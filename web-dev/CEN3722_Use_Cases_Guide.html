@@ -1,0 +1,1694 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CEN3722 - Use Cases & Task Analysis Guide</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.6;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            padding: 20px;
+            color: #333;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.3);
+            overflow: hidden;
+        }
+
+        header {
+            background: linear-gradient(135deg, #2c3e50 0%, #34495e 100%);
+            color: white;
+            padding: 40px;
+            text-align: center;
+        }
+
+        header h1 {
+            font-size: 2.5em;
+            margin-bottom: 10px;
+        }
+
+        header p {
+            font-size: 1.2em;
+            opacity: 0.9;
+        }
+
+        .content {
+            padding: 40px;
+        }
+
+        .intro-box {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 30px;
+            border-radius: 10px;
+            margin-bottom: 30px;
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.3);
+        }
+
+        .intro-box h2 {
+            margin-bottom: 15px;
+        }
+
+        .collapsible {
+            background-color: #3498db;
+            color: white;
+            cursor: pointer;
+            padding: 18px;
+            width: 100%;
+            border: none;
+            text-align: left;
+            outline: none;
+            font-size: 1.2em;
+            font-weight: 600;
+            margin-top: 10px;
+            border-radius: 8px;
+            transition: all 0.3s ease;
+            position: relative;
+            padding-right: 50px;
+        }
+
+        .collapsible:hover {
+            background-color: #2980b9;
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(52, 152, 219, 0.3);
+        }
+
+        .collapsible.active {
+            background-color: #2c3e50;
+        }
+
+        .collapsible:after {
+            content: '\002B';
+            color: white;
+            font-weight: bold;
+            font-size: 1.5em;
+            position: absolute;
+            right: 20px;
+            top: 50%;
+            transform: translateY(-50%);
+        }
+
+        .collapsible.active:after {
+            content: "\2212";
+        }
+
+        .collapsible-content {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.3s ease-out;
+            background-color: #f8f9fa;
+            border-left: 4px solid #3498db;
+            margin-bottom: 10px;
+            border-radius: 0 0 8px 8px;
+        }
+
+        .collapsible-inner {
+            padding: 30px;
+        }
+
+        .info-block {
+            background: #e3f2fd;
+            border-left: 5px solid #2196F3;
+            padding: 20px;
+            margin: 20px 0;
+            border-radius: 5px;
+        }
+
+        .info-block.warning {
+            background: #fff3cd;
+            border-left-color: #ffc107;
+        }
+
+        .info-block.success {
+            background: #d4edda;
+            border-left-color: #28a745;
+        }
+
+        .info-block.tip {
+            background: #d1ecf1;
+            border-left-color: #17a2b8;
+        }
+
+        .example-box {
+            background: white;
+            border: 2px solid #ddd;
+            border-radius: 8px;
+            padding: 25px;
+            margin: 20px 0;
+            box-shadow: 0 3px 10px rgba(0,0,0,0.1);
+        }
+
+        .example-box h4 {
+            color: #2c3e50;
+            margin-bottom: 15px;
+            font-size: 1.3em;
+            border-bottom: 2px solid #3498db;
+            padding-bottom: 10px;
+        }
+
+        .code-block {
+            background: #282c34;
+            color: #abb2bf;
+            padding: 20px;
+            border-radius: 8px;
+            overflow-x: auto;
+            margin: 15px 0;
+            font-family: 'Courier New', monospace;
+            line-height: 1.5;
+        }
+
+        .highlight {
+            background: #fff3cd;
+            padding: 2px 6px;
+            border-radius: 3px;
+            font-weight: 600;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 20px 0;
+            background: white;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        }
+
+        th {
+            background: linear-gradient(135deg, #3498db 0%, #2980b9 100%);
+            color: white;
+            padding: 15px;
+            text-align: left;
+            font-weight: 600;
+        }
+
+        td {
+            padding: 12px 15px;
+            border-bottom: 1px solid #ddd;
+        }
+
+        tr:hover {
+            background: #f5f5f5;
+        }
+
+        ul, ol {
+            margin: 15px 0 15px 30px;
+        }
+
+        li {
+            margin: 8px 0;
+        }
+
+        h3 {
+            color: #2c3e50;
+            margin: 25px 0 15px 0;
+            font-size: 1.6em;
+        }
+
+        h4 {
+            color: #34495e;
+            margin: 20px 0 10px 0;
+            font-size: 1.3em;
+        }
+
+        .two-column {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+            margin: 20px 0;
+        }
+
+        .card {
+            background: white;
+            border-radius: 8px;
+            padding: 20px;
+            box-shadow: 0 3px 10px rgba(0,0,0,0.1);
+            border-top: 4px solid #3498db;
+        }
+
+        .card h4 {
+            color: #3498db;
+            margin-top: 0;
+        }
+
+        @media (max-width: 768px) {
+            .two-column {
+                grid-template-columns: 1fr;
+            }
+            
+            header h1 {
+                font-size: 1.8em;
+            }
+            
+            .content {
+                padding: 20px;
+            }
+        }
+
+        .key-points {
+            background: linear-gradient(135deg, #11998e 0%, #38ef7d 100%);
+            color: white;
+            padding: 20px;
+            border-radius: 8px;
+            margin: 20px 0;
+        }
+
+        .key-points ul {
+            list-style: none;
+            margin-left: 0;
+        }
+
+        .key-points li:before {
+            content: "✓ ";
+            font-weight: bold;
+            margin-right: 8px;
+        }
+
+        .process-step {
+            background: linear-gradient(90deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 15px 20px;
+            margin: 10px 0;
+            border-radius: 8px;
+            font-weight: 600;
+        }
+
+        .process-step span {
+            background: rgba(255,255,255,0.3);
+            padding: 5px 12px;
+            border-radius: 50%;
+            margin-right: 10px;
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>CEN3722: Human-Computer Interaction</h1>
+            <p>Use Cases & Task Analysis: Foundations of Interface Design</p>
+        </header>
+
+        <div class="content">
+            <div class="intro-box">
+                <h2>📋 Course Module Overview</h2>
+                <p>Welcome to this comprehensive guide on Use Cases and Task Analysis. These are the foundational steps in designing effective user interfaces for any application. By understanding what users need to accomplish and how they'll accomplish it, we can create intuitive, efficient, and user-centered designs.</p>
+            </div>
+
+            <!-- Section 1: Introduction -->
+            <button type="button" class="collapsible">Introduction: Why Use Cases and Task Analysis Matter</button>
+            <div class="collapsible-content">
+                <div class="collapsible-inner">
+                    <h3>The Foundation of User-Centered Design</h3>
+                    <p>Before writing a single line of code or designing a single screen, successful software development begins with understanding <strong>who will use the system and what they need to accomplish</strong>. Use cases and task analysis are the bridge between user requirements and system design.</p>
+
+                    <div class="two-column">
+                        <div class="card">
+                            <h4>🎯 Use Cases</h4>
+                            <p>Document <strong>what</strong> the system should do from the user's perspective. They capture functional requirements as interactions between actors and the system.</p>
+                        </div>
+                        <div class="card">
+                            <h4>🔍 Task Analysis</h4>
+                            <p>Document <strong>how</strong> users will accomplish their goals. They break down activities into detailed steps and reveal the cognitive and physical processes involved.</p>
+                        </div>
+                    </div>
+
+                    <div class="info-block success">
+                        <h4>💡 The Value Proposition</h4>
+                        <p><strong>Together, these techniques help us:</strong></p>
+                        <ul>
+                            <li>Identify all system functionality early in development</li>
+                            <li>Understand user workflows and mental models</li>
+                            <li>Design interfaces that match how users think and work</li>
+                            <li>Catch usability problems before they're expensive to fix</li>
+                            <li>Create consistent, predictable user experiences</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Section 2: Use Cases -->
+            <button type="button" class="collapsible">What Are Use Cases?</button>
+            <div class="collapsible-content">
+                <div class="collapsible-inner">
+                    <h3>Understanding Use Cases</h3>
+                    <p>A <span class="highlight">use case</span> is a description of how a user (actor) interacts with a system to achieve a specific goal. It captures the functional requirements from the user's perspective, focusing on <strong>what</strong> the system does, not <strong>how</strong> it does it internally.</p>
+
+                    <div class="info-block">
+                        <h4>Key Components of a Use Case</h4>
+                        <ul>
+                            <li><strong>Actor:</strong> The person or external system interacting with your system</li>
+                            <li><strong>Goal:</strong> What the actor wants to accomplish</li>
+                            <li><strong>Preconditions:</strong> What must be true before the use case can begin</li>
+                            <li><strong>Basic Flow:</strong> The normal, successful path through the interaction</li>
+                            <li><strong>Alternative Flows:</strong> Variations on the basic flow</li>
+                            <li><strong>Exception Flows:</strong> What happens when things go wrong</li>
+                            <li><strong>Postconditions:</strong> What's true after successful completion</li>
+                        </ul>
+                    </div>
+
+                    <h3>Levels of Detail in Use Cases</h3>
+                    <p>Use cases can be written at different levels of abstraction depending on the project phase and audience:</p>
+
+                    <table>
+                        <tr>
+                            <th>Level</th>
+                            <th>Description</th>
+                            <th>When to Use</th>
+                        </tr>
+                        <tr>
+                            <td><strong>Brief</strong></td>
+                            <td>One paragraph summary, usually the main success scenario only</td>
+                            <td>Early requirements gathering, high-level planning</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Casual</strong></td>
+                            <td>Multiple paragraphs covering various scenarios, informal writing</td>
+                            <td>Initial design discussions, stakeholder reviews</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Fully Dressed</strong></td>
+                            <td>All sections completed in detail, formal structure</td>
+                            <td>Critical use cases, implementation planning, testing</td>
+                        </tr>
+                    </table>
+
+                    <div class="example-box">
+                        <h4>📝 Example: Brief Use Case</h4>
+                        <div class="code-block">
+<strong>Use Case:</strong> Purchase Items<br>
+<strong>Actor:</strong> Customer<br>
+<br>
+A customer browses the product catalog, adds desired items to a shopping cart, <br>
+provides shipping and payment information, and submits the order. The system <br>
+validates the payment, confirms the order, and sends a confirmation email.
+                        </div>
+                    </div>
+
+                    <div class="example-box">
+                        <h4>📝 Example: Fully Dressed Use Case</h4>
+                        <div class="code-block">
+<strong>Use Case ID:</strong> UC-101<br>
+<strong>Use Case Name:</strong> Purchase Items<br>
+<strong>Actor:</strong> Customer<br>
+<strong>Description:</strong> Customer completes a purchase of items from the online store<br>
+<strong>Trigger:</strong> Customer clicks "Checkout" button<br>
+<br>
+<strong>Preconditions:</strong><br>
+- Customer has an account and is logged in<br>
+- Shopping cart contains at least one item<br>
+- Items are in stock<br>
+<br>
+<strong>Basic Flow:</strong><br>
+1. System displays order summary with items, quantities, and prices<br>
+2. Customer reviews order<br>
+3. System requests shipping address<br>
+4. Customer enters or selects shipping address<br>
+5. System calculates shipping cost and displays total<br>
+6. System requests payment information<br>
+7. Customer enters credit card details<br>
+8. System validates payment information<br>
+9. Customer confirms order<br>
+10. System processes payment<br>
+11. System creates order record<br>
+12. System sends confirmation email to customer<br>
+13. System displays order confirmation page with order number<br>
+<br>
+<strong>Alternative Flow 1: Use Saved Payment Method</strong><br>
+At step 7, if customer has saved payment methods:<br>
+7a. System displays list of saved payment methods<br>
+7b. Customer selects a saved payment method<br>
+7c. Resume at step 9<br>
+<br>
+<strong>Alternative Flow 2: Apply Discount Code</strong><br>
+At step 5, customer may enter a discount code:<br>
+5a. Customer clicks "Add discount code"<br>
+5b. Customer enters code<br>
+5c. System validates code<br>
+5d. System recalculates total with discount applied<br>
+5e. Resume at step 6<br>
+<br>
+<strong>Exception Flow 1: Payment Declined</strong><br>
+At step 10, if payment is declined:<br>
+10a. System displays error message<br>
+10b. System returns to step 6<br>
+10c. Customer may try different payment method<br>
+<br>
+<strong>Exception Flow 2: Item Out of Stock</strong><br>
+At step 1, if item is no longer in stock:<br>
+1a. System displays message about unavailable item(s)<br>
+1b. System removes out-of-stock items from cart<br>
+1c. Customer may continue with remaining items or cancel<br>
+<br>
+<strong>Postconditions:</strong><br>
+- Order is recorded in system<br>
+- Inventory is updated<br>
+- Customer has received confirmation<br>
+- Payment has been processed<br>
+<br>
+<strong>Business Rules:</strong><br>
+- Minimum order value: $10<br>
+- Free shipping over $50<br>
+- Orders over $1000 require additional verification
+                        </div>
+                    </div>
+
+                    <div class="info-block tip">
+                        <h4>💡 Best Practices for Writing Use Cases</h4>
+                        <ul>
+                            <li><strong>Focus on user goals:</strong> Name use cases with verb phrases that describe what the user accomplishes (e.g., "Purchase Items" not "Process Order")</li>
+                            <li><strong>Keep it at the right level:</strong> Each step should represent a meaningful interaction, not button clicks</li>
+                            <li><strong>Write from the user's perspective:</strong> Avoid implementation details</li>
+                            <li><strong>Be complete:</strong> Cover main flow and important alternatives/exceptions</li>
+                            <li><strong>Make it testable:</strong> Use cases should be specific enough to guide testing</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Section 3: Task Analysis -->
+            <button type="button" class="collapsible">What Is Task Analysis?</button>
+            <div class="collapsible-content">
+                <div class="collapsible-inner">
+                    <h3>Understanding Task Analysis</h3>
+                    <p>While use cases capture <em>what</em> the system must do, <span class="highlight">task analysis</span> digs deeper into <em>how</em> users will accomplish their goals. It examines the cognitive and physical activities users perform, revealing the steps, decisions, information needs, and potential pain points in completing a task.</p>
+
+                    <div class="info-block">
+                        <h4>Purpose of Task Analysis</h4>
+                        <p>Task analysis helps us:</p>
+                        <ul>
+                            <li>Understand the user's <strong>mental model</strong> of how work should be done</li>
+                            <li>Identify <strong>information requirements</strong> at each step</li>
+                            <li>Discover <strong>decision points</strong> and criteria users consider</li>
+                            <li>Recognize <strong>opportunities for automation</strong> or assistance</li>
+                            <li>Spot potential <strong>usability problems</strong> before design begins</li>
+                            <li>Design <strong>workflows that match user thinking</strong></li>
+                        </ul>
+                    </div>
+
+                    <h3>Types of Task Analysis</h3>
+
+                    <div class="two-column">
+                        <div class="card">
+                            <h4>Hierarchical Task Analysis (HTA)</h4>
+                            <p>Breaks tasks into a hierarchy of goals, sub-goals, and operations. Shows the structure and sequence of activities.</p>
+                        </div>
+                        <div class="card">
+                            <h4>Cognitive Task Analysis (CTA)</h4>
+                            <p>Focuses on mental processes: what users need to know, remember, perceive, and understand at each step.</p>
+                        </div>
+                    </div>
+
+                    <h3>Hierarchical Task Analysis (HTA)</h3>
+                    <p>HTA decomposes a task into a hierarchy, starting with high-level goals and breaking them down into sub-tasks and operations. It uses a plan to specify the order and conditions for performing sub-tasks.</p>
+
+                    <div class="example-box">
+                        <h4>📝 Example: HTA for Making Coffee with a Drip Coffee Maker</h4>
+                        <div class="code-block">
+<strong>0. Make Coffee</strong><br>
+    <strong>Plan 0:</strong> Do 1, 2, 3, 4 in order, then 5<br>
+<br>
+    <strong>1. Prepare coffee maker</strong><br>
+        <strong>Plan 1:</strong> Do 1.1, then 1.2, then 1.3<br>
+        1.1 Ensure coffee maker is plugged in<br>
+        1.2 Check that carafe is clean and empty<br>
+        1.3 Open filter basket<br>
+<br>
+    <strong>2. Add coffee filter and grounds</strong><br>
+        <strong>Plan 2:</strong> Do 2.1, then 2.2<br>
+        2.1 Place paper filter in basket<br>
+        2.2 Measure and add coffee grounds (1 tablespoon per cup)<br>
+<br>
+    <strong>3. Add water</strong><br>
+        <strong>Plan 3:</strong> Do 3.1, then 3.2<br>
+        3.1 Fill water reservoir to desired cup marking<br>
+        3.2 Close reservoir lid<br>
+<br>
+    <strong>4. Start brewing</strong><br>
+        <strong>Plan 4:</strong> Do 4.1, then 4.2<br>
+        4.1 Close filter basket<br>
+        4.2 Press power/brew button<br>
+<br>
+    <strong>5. Complete and clean up</strong><br>
+        <strong>Plan 5:</strong> Do 5.1, wait for completion, then 5.2, 5.3<br>
+        5.1 Wait for brewing to complete (indicated by sound/light)<br>
+        5.2 Pour coffee<br>
+        5.3 Dispose of used grounds and filter
+                        </div>
+                    </div>
+
+                    <h3>Level of Detail in Task Analysis</h3>
+                    <p>The appropriate level of detail depends on:</p>
+                    
+                    <table>
+                        <tr>
+                            <th>Factor</th>
+                            <th>More Detail Needed</th>
+                            <th>Less Detail Acceptable</th>
+                        </tr>
+                        <tr>
+                            <td><strong>Task Complexity</strong></td>
+                            <td>Complex, error-prone, or safety-critical tasks</td>
+                            <td>Simple, routine tasks</td>
+                        </tr>
+                        <tr>
+                            <td><strong>User Expertise</strong></td>
+                            <td>Novice users or infrequent tasks</td>
+                            <td>Expert users doing familiar tasks</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Design Stage</strong></td>
+                            <td>Detailed design and implementation</td>
+                            <td>Early conceptual design</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Innovation Level</strong></td>
+                            <td>Novel interfaces or workflows</td>
+                            <td>Standard, well-understood interfaces</td>
+                        </tr>
+                    </table>
+
+                    <div class="example-box">
+                        <h4>📝 Example: Detailed Task Analysis for E-commerce Checkout</h4>
+                        <div class="code-block">
+<strong>Task:</strong> Complete Checkout Process<br>
+<strong>User Type:</strong> First-time customer<br>
+<strong>Context:</strong> Desktop computer, has items in cart<br>
+<br>
+<strong>STEP 1: Review Cart</strong><br>
+    <strong>User Action:</strong> Navigate to shopping cart<br>
+    <strong>Information Needed:</strong><br>
+        - Product names and images<br>
+        - Individual prices<br>
+        - Quantities<br>
+        - Subtotal<br>
+    <strong>Decisions:</strong><br>
+        - Are these the right items?<br>
+        - Are quantities correct?<br>
+        - Is the price acceptable?<br>
+    <strong>Potential Issues:</strong><br>
+        - User may want to adjust quantities<br>
+        - User may want to remove items<br>
+        - User may want to save cart for later<br>
+    <strong>Interface Needs:</strong><br>
+        - Clear item details and pricing<br>
+        - Easy quantity adjustment<br>
+        - Remove item option<br>
+        - Estimated total visible<br>
+        - "Continue Shopping" vs "Checkout" clear<br>
+<br>
+<strong>STEP 2: Enter Shipping Address</strong><br>
+    <strong>User Action:</strong> Input or select shipping address<br>
+    <strong>Information Needed:</strong><br>
+        - Form field labels and requirements<br>
+        - Which fields are mandatory<br>
+        - Address format expectations<br>
+    <strong>Cognitive Load:</strong><br>
+        - Must recall full address details<br>
+        - Must understand field purposes<br>
+        - May need to decide between addresses<br>
+    <strong>Decisions:</strong><br>
+        - Ship to home or another address?<br>
+        - Create account or checkout as guest?<br>
+    <strong>Potential Issues:</strong><br>
+        - Unclear field requirements<br>
+        - Form validation errors<br>
+        - Address verification failures<br>
+        - Confusion about billing vs shipping<br>
+    <strong>Interface Needs:</strong><br>
+        - Clear labels with examples<br>
+        - Inline validation<br>
+        - Address autocomplete<br>
+        - Option to use billing address<br>
+        - Account creation benefits explained<br>
+<br>
+<strong>STEP 3: Select Shipping Method</strong><br>
+    <strong>User Action:</strong> Choose from shipping options<br>
+    <strong>Information Needed:</strong><br>
+        - Available shipping methods<br>
+        - Cost for each method<br>
+        - Estimated delivery dates<br>
+        - Current selection<br>
+    <strong>Decisions:</strong><br>
+        - Balance of cost vs speed<br>
+        - Acceptable delivery timeframe<br>
+    <strong>Potential Issues:</strong><br>
+        - Unexpected shipping costs<br>
+        - Limited delivery options<br>
+        - Unclear delivery estimates<br>
+    <strong>Interface Needs:</strong><br>
+        - Clear comparison of options<br>
+        - Updated total with shipping<br>
+        - Estimated delivery dates prominent<br>
+        - Recommendation for user's location<br>
+<br>
+<strong>STEP 4: Enter Payment Information</strong><br>
+    <strong>User Action:</strong> Input payment details<br>
+    <strong>Information Needed:</strong><br>
+        - Accepted payment methods<br>
+        - Required payment information<br>
+        - Security indicators<br>
+    <strong>Cognitive Load:</strong><br>
+        - Must retrieve payment card<br>
+        - Must enter sensitive information<br>
+        - Concern about security<br>
+    <strong>Decisions:</strong><br>
+        - Which payment method to use?<br>
+        - Save payment info for future?<br>
+    <strong>Potential Issues:</strong><br>
+        - Security concerns<br>
+        - Payment validation errors<br>
+        - Card declined<br>
+        - Form timeout during entry<br>
+    <strong>Interface Needs:</strong><br>
+        - Security badges visible<br>
+        - Card type auto-detection<br>
+        - Field masking for card number<br>
+        - Clear indication of secure connection<br>
+        - Explanation of why billing address needed<br>
+<br>
+<strong>STEP 5: Review and Confirm Order</strong><br>
+    <strong>User Action:</strong> Final review before purchase<br>
+    <strong>Information Needed:</strong><br>
+        - Complete order summary<br>
+        - All costs breakdown<br>
+        - Shipping address<br>
+        - Estimated delivery<br>
+        - Return policy info<br>
+    <strong>Decisions:</strong><br>
+        - Is everything correct?<br>
+        - Proceed with purchase?<br>
+    <strong>Potential Issues:</strong><br>
+        - Missing information<br>
+        - Unexpected fees<br>
+        - Wrong address displayed<br>
+        - Concerns about return policy<br>
+    <strong>Interface Needs:</strong><br>
+        - Complete itemized summary<br>
+        - Edit options for each section<br>
+        - Clear total with all fees<br>
+        - Prominent "Place Order" button<br>
+        - Terms and policies accessible<br>
+<br>
+<strong>STEP 6: Receive Confirmation</strong><br>
+    <strong>User Action:</strong> View order confirmation<br>
+    <strong>Information Needed:</strong><br>
+        - Order number<br>
+        - Confirmation email sent<br>
+        - Next steps<br>
+        - Tracking information (when available)<br>
+    <strong>User Goals:</strong><br>
+        - Record order number<br>
+        - Verify email received<br>
+        - Understand when item will arrive<br>
+    <strong>Interface Needs:</strong><br>
+        - Clear confirmation message<br>
+        - Order number prominent<br>
+        - Email confirmation noted<br>
+        - Order tracking link<br>
+        - Option to print receipt<br>
+        - Account creation prompt (if guest)
+                        </div>
+                    </div>
+
+                    <div class="info-block warning">
+                        <h4>⚠️ Common Pitfalls in Task Analysis</h4>
+                        <ul>
+                            <li><strong>Being too technology-focused:</strong> Focus on what users need to accomplish, not how the current system works</li>
+                            <li><strong>Stopping too early:</strong> Don't just list steps; identify information needs, decisions, and potential issues</li>
+                            <li><strong>Assuming expert behavior:</strong> Remember that most users are not experts in your system</li>
+                            <li><strong>Ignoring errors and exceptions:</strong> Users make mistakes and encounter problems</li>
+                            <li><strong>Working alone:</strong> Always validate your task analysis with real users</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Section 4: Relationship Between Use Cases and Task Analysis -->
+            <button type="button" class="collapsible">How Use Cases and Task Analysis Work Together</button>
+            <div class="collapsible-content">
+                <div class="collapsible-inner">
+                    <h3>Complementary Perspectives</h3>
+                    <p>Use cases and task analysis provide complementary views of user requirements and system behavior:</p>
+
+                    <div class="two-column">
+                        <div class="info-block">
+                            <h4>📋 Use Cases</h4>
+                            <ul>
+                                <li><strong>System-centric:</strong> What the system must do</li>
+                                <li><strong>Functional requirements:</strong> Features and capabilities</li>
+                                <li><strong>Actor interactions:</strong> Inputs and outputs</li>
+                                <li><strong>Success and failure:</strong> Expected outcomes</li>
+                                <li><strong>Complete scenarios:</strong> End-to-end flows</li>
+                            </ul>
+                        </div>
+                        <div class="info-block">
+                            <h4>🔍 Task Analysis</h4>
+                            <ul>
+                                <li><strong>User-centric:</strong> How users work</li>
+                                <li><strong>Cognitive requirements:</strong> Understanding and decision-making</li>
+                                <li><strong>User actions:</strong> Physical and mental operations</li>
+                                <li><strong>Problems and needs:</strong> Pain points and opportunities</li>
+                                <li><strong>Detailed steps:</strong> Granular breakdown</li>
+                            </ul>
+                        </div>
+                    </div>
+
+                    <h3>The Design Process Flow</h3>
+                    <p>Here's how these techniques fit into the overall design process:</p>
+
+                    <div class="process-step">
+                        <span>1</span> <strong>Identify Actors and Goals:</strong> Who will use the system and what do they need to accomplish?
+                    </div>
+
+                    <div class="process-step">
+                        <span>2</span> <strong>Write Use Cases:</strong> Document each goal as a use case showing system interactions
+                    </div>
+
+                    <div class="process-step">
+                        <span>3</span> <strong>Conduct Task Analysis:</strong> For each use case, analyze the detailed user tasks
+                    </div>
+
+                    <div class="process-step">
+                        <span>4</span> <strong>Identify Design Requirements:</strong> Extract interface needs from task analysis
+                    </div>
+
+                    <div class="process-step">
+                        <span>5</span> <strong>Create Design Solutions:</strong> Design UI that supports the identified tasks
+                    </div>
+
+                    <div class="process-step">
+                        <span>6</span> <strong>Validate Design:</strong> Test whether design supports use cases and tasks effectively
+                    </div>
+
+                    <div class="example-box">
+                        <h4>📝 Example: From Use Case to Task Analysis to Design</h4>
+                        
+                        <h4>Use Case: Search for Products</h4>
+                        <div class="code-block">
+<strong>Actor:</strong> Customer<br>
+<strong>Basic Flow:</strong><br>
+1. Customer enters search term<br>
+2. System displays matching products<br>
+3. Customer filters results by category, price, rating<br>
+4. Customer sorts results<br>
+5. Customer views product details<br>
+6. Customer adds product to cart
+                        </div>
+
+                        <h4>Task Analysis Excerpt: Step 2 (Display Results)</h4>
+                        <div class="code-block">
+<strong>User Action:</strong> Scan search results to find relevant products<br>
+<strong>Information Needed:</strong><br>
+    - Product images<br>
+    - Product names<br>
+    - Prices<br>
+    - Ratings/reviews<br>
+    - Availability<br>
+    - Key features/specifications<br>
+<strong>Cognitive Process:</strong><br>
+    - Quick visual scanning<br>
+    - Pattern matching against needs<br>
+    - Price comparison<br>
+    - Quality assessment via ratings<br>
+<strong>Decisions:</strong><br>
+    - Which products meet needs?<br>
+    - Which products warrant further investigation?<br>
+    - Need to refine search?<br>
+<strong>Potential Issues:</strong><br>
+    - Too many results (overwhelming)<br>
+    - Irrelevant results (poor search)<br>
+    - Unclear product differentiation<br>
+    - Important information buried
+                        </div>
+
+                        <h4>Design Requirements Derived:</h4>
+                        <div class="code-block">
+<strong>Layout:</strong><br>
+    - Grid layout for easy scanning<br>
+    - Product images prominent<br>
+    - Key info visible without clicking<br>
+<br>
+<strong>Information Display:</strong><br>
+    - Product title (clear, descriptive)<br>
+    - Price (large, readable)<br>
+    - Rating (visual stars + count)<br>
+    - 2-3 key features<br>
+    - Availability indicator<br>
+<br>
+<strong>Interaction:</strong><br>
+    - Filters accessible without scrolling<br>
+    - Quick view option for details<br>
+    - Add to cart from results<br>
+    - Easy comparison between products<br>
+<br>
+<strong>Performance:</strong><br>
+    - Fast loading of results<br>
+    - Lazy loading of images<br>
+    - Immediate filter/sort feedback
+                        </div>
+                    </div>
+
+                    <div class="key-points">
+                        <h4>🎯 Key Integration Points</h4>
+                        <ul>
+                            <li>Use cases define <strong>what scenarios</strong> to analyze in detail</li>
+                            <li>Task analysis reveals <strong>what information and actions</strong> each use case step requires</li>
+                            <li>Together they specify <strong>both functional and usability requirements</strong></li>
+                            <li>They guide design by showing <strong>how users think and what they need</strong></li>
+                            <li>They provide <strong>test scenarios</strong> for validating the final design</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Section 5: Practical Application -->
+            <button type="button" class="collapsible">Practical Application in Design</button>
+            <div class="collapsible-content">
+                <div class="collapsible-inner">
+                    <h3>From Analysis to Design Decisions</h3>
+                    <p>The real value of use cases and task analysis comes from translating insights into concrete design decisions. Here's how:</p>
+
+                    <h3>Extracting Design Requirements</h3>
+                    
+                    <div class="example-box">
+                        <h4>📝 Example: Banking App - Transfer Money</h4>
+                        
+                        <h4>Task Analysis Insight:</h4>
+                        <div class="code-block">
+<strong>Step:</strong> Select recipient for transfer<br>
+<strong>Finding:</strong> Users frequently transfer to the same 3-5 people (spouse, <br>
+children, rent). Looking up account numbers is tedious and error-prone. Users <br>
+expressed anxiety about entering wrong account numbers.
+                        </div>
+
+                        <h4>Design Decisions:</h4>
+                        <div class="code-block">
+✅ Create "Favorites" or "Frequent Recipients" list<br>
+✅ Allow nickname assignment for saved recipients<br>
+✅ Show recent recipients at top of selection<br>
+✅ Implement confirmation step showing recipient name before final transfer<br>
+✅ Add ability to verify recipient with small test transfer<br>
+✅ Include clear account number display with verification
+                        </div>
+
+                        <h4>Task Analysis Insight:</h4>
+                        <div class="code-block">
+<strong>Step:</strong> Enter transfer amount<br>
+<strong>Finding:</strong> Users often transfer bill amounts (from paper bills or emails) <br>
+or split expenses (calculating portions). They want to ensure sufficient balance <br>
+and avoid overdrafts.
+                        </div>
+
+                        <h4>Design Decisions:</h4>
+                        <div class="code-block">
+✅ Show available balance prominently during amount entry<br>
+✅ Provide calculator function built into amount field<br>
+✅ Allow bill photo capture with OCR for amount<br>
+✅ Offer split calculation (divide amount by N people)<br>
+✅ Warn if amount exceeds balance<br>
+✅ Show resulting balance after transfer
+                        </div>
+                    </div>
+
+                    <h3>Information Architecture</h3>
+                    <p>Task analysis directly informs how to organize information:</p>
+
+                    <table>
+                        <tr>
+                            <th>Task Analysis Finding</th>
+                            <th>Design Implication</th>
+                        </tr>
+                        <tr>
+                            <td>Users need info A to make decision before action B</td>
+                            <td>Display info A before presenting action B</td>
+                        </tr>
+                        <tr>
+                            <td>Users compare products on criteria X, Y, Z</td>
+                            <td>Make X, Y, Z visible without extra clicks; provide comparison view</td>
+                        </tr>
+                        <tr>
+                            <td>Users need to reference info from step 2 in step 5</td>
+                            <td>Keep info visible or easily accessible throughout</td>
+                        </tr>
+                        <tr>
+                            <td>Users frequently switch between tasks A and B</td>
+                            <td>Make both tasks accessible from same location</td>
+                        </tr>
+                        <tr>
+                            <td>Users get confused about which step they're on</td>
+                            <td>Add progress indicator and step labels</td>
+                        </tr>
+                    </table>
+
+                    <h3>Interaction Design</h3>
+                    
+                    <div class="example-box">
+                        <h4>📝 Example: Booking System</h4>
+                        
+                        <div class="code-block">
+<strong>Use Case:</strong> Book Appointment<br>
+<strong>Task Analysis:</strong><br>
+- Users need to find available time slots that fit their schedule<br>
+- Users often have constraints (not before 9am, not during lunch, specific days)<br>
+- Users want to see multiple options quickly<br>
+- Users may need to check their own calendar<br>
+- Users value flexibility to change if needed<br>
+<br>
+<strong>Design Solution:</strong><br>
+1. <strong>Calendar View:</strong> Visual grid showing availability at a glance<br>
+   - Week view as default (shows patterns)<br>
+   - Available slots highlighted in green<br>
+   - Unavailable in grey<br>
+   - Selected in blue<br>
+<br>
+2. <strong>Filters:</strong> Quick constraint application<br>
+   - Day of week checkboxes<br>
+   - Time range slider<br>
+   - Duration selector<br>
+   - Results update immediately<br>
+<br>
+3. <strong>Multi-Selection:</strong> Allow comparing options<br>
+   - Click multiple slots to compare<br>
+   - Side panel shows details of each<br>
+   - One-click booking of preferred<br>
+<br>
+4. <strong>Calendar Integration:</strong><br>
+   - "Check my calendar" button<br>
+   - Import from Google/Outlook<br>
+   - Shows conflicts inline<br>
+<br>
+5. <strong>Confirmation:</strong><br>
+   - Clear summary before final booking<br>
+   - Easy rescheduling option provided<br>
+   - Add to personal calendar prompt
+                        </div>
+                    </div>
+
+                    <h3>Error Prevention and Recovery</h3>
+                    <p>Task analysis reveals where errors are likely:</p>
+
+                    <div class="two-column">
+                        <div class="card">
+                            <h4>Prevention Strategies</h4>
+                            <ul>
+                                <li><strong>Constraints:</strong> Only allow valid inputs</li>
+                                <li><strong>Defaults:</strong> Pre-populate with sensible values</li>
+                                <li><strong>Guidance:</strong> Inline help and examples</li>
+                                <li><strong>Confirmation:</strong> Verify destructive actions</li>
+                            </ul>
+                        </div>
+                        <div class="card">
+                            <h4>Recovery Strategies</h4>
+                            <ul>
+                                <li><strong>Clear errors:</strong> Explain what's wrong and how to fix</li>
+                                <li><strong>Undo:</strong> Allow reversal of actions</li>
+                                <li><strong>Save drafts:</strong> Don't lose work on errors</li>
+                                <li><strong>Progressive disclosure:</strong> Don't overwhelm with options</li>
+                            </ul>
+                        </div>
+                    </div>
+
+                    <div class="info-block success">
+                        <h4>✨ Design Principles from Task Analysis</h4>
+                        <ol>
+                            <li><strong>Match User's Mental Model:</strong> Organize interface to match how users think about the task</li>
+                            <li><strong>Minimize Cognitive Load:</strong> Reduce memory requirements, provide visual cues</li>
+                            <li><strong>Support Recognition over Recall:</strong> Show options rather than requiring users to remember</li>
+                            <li><strong>Provide Feedback:</strong> Confirm actions and show system state</li>
+                            <li><strong>Anticipate Needs:</strong> Predict what information or action user needs next</li>
+                            <li><strong>Optimize for Common Cases:</strong> Make frequent tasks easy; rare tasks possible</li>
+                            <li><strong>Support Interruption and Resumption:</strong> Allow users to pause and return</li>
+                        </ol>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Section 6: Complete Example -->
+            <button type="button" class="collapsible">Complete Example: Fitness Tracking App</button>
+            <div class="collapsible-content">
+                <div class="collapsible-inner">
+                    <h3>End-to-End Analysis and Design</h3>
+                    <p>Let's walk through a complete example showing how use cases and task analysis drive interface design for a fitness tracking application.</p>
+
+                    <div class="example-box">
+                        <h4>📋 Use Case: Log Workout</h4>
+                        <div class="code-block">
+<strong>Use Case ID:</strong> UC-201<br>
+<strong>Use Case Name:</strong> Log Workout<br>
+<strong>Actor:</strong> Fitness App User<br>
+<strong>Goal:</strong> Record details of completed workout for tracking progress<br>
+<br>
+<strong>Preconditions:</strong><br>
+- User has completed a workout<br>
+- User is logged into the app<br>
+<br>
+<strong>Basic Flow:</strong><br>
+1. User selects "Log Workout" from main menu<br>
+2. System prompts for workout type<br>
+3. User selects workout type (strength, cardio, sports, etc.)<br>
+4. System displays appropriate entry form for workout type<br>
+5. User enters workout details (exercises, sets, reps, weight, duration, etc.)<br>
+6. User marks workout as complete<br>
+7. System saves workout log<br>
+8. System updates user statistics and progress charts<br>
+9. System displays summary of logged workout<br>
+<br>
+<strong>Alternative Flow 1: Log from Template</strong><br>
+At step 3, if user has saved workout templates:<br>
+3a. System offers option to use template<br>
+3b. User selects template<br>
+3c. System pre-fills form with template data<br>
+3d. User modifies as needed<br>
+3e. Resume at step 6<br>
+<br>
+<strong>Alternative Flow 2: Quick Log</strong><br>
+At step 4, user may choose quick log option:<br>
+4a. System displays simplified form with just key data<br>
+4b. User enters minimal details<br>
+4c. Resume at step 6<br>
+<br>
+<strong>Alternative Flow 3: Start Workout Timer</strong><br>
+At step 2, user may indicate workout is in progress:<br>
+2a. User selects "Start Workout"<br>
+2b. System starts timer<br>
+2c. User logs exercises during workout<br>
+2d. User indicates workout complete<br>
+2e. System calculates total workout time<br>
+2f. Resume at step 7<br>
+<br>
+<strong>Exception Flow: Interrupted Entry</strong><br>
+At any data entry step, if user exits or app closes:<br>
+7a. System auto-saves draft<br>
+7b. On next login, system prompts to resume or discard<br>
+7c. If resume, return to entry screen with saved data<br>
+<br>
+<strong>Postconditions:</strong><br>
+- Workout is recorded in user's history<br>
+- Statistics are updated<br>
+- Progress toward goals is recalculated<br>
+- Data is available for analysis
+                        </div>
+                    </div>
+
+                    <div class="example-box">
+                        <h4>🔍 Task Analysis: Log Strength Training Workout</h4>
+                        <div class="code-block">
+<strong>TASK: Log Strength Training Workout</strong><br>
+<strong>User Profile:</strong> Intermediate lifter, tracks workouts 4x/week<br>
+<strong>Context:</strong> Just finished workout at gym, wants to log before leaving<br>
+<br>
+<strong>========================================</strong><br>
+<strong>PHASE 1: INITIATE LOGGING</strong><br>
+<strong>========================================</strong><br>
+<br>
+<strong>Task 1.1: Open App and Navigate to Log Feature</strong><br>
+    <strong>User Action:</strong> Launch app, tap to log workout<br>
+    <strong>Mental State:</strong><br>
+        - Post-workout (tired, wants to leave gym soon)<br>
+        - Muscle memory for app location<br>
+    <strong>Information Needed:</strong><br>
+        - Quick access to log function<br>
+    <strong>Potential Issues:</strong><br>
+        - App takes too long to load<br>
+        - Multiple taps needed to reach log screen<br>
+        - Distracted by other notifications/content<br>
+    <strong>Design Requirements:</strong><br>
+        ✓ Fast app launch<br>
+        ✓ Log function accessible from home screen (1-tap)<br>
+        ✓ Optional: Widget for direct logging<br>
+        ✓ Remember last activity type for quick repeat<br>
+<br>
+<strong>========================================</strong><br>
+<strong>PHASE 2: SELECT WORKOUT TYPE AND DATE</strong><br>
+<strong>========================================</strong><br>
+<br>
+<strong>Task 2.1: Specify This is Strength Training</strong><br>
+    <strong>User Action:</strong> Select "Strength Training" from workout types<br>
+    <strong>Information Needed:</strong><br>
+        - Available workout types<br>
+        - Previously used types (for quick access)<br>
+    <strong>Cognitive Load:</strong><br>
+        - Minimal (knows workout type)<br>
+    <strong>Decisions:</strong><br>
+        - General strength vs. specific program?<br>
+        - Use template or free-form?<br>
+    <strong>Potential Issues:</strong><br>
+        - Too many workout type options (overwhelming)<br>
+        - Unclear category names<br>
+        - Relevant option buried<br>
+    <strong>Design Requirements:</strong><br>
+        ✓ Most recent/frequent workout types at top<br>
+        ✓ Clear icons + labels for workout types<br>
+        ✓ 4-6 main categories, "Other" for rare types<br>
+        ✓ Template suggestion based on day/history<br>
+<br>
+<strong>Task 2.2: Confirm Workout Date/Time</strong><br>
+    <strong>User Action:</strong> Accept or modify workout date/time<br>
+    <strong>Information Needed:</strong><br>
+        - Current date/time pre-filled<br>
+        - Option to change if logging later<br>
+    <strong>Decisions:</strong><br>
+        - Is this for current time or earlier?<br>
+    <strong>Potential Issues:</strong><br>
+        - Logging workout from earlier today/yesterday<br>
+        - Time zones if traveling<br>
+    <strong>Design Requirements:</strong><br>
+        ✓ Default to "Now"<br>
+        ✓ Quick options: "Earlier Today", "Yesterday"<br>
+        ✓ Full date/time picker available<br>
+        ✓ Calculate duration from start time if available<br>
+<br>
+<strong>========================================</strong><br>
+<strong>PHASE 3: LOG EXERCISES</strong><br>
+<strong>========================================</strong><br>
+<br>
+<strong>Task 3.1: Add First Exercise</strong><br>
+    <strong>User Action:</strong> Select or search for exercise name<br>
+    <strong>Information Needed:</strong><br>
+        - Exercise names (searchable)<br>
+        - Previously performed exercises<br>
+        - Exercise categories<br>
+    <strong>Cognitive Load:</strong><br>
+        - Must know/remember exercise name<br>
+        - May not know technical name<br>
+    <strong>Decisions:</strong><br>
+        - Exact exercise name vs. similar exercise<br>
+    <strong>Potential Issues:</strong><br>
+        - Exercise name unknown/forgotten<br>
+        - Multiple similar exercises (e.g., variations)<br>
+        - Searching takes too long<br>
+    <strong>Design Requirements:</strong><br>
+        ✓ Recent exercises at top of list<br>
+        ✓ Auto-complete search<br>
+        ✓ Multiple names/aliases for exercises<br>
+        ✓ Visual reference (images/videos)<br>
+        ✓ Quick-add frequently used exercises<br>
+        ✓ Option to add custom exercise<br>
+<br>
+<strong>Task 3.2: Enter Sets and Reps for Exercise</strong><br>
+    <strong>User Action:</strong> Log each set with weight and reps<br>
+    <strong>Information Needed:</strong><br>
+        - Previous performance (weight/reps from last time)<br>
+        - Current set number<br>
+        - Target reps/weight<br>
+    <strong>Cognitive Load:</strong><br>
+        - Must recall what was just done<br>
+        - May need to reference workout notes/gym paper<br>
+    <strong>Decisions:</strong><br>
+        - All sets same or varying?<br>
+        - RPE or just weight/reps?<br>
+        - Rest time worth noting?<br>
+    <strong>Potential Issues:</strong><br>
+        - Forgot exact weights/reps<br>
+        - Typing errors in numbers<br>
+        - Tedious if many sets<br>
+    <strong>Design Requirements:</strong><br>
+        ✓ Show previous workout data for reference<br>
+        ✓ Pre-fill based on last time or template<br>
+        ✓ Quick copy for same weight/reps<br>
+        ✓ Numeric keypad for entry<br>
+        ✓ Increment/decrement buttons<br>
+        ✓ Swipe to copy previous set<br>
+        ✓ Optional: voice input for hands-free<br>
+        ✓ Optional fields: rest time, RPE, notes<br>
+<br>
+<strong>Task 3.3: Add Subsequent Exercises</strong><br>
+    <strong>User Action:</strong> Repeat 3.1-3.2 for each exercise<br>
+    <strong>Cognitive Load:</strong><br>
+        - Recalling workout order<br>
+        - Recalling all exercises performed<br>
+    <strong>Potential Issues:</strong><br>
+        - Forgetting an exercise<br>
+        - Losing place in sequence<br>
+        - Fatigue from repetitive entry<br>
+    <strong>Design Requirements:</strong><br>
+        ✓ Show list of logged exercises<br>
+        ✓ Quick reorder if sequence wrong<br>
+        ✓ Suggest common exercise combinations<br>
+        ✓ Show workout duration so far<br>
+        ✓ Save draft continuously<br>
+        ✓ Easy to add missed exercise later<br>
+<br>
+<strong>========================================</strong><br>
+<strong>PHASE 4: ADD SUPPLEMENTARY INFORMATION</strong><br>
+<strong>========================================</strong><br>
+<br>
+<strong>Task 4.1: Rate Workout and Add Notes</strong><br>
+    <strong>User Action:</strong> Optionally add subjective data<br>
+    <strong>Information Needed:</strong><br>
+        - What optional fields are available<br>
+        - Benefit of adding this data<br>
+    <strong>Decisions:</strong><br>
+        - Worth the extra time?<br>
+        - What's relevant to note?<br>
+    <strong>Potential Issues:</strong><br>
+        - Optional fields may be skipped if not obvious value<br>
+        - Too many optional fields (fatigue)<br>
+    <strong>Design Requirements:</strong><br>
+        ✓ Keep optional section separate/collapsible<br>
+        ✓ Quick ratings (stars, thumbs, sliders)<br>
+        ✓ Pre-made tags for common notes (e.g., "Felt strong")<br>
+        ✓ Voice-to-text for notes<br>
+        ✓ Photo attachment option<br>
+<br>
+<strong>========================================</strong><br>
+<strong>PHASE 5: REVIEW AND SAVE</strong><br>
+<strong>========================================</strong><br>
+<br>
+<strong>Task 5.1: Review Complete Workout Summary</strong><br>
+    <strong>User Action:</strong> Scan entered data for accuracy<br>
+    <strong>Information Needed:</strong><br>
+        - All exercises and sets<br>
+        - Total workout time<br>
+        - Volume/tonnage<br>
+    <strong>Decisions:</strong><br>
+        - Is this accurate?<br>
+        - Any mistakes to correct?<br>
+    <strong>Potential Issues:</strong><br>
+        - Hard to spot errors in long list<br>
+        - Mistake noticed after saving<br>
+    <strong>Design Requirements:</strong><br>
+        ✓ Clear summary view<br>
+        ✓ Highlight unusual values (outliers)<br>
+        ✓ Easy to tap exercise to edit<br>
+        ✓ Delete option for each exercise/set<br>
+        ✓ Calculate totals (volume, duration, etc.)<br>
+<br>
+<strong>Task 5.2: Save Workout</strong><br>
+    <strong>User Action:</strong> Commit workout to history<br>
+    <strong>Information Needed:</strong><br>
+        - Confirmation that save succeeded<br>
+        - What happens next<br>
+    <strong>User Goals:</strong><br>
+        - Ensure data is saved<br>
+        - See progress/accomplishment<br>
+        - Return to main app or exit<br>
+    <strong>Potential Issues:</strong><br>
+        - Network failure (data loss)<br>
+        - Unclear if save completed<br>
+    <strong>Design Requirements:</strong><br>
+        ✓ Clear "Save"/"Complete Workout" button<br>
+        ✓ Auto-save drafts throughout<br>
+        ✓ Offline capability with sync later<br>
+        ✓ Success confirmation<br>
+        ✓ Show updated stats/streaks<br>
+        ✓ Options: Share, save as template, return home<br>
+<br>
+<strong>========================================</strong><br>
+<strong>POST-TASK: REFLECTION AND ANALYSIS</strong><br>
+<strong>========================================</strong><br>
+<br>
+<strong>Task 6.1: View Workout in History</strong><br>
+    <strong>User Action:</strong> Return to logged workout later<br>
+    <strong>User Goals:</strong><br>
+        - Reference for next workout<br>
+        - Compare progress over time<br>
+        - Share with trainer/friends<br>
+    <strong>Design Requirements:</strong><br>
+        ✓ Easy to find in workout history<br>
+        ✓ Clear presentation of data<br>
+        ✓ Comparison with previous workouts<br>
+        ✓ Charts showing progression<br>
+        ✓ Export/share options
+                        </div>
+                    </div>
+
+                    <div class="example-box">
+                        <h4>🎨 Design Solutions Based on Analysis</h4>
+                        
+                        <h4>1. HOME SCREEN QUICK ACTION</h4>
+                        <div class="code-block">
+<strong>Problem:</strong> User wants to log quickly post-workout<br>
+<strong>Solution:</strong><br>
+- Large "Log Workout" FAB (Floating Action Button) on home screen<br>
+- Widget option for even faster access<br>
+- Remember last workout type for instant repeat<br>
+- Offline-first: Works without internet<br>
+<br>
+<strong>UI Elements:</strong><br>
+[Home Screen]<br>
+┌─────────────────────────┐<br>
+│  ☰  Fitness Tracker   ⚙ │<br>
+├─────────────────────────┤<br>
+│                         │<br>
+│  📊 Today's Summary     │<br>
+│  └─ 1 workout logged   │<br>
+│                         │<br>
+│  📈 Weekly Progress     │<br>
+│  └─ 4 of 5 workouts    │<br>
+│                         │<br>
+│                         │<br>
+│                [+]      │ ← Large FAB<br>
+│                         │<br>
+└─────────────────────────┘
+                        </div>
+
+                        <h4>2. WORKOUT TYPE SELECTION</h4>
+                        <div class="code-block">
+<strong>Problem:</strong> Quick selection of workout type<br>
+<strong>Solution:</strong><br>
+- Recent workouts at top<br>
+- Large tap targets with icons<br>
+- One-tap to start logging<br>
+- Template suggestions<br>
+<br>
+<strong>UI Elements:</strong><br>
+[Log Workout]<br>
+┌─────────────────────────┐<br>
+│  ← Log Workout          │<br>
+├─────────────────────────┤<br>
+│ RECENT                  │<br>
+│  ┌───────┐ ┌───────┐   │<br>
+│  │  💪   │ │  🏃   │   │<br>
+│  │Chest  │ │Cardio │   │<br>
+│  │& Back │ │       │   │<br>
+│  └───────┘ └───────┘   │<br>
+│                         │<br>
+│ ALL TYPES               │<br>
+│  [💪 Strength Training] │<br>
+│  [🏃 Cardio]            │<br>
+│  [⚽ Sports]             │<br>
+│  [🧘 Yoga/Flexibility]  │<br>
+│  [+ Custom]             │<br>
+└─────────────────────────┘
+                        </div>
+
+                        <h4>3. EXERCISE ENTRY SCREEN</h4>
+                        <div class="code-block">
+<strong>Problem:</strong> Fast, accurate data entry<br>
+<strong>Solution:</strong><br>
+- Previous performance visible for reference<br>
+- Quick increment/decrement<br>
+- Copy previous set<br>
+- Voice input option<br>
+<br>
+<strong>UI Elements:</strong><br>
+[Bench Press - Set 1]<br>
+┌─────────────────────────┐<br>
+│← Bench Press         🎤 │<br>
+├─────────────────────────┤<br>
+│ Last workout: 185lb 3x8 │ ← Reference<br>
+├─────────────────────────┤<br>
+│                         │<br>
+│ Set 1 of 5              │<br>
+│                         │<br>
+│ Weight (lb)             │<br>
+│  ┌───────────────────┐  │<br>
+│  │  [-] 185 [+]      │  │ ← Quick adjust<br>
+│  └───────────────────┘  │<br>
+│                         │<br>
+│ Reps                    │<br>
+│  ┌───────────────────┐  │<br>
+│  │  [-]  8  [+]      │  │<br>
+│  └───────────────────┘  │<br>
+│                         │<br>
+│ [📋 Copy Last Set]      │ ← Quick copy<br>
+│                         │<br>
+│ [Save Set]              │<br>
+│                         │<br>
+│ ═══ Completed Sets ═══  │<br>
+│  None yet              │<br>
+└─────────────────────────┘
+                        </div>
+
+                        <h4>4. WORKOUT SUMMARY</h4>
+                        <div class="code-block">
+<strong>Problem:</strong> Quick review before saving<br>
+<strong>Solution:</strong><br>
+- Scannable summary<br>
+- Easy editing<br>
+- Calculated statistics<br>
+- Motivational feedback<br>
+<br>
+<strong>UI Elements:</strong><br>
+[Review Workout]<br>
+┌─────────────────────────┐<br>
+│← Complete Workout       │<br>
+├─────────────────────────┤<br>
+│ Chest & Back            │<br>
+│ Wed Feb 11, 2026        │<br>
+│ Duration: 58 minutes    │<br>
+├─────────────────────────┤<br>
+│                         │<br>
+│ ✏️ Bench Press          │<br>
+│    185lb  8,8,7,6,6     │<br>
+│                         │<br>
+│ ✏️ Barbell Row          │<br>
+│    155lb  10,10,8,8     │<br>
+│                         │<br>
+│ ✏️ Dumbbell Fly         │<br>
+│    45lb   12,10,10      │<br>
+│                         │<br>
+│ [+ Add Exercise]        │<br>
+│                         │<br>
+├─────────────────────────┤<br>
+│ STATS                   │<br>
+│ • Total Volume: 15,820lb│<br>
+│ • Sets Completed: 12    │<br>
+│ • Avg Rest: 90s         │<br>
+│                         │<br>
+│ 💪 New PR: Bench Press! │<br>
+├─────────────────────────┤<br>
+│                         │<br>
+│ Rating: ⭐⭐⭐⭐☆      │<br>
+│                         │<br>
+│ [Save Workout]          │<br>
+│                         │<br>
+└─────────────────────────┘
+                        </div>
+                    </div>
+
+                    <div class="key-points">
+                        <h4>🎯 Key Design Principles Applied</h4>
+                        <ul>
+                            <li><strong>Speed Over Complexity:</strong> Post-workout users want to log quickly - minimize taps and typing</li>
+                            <li><strong>Progressive Disclosure:</strong> Core data entry simple, advanced features optional</li>
+                            <li><strong>Memory Aids:</strong> Show previous performance to reduce recall burden</li>
+                            <li><strong>Error Prevention:</strong> Numeric inputs, validation, and reference data reduce mistakes</li>
+                            <li><strong>Flexibility:</strong> Support quick logging and detailed logging based on user needs</li>
+                            <li><strong>Motivation:</strong> Immediate feedback and progress indicators encourage continued use</li>
+                            <li><strong>Resilience:</strong> Auto-save and offline support prevent data loss</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Section 7: Summary and Best Practices -->
+            <button type="button" class="collapsible">Summary and Best Practices</button>
+            <div class="collapsible-content">
+                <div class="collapsible-inner">
+                    <h3>Key Takeaways</h3>
+                    
+                    <div class="two-column">
+                        <div class="info-block">
+                            <h4>📋 Use Cases</h4>
+                            <p><strong>Purpose:</strong> Define functional requirements from user perspective</p>
+                            <p><strong>Focus:</strong> What the system must do</p>
+                            <p><strong>Output:</strong> Complete scenarios showing actor-system interactions</p>
+                            <p><strong>Level of Detail:</strong> Brief for planning, fully dressed for implementation</p>
+                        </div>
+                        <div class="info-block">
+                            <h4>🔍 Task Analysis</h4>
+                            <p><strong>Purpose:</strong> Understand user workflows and cognition</p>
+                            <p><strong>Focus:</strong> How users accomplish goals</p>
+                            <p><strong>Output:</strong> Detailed breakdown of steps, decisions, information needs</p>
+                            <p><strong>Level of Detail:</strong> As deep as needed for design clarity</p>
+                        </div>
+                    </div>
+
+                    <h3>Process Guidelines</h3>
+
+                    <div class="process-step">
+                        <span>1</span> <strong>Start with Users:</strong> Identify actors and their goals through interviews and observation
+                    </div>
+
+                    <div class="process-step">
+                        <span>2</span> <strong>Document Use Cases:</strong> Write brief cases first, expand critical ones to fully dressed
+                    </div>
+
+                    <div class="process-step">
+                        <span>3</span> <strong>Analyze Tasks:</strong> For each use case, conduct detailed task analysis
+                    </div>
+
+                    <div class="process-step">
+                        <span>4</span> <strong>Validate with Users:</strong> Review use cases and task analysis with real users
+                    </div>
+
+                    <div class="process-step">
+                        <span>5</span> <strong>Extract Requirements:</strong> Identify functional and interface requirements
+                    </div>
+
+                    <div class="process-step">
+                        <span>6</span> <strong>Design Solutions:</strong> Create UI designs that support identified tasks
+                    </div>
+
+                    <div class="process-step">
+                        <span>7</span> <strong>Test Against Cases:</strong> Validate design by walking through use cases and tasks
+                    </div>
+
+                    <h3>Common Mistakes to Avoid</h3>
+
+                    <table>
+                        <tr>
+                            <th>❌ Don't</th>
+                            <th>✅ Do</th>
+                        </tr>
+                        <tr>
+                            <td>Write use cases as system requirements docs</td>
+                            <td>Write from user's perspective and goals</td>
+                        </tr>
+                        <tr>
+                            <td>Include UI details in use cases</td>
+                            <td>Focus on interactions, not interface specifics</td>
+                        </tr>
+                        <tr>
+                            <td>Stop at happy path only</td>
+                            <td>Document alternatives and exceptions</td>
+                        </tr>
+                        <tr>
+                            <td>Analyze tasks in isolation</td>
+                            <td>Consider context, user state, and workflow</td>
+                        </tr>
+                        <tr>
+                            <td>Assume you understand users</td>
+                            <td>Observe and interview real users</td>
+                        </tr>
+                        <tr>
+                            <td>Do analysis once and move on</td>
+                            <td>Iterate as you learn more about users</td>
+                        </tr>
+                        <tr>
+                            <td>Let analysis gather dust</td>
+                            <td>Use it actively to guide design decisions</td>
+                        </tr>
+                    </table>
+
+                    <h3>Tools and Templates</h3>
+                    
+                    <div class="example-box">
+                        <h4>Use Case Template</h4>
+                        <div class="code-block">
+<strong>Use Case ID:</strong> UC-[number]<br>
+<strong>Use Case Name:</strong> [Verb phrase describing user goal]<br>
+<strong>Actor(s):</strong> [Primary actor, plus any secondary actors]<br>
+<strong>Description:</strong> [Brief summary of what this achieves]<br>
+<strong>Trigger:</strong> [What initiates this use case]<br>
+<strong>Preconditions:</strong> [What must be true before this starts]<br>
+<br>
+<strong>Basic Flow:</strong><br>
+1. [Step]<br>
+2. [Step]<br>
+3. [Step]<br>
+...<br>
+<br>
+<strong>Alternative Flows:</strong><br>
+[Name]: [When this occurs]<br>
+[Steps]<br>
+<br>
+<strong>Exception Flows:</strong><br>
+[Name]: [Error condition]<br>
+[Steps to handle]<br>
+<br>
+<strong>Postconditions:</strong><br>
+[What's true after successful completion]<br>
+<br>
+<strong>Business Rules:</strong><br>
+[Any constraints or policies that apply]
+                        </div>
+                    </div>
+
+                    <div class="example-box">
+                        <h4>Task Analysis Template</h4>
+                        <div class="code-block">
+<strong>Task:</strong> [Overall task name]<br>
+<strong>User Profile:</strong> [Experience level, role, context]<br>
+<strong>Goal:</strong> [What user wants to accomplish]<br>
+<br>
+<strong>STEP [N]: [Step Name]</strong><br>
+    <strong>User Action:</strong> [What user does]<br>
+    <strong>Information Needed:</strong><br>
+        - [Info 1]<br>
+        - [Info 2]<br>
+    <strong>Cognitive Process:</strong><br>
+        - [Mental activity]<br>
+    <strong>Decisions:</strong><br>
+        - [Choice point 1]<br>
+        - [Choice point 2]<br>
+    <strong>Potential Issues:</strong><br>
+        - [Possible problem 1]<br>
+        - [Possible problem 2]<br>
+    <strong>Design Requirements:</strong><br>
+        ✓ [Requirement 1]<br>
+        ✓ [Requirement 2]<br>
+<br>
+[Repeat for each step]
+                        </div>
+                    </div>
+
+                    <div class="key-points">
+                        <h4>✨ Final Thoughts</h4>
+                        <ul>
+                            <li>Use cases and task analysis are <strong>investments that pay dividends</strong> throughout development</li>
+                            <li>They help you <strong>design the right thing</strong> before coding the wrong thing</li>
+                            <li>Good analysis leads to <strong>intuitive interfaces</strong> that users actually want to use</li>
+                            <li>These techniques <strong>reduce rework</strong> and improve user satisfaction</li>
+                            <li>Most importantly, they <strong>keep users at the center</strong> of the design process</li>
+                        </ul>
+                    </div>
+
+                    <div class="info-block success">
+                        <h4>📚 Additional Resources</h4>
+                        <ul>
+                            <li><strong>Books:</strong>
+                                <ul>
+                                    <li>"Writing Effective Use Cases" by Alistair Cockburn</li>
+                                    <li>"Task Analysis" by Diaper & Stanton</li>
+                                    <li>"The Design of Everyday Things" by Don Norman</li>
+                                </ul>
+                            </li>
+                            <li><strong>Practice:</strong> Start with a familiar app and reverse-engineer its use cases and task flows</li>
+                            <li><strong>User Research:</strong> Nothing beats observing real users performing real tasks</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+    <script>
+        // JavaScript for collapsible sections
+        const collapsibles = document.getElementsByClassName("collapsible");
+        
+        for (let i = 0; i < collapsibles.length; i++) {
+            collapsibles[i].addEventListener("click", function() {
+                this.classList.toggle("active");
+                const content = this.nextElementSibling;
+                
+                if (content.style.maxHeight) {
+                    content.style.maxHeight = null;
+                } else {
+                    content.style.maxHeight = content.scrollHeight + "px";
+                }
+            });
+        }
+
+        // Optional: Open first section by default
+        if (collapsibles.length > 0) {
+            collapsibles[0].click();
+        }
+    </script>
+</body>
+</html>

@@ -1,0 +1,1352 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Module 12: Wet Detention Systems | BMPFast Stormwater Training</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400&family=Source+Serif+4:ital,wght@0,300;0,400;0,600;1,300;1,400&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --forest:       #2d5a27;
+    --forest-dark:  #1e3d1a;
+    --forest-mid:   #3a7232;
+    --forest-light: #d4e8d0;
+    --warm-white:   #f8f5ef;
+    --cream:        #ede9e0;
+    --text-dark:    #1a1a18;
+    --text-body:    #2e2e2a;
+    --text-muted:   #5a5a52;
+    --rule:         #b8c9b4;
+    --accent:       #5a8f52;
+    --accent-light: #7ab070;
+    --warn:         #c4762a;
+    --table-head:   #2d5a27;
+    --table-alt:    #eef4ec;
+    --sidebar-w:    260px;
+    --content-max:  860px;
+  }
+
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  html { scroll-behavior: smooth; }
+
+  body {
+    background: var(--warm-white);
+    color: var(--text-body);
+    font-family: 'Source Serif 4', Georgia, serif;
+    font-size: 17px;
+    line-height: 1.72;
+    display: flex;
+    min-height: 100vh;
+  }
+
+  /* ── SIDEBAR ── */
+  nav#sidebar {
+    width: var(--sidebar-w);
+    flex-shrink: 0;
+    background: var(--forest-dark);
+    color: #d8ead4;
+    position: sticky;
+    top: 0;
+    height: 100vh;
+    overflow-y: auto;
+    padding: 0 0 2rem 0;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11.5px;
+    line-height: 1.4;
+    scrollbar-width: thin;
+    scrollbar-color: var(--forest-mid) var(--forest-dark);
+  }
+
+  .nav-header {
+    background: var(--forest);
+    padding: 1.4rem 1.2rem 1rem;
+    border-bottom: 2px solid var(--accent);
+    margin-bottom: 0.6rem;
+  }
+  .nav-header .module-label {
+    font-size: 10px;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--accent-light);
+    margin-bottom: 0.3rem;
+  }
+  .nav-header h2 {
+    font-family: 'Playfair Display', serif;
+    font-size: 14px;
+    font-weight: 600;
+    color: #fff;
+    line-height: 1.3;
+  }
+
+  nav#sidebar ul { list-style: none; }
+  nav#sidebar li a {
+    display: block;
+    padding: 0.38rem 1.2rem 0.38rem 1.4rem;
+    color: #b8d4b2;
+    text-decoration: none;
+    border-left: 3px solid transparent;
+    transition: background 0.15s, color 0.15s, border-color 0.15s;
+  }
+  nav#sidebar li a:hover,
+  nav#sidebar li a.active {
+    background: rgba(255,255,255,0.07);
+    color: #fff;
+    border-left-color: var(--accent-light);
+  }
+  nav#sidebar .nav-section-label {
+    padding: 0.9rem 1.2rem 0.25rem;
+    font-size: 10px;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--accent-light);
+    opacity: 0.7;
+  }
+
+  /* ── MAIN CONTENT ── */
+  main {
+    flex: 1;
+    min-width: 0;
+    padding: 0 2.5rem 4rem;
+  }
+
+  /* ── HERO ── */
+  .hero {
+    background: linear-gradient(135deg, var(--forest-dark) 0%, var(--forest) 60%, var(--forest-mid) 100%);
+    margin: 0 -2.5rem 3rem;
+    padding: 3.5rem 3rem 3rem;
+    color: #fff;
+    border-bottom: 4px solid var(--accent);
+    position: relative;
+    overflow: hidden;
+  }
+  .hero::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23ffffff' fill-opacity='0.03'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
+    pointer-events: none;
+  }
+  .hero .module-tag {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--accent-light);
+    margin-bottom: 0.75rem;
+    position: relative;
+    z-index: 1;
+  }
+  .hero h1 {
+    font-family: 'Playfair Display', serif;
+    font-size: 2.6rem;
+    font-weight: 700;
+    line-height: 1.15;
+    margin-bottom: 1rem;
+    position: relative;
+    z-index: 1;
+  }
+  .hero .hero-meta {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 12px;
+    color: rgba(255,255,255,0.65);
+    position: relative;
+    z-index: 1;
+  }
+  .hero .hero-meta span + span::before {
+    content: ' · ';
+    margin: 0 0.4em;
+  }
+
+  /* ── SECTIONS ── */
+  section {
+    max-width: var(--content-max);
+    margin-bottom: 3.5rem;
+    padding-top: 0.5rem;
+  }
+  section:not(:first-child) {
+    border-top: 1px solid var(--rule);
+    padding-top: 2.5rem;
+  }
+
+  h2 {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.75rem;
+    font-weight: 700;
+    color: var(--forest-dark);
+    margin-bottom: 1rem;
+    line-height: 1.2;
+  }
+  h3 {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.25rem;
+    font-weight: 600;
+    color: var(--forest);
+    margin: 1.6rem 0 0.6rem;
+    line-height: 1.3;
+  }
+  h4 {
+    font-family: 'Source Serif 4', serif;
+    font-size: 1rem;
+    font-weight: 600;
+    color: var(--forest-dark);
+    margin: 1.2rem 0 0.4rem;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    font-size: 0.88rem;
+  }
+
+  p { margin-bottom: 0.9rem; }
+  p:last-child { margin-bottom: 0; }
+
+  /* ── DEFINITION BLOCK ── */
+  .definition-block {
+    border-left: 4px solid var(--forest);
+    padding: 1rem 1.2rem;
+    margin: 1.2rem 0;
+    background: var(--table-alt);
+    border-radius: 0 4px 4px 0;
+  }
+  .definition-block .def-term {
+    font-family: 'Playfair Display', serif;
+    font-weight: 600;
+    font-size: 1.05rem;
+    color: var(--forest-dark);
+    margin-bottom: 0.4rem;
+    text-decoration: underline;
+    text-underline-offset: 3px;
+  }
+  .definition-block ul {
+    margin: 0.5rem 0 0 1.2rem;
+  }
+  .definition-block ul li { margin-bottom: 0.2rem; }
+
+  /* ── CALLOUT ── */
+  .callout {
+    background: var(--forest-light);
+    border: 1px solid var(--rule);
+    border-left: 4px solid var(--accent);
+    border-radius: 0 6px 6px 0;
+    padding: 1rem 1.2rem;
+    margin: 1.2rem 0;
+    font-size: 0.96rem;
+  }
+  .callout.warn {
+    background: #fdf3e8;
+    border-left-color: var(--warn);
+  }
+  .callout strong {
+    font-weight: 600;
+    color: var(--forest-dark);
+  }
+
+  /* ── FORMULA BLOCK ── */
+  .formula-block {
+    background: var(--cream);
+    border: 1px solid var(--rule);
+    border-radius: 6px;
+    padding: 1.4rem 1.8rem;
+    margin: 1.4rem 0;
+    text-align: center;
+  }
+  .formula-block .formula {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 1.05rem;
+    color: var(--forest-dark);
+    margin-bottom: 0.8rem;
+  }
+  .formula-block .formula-label {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--text-muted);
+    margin-bottom: 0.6rem;
+  }
+  .formula-block .variables {
+    text-align: left;
+    display: inline-block;
+    font-size: 0.9rem;
+    color: var(--text-muted);
+  }
+  .formula-block .variables p { margin-bottom: 0.2rem; }
+
+  /* ── IMAGE PLACEHOLDER ── */
+  .figure-placeholder {
+    width: 100%;
+    background: var(--cream);
+    border: 2px dashed var(--rule);
+    border-radius: 6px;
+    padding: 2.5rem 1.5rem;
+    text-align: center;
+    margin: 1.5rem 0;
+    color: var(--text-muted);
+  }
+  .figure-placeholder .fig-icon {
+    font-size: 2rem;
+    margin-bottom: 0.5rem;
+    opacity: 0.4;
+  }
+  .figure-placeholder .fig-title {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--accent);
+    margin-bottom: 0.4rem;
+  }
+  .figure-placeholder .fig-caption {
+    font-size: 0.9rem;
+    font-style: italic;
+    max-width: 500px;
+    margin: 0 auto;
+  }
+
+  /* ── TABLES ── */
+  .table-wrapper {
+    overflow-x: auto;
+    margin: 1.4rem 0;
+    border: 1px solid var(--rule);
+    border-radius: 6px;
+  }
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 0.9rem;
+  }
+  thead tr {
+    background: var(--table-head);
+    color: #fff;
+  }
+  thead th {
+    padding: 0.75rem 1rem;
+    text-align: left;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    font-weight: 500;
+  }
+  tbody tr:nth-child(even) { background: var(--table-alt); }
+  tbody tr:hover { background: #e0eddc; }
+  tbody td {
+    padding: 0.6rem 1rem;
+    border-top: 1px solid var(--rule);
+    vertical-align: top;
+  }
+  td:first-child { font-weight: 500; color: var(--forest-dark); }
+
+  /* ── PROCESS GRID ── */
+  .process-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1rem;
+    margin: 1.2rem 0;
+  }
+  .process-card {
+    background: var(--cream);
+    border: 1px solid var(--rule);
+    border-radius: 6px;
+    padding: 1rem 1.2rem;
+  }
+  .process-card h4 {
+    font-family: 'Playfair Display', serif;
+    font-size: 1rem;
+    font-weight: 600;
+    color: var(--forest);
+    text-transform: none;
+    letter-spacing: 0;
+    margin: 0 0 0.5rem;
+  }
+  .process-card ul {
+    margin-left: 1.1rem;
+    font-size: 0.93rem;
+  }
+  .process-card li { margin-bottom: 0.2rem; }
+
+  /* ── CALCULATION STEPS ── */
+  .calc-step {
+    background: var(--warm-white);
+    border: 1px solid var(--rule);
+    border-radius: 6px;
+    padding: 1.4rem 1.6rem;
+    margin: 1.2rem 0;
+  }
+  .calc-step-header {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--accent);
+    margin-bottom: 0.5rem;
+  }
+  .calc-step h3 {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.1rem;
+    font-weight: 600;
+    color: var(--forest-dark);
+    margin: 0 0 0.8rem;
+  }
+
+  /* ── RESULT BOX ── */
+  .result-box {
+    display: inline-block;
+    background: var(--forest);
+    color: #fff;
+    padding: 0.3rem 0.8rem;
+    border-radius: 4px;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.95rem;
+    margin: 0.4rem 0;
+  }
+
+  /* ── SECTION LABEL ── */
+  .section-label {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10.5px;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    color: var(--accent);
+    margin-bottom: 0.4rem;
+    display: block;
+  }
+
+  /* ── FIGURE REFERENCES ── */
+  #figure-references {
+    margin-top: 4rem;
+    padding-top: 2.5rem;
+    border-top: 2px solid var(--forest);
+  }
+  #figure-references h2 { font-size: 1.4rem; }
+  .fig-ref-list {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1rem;
+    margin-top: 1.2rem;
+  }
+  .fig-ref-item {
+    background: var(--cream);
+    border: 1px solid var(--rule);
+    border-radius: 6px;
+    padding: 1rem 1.2rem;
+    font-size: 0.88rem;
+  }
+  .fig-ref-item .fig-num {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--accent);
+    margin-bottom: 0.3rem;
+  }
+
+  ul, ol { margin-left: 1.4rem; margin-bottom: 0.8rem; }
+  li { margin-bottom: 0.25rem; }
+  ul ul, ol ol, ul ol, ol ul { margin-top: 0.25rem; margin-bottom: 0; }
+
+  strong { color: var(--forest-dark); font-weight: 600; }
+  em { font-style: italic; }
+
+  @media (max-width: 900px) {
+    nav#sidebar { display: none; }
+    main { padding: 0 1.2rem 3rem; }
+    .hero { margin: 0 -1.2rem 2rem; padding: 2rem 1.5rem; }
+    .process-grid { grid-template-columns: 1fr; }
+    .fig-ref-list { grid-template-columns: 1fr; }
+  }
+</style>
+</head>
+<body>
+
+<!-- ════════════════════════════════ SIDEBAR ════════════════════════════════ -->
+<nav id="sidebar">
+  <div class="nav-header">
+    <div class="module-label">BMPFast · Module 12</div>
+    <h2>Wet Detention Systems</h2>
+  </div>
+  <ul>
+    <li class="nav-section-label">Introduction</li>
+    <li><a href="#definitions">Definitions</a></li>
+    <li><a href="#overview">Wet Detention Ponds</a></li>
+    <li><a href="#removal-processes">Pollutant Removal Processes</a></li>
+    <li class="nav-section-label">Performance</li>
+    <li><a href="#detention-time">Detention Time</a></li>
+    <li><a href="#tss-removal">TSS Removal</a></li>
+    <li><a href="#tp-removal">Phosphorus Removal</a></li>
+    <li><a href="#tn-removal">Nitrogen Removal</a></li>
+    <li><a href="#nutrient-relationships">Nutrient Relationships</a></li>
+    <li><a href="#negative-factors">Negative Factors</a></li>
+    <li class="nav-section-label">Design Criteria</li>
+    <li><a href="#wmd-criteria">WMD Design Criteria</a></li>
+    <li><a href="#lake-zonation">Lake Zonation</a></li>
+    <li><a href="#stoneybrook">Stoneybrook Monitoring</a></li>
+    <li class="nav-section-label">Anoxic Depth</li>
+    <li><a href="#lake-parameters">Lake Parameters</a></li>
+    <li><a href="#secchi">Secchi Disk Depth</a></li>
+    <li><a href="#anoxic-estimation">Anoxic Depth Estimation</a></li>
+    <li><a href="#anoxic-calculation">Anoxic Depth Calculation</a></li>
+    <li class="nav-section-label">Design Example</li>
+    <li><a href="#example">Design Example</a></li>
+    <li><a href="#additional-ppv">Additional PPV Impacts</a></li>
+    <li><a href="#irreducible">Irreducible Concentration</a></li>
+    <li><a href="#detention-comparison">14-Day vs. Annual</a></li>
+    <li><a href="#color-impacts">Impacts of Color</a></li>
+    <li><a href="#figure-references">Figure References</a></li>
+  </ul>
+</nav>
+
+<!-- ════════════════════════════════ MAIN ════════════════════════════════ -->
+<main>
+
+  <!-- HERO -->
+  <div class="hero">
+    <div class="module-tag">BMPFast Stormwater Toolbox · Module 12</div>
+    <h1>Wet Detention Systems</h1>
+    <div class="hero-meta">
+      <span>Harvey H. Harper</span>
+      <span>Environmental Research &amp; Design, Inc.</span>
+      <span>January 2026</span>
+    </div>
+  </div>
+
+  <!-- ════ 1. DEFINITIONS ════ -->
+  <section id="definitions">
+    <span class="section-label">Section 1</span>
+    <h2>Definitions</h2>
+
+    <p>Stormwater best management practices (BMPs) are broadly classified into two groups based on how the treatment volume is managed: <strong>retention</strong> systems and <strong>detention</strong> systems. Understanding this fundamental distinction is essential to selecting an appropriate BMP for a given site and regulatory context.</p>
+
+    <div class="definition-block">
+      <div class="def-term">Retention</div>
+      <p>A group of stormwater practices where the treatment volume is evacuated by either percolation into groundwater or evaporation. There is no surface discharge for the treatment volume, resulting in a substantial reduction in overall runoff volume.</p>
+      <p><strong>Retention practices include:</strong></p>
+      <ul>
+        <li>Dry retention</li>
+        <li>Harvesting (reuse irrigation)</li>
+        <li>Underground storage systems</li>
+      </ul>
+    </div>
+
+    <div class="definition-block">
+      <div class="def-term">Detention</div>
+      <p>A group of stormwater practices where the treatment volume is detained for a period of time before release. The treatment volume is discharged over a period of days; there is no significant reduction in runoff volume.</p>
+      <p><strong>Detention practices include:</strong></p>
+      <ul>
+        <li>Wet detention</li>
+        <li>Dry detention</li>
+      </ul>
+    </div>
+  </section>
+
+  <!-- ════ 2. WET DETENTION PONDS ════ -->
+  <section id="overview">
+    <span class="section-label">Section 2</span>
+    <h2>Wet Detention Ponds</h2>
+
+    <p>Wet detention ponds are essentially man-made lakes. They are governed by the same physical, biological, and chemical processes that regulate natural lakes, making their performance highly predictable. Wet detention ponds can be designed as attractive amenities and are frequently integrated into the overall site development plan as landscaping features and recreational assets.</p>
+
+    <div class="figure-placeholder">
+      <div class="fig-icon">🏞</div>
+      <div class="fig-title">Figure 1 — Wet Detention Pond Examples</div>
+      <div class="fig-caption">Left: Wet detention pond constructed as a development amenity with decorative fountain. Right: Aerial view of wet detention lakes integrated into a residential development plan.</div>
+    </div>
+
+    <h3>Key Characteristics</h3>
+    <ul>
+      <li>Essentially man-made lakes in function and behavior</li>
+      <li>Subject to all physical, biological, and chemical processes operating in natural surface waters</li>
+      <li>Highly predictable pollutant removal performance</li>
+      <li>Pollutant removal processes occur within the <strong>permanent pool volume</strong> below the control elevation</li>
+      <li>Removal efficiency is a function of residence time</li>
+    </ul>
+
+    <div class="figure-placeholder">
+      <div class="fig-icon">📐</div>
+      <div class="fig-title">Figure 2 — Typical Wet Detention Pond Cross-Section</div>
+      <div class="fig-caption">Cross-sectional diagram showing permanent pool, normal water level (NWL), littoral zone, control elevation, weir, orifice, groundwater table (GWT), top of bank (T.O.B.), and typical side slopes (6:1 or 4:1 on upland side; 2:1 on pond interior). The Water Quality Volume (repealed June 2024) was measured above the NWL.</div>
+    </div>
+  </section>
+
+  <!-- ════ 3. POLLUTANT REMOVAL PROCESSES ════ -->
+  <section id="removal-processes">
+    <span class="section-label">Section 3</span>
+    <h2>Wet Detention Pollutant Removal Processes</h2>
+
+    <p>Pollutant removal in wet detention ponds is accomplished through a combination of physical, biological, and chemical mechanisms. Most removal activity occurs during the quiescent period between storm events, making the permanent pool a critical design element.</p>
+
+    <div class="process-grid">
+      <div class="process-card">
+        <h4>Physical Processes</h4>
+        <ul>
+          <li><strong>Gravity settling</strong> — primary physical process; efficiency depends on pond geometry, volume, residence time, and particle size</li>
+          <li><strong>Adsorption</strong> onto solid surfaces</li>
+        </ul>
+      </div>
+      <div class="process-card">
+        <h4>Biological Processes</h4>
+        <ul>
+          <li>Uptake by algae and aquatic plants</li>
+          <li>Metabolization by microorganisms</li>
+        </ul>
+      </div>
+      <div class="process-card">
+        <h4>Chemical Processes</h4>
+        <ul>
+          <li>Co-precipitation by metal oxides</li>
+        </ul>
+      </div>
+      <div class="process-card">
+        <h4>Role of the Permanent Pool</h4>
+        <ul>
+          <li>Reduces incoming flow energy and promotes settling</li>
+          <li>Provides habitat for aquatic plants and microorganisms</li>
+          <li>Biological processes occur primarily during quiescent periods between storms</li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <!-- ════ 4. DETENTION TIME ════ -->
+  <section id="detention-time">
+    <span class="section-label">Section 4</span>
+    <h2>Detention Time</h2>
+
+    <p>The performance efficiency of a wet detention pond is fundamentally a function of detention time — the average time water remains in the permanent pool before being discharged. Longer detention times allow more complete pollutant removal through all operative processes.</p>
+
+    <div class="formula-block">
+      <div class="formula-label">Detention Time Formula</div>
+      <div class="formula">t<sub>d</sub> (days) = (PPV / RO) × (365 days / year)</div>
+      <div class="variables">
+        <p><strong>PPV</strong> = permanent pool volume below control elevation (ac-ft)</p>
+        <p><strong>RO</strong> = annual runoff inputs (ac-ft/yr)</p>
+        <p><strong>t<sub>d</sub></strong> = mean annual detention time (days)</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- ════ 5. TSS REMOVAL ════ -->
+  <section id="tss-removal">
+    <span class="section-label">Section 5</span>
+    <h2>TSS Removal as a Function of Detention Time</h2>
+
+    <p>Total suspended solids (TSS) removal in wet ponds exhibits a characteristic two-phase pattern as detention time increases. Initial rapid settling of larger, heavier particles occurs at short detention times, followed by the slower removal of fine particles as detention time extends. Field data confirm that substantial TSS removal (approaching 80–85%) can be achieved at detention times greater than approximately 10–15 days, with diminishing marginal returns at longer detention times.</p>
+
+    <div class="figure-placeholder">
+      <div class="fig-icon">📈</div>
+      <div class="fig-title">Figure 3 — TSS Removal vs. Detention Time</div>
+      <div class="fig-caption">Scatter plot with fitted curve showing TSS removal efficiency (%) on the y-axis (0–100%) versus detention time in days (0–50 days) on the x-axis. The curve rises steeply for the first 10 days (initial rapid settling of larger particles), then flattens asymptotically toward approximately 85% (slower settling of fine particles).</div>
+    </div>
+  </section>
+
+  <!-- ════ 6. PHOSPHORUS REMOVAL ════ -->
+  <section id="tp-removal">
+    <span class="section-label">Section 6</span>
+    <h2>Phosphorus Removal for Untreated Runoff in Wet Ponds</h2>
+
+    <p>Phosphorus removal in wet detention ponds is highly predictable and has been documented in research studies with detention times ranging up to 450 days. All study ponds included littoral zones; therefore, littoral zone contributions are embedded in the calculated removal efficiencies. The following regression equation describes TP removal as a function of mean annual detention time:</p>
+
+    <div class="formula-block">
+      <div class="formula-label">Total Phosphorus Removal — Regression Equation</div>
+      <div class="formula">% Removal = 40.15 + 6.366 · ln(t<sub>d</sub>) + 0.214 · [ln(t<sub>d</sub>)]²</div>
+      <div class="variables">
+        <p><strong>R²</strong> = 0.894</p>
+        <p><strong>t<sub>d</sub></strong> = mean annual detention time (days)</p>
+      </div>
+    </div>
+
+    <div class="callout warn">
+      <strong>Regulatory Note:</strong> The June 2024 Florida Stormwater Rule limits the maximum allowable detention time used in the removal efficiency calculation to <strong>200 days</strong>. Pond designs proposing longer detention times may not claim removal credit beyond the 200-day performance level.
+    </div>
+
+    <div class="figure-placeholder">
+      <div class="fig-icon">📈</div>
+      <div class="fig-title">Figure 4 — Total Phosphorus Removal vs. Detention Time</div>
+      <div class="fig-caption">Scatter plot with fitted logarithmic curve showing TP removal efficiency (%) versus detention time t<sub>d</sub> (days, 0–500). Data points from multiple Florida studies are fitted with the quadratic-log regression equation (R²=0.894). A vertical dashed line at 200 days marks the regulatory maximum detention time for credit under the new rule.</div>
+    </div>
+  </section>
+
+  <!-- ════ 7. NITROGEN REMOVAL ════ -->
+  <section id="tn-removal">
+    <span class="section-label">Section 7</span>
+    <h2>Nitrogen Removal for Untreated Runoff in Wet Ponds</h2>
+
+    <p>Nitrogen removal in wet ponds is more variable than phosphorus removal and depends significantly on the forms of nitrogen present in the runoff. Inorganic nitrogen is removed primarily through biological uptake by algae and aquatic plants. Particulate nitrogen is readily removed by sedimentation. Organic nitrogen, however, is not easily removed, which limits the maximum achievable total nitrogen removal efficiency.</p>
+
+    <div class="formula-block">
+      <div class="formula-label">Total Nitrogen Removal — Regression Equation</div>
+      <div class="formula">Efficiency (%) = (44.72 · t<sub>d</sub>) / (5.46 + t<sub>d</sub>)</div>
+      <div class="variables">
+        <p><strong>R²</strong> = 0.808</p>
+        <p><strong>t<sub>d</sub></strong> = mean annual detention time (days)</p>
+      </div>
+    </div>
+
+    <div class="callout warn">
+      <strong>Regulatory Note:</strong> The new rule also limits the maximum allowable detention time for TN removal credit to <strong>200 days</strong>.
+    </div>
+
+    <div class="figure-placeholder">
+      <div class="fig-icon">📈</div>
+      <div class="fig-title">Figure 5 — Total Nitrogen Removal vs. Detention Time</div>
+      <div class="fig-caption">Scatter plot with fitted hyperbolic curve showing TN removal efficiency (%) versus detention time t<sub>d</sub> (days, 0–450). The data exhibit greater scatter than TP (R²=0.808), reflecting variability in nitrogen forms. The curve plateaus near 40–45% efficiency, substantially lower than the TP asymptote. A vertical dashed line marks the 200-day regulatory limit.</div>
+    </div>
+  </section>
+
+  <!-- ════ 8. NUTRIENT RELATIONSHIPS ════ -->
+  <section id="nutrient-relationships">
+    <span class="section-label">Section 8</span>
+    <h2>Nutrient Removal Relationships for Wet Ponds</h2>
+
+    <p>Nutrient removal in wet ponds is primarily a function of detention time. The removal curves for both TN and TP can be decomposed into two components: rapid initial removal of <em>particulate</em> species (occurring within the first days of detention) and slower, continuing removal of <em>dissolved</em> species.</p>
+
+    <div class="figure-placeholder">
+      <div class="fig-icon">📊</div>
+      <div class="fig-title">Figure 6 — TN and TP Nutrient Removal Relationships</div>
+      <div class="fig-caption">Side-by-side scatter plots for Total Nitrogen (left) and Total Phosphorus (right), both showing removal efficiency (%) versus detention time t<sub>d</sub> (days). Annotations identify the early steeper region as "removal of particulates" and the later gradual region as "removal of dissolved species."</div>
+    </div>
+
+    <div class="callout">
+      <strong>Important limitations of these relationships:</strong>
+      <ul style="margin-top:0.5rem;">
+        <li>These relationships were developed for <strong>untreated</strong> runoff only and do not apply when runoff receives pre-treatment prior to entering the wet pond.</li>
+        <li>Removal of dissolved pollutants is a function of water column concentration — removal rates decrease as concentration decreases.</li>
+        <li>Removal effectively stops when the <strong>irreducible concentration</strong> is reached (see Section 19).</li>
+      </ul>
+    </div>
+  </section>
+
+  <!-- ════ 9. NEGATIVE FACTORS ════ -->
+  <section id="negative-factors">
+    <span class="section-label">Section 9</span>
+    <h2>Factors Negatively Impacting Efficiencies of Wet Ponds</h2>
+
+    <p>Several operational and ecological conditions can substantially degrade the pollutant removal performance of wet detention ponds:</p>
+
+    <ul>
+      <li><strong>Waterfowl loadings</strong> — Large populations of waterfowl (particularly wading birds and ducks) introduce substantial nutrient and pathogen loadings from fecal matter, offsetting pollutant removal.</li>
+      <li><strong>Managing ponds as amenities</strong> — Fertilizing adjacent turf areas, applying herbicides, and aggressively maintaining ornamental aesthetics can introduce nutrients and disrupt the biological communities responsible for pollutant removal.</li>
+      <li><strong>Cattail invasion</strong> — Dense stands of <em>Typha</em> spp. (cattails) can impede water circulation, create short-circuiting flow paths, and reduce effective pond volume.</li>
+      <li><strong>Use of copper sulfate and herbicides for algae control</strong> — These treatments kill the algal and aquatic plant communities that are responsible for biological nutrient uptake, potentially eliminating much of the pond's biological removal capacity.</li>
+    </ul>
+
+    <div class="figure-placeholder">
+      <div class="fig-icon">🖼</div>
+      <div class="fig-title">Figure 7 — Factors Negatively Impacting Wet Pond Efficiency</div>
+      <div class="fig-caption">Four field photographs: (1) Dense cattail stand along pond shoreline; (2) Large waterfowl aggregation in a wet detention pond; (3) Heavily manicured golf-course-style pond managed as an amenity; (4) Application of aquatic herbicide by boat.</div>
+    </div>
+  </section>
+
+  <!-- ════ 10. WMD DESIGN CRITERIA ════ -->
+  <section id="wmd-criteria">
+    <span class="section-label">Section 10</span>
+    <h2>Comparison of Wet Detention Design Criteria for Florida Water Management Districts</h2>
+
+    <p>Florida's five Water Management Districts (WMDs) employ similar but not identical design standards for wet detention systems. The table below summarizes the key design parameters for the four WMDs that cover the state:</p>
+
+    <div class="table-wrapper">
+      <table>
+        <thead>
+          <tr>
+            <th>Design Parameter</th>
+            <th>SJRWMD</th>
+            <th>SRWMD</th>
+            <th>SWFWMD</th>
+            <th>SFWMD</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>Water Quality Treatment Volume</td>
+            <td>First 1″ runoff or 1.25 × impervious %</td>
+            <td>Same as dry retention</td>
+            <td>First 1″ of runoff</td>
+            <td>First 1″ runoff or 1.25 × impervious %</td>
+          </tr>
+          <tr>
+            <td>Detention Time</td>
+            <td>14-day average wet season</td>
+            <td>14-day average wet season</td>
+            <td>14-day average wet season</td>
+            <td>None specified</td>
+          </tr>
+          <tr>
+            <td>Depth Requirements</td>
+            <td>Max: 12 ft; Mean depth: 2–8 ft</td>
+            <td>Max: 12 ft; Min: 2 ft</td>
+            <td>None</td>
+            <td>None</td>
+          </tr>
+          <tr>
+            <td>Littoral Zone Requirements</td>
+            <td>30% of pond surface; 80% survival after 2 years</td>
+            <td>Not addressed</td>
+            <td>35% concentrated at the outfall</td>
+            <td>20% of pond area or 2.5% of basin</td>
+          </tr>
+          <tr>
+            <td>Volume Recovery</td>
+            <td>&lt;50% in 24 hours</td>
+            <td>&lt;72 hours by percolation, evaporation, or ET</td>
+            <td>50% in 72 hours; 100% in 5 days</td>
+            <td>&lt;50% in 24 hours</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <p style="font-size:0.88rem;color:var(--text-muted);font-style:italic;">SJRWMD = St. Johns River WMD; SRWMD = Suwannee River WMD; SWFWMD = Southwest Florida WMD; SFWMD = South Florida WMD.</p>
+  </section>
+
+  <!-- ════ 11. LAKE ZONATION ════ -->
+  <section id="lake-zonation">
+    <span class="section-label">Section 11</span>
+    <h2>Zonation in a Typical Lake</h2>
+
+    <p>Wet detention ponds share the same physical and biological zonation structure as natural lakes. Understanding this zonation is important for assessing the potential for anoxic conditions and associated internal nutrient loading.</p>
+
+    <div class="figure-placeholder">
+      <div class="fig-icon">🏊</div>
+      <div class="fig-title">Figure 8 — Lake Zonation Diagram</div>
+      <div class="fig-caption">Cross-sectional diagram of a lake illustrating: littoral zones at both margins; pelagic zone (open water) in the center; mixed layer; photic zone (epilimnion) where photosynthesis exceeds respiration; aphotic zone (hypolimnion) where respiration exceeds photosynthesis; and the light compensation depth at approximately 1% of surface irradiance.</div>
+    </div>
+
+    <p>Deep areas of natural lakes that become anoxic can release ammonia, phosphorus, and gases from organic-rich sediments that have accumulated over centuries (internal nutrient loading). <strong>However, wet detention ponds do not develop the muck accumulations or other conditions responsible for significant internal nutrient release</strong>, because they lack the centuries-long history of organic sediment accumulation found in natural lakes.</p>
+
+    <p>Despite the lack of documented evidence for internal loading in wet ponds, the Water Management Districts, in an abundance of caution, have elected to limit the portion of a wet detention pond's volume that can be credited toward detention time calculations to the volume <em>above</em> the hypothetical anoxic zone. ERD developed a methodology to estimate this anoxic zone depth from water quality parameters.</p>
+  </section>
+
+  <!-- ════ 12. STONEYBROOK ════ -->
+  <section id="stoneybrook">
+    <span class="section-label">Section 12</span>
+    <h2>Stoneybrook Development Monitoring — Field Evidence for Wet Pond Performance</h2>
+
+    <p>During the period August 2001 through December 2007, ERD conducted water quality monitoring at a series of deep wet detention ponds associated with the Stoneybrook residential development (27 storm events, n=27). Pond depths ranged from 20 to 25 feet. Water quality was measured at pond outfalls continuously for 72 hours following rain events of 0.5 inch or greater.</p>
+
+    <div class="figure-placeholder">
+      <div class="fig-icon">📊</div>
+      <div class="fig-title">Figure 9 — Stoneybrook Monitoring: Total Copper and Total Nitrogen</div>
+      <div class="fig-caption">Two time-series plots (0–3.5 days) showing outfall concentrations for multiple ponds (labeled 2-1, 2-3, 3-1, 5-1, 8-1, 10, 11). Top: Total Copper concentrations (μg/L, 0–180), all ponds except pond 2-1 well below the Class III criterion (dashed line). Bottom: Total N concentrations (μg/L, 600–1100). No significant trend in concentration over the 72-hour monitoring period is observed in either parameter.</div>
+    </div>
+
+    <div class="figure-placeholder">
+      <div class="fig-icon">📊</div>
+      <div class="fig-title">Figure 10 — Stoneybrook Monitoring: Total Phosphorus</div>
+      <div class="fig-caption">Time-series plot (0–3.5 days) showing outfall Total P concentrations (μg/L, 15–40) for all monitored ponds. No systematic change in concentration over time is apparent, providing no evidence of nutrient release from bottom sediments.</div>
+    </div>
+
+    <p>Key findings from the Stoneybrook monitoring program:</p>
+    <ul>
+      <li>No significant change in outfall pollutant concentrations over the 72-hour post-storm monitoring period for any parameter.</li>
+      <li>Monitoring conducted by ERD has <strong>never</strong> detected evidence of significant nutrient release from bottom sediments in a wet detention pond.</li>
+      <li>Despite the lack of empirical evidence, WMDs require that the effective pond volume be limited to the zone above the hypothetical anoxic depth as a conservative design measure.</li>
+      <li>ERD developed a methodology for estimating anoxic zone depth based on algal productivity and water quality parameters.</li>
+    </ul>
+  </section>
+
+  <!-- ════ 13. LAKE PARAMETERS ════ -->
+  <section id="lake-parameters">
+    <span class="section-label">Section 13</span>
+    <h2>Relationships Between Lake Trophic State Parameters</h2>
+
+    <p>Phosphorus regulates the growth of algae in most freshwater lakes in Florida. Using Lake Watch data compiled from more than 1,000 lakes across Florida, ERD developed regression relationships between key trophic state parameters expressed as mean annual values:</p>
+
+    <h3>Relationship 1: Total Phosphorus and Chlorophyll-a</h3>
+
+    <div class="formula-block">
+      <div class="formula-label">TP — Chlorophyll-a Relationship (Florida Lakes)</div>
+      <div class="formula">ln(chyl-a) = 1.058 · ln(TP) − 0.934</div>
+      <div class="variables">
+        <p><strong>chyl-a</strong> = chlorophyll-a concentration (mg/m³)</p>
+        <p><strong>TP</strong> = total phosphorus concentration (μg/L)</p>
+      </div>
+    </div>
+
+    <h3>Relationship 2: Chlorophyll-a and Secchi Disk Depth</h3>
+
+    <div class="formula-block">
+      <div class="formula-label">Chlorophyll-a — Secchi Disk Depth Relationship (Florida Lakes)</div>
+      <div class="formula">SD = [24.2386 + (0.3041 × chyl-a)] / (6.0632 + chyl-a)</div>
+      <div class="variables">
+        <p><strong>SD</strong> = Secchi disk depth (m)</p>
+        <p><strong>chyl-a</strong> = chlorophyll-a concentration (mg/m³)</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- ════ 14. SECCHI ════ -->
+  <section id="secchi">
+    <span class="section-label">Section 14</span>
+    <h2>Secchi Disk Depth</h2>
+
+    <p>The Secchi disk depth is a standard measure of water transparency (clarity) in lakes, ponds, and other waterbodies. The technique was developed by Father Pietro Secchi (1818–1878), scientific advisor to the Pope, who first employed the method to measure water clarity in the Mediterranean Sea.</p>
+
+    <h3>Measurement Protocol</h3>
+    <ol>
+      <li>Lower a standard 20 cm diameter disk (divided into alternating black and white quadrants) into the water on a calibrated line.</li>
+      <li>Continue lowering until the disk is no longer visible.</li>
+      <li>Slowly raise the disk until it becomes visible again.</li>
+      <li>The Secchi disk depth is the <strong>average</strong> of the disappearance depth and the reappearance depth.</li>
+    </ol>
+
+    <div class="figure-placeholder">
+      <div class="fig-icon">⚫</div>
+      <div class="fig-title">Figure 11 — Secchi Disk</div>
+      <div class="fig-caption">Left: Standard 20 cm Secchi disk showing alternating black and white quadrant pattern. Right: Photograph of disk as seen from above at near-limiting visibility depth in water.</div>
+    </div>
+  </section>
+
+  <!-- ════ 15. ANOXIC ESTIMATION ════ -->
+  <section id="anoxic-estimation">
+    <span class="section-label">Section 15</span>
+    <h2>Estimation of Anoxic Depth</h2>
+
+    <p>The depth at which anoxic conditions (dissolved oxygen &lt;1 mg/L) develop in a lake or wet detention pond is a function of water quality characteristics. Because anoxia is driven by the depletion of oxygen in the water column below the photic zone, factors controlling light penetration should exhibit a predictable relationship with anoxic depth.</p>
+
+    <p>ERD developed a dataset from geomean water quality data obtained from more than 100 Florida lakes to evaluate these relationships. Collected parameters included:</p>
+
+    <ul>
+      <li><strong>Chlorophyll-a</strong> — measure of algal biomass; excess algae shades deeper water, reducing the photic zone</li>
+      <li><strong>Secchi disk depth</strong> — measure of light penetration depth</li>
+      <li><strong>Total phosphorus</strong> — in most stormwater ponds and lakes, algal productivity is phosphorus-limited; TP controls the algal standing crop</li>
+      <li><strong>Anoxic depth</strong> — the depth at which dissolved oxygen concentration decreases to &lt;1 mg/L</li>
+    </ul>
+
+    <p>A multiple regression analysis was conducted to derive a predictive relationship for anoxic depth from the measured water quality variables.</p>
+  </section>
+
+  <!-- ════ 16. ANOXIC CALCULATION ════ -->
+  <section id="anoxic-calculation">
+    <span class="section-label">Section 16</span>
+    <h2>Calculation of Anoxic Depth</h2>
+
+    <div class="figure-placeholder">
+      <div class="fig-icon">🏊</div>
+      <div class="fig-title">Figure 12 — Lake Zonation with Anoxic Zone</div>
+      <div class="fig-caption">Cross-sectional lake diagram (same as Figure 8) with the aphotic hypolimnion highlighted in red, representing the anoxic zone. The anoxic depth is measured from the surface to the oxic/anoxic transition.</div>
+    </div>
+
+    <div class="formula-block">
+      <div class="formula-label">Anoxic Depth Regression Equation</div>
+      <div class="formula">AD (m) = 3.035 × Secchi (m) − 0.004979 × Total P (mg/L) + 0.02164 × chyl-a (mg/m³)</div>
+      <div class="variables">
+        <p><strong>R²</strong> = 0.951</p>
+        <p><strong>AD</strong> = anoxic depth (m)</p>
+      </div>
+    </div>
+
+    <p><strong>Valid ranges for the equation:</strong></p>
+    <ul>
+      <li>0.25 m &lt; anoxic depth &lt; 9.0 m</li>
+      <li>0.09 m &lt; Secchi disk depth &lt; 3.49 m</li>
+      <li>0.001 mg/L &lt; Total P &lt; 0.498 mg/L</li>
+      <li>1 mg/m³ &lt; chlorophyll-a &lt; 332 mg/m³</li>
+    </ul>
+
+    <h3>Converting Mean Annual to Minimum Monthly Anoxic Depth</h3>
+
+    <p>The anoxic depth equation yields a <em>mean annual</em> value. Anoxic depth varies seasonally. To impart a conservative bias, some WMDs require that the design anoxic depth reflect conditions during the worst (shallowest) month. ERD derived the following conversion factor from a dataset of Florida lakes:</p>
+
+    <div class="figure-placeholder">
+      <div class="fig-icon">📊</div>
+      <div class="fig-title">Figure 13 — Mean Annual vs. Minimum Monthly Anoxic Depth</div>
+      <div class="fig-caption">Left panel: Box plots comparing distribution of annual mean and minimum monthly anoxic depths (ft). Right panel: Scatter plot of minimum monthly AD (ft) versus mean annual AD (ft); linear regression fit with r²=0.9669. The median ratio of minimum monthly to mean annual AD is 0.892.</div>
+    </div>
+
+    <div class="formula-block">
+      <div class="formula-label">Minimum Monthly Anoxic Depth</div>
+      <div class="formula">Min. Monthly AD = 0.892 × Mean Annual AD</div>
+    </div>
+  </section>
+
+  <!-- ════ 17. DESIGN EXAMPLE ════ -->
+  <section id="example">
+    <span class="section-label">Section 17</span>
+    <h2>Wet Detention Design Example</h2>
+
+    <p>This example evaluates wet detention system design for a hypothetical 100-acre mixed residential/commercial development with 35% impervious cover, assessed at three Florida locations: Pensacola, Orlando, and Key West. The target performance standard is <strong>80% TP removal</strong>.</p>
+
+    <!-- Step 1 -->
+    <div class="calc-step">
+      <div class="calc-step-header">Step 1</div>
+      <h3>Project Hydrologic and Mass Loading Characteristics</h3>
+      <div class="table-wrapper">
+        <table>
+          <thead>
+            <tr>
+              <th>Location</th>
+              <th>Annual C Value</th>
+              <th>Runoff (ac-ft/yr)</th>
+              <th>TN Loading (kg/yr)</th>
+              <th>TP Loading (kg/yr)</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr><td>Pensacola</td><td>0.304</td><td>149.3</td><td>344</td><td>55.4</td></tr>
+            <tr><td>Orlando</td><td>0.253</td><td>94.8</td><td>219</td><td>35.2</td></tr>
+            <tr><td>Key West</td><td>0.266</td><td>79.8</td><td>184</td><td>29.6</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- Step 2 -->
+    <div class="calc-step">
+      <div class="calc-step-header">Step 2</div>
+      <h3>Calculate Required Pond Detention Time (T<sub>d</sub>)</h3>
+
+      <p>Using the TP removal equation and solving iteratively for 80% removal:</p>
+
+      <div class="formula-block">
+        <div class="formula">Eff = 40.13 + 6.372 · ln(t<sub>d</sub>) + 0.213 · [ln(t<sub>d</sub>)]²</div>
+        <div class="variables">
+          <p>By iteration: <strong>T<sub>d</sub> ≈ 200 days → 79.9% TP removal</strong></p>
+        </div>
+      </div>
+
+      <p>Anticipated TN removal for a 200-day detention time:</p>
+
+      <div class="formula-block">
+        <div class="formula">Eff = (44.72 × 200) / (5.46 + 200) = <strong>42.6% TN removal</strong></div>
+      </div>
+    </div>
+
+    <!-- Step 3 -->
+    <div class="calc-step">
+      <div class="calc-step-header">Step 3</div>
+      <h3>Calculate Required Permanent Pool Volume (PPV)</h3>
+
+      <p>Using the detention time formula: PPV = RO × T<sub>d</sub> × (1 year / 365 days)</p>
+
+      <div class="table-wrapper">
+        <table>
+          <thead>
+            <tr>
+              <th>Location</th>
+              <th>Runoff (ac-ft/yr)</th>
+              <th>T<sub>d</sub> (days)</th>
+              <th>Required PPV (ac-ft)</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr><td>Pensacola</td><td>149.3</td><td>200</td><td>81.8</td></tr>
+            <tr><td>Orlando</td><td>94.8</td><td>200</td><td>51.9</td></tr>
+            <tr><td>Key West</td><td>79.8</td><td>200</td><td>43.7</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- Step 4 -->
+    <div class="calc-step">
+      <div class="calc-step-header">Step 4</div>
+      <h3>Calculate Mean Annual Pond TP Concentration (Pensacola Example)</h3>
+
+      <p>Annual mass of TP discharged from pond at 79.9% removal:</p>
+      <div class="formula-block">
+        <div class="formula">TP<sub>discharge</sub> = 55.4 kg/yr × (1 − 0.799) = <span class="result-box">11.1 kg/yr</span></div>
+      </div>
+
+      <p>Assuming inflow volume equals outflow volume (149.3 ac-ft/yr), the mean discharge concentration is:</p>
+      <div class="formula-block">
+        <div class="formula">C = (11.1 kg/yr) / (149.3 ac-ft/yr) × unit conversions = <span class="result-box">60 μg TP/L</span></div>
+        <div class="variables">
+          <p>Unit conversion chain: kg/yr ÷ ac-ft/yr × (1 ac/43,560 ft²) × (1 ft³/7.48 gal) × (1 gal/3.785 L) × (10⁶ mg/kg)</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Step 5 -->
+    <div class="calc-step">
+      <div class="calc-step-header">Step 5</div>
+      <h3>Calculate Mean Annual Pond Chlorophyll-a Concentration</h3>
+
+      <div class="formula-block">
+        <div class="formula">ln(chyl-a) = 1.058 · ln(60) − 0.934</div>
+        <div class="formula">chyl-a = e<sup>2.94</sup> = <span class="result-box">40.4 mg/m³</span></div>
+      </div>
+    </div>
+
+    <!-- Step 6 -->
+    <div class="calc-step">
+      <div class="calc-step-header">Step 6</div>
+      <h3>Calculate Mean Annual Pond Secchi Disk Depth</h3>
+
+      <div class="formula-block">
+        <div class="formula">SD = [24.2386 + (0.3041 × 40.4)] / (6.0632 + 40.4)</div>
+        <div class="formula">SD = <span class="result-box">0.79 m = 2.6 ft</span></div>
+      </div>
+    </div>
+
+    <!-- Step 7 -->
+    <div class="calc-step">
+      <div class="calc-step-header">Step 7</div>
+      <h3>Calculate Mean Annual Depth of Anoxic Conditions</h3>
+
+      <div class="formula-block">
+        <div class="formula-label">Anoxic Depth Equation</div>
+        <div class="formula">AD = 3.035 × Secchi + 0.02164 × chyl-a − 0.004979 × Total P</div>
+        <div class="variables">
+          <p><strong>AD</strong> = anoxic depth (m) | <strong>Secchi</strong> = depth (m) | <strong>chyl-a</strong> = mg/m³ | <strong>Total P</strong> = μg/L</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Step 8 -->
+    <div class="calc-step">
+      <div class="calc-step-header">Step 8</div>
+      <h3>Calculate Mean Annual and Minimum Monthly Anoxic Depth</h3>
+
+      <div class="formula-block">
+        <div class="formula">AD = 3.035(0.79) + 0.02164(40.4) − 0.004979(60)</div>
+        <div class="formula">Mean Annual AD = <span class="result-box">2.97 m = 9.8 ft</span></div>
+      </div>
+
+      <p>Converting to minimum monthly design value:</p>
+
+      <div class="formula-block">
+        <div class="formula">Min. Monthly AD = 0.892 × 2.97 m = <span class="result-box">2.65 m = 8.7 ft</span></div>
+      </div>
+
+      <p>The design pond depth below the control elevation should not exceed the minimum monthly anoxic depth. In this example, only the top <strong>8.7 ft</strong> of the water column may be credited as aerobic, biologically active volume for detention time calculations.</p>
+    </div>
+  </section>
+
+  <!-- ════ 18. ADDITIONAL PPV ════ -->
+  <section id="additional-ppv">
+    <span class="section-label">Section 18</span>
+    <h2>Modeled Impacts of Additional Permanent Pool Volume</h2>
+
+    <p>Increasing the permanent pool volume beyond the minimum required has measurable benefits. The following table illustrates modeled performance outcomes across a range of detention times for the Pensacola example, with each successive detention time value representing a 50% increase over the previous.</p>
+
+    <div class="table-wrapper">
+      <table>
+        <thead>
+          <tr>
+            <th>Detention Time (days)<sup>1</sup></th>
+            <th>TP Mass Removal (%)</th>
+            <th>Pond TP Conc. (mg/L)</th>
+            <th>TP Discharge (kg/yr)</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr><td>8</td><td>68.6</td><td>0.094</td><td>56.4</td></tr>
+          <tr><td>11</td><td>69.9</td><td>0.089</td><td>53.9</td></tr>
+          <tr><td>17</td><td>71.3</td><td>0.085</td><td>51.2</td></tr>
+          <tr><td>26</td><td>72.7</td><td>0.080</td><td>48.4</td></tr>
+          <tr><td>39</td><td>74.3</td><td>0.075</td><td>45.4</td></tr>
+          <tr><td>58</td><td>75.9</td><td>0.069</td><td>42.1</td></tr>
+          <tr><td>87</td><td>77.7</td><td>0.063</td><td>38.7</td></tr>
+          <tr><td>130</td><td>79.6</td><td>0.057</td><td>35.0</td></tr>
+          <tr><td>195</td><td>81.6</td><td>0.050</td><td>31.1</td></tr>
+          <tr><td>293</td><td>83.8</td><td>0.042</td><td>26.9</td></tr>
+          <tr><td>440</td><td>86.1</td><td>0.035</td><td>22.3</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <p style="font-size:0.85rem;color:var(--text-muted);font-style:italic;">¹ Each successive detention time value represents a 50% increase from the previous row.</p>
+
+    <p>The key benefits of providing additional permanent pool volume are: (1) increased mass removal of pollutants, (2) reduced discharge concentrations and mass loadings to receiving waters, and (3) increased dilution capacity for episodic slug inputs of contaminants.</p>
+  </section>
+
+  <!-- ════ 19. IRREDUCIBLE CONCENTRATION ════ -->
+  <section id="irreducible">
+    <span class="section-label">Section 19</span>
+    <h2>Concept of Irreducible Concentration</h2>
+
+    <p>Irreducible concentrations reflect fundamental limitations on pollutant removal pathways within a given treatment system. In wet detention ponds, the most significant removal processes are sedimentation and biological uptake. As concentrations in the water column decrease, removal rates slow because the concentration gradient driving uptake diminishes.</p>
+
+    <p>When the irreducible concentration is reached, no significant additional removal is possible regardless of how much additional treatment volume or time is provided. This concept is widely used in modeling the performance of wastewater treatment wetlands and is equally applicable to stormwater wet ponds.</p>
+
+    <div class="table-wrapper">
+      <table>
+        <thead>
+          <tr>
+            <th>Parameter</th>
+            <th>Units</th>
+            <th>Assumed Minimum Irreducible Concentration</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr><td>Total Nitrogen</td><td>μg/L</td><td>400</td></tr>
+          <tr><td>Total Phosphorus</td><td>μg/L</td><td>10</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="callout">
+      <strong>Implication for design:</strong> If the incoming runoff concentration is already at or near the irreducible concentration, additional detention volume will not provide meaningful pollutant reduction. This underscores why the nutrient removal equations are valid only for <em>untreated</em> runoff entering directly into a wet pond.
+    </div>
+  </section>
+
+  <!-- ════ 20. DETENTION COMPARISON ════ -->
+  <section id="detention-comparison">
+    <span class="section-label">Section 20</span>
+    <h2>Comparison of 14-Day Wet Season with Mean Annual Detention Time</h2>
+
+    <p>Several Water Management Districts base wet detention pond design on a <strong>14-day wet season</strong> detention time criterion. The BMPFast methodology, by contrast, uses a <strong>mean annual</strong> detention time, which integrates performance across all seasons.</p>
+
+    <p>Because Florida receives significant rainfall throughout the year (not only during the summer wet season), a 14-day wet season detention time translates into a longer mean annual detention time. The table below shows the equivalent mean annual detention times corresponding to a 14-day wet season design across Florida's five meteorological zones:</p>
+
+    <div class="table-wrapper">
+      <table>
+        <thead>
+          <tr>
+            <th>Meteorological Zone</th>
+            <th>Equivalent Mean Annual Detention Time (days)</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr><td>Zone 1 — Panhandle</td><td>17.1</td></tr>
+          <tr><td>Zone 2 — Central</td><td>19.9</td></tr>
+          <tr><td>Zone 3 — Keys</td><td>21.8</td></tr>
+          <tr><td>Zone 4 — West Coastal</td><td>20.2</td></tr>
+          <tr><td>Zone 5 — Southeast</td><td>21.0</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="figure-placeholder">
+      <div class="fig-icon">🗺</div>
+      <div class="fig-title">Figure 14 — Florida Meteorological Zone Map</div>
+      <div class="fig-caption">Map of Florida showing the five meteorological rainfall zones (color-coded): Zone 1 Panhandle (northwest), Zone 2 Central, Zone 3 Keys (south), Zone 4 West Coastal, and Zone 5 Southeast. Rain gauge station locations used in the analysis are labeled.</div>
+    </div>
+
+    <p>The Panhandle (Zone 1) has the lowest equivalent mean annual detention time (17.1 days) because rainfall is more concentrated in the summer months relative to South Florida zones, where year-round rainfall extends the period over which a given permanent pool volume operates.</p>
+  </section>
+
+  <!-- ════ 21. IMPACTS OF COLOR ════ -->
+  <section id="color-impacts">
+    <span class="section-label">Section 21</span>
+    <h2>Impacts of Color on Wet Pond Effectiveness</h2>
+
+    <h3>Sources and Nature of Color</h3>
+    <p>Water color in Florida stormwater is caused primarily by dissolved organic molecules — specifically tannins and lignins — produced by the decomposition of leaves, roots, and plant litter. Wetlands commonly discharge highly colored water into receiving ponds. Color is measured in Platinum Cobalt Units (PCU) or CPU.</p>
+
+    <div class="figure-placeholder">
+      <div class="fig-icon">🌊</div>
+      <div class="fig-title">Figure 15 — Water Color Caused by Dissolved Tannins</div>
+      <div class="fig-caption">Photograph of a water body exhibiting intense brown-red coloration from dissolved tannin compounds derived from decomposing organic matter.</div>
+    </div>
+
+    <h3>Impacts of Color on Pond Performance</h3>
+
+    <p>The presence of elevated color in a wet detention pond's water column has multiple interacting effects that substantially reduce pollutant removal performance:</p>
+
+    <ul>
+      <li><strong>Reduced light penetration</strong> — color absorbs sunlight and reduces the depth of the photic zone, limiting algal and aquatic plant growth.</li>
+      <li><strong>Reduced pH</strong> — colored water often has pH values below 5, which limits the species of algae and aquatic plants capable of growing in the pond.</li>
+      <li><strong>Natural algaecide effects</strong> — some color compounds act as natural inhibitors of algal growth.</li>
+      <li><strong>Nutrient sequestration in organic molecules</strong> — nutrients in colored water are more likely to be bound into dissolved organic molecules, making them unavailable for algal uptake and biological removal.</li>
+      <li><strong>Substantially reduced effectiveness</strong> — in highly colored ponds, performance is limited primarily to removal of particulate matter through sedimentation; biological nutrient removal is negligible.</li>
+    </ul>
+
+    <div class="callout warn">
+      <strong>Design implication:</strong> Sites draining through or adjacent to wetlands may experience chronically elevated water color in the receiving wet pond. In these cases, the standard nutrient removal relationships (based on detention time) may substantially overestimate actual performance. Site-specific color data should be evaluated during system design.
+    </div>
+  </section>
+
+  <!-- ════ FIGURE REFERENCES ════ -->
+  <section id="figure-references">
+    <h2>Figure Reference List</h2>
+    <p style="font-size:0.9rem;color:var(--text-muted);">The following figures are referenced in the text above. Insert appropriate graphics at each placeholder location.</p>
+
+    <div class="fig-ref-list">
+      <div class="fig-ref-item">
+        <div class="fig-num">Figure 1</div>
+        <strong>Wet Detention Pond Examples</strong><br>
+        Field photographs: amenity pond with fountain; aerial view of development with integrated wet detention lakes.
+      </div>
+      <div class="fig-ref-item">
+        <div class="fig-num">Figure 2</div>
+        <strong>Typical Wet Detention Pond Cross-Section</strong><br>
+        Engineering diagram showing pond geometry, permanent pool, NWL, littoral zone, outfall structure, and design dimensions.
+      </div>
+      <div class="fig-ref-item">
+        <div class="fig-num">Figure 3</div>
+        <strong>TSS Removal vs. Detention Time</strong><br>
+        Scatter plot with two-phase removal curve (0–50 days); data points from Florida wet pond studies.
+      </div>
+      <div class="fig-ref-item">
+        <div class="fig-num">Figure 4</div>
+        <strong>Total Phosphorus Removal vs. Detention Time</strong><br>
+        Scatter plot with quadratic-log regression curve; vertical line at 200-day regulatory limit.
+      </div>
+      <div class="fig-ref-item">
+        <div class="fig-num">Figure 5</div>
+        <strong>Total Nitrogen Removal vs. Detention Time</strong><br>
+        Scatter plot with hyperbolic regression curve; vertical line at 200-day regulatory limit.
+      </div>
+      <div class="fig-ref-item">
+        <div class="fig-num">Figure 6</div>
+        <strong>TN and TP Nutrient Removal Relationships</strong><br>
+        Side-by-side plots annotated with "removal of particulates" and "removal of dissolved species" regions.
+      </div>
+      <div class="fig-ref-item">
+        <div class="fig-num">Figure 7</div>
+        <strong>Factors Negatively Impacting Wet Pond Efficiency</strong><br>
+        Four field photographs: cattails, waterfowl, amenity pond management, herbicide application.
+      </div>
+      <div class="fig-ref-item">
+        <div class="fig-num">Figure 8</div>
+        <strong>Lake Zonation Diagram</strong><br>
+        Cross-section showing littoral zone, pelagic zone, epilimnion, hypolimnion, and light compensation depth.
+      </div>
+      <div class="fig-ref-item">
+        <div class="fig-num">Figure 9</div>
+        <strong>Stoneybrook Monitoring: Total Copper and Total N</strong><br>
+        Time-series outfall concentration plots for 27 storm events across 7 ponds, 2001–2007.
+      </div>
+      <div class="fig-ref-item">
+        <div class="fig-num">Figure 10</div>
+        <strong>Stoneybrook Monitoring: Total Phosphorus</strong><br>
+        Time-series outfall TP concentration plots; no trend detected over 72-hour monitoring window.
+      </div>
+      <div class="fig-ref-item">
+        <div class="fig-num">Figure 11</div>
+        <strong>Secchi Disk</strong><br>
+        Standard 20 cm disk diagram and field photograph at limiting visibility depth.
+      </div>
+      <div class="fig-ref-item">
+        <div class="fig-num">Figure 12</div>
+        <strong>Lake Zonation with Anoxic Zone Highlighted</strong><br>
+        Cross-section diagram identical to Figure 8 with hypolimnion colored red to indicate anoxic zone.
+      </div>
+      <div class="fig-ref-item">
+        <div class="fig-num">Figure 13</div>
+        <strong>Mean Annual vs. Minimum Monthly Anoxic Depth</strong><br>
+        Box plots and scatter plot with linear regression (r²=0.9669) showing Min. Monthly AD = 0.892 × Mean Annual AD.
+      </div>
+      <div class="fig-ref-item">
+        <div class="fig-num">Figure 14</div>
+        <strong>Florida Meteorological Zone Map</strong><br>
+        State map with five rainfall zones color-coded and rain gauge station locations labeled.
+      </div>
+      <div class="fig-ref-item">
+        <div class="fig-num">Figure 15</div>
+        <strong>Water Color from Dissolved Tannins</strong><br>
+        Field photograph of tannin-colored water body.
+      </div>
+    </div>
+  </section>
+
+</main>
+
+<script>
+  // Active nav link highlighting on scroll
+  const sections = document.querySelectorAll('section[id], div[id]');
+  const navLinks = document.querySelectorAll('#sidebar a');
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) {
+        navLinks.forEach(a => a.classList.remove('active'));
+        const active = document.querySelector(`#sidebar a[href="#${entry.target.id}"]`);
+        if (active) active.classList.add('active');
+      }
+    });
+  }, { rootMargin: '-20% 0px -70% 0px' });
+  sections.forEach(s => observer.observe(s));
+</script>
+
+</body>
+</html>

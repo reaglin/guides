@@ -1,0 +1,1149 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>FCLE Resource Links — Florida Civics Literacy Exam</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;900&family=Source+Serif+4:ital,wght@0,300;0,400;0,600;1,400&family=JetBrains+Mono:wght@400;500;600&display=swap');
+
+:root {
+  --navy:        #0d1b35;
+  --navy-mid:    #162444;
+  --navy-light:  #1e3060;
+  --gold:        #c9952a;
+  --gold-light:  #e4b84a;
+  --gold-pale:   #f5e6c8;
+  --crimson:     #8b1a2e;
+  --crimson-lt:  #b52040;
+  --cream:       #faf7f0;
+  --cream-dark:  #f0ead8;
+  --text-dark:   #1a1208;
+  --text-mid:    #3d3220;
+  --text-light:  #6b5a3e;
+  --green:       #1a6b3c;
+  --green-bg:    #eaf5ee;
+  --green-bd:    #4caf7a;
+  --red-bg:      #fdf0f0;
+  --red-bd:      #e07070;
+  --white:       #ffffff;
+  --official-bg: #eef3f9;
+  --official-bd: #3a5f9e;
+  --uni-bg:      #eef5ee;
+  --uni-bd:      #3a7a4a;
+  --college-bg:  #f5f0e8;
+  --college-bd:  #9e6e2a;
+  --supp-bg:     #f5eef5;
+  --supp-bd:     #7a3a8a;
+}
+
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+body {
+  font-family: 'Source Serif 4', Georgia, serif;
+  background: var(--cream);
+  color: var(--text-dark);
+  line-height: 1.7;
+}
+
+/* ─── HEADER ────────────────────────────────────────────── */
+header {
+  background: var(--navy);
+  border-bottom: 4px solid var(--gold);
+}
+.stripe-top {
+  height: 6px;
+  background: repeating-linear-gradient(90deg,
+    var(--crimson) 0, var(--crimson) 60px,
+    #fff 60px, #fff 120px);
+}
+.header-inner {
+  max-width: 980px;
+  margin: 0 auto;
+  padding: 28px 28px 24px;
+  display: flex;
+  align-items: center;
+  gap: 20px;
+}
+.header-icon {
+  font-size: 2.2rem;
+  background: rgba(201,149,42,.15);
+  border: 1px solid var(--gold);
+  border-radius: 8px;
+  width: 58px; height: 58px;
+  display: flex; align-items: center; justify-content: center;
+  flex-shrink: 0;
+}
+.header-text h1 {
+  font-family: 'Playfair Display', serif;
+  font-size: 1.65rem;
+  font-weight: 900;
+  color: var(--white);
+  line-height: 1.15;
+}
+.header-text h1 span { color: var(--gold-light); }
+.header-text p {
+  font-size: 0.85rem;
+  color: rgba(255,255,255,.62);
+  font-style: italic;
+  margin-top: 4px;
+}
+.header-badges {
+  display: flex; gap: 8px; margin-top: 10px; flex-wrap: wrap;
+}
+.badge {
+  background: rgba(201,149,42,.18);
+  border: 1px solid var(--gold);
+  color: var(--gold-light);
+  font-size: 0.72rem;
+  font-family: 'JetBrains Mono', monospace;
+  padding: 3px 9px;
+  border-radius: 3px;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+
+/* ─── MAIN ───────────────────────────────────────────────── */
+main {
+  max-width: 980px;
+  margin: 0 auto;
+  padding: 32px 24px 60px;
+}
+
+/* ─── INTRO NOTE ─────────────────────────────────────────── */
+.intro-note {
+  background: var(--navy-mid);
+  border-left: 5px solid var(--gold);
+  color: var(--cream);
+  padding: 18px 24px;
+  border-radius: 0 6px 6px 0;
+  font-size: 0.94rem;
+  line-height: 1.65;
+  margin-bottom: 32px;
+}
+.intro-note strong { color: var(--gold-light); }
+
+/* ─── LEGEND ─────────────────────────────────────────────── */
+.legend-bar {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-bottom: 28px;
+  align-items: center;
+}
+.legend-label {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.74rem;
+  color: var(--text-light);
+  letter-spacing: 0.05em;
+  margin-right: 4px;
+}
+.legend-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 4px 11px;
+  border-radius: 100px;
+  font-size: 0.76rem;
+  font-family: 'JetBrains Mono', monospace;
+  font-weight: 500;
+  border: 1px solid;
+}
+.chip-official { background: var(--official-bg); border-color: var(--official-bd); color: var(--official-bd); }
+.chip-uni      { background: var(--uni-bg);      border-color: var(--uni-bd);      color: var(--uni-bd); }
+.chip-college  { background: var(--college-bg);  border-color: var(--college-bd);  color: var(--college-bd); }
+.chip-supp     { background: var(--supp-bg);     border-color: var(--supp-bd);     color: var(--supp-bd); }
+
+/* ─── SECTION HEADERS ────────────────────────────────────── */
+.section-header {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin: 36px 0 16px;
+}
+.section-header .sh-icon {
+  font-size: 1.5rem;
+  flex-shrink: 0;
+  width: 44px; height: 44px;
+  display: flex; align-items: center; justify-content: center;
+  border-radius: 8px;
+}
+.section-header.official .sh-icon { background: var(--official-bg); }
+.section-header.uni      .sh-icon { background: var(--uni-bg); }
+.section-header.college  .sh-icon { background: var(--college-bg); }
+.section-header.supp     .sh-icon { background: var(--supp-bg); }
+
+.section-header h2 {
+  font-family: 'Playfair Display', serif;
+  font-size: 1.2rem;
+  font-weight: 900;
+  color: var(--navy);
+}
+.section-header p {
+  font-size: 0.83rem;
+  color: var(--text-light);
+  font-style: italic;
+  margin-top: 1px;
+}
+
+/* ─── RESOURCE CARDS ─────────────────────────────────────── */
+.resource-cards {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.res-card {
+  background: var(--white);
+  border-radius: 8px;
+  box-shadow: 0 2px 10px rgba(13,27,53,.08);
+  overflow: hidden;
+  border: 1px solid;
+  display: flex;
+  flex-direction: column;
+}
+
+.res-card.official { border-color: var(--official-bd); }
+.res-card.uni      { border-color: var(--uni-bd); }
+.res-card.college  { border-color: var(--college-bd); }
+.res-card.supp     { border-color: var(--supp-bd); }
+
+.res-card-top {
+  padding: 14px 18px 12px;
+  border-bottom: 1px solid var(--cream-dark);
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+}
+
+.res-type-chip {
+  flex-shrink: 0;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.65rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  padding: 2px 8px;
+  border-radius: 3px;
+  font-weight: 600;
+  margin-top: 3px;
+  border: 1px solid;
+}
+.res-card.official .res-type-chip { background: var(--official-bg); border-color: var(--official-bd); color: var(--official-bd); }
+.res-card.uni      .res-type-chip { background: var(--uni-bg);      border-color: var(--uni-bd);      color: var(--uni-bd); }
+.res-card.college  .res-type-chip { background: var(--college-bg);  border-color: var(--college-bd);  color: var(--college-bd); }
+.res-card.supp     .res-type-chip { background: var(--supp-bg);     border-color: var(--supp-bd);     color: var(--supp-bd); }
+
+.res-title-group { flex: 1; }
+.res-site-name {
+  font-family: 'Playfair Display', serif;
+  font-size: 1rem;
+  font-weight: 700;
+  color: var(--navy);
+  line-height: 1.3;
+}
+.res-updated {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.7rem;
+  color: var(--text-light);
+  margin-top: 2px;
+}
+
+.res-card-body {
+  padding: 12px 18px 14px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.res-link-row {
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+}
+.res-link-label {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.68rem;
+  color: var(--text-light);
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  flex-shrink: 0;
+  padding-top: 2px;
+  min-width: 48px;
+}
+.res-link-row a {
+  font-size: 0.87rem;
+  color: var(--navy-light);
+  text-decoration: none;
+  word-break: break-word;
+  line-height: 1.45;
+}
+.res-link-row a:hover {
+  color: var(--gold);
+  text-decoration: underline;
+}
+
+.res-flags {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+  padding-top: 4px;
+}
+
+.flag {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  font-size: 0.79rem;
+  font-family: 'JetBrains Mono', monospace;
+  padding: 3px 10px;
+  border-radius: 4px;
+}
+.flag-yes {
+  background: var(--green-bg);
+  color: var(--green);
+  border: 1px solid var(--green-bd);
+}
+.flag-no {
+  background: var(--red-bg);
+  color: #8b1a1a;
+  border: 1px solid var(--red-bd);
+}
+.flag-partial {
+  background: #fdf5e0;
+  color: #7a5a0a;
+  border: 1px solid #e4b84a;
+}
+
+.res-description {
+  font-size: 0.875rem;
+  color: var(--text-mid);
+  line-height: 1.6;
+  font-style: italic;
+  padding-top: 2px;
+  border-top: 1px solid var(--cream-dark);
+}
+
+/* ─── FOOTER ─────────────────────────────────────────────── */
+footer {
+  background: var(--navy);
+  color: rgba(255,255,255,.55);
+  text-align: center;
+  padding: 22px;
+  font-size: 0.81rem;
+  line-height: 1.7;
+}
+footer a { color: var(--gold-light); text-decoration: none; }
+footer a:hover { text-decoration: underline; }
+
+/* ─── RESPONSIVE ─────────────────────────────────────────── */
+@media (max-width: 580px) {
+  .header-inner { flex-direction: column; padding: 18px 16px; }
+  .header-text h1 { font-size: 1.3rem; }
+  .res-card-top { flex-direction: column; }
+  .res-flags { flex-direction: column; }
+}
+</style>
+</head>
+<body>
+
+<header>
+  <div class="stripe-top"></div>
+  <div class="header-inner">
+    <div class="header-icon">🔗</div>
+    <div class="header-text">
+      <h1>FCLE <span>Resource Links</span> Directory</h1>
+      <p>Curated links to study materials, sample questions, and exam information for the Florida Civic Literacy Exam</p>
+      <div class="header-badges">
+        <span class="badge">Official FLDOE</span>
+        <span class="badge">State Universities</span>
+        <span class="badge">Florida Colleges</span>
+        <span class="badge">Supplemental Tools</span>
+        <span class="badge">Verified March 2026</span>
+      </div>
+    </div>
+  </div>
+</header>
+
+<main>
+
+  <div class="intro-note">
+    <strong>About This Directory:</strong> All links were verified in March 2026. The FCLE is an 80-question, multiple-choice, computer-based exam administered by Cambium Assessments. A passing score is <strong>48/80 (60%)</strong>. Links are organized by source type: official state resources, State University System (SUS) institutions, Florida College System (FCS) institutions, and supplemental third-party tools. "Last Updated" dates reflect the most recent modification date reported by the source page or, where unavailable, the date of the most recent content change found during verification. Pages with no visible date are marked <em>N/A</em>.
+  </div>
+
+  <!-- ─── LEGEND ──────────────────────────────────────────── -->
+  <div class="legend-bar">
+    <span class="legend-label">KEY:</span>
+    <span class="legend-chip chip-official">🏛 Official / FLDOE</span>
+    <span class="legend-chip chip-uni">🎓 State University (SUS)</span>
+    <span class="legend-chip chip-college">🏫 Florida College (FCS)</span>
+    <span class="legend-chip chip-supp">🛠 Supplemental / Third-Party</span>
+  </div>
+
+  <!-- ══════════════════════════════════════════════════════ -->
+  <!-- SECTION 1: OFFICIAL / FLDOE                           -->
+  <!-- ══════════════════════════════════════════════════════ -->
+  <div class="section-header official">
+    <div class="sh-icon">🏛️</div>
+    <div>
+      <h2>Official Florida Department of Education (FLDOE) Resources</h2>
+      <p>Primary authoritative sources — all exam content is based on these documents</p>
+    </div>
+  </div>
+
+  <div class="resource-cards">
+
+    <div class="res-card official">
+      <div class="res-card-top">
+        <span class="res-type-chip">Official</span>
+        <div class="res-title-group">
+          <div class="res-site-name">FLDOE — Florida Civic Literacy Exam (FCLE) Main Page</div>
+          <div class="res-updated">Last Updated: Continuously maintained | Publisher: Florida Dept. of Education</div>
+        </div>
+      </div>
+      <div class="res-card-body">
+        <div class="res-link-row">
+          <span class="res-link-label">URL</span>
+          <a href="https://www.fldoe.org/accountability/assessments/k-12-student-assessment/fcle.stml" target="_blank">https://www.fldoe.org/accountability/assessments/k-12-student-assessment/fcle.stml</a>
+        </div>
+        <div class="res-flags">
+          <span class="flag flag-yes">✅ Contains FCLE Study Materials</span>
+          <span class="flag flag-yes">✅ Contains FCLE Sample Questions</span>
+        </div>
+        <div class="res-description">The official FLDOE hub for the FCLE. Links to the Supplemental Guide PDF, Sample Items PDF, the online practice test, and statewide exam results. This is the definitive starting point for all FCLE preparation. Also contains the statute references (SB 1108 / s. 1003.4282) and exam structure details.</div>
+      </div>
+    </div>
+
+    <div class="res-card official">
+      <div class="res-card-top">
+        <span class="res-type-chip">Official</span>
+        <div class="res-title-group">
+          <div class="res-site-name">FLDOE — Supplemental Guide for the FCLE (PDF)</div>
+          <div class="res-updated">Last Updated: March 31, 2022 | Publisher: FLDOE Office of Assessment</div>
+        </div>
+      </div>
+      <div class="res-card-body">
+        <div class="res-link-row">
+          <span class="res-link-label">URL</span>
+          <a href="https://www.fldoe.org/core/fileparse.php/5663/urlt/SuppGuideFCLE.pdf" target="_blank">https://www.fldoe.org/core/fileparse.php/5663/urlt/SuppGuideFCLE.pdf</a>
+        </div>
+        <div class="res-flags">
+          <span class="flag flag-yes">✅ Contains FCLE Study Materials</span>
+          <span class="flag flag-partial">⚠️ Contains Sample Questions (limited)</span>
+        </div>
+        <div class="res-description">Direct PDF download of the official FLDOE Supplemental Study Guide. Contains the four exam competency domains with detailed topic lists, hyperlinks to primary source documents (CPALMS, Oyez, Archives.gov), and guidance on what content areas appear on the exam. This is the single most important document for FCLE preparation.</div>
+      </div>
+    </div>
+
+    <div class="res-card official">
+      <div class="res-card-top">
+        <span class="res-type-chip">Official</span>
+        <div class="res-title-group">
+          <div class="res-site-name">FLDOE — FCLE Sample Items (PDF)</div>
+          <div class="res-updated">Last Updated: 2022 | Publisher: FLDOE / Cambium Assessments</div>
+        </div>
+      </div>
+      <div class="res-card-body">
+        <div class="res-link-row">
+          <span class="res-link-label">URL</span>
+          <a href="https://www.fldoe.org/core/fileparse.php/5663/urlt/FCLESampleItem.pdf" target="_blank">https://www.fldoe.org/core/fileparse.php/5663/urlt/FCLESampleItem.pdf</a>
+        </div>
+        <div class="res-flags">
+          <span class="flag flag-yes">✅ Contains FCLE Study Materials</span>
+          <span class="flag flag-yes">✅ Contains FCLE Sample Questions</span>
+        </div>
+        <div class="res-description">Direct PDF of official FCLE sample test items with answer key. Produced by the Florida DOE/Cambium Assessments. Shows actual question format and style. Note: FLDOE states that sample questions are illustrative only and should not be used to predict performance or guide classroom instruction.</div>
+      </div>
+    </div>
+
+    <div class="res-card official">
+      <div class="res-card-top">
+        <span class="res-type-chip">Official</span>
+        <div class="res-title-group">
+          <div class="res-site-name">FLDOE — FCLE Online Practice Test (Cambium TDS Portal)</div>
+          <div class="res-updated">Last Updated: Continuously maintained | Publisher: Cambium Assessments / FLDOE</div>
+        </div>
+      </div>
+      <div class="res-card-body">
+        <div class="res-link-row">
+          <span class="res-link-label">URL</span>
+          <a href="https://login4.cambiumtds.com/student_core/V176/Pages/LoginShell.aspx?c=Florida_PT&a=Student" target="_blank">https://login4.cambiumtds.com/student_core/V176/Pages/LoginShell.aspx?c=Florida_PT&a=Student</a>
+        </div>
+        <div class="res-flags">
+          <span class="flag flag-no">❌ Study Materials (testing platform only)</span>
+          <span class="flag flag-yes">✅ Contains FCLE Sample Questions</span>
+        </div>
+        <div class="res-description">The official Cambium testing platform where students can experience sample FCLE questions in the same interface used for the real exam. Log in as "Guest User" with "Guest Session" toggled ON. Select Grade Level "30," then "Sample Items," and choose "Start FCLE Sample Items." The sample test is unscored — see the Sample Items PDF for answer keys.</div>
+      </div>
+    </div>
+
+    <div class="res-card official">
+      <div class="res-card-top">
+        <span class="res-type-chip">Official</span>
+        <div class="res-title-group">
+          <div class="res-site-name">CPALMS — Florida's Official Standards &amp; Resources Platform</div>
+          <div class="res-updated">Last Updated: Continuously maintained | Publisher: Florida DOE / FSU</div>
+        </div>
+      </div>
+      <div class="res-card-body">
+        <div class="res-link-row">
+          <span class="res-link-label">URL</span>
+          <a href="https://www.cpalms.org/public/search/Standard" target="_blank">https://www.cpalms.org/public/search/Standard</a>
+        </div>
+        <div class="res-flags">
+          <span class="flag flag-yes">✅ Contains FCLE Study Materials</span>
+          <span class="flag flag-no">❌ Does Not Contain FCLE Sample Questions</span>
+        </div>
+        <div class="res-description">CPALMS is Florida's official toolbox for educational standards and resources, referenced extensively in the FLDOE Supplemental Guide. Includes civics, U.S. history, and American government standards aligned to the FCLE competencies. Use to find standards-aligned reading materials and lesson resources.</div>
+      </div>
+    </div>
+
+  </div><!-- /official cards -->
+
+
+  <!-- ══════════════════════════════════════════════════════ -->
+  <!-- SECTION 2: STATE UNIVERSITIES (SUS)                   -->
+  <!-- ══════════════════════════════════════════════════════ -->
+  <div class="section-header uni">
+    <div class="sh-icon">🎓</div>
+    <div>
+      <h2>State University System (SUS) — FCLE Resources</h2>
+      <p>Florida's 12 public universities — most provide exam information pages; some offer dedicated prep materials</p>
+    </div>
+  </div>
+
+  <div class="resource-cards">
+
+    <div class="res-card uni">
+      <div class="res-card-top">
+        <span class="res-type-chip">University</span>
+        <div class="res-title-group">
+          <div class="res-site-name">University of Central Florida (UCF) — University Testing Center FCLE Page</div>
+          <div class="res-updated">Last Updated: N/A (current academic year) | Publisher: UCF Testing Center</div>
+        </div>
+      </div>
+      <div class="res-card-body">
+        <div class="res-link-row">
+          <span class="res-link-label">URL</span>
+          <a href="https://utc.sswb.ucf.edu/fcle/" target="_blank">https://utc.sswb.ucf.edu/fcle/</a>
+        </div>
+        <div class="res-flags">
+          <span class="flag flag-partial">⚠️ Study Materials (links to FLDOE resources)</span>
+          <span class="flag flag-no">❌ Does Not Contain UCF Sample Questions</span>
+        </div>
+        <div class="res-description">UCF's official FCLE testing page covers exam formats (80-question 2021 FCLE and legacy 100-question FCLT), scheduling procedures, fees ($30 per in-person attempt), and retake policies. Also details Canvas-based practice course access and alternative pathways (CLEP/AP). Non-UCF students may also test here with authorization.</div>
+      </div>
+    </div>
+
+    <div class="res-card uni">
+      <div class="res-card-top">
+        <span class="res-type-chip">University</span>
+        <div class="res-title-group">
+          <div class="res-site-name">Florida State University (FSU) — Academic Center for Excellence Civic Literacy Resources</div>
+          <div class="res-updated">Last Updated: 2025 | Publisher: FSU ACE</div>
+        </div>
+      </div>
+      <div class="res-card-body">
+        <div class="res-link-row">
+          <span class="res-link-label">URL</span>
+          <a href="https://ace.fsu.edu/civic-literacy-resources" target="_blank">https://ace.fsu.edu/civic-literacy-resources</a>
+        </div>
+        <div class="res-flags">
+          <span class="flag flag-partial">⚠️ Study Materials (links to FLDOE resources)</span>
+          <span class="flag flag-no">❌ Does Not Contain FSU Sample Questions</span>
+        </div>
+        <div class="res-description">FSU's ACE civic literacy page explains the transition from the older online Citizenship/Naturalization Exam to the new in-person FCLE for Fall 2024+ students. Includes details on the transition timeline (deadline August 2025 for older exam option) and links to official preparation resources.</div>
+      </div>
+    </div>
+
+    <div class="res-card uni">
+      <div class="res-card-top">
+        <span class="res-type-chip">University</span>
+        <div class="res-title-group">
+          <div class="res-site-name">University of Florida (UF) — Civic Literacy Requirement (Catalog)</div>
+          <div class="res-updated">Last Updated: 2025–2026 Academic Catalog | Publisher: UF Academic Catalog</div>
+        </div>
+      </div>
+      <div class="res-card-body">
+        <div class="res-link-row">
+          <span class="res-link-label">URL</span>
+          <a href="https://catalog.ufl.edu/UGRD/academic-regulations/civics_requirement/" target="_blank">https://catalog.ufl.edu/UGRD/academic-regulations/civics_requirement/</a>
+        </div>
+        <div class="res-flags">
+          <span class="flag flag-partial">⚠️ Requirement Overview (not prep materials)</span>
+          <span class="flag flag-no">❌ Does Not Contain Sample Questions</span>
+        </div>
+        <div class="res-description">UF's official academic catalog entry for the Civic Literacy requirement. Explains cohort definitions (Cohorts 1–4), which exam versions satisfy which requirements, and how AP/CLEP credit interacts with the civic literacy mandate. Essential for understanding graduation requirements but not a study resource itself.</div>
+      </div>
+    </div>
+
+    <div class="res-card uni">
+      <div class="res-card-top">
+        <span class="res-type-chip">University</span>
+        <div class="res-title-group">
+          <div class="res-site-name">Florida International University (FIU) — Civic Literacy Competency Requirement</div>
+          <div class="res-updated">Last Updated: Fall 2024 | Publisher: FIU Division of Student Affairs</div>
+        </div>
+      </div>
+      <div class="res-card-body">
+        <div class="res-link-row">
+          <span class="res-link-label">URL</span>
+          <a href="https://dasa.fiu.edu/all-departments/advising/civic-literacy/" target="_blank">https://dasa.fiu.edu/all-departments/advising/civic-literacy/</a>
+        </div>
+        <div class="res-link-row">
+          <span class="res-link-label">Also</span>
+          <a href="https://dasa.fiu.edu/all-departments/center-for-testing/virtual-remote-testing-center/florida-civic-literacy-test/" target="_blank">https://dasa.fiu.edu/all-departments/center-for-testing/virtual-remote-testing-center/florida-civic-literacy-test/</a>
+        </div>
+        <div class="res-flags">
+          <span class="flag flag-partial">⚠️ Study Materials (links to FLDOE resources)</span>
+          <span class="flag flag-no">❌ Does Not Contain FIU Sample Questions</span>
+        </div>
+        <div class="res-description">FIU provides one of the more detailed university FAQ pages on the civic literacy requirement — covering both the FCLT (100-question legacy) and FCLE (80-question current), cohort eligibility, remote vs. in-person testing, fees ($35), dual enrollment rules, and CLEP alternatives. Includes link to schedule the exam at Modesto Maidique or Biscayne Bay campuses.</div>
+      </div>
+    </div>
+
+    <div class="res-card uni">
+      <div class="res-card-top">
+        <span class="res-type-chip">University</span>
+        <div class="res-title-group">
+          <div class="res-site-name">Florida Atlantic University (FAU) — Civic Literacy Requirement &amp; Free Canvas Prep Course</div>
+          <div class="res-updated">Last Updated: 2024–2025 | Publisher: FAU Division of Undergraduate Studies</div>
+        </div>
+      </div>
+      <div class="res-card-body">
+        <div class="res-link-row">
+          <span class="res-link-label">URL</span>
+          <a href="https://www.fau.edu/ugstudies/civic-literacy-requirement/" target="_blank">https://www.fau.edu/ugstudies/civic-literacy-requirement/</a>
+        </div>
+        <div class="res-link-row">
+          <span class="res-link-label">Prep</span>
+          <a href="https://www.fau.edu/class/civicliteracy.php" target="_blank">https://www.fau.edu/class/civicliteracy.php</a>
+        </div>
+        <div class="res-flags">
+          <span class="flag flag-yes">✅ Contains FCLE Study Materials (Canvas course)</span>
+          <span class="flag flag-partial">⚠️ Contains Sample Questions (via Canvas)</span>
+        </div>
+        <div class="res-description">FAU stands out among SUS institutions for offering a free Canvas-based FCLE study course open to all FAU students. The prep page also references FAU's own FCLE prep videos on YouTube (FAU Civic Literacy Test Prep 1 &amp; 2). One of the more developed university-level study resource offerings.</div>
+      </div>
+    </div>
+
+  </div><!-- /uni cards -->
+
+
+  <!-- ══════════════════════════════════════════════════════ -->
+  <!-- SECTION 3: FLORIDA COLLEGE SYSTEM (FCS)               -->
+  <!-- ══════════════════════════════════════════════════════ -->
+  <div class="section-header college">
+    <div class="sh-icon">🏫</div>
+    <div>
+      <h2>Florida College System (FCS) — FCLE Study Guides &amp; LibGuides</h2>
+      <p>Florida's state colleges have built some of the most comprehensive FCLE preparation resources available</p>
+    </div>
+  </div>
+
+  <div class="resource-cards">
+
+    <div class="res-card college">
+      <div class="res-card-top">
+        <span class="res-type-chip">FL College</span>
+        <div class="res-title-group">
+          <div class="res-site-name">Miami Dade College (MDC) — Florida Civic Literacy Exam Resources Guide (LibGuide)</div>
+          <div class="res-updated">Last Updated: 2025–2026 | Publisher: MDC Library / Learning Resources</div>
+        </div>
+      </div>
+      <div class="res-card-body">
+        <div class="res-link-row">
+          <span class="res-link-label">URL</span>
+          <a href="https://libraryguides.mdc.edu/FCLE" target="_blank">https://libraryguides.mdc.edu/FCLE</a>
+        </div>
+        <div class="res-link-row">
+          <span class="res-link-label">Practice</span>
+          <a href="https://libraryguides.mdc.edu/FCLE/Questions" target="_blank">https://libraryguides.mdc.edu/FCLE/Questions</a>
+        </div>
+        <div class="res-flags">
+          <span class="flag flag-yes">✅ Contains FCLE Study Materials</span>
+          <span class="flag flag-yes">✅ Contains FCLE Sample Questions</span>
+        </div>
+        <div class="res-description">One of the most comprehensive FCLE LibGuides available. MDC created the "Civic Literacy Road to Success" Canvas Course (FCLE CLRS) — a free, 24/7 modular study course. Practice tab links directly to official sample test and previously offered InQuizitive adaptive practice questions (now paid via Canvas). Includes AI study tips (Tech Tuesday Skillshop resources).</div>
+      </div>
+    </div>
+
+    <div class="res-card college">
+      <div class="res-card-top">
+        <span class="res-type-chip">FL College</span>
+        <div class="res-title-group">
+          <div class="res-site-name">Broward College — Civic Literacy Study Materials (LibGuide)</div>
+          <div class="res-updated">Last Updated: November 12, 2025 | Publisher: Broward College Library</div>
+        </div>
+      </div>
+      <div class="res-card-body">
+        <div class="res-link-row">
+          <span class="res-link-label">URL</span>
+          <a href="https://libguides.broward.edu/civic-literacy" target="_blank">https://libguides.broward.edu/civic-literacy</a>
+        </div>
+        <div class="res-link-row">
+          <span class="res-link-label">Study</span>
+          <a href="https://libguides.broward.edu/c.php?g=854066&p=6142658" target="_blank">https://libguides.broward.edu/c.php?g=854066&p=6142658</a>
+        </div>
+        <div class="res-flags">
+          <span class="flag flag-yes">✅ Contains FCLE Study Materials</span>
+          <span class="flag flag-yes">✅ Contains FCLE Sample Questions</span>
+        </div>
+        <div class="res-description">Broward College's LibGuide is one of the most recently updated (Nov 2025) and comprehensive resources. Includes the "Topics by Section" breakdown, links to the official practice exam, flashcard sets, the Modern States free CLEP prep course, Oyez landmark cases, the Bill of Rights Institute, and FAU's FCLE YouTube prep videos.</div>
+      </div>
+    </div>
+
+    <div class="res-card college">
+      <div class="res-card-top">
+        <span class="res-type-chip">FL College</span>
+        <div class="res-title-group">
+          <div class="res-site-name">Florida State College at Jacksonville (FSCJ) — Civic Literacy LibGuide &amp; Open Textbook</div>
+          <div class="res-updated">Last Updated: 2024 | Publisher: FSCJ Library / Learning Commons</div>
+        </div>
+      </div>
+      <div class="res-card-body">
+        <div class="res-link-row">
+          <span class="res-link-label">LibGuide</span>
+          <a href="https://guides.fscj.edu/FloridaCivicLiteracyExam" target="_blank">https://guides.fscj.edu/FloridaCivicLiteracyExam</a>
+        </div>
+        <div class="res-link-row">
+          <span class="res-link-label">Textbook</span>
+          <a href="https://fscj.pressbooks.pub/fcle/" target="_blank">https://fscj.pressbooks.pub/fcle/</a>
+        </div>
+        <div class="res-flags">
+          <span class="flag flag-yes">✅ Contains FCLE Study Materials</span>
+          <span class="flag flag-partial">⚠️ Contains Sample Questions (via linked FLDOE resources)</span>
+        </div>
+        <div class="res-description">FSCJ produced a full open-access FCLE Study Guide textbook (CC-BY 4.0 license, 2024 edition) published through Pressbooks — edited by Shannon Dew, Lisa Taylor, and Carson Welch. The LibGuide also references the Mometrix FCLE Exam Prep Book (2 full-length practice tests), citizenship test resources, and flash card games. The open textbook is freely usable and downloadable.</div>
+      </div>
+    </div>
+
+    <div class="res-card college">
+      <div class="res-card-top">
+        <span class="res-type-chip">FL College</span>
+        <div class="res-title-group">
+          <div class="res-site-name">Eastern Florida State College (EFSC) — FCLE Study Guide LibGuide &amp; Exam Prep Page</div>
+          <div class="res-updated">Last Updated: January 29, 2026 | Publisher: EFSC Faculty &amp; Staff</div>
+        </div>
+      </div>
+      <div class="res-card-body">
+        <div class="res-link-row">
+          <span class="res-link-label">LibGuide</span>
+          <a href="https://libguides.easternflorida.edu/FloridaCivicLiteracyExamStudyGuide" target="_blank">https://libguides.easternflorida.edu/FloridaCivicLiteracyExamStudyGuide</a>
+        </div>
+        <div class="res-link-row">
+          <span class="res-link-label">Exam Info</span>
+          <a href="https://www.easternflorida.edu/academics/civic-literacy/exam-preparation.php" target="_blank">https://www.easternflorida.edu/academics/civic-literacy/exam-preparation.php</a>
+        </div>
+        <div class="res-flags">
+          <span class="flag flag-yes">✅ Contains FCLE Study Materials</span>
+          <span class="flag flag-partial">⚠️ Contains Sample Questions (via InQuizitive platform)</span>
+        </div>
+        <div class="res-description">One of the most recently updated FCS guides (Jan 2026). EFSC faculty built this guide offering video lectures, short topic videos, written flashcard summaries, and InQuizitive adaptive practice questions (W.W. Norton platform). The guide is organized around the four FCLE domains and designed for multiple learning styles.</div>
+      </div>
+    </div>
+
+    <div class="res-card college">
+      <div class="res-card-top">
+        <span class="res-type-chip">FL College</span>
+        <div class="res-title-group">
+          <div class="res-site-name">Santa Fe College — FCLE Standardized Test Resources (LibGuide)</div>
+          <div class="res-updated">Last Updated: 2025–2026 | Publisher: Santa Fe College Library</div>
+        </div>
+      </div>
+      <div class="res-card-body">
+        <div class="res-link-row">
+          <span class="res-link-label">URL</span>
+          <a href="https://sfcollege.libguides.com/tests/fcle" target="_blank">https://sfcollege.libguides.com/tests/fcle</a>
+        </div>
+        <div class="res-flags">
+          <span class="flag flag-yes">✅ Contains FCLE Study Materials</span>
+          <span class="flag flag-partial">⚠️ Contains Sample Questions (via linked FLDOE resources)</span>
+        </div>
+        <div class="res-description">SF College's guide references the FCLE Study Center (a free self-paced Canvas course for SF students), published study guides (including FCLE Study Guide 2025–2026 and the 3-Week Solution by Civics Prep Academy Lab), and the FSCJ open textbook. Also links to TestPrep-Online and CLEP practice tests as supplemental preparation.</div>
+      </div>
+    </div>
+
+    <div class="res-card college">
+      <div class="res-card-top">
+        <span class="res-type-chip">FL College</span>
+        <div class="res-title-group">
+          <div class="res-site-name">St. Petersburg College (SPC) — Civic Literacy Competency Study Resources (LibGuide)</div>
+          <div class="res-updated">Last Updated: 2024–2025 | Publisher: SPC Library</div>
+        </div>
+      </div>
+      <div class="res-card-body">
+        <div class="res-link-row">
+          <span class="res-link-label">URL</span>
+          <a href="https://spcollege.libguides.com/civicliteracy/study" target="_blank">https://spcollege.libguides.com/civicliteracy/study</a>
+        </div>
+        <div class="res-flags">
+          <span class="flag flag-yes">✅ Contains FCLE Study Materials</span>
+          <span class="flag flag-partial">⚠️ Contains Sample Questions (via FLDOE links)</span>
+        </div>
+        <div class="res-description">SPC's guide focuses on linking students to the FLDOE Supplemental Guide, the official practice test, Modern States American Government free course, and USCIS Civics Review materials. Clean and concise resource list that effectively aggregates the most useful official and supplemental prep tools.</div>
+      </div>
+    </div>
+
+    <div class="res-card college">
+      <div class="res-card-top">
+        <span class="res-type-chip">FL College</span>
+        <div class="res-title-group">
+          <div class="res-site-name">Daytona State College (DSC) — FCLE Library Guide &amp; Testing Center Page</div>
+          <div class="res-updated">Last Updated: ~3 weeks before March 2026 | Publisher: DSC Library &amp; Testing Center</div>
+        </div>
+      </div>
+      <div class="res-card-body">
+        <div class="res-link-row">
+          <span class="res-link-label">LibGuide</span>
+          <a href="https://library.daytonastate.edu/Florida-Civic-Literacy-Exam/practice" target="_blank">https://library.daytonastate.edu/Florida-Civic-Literacy-Exam/practice</a>
+        </div>
+        <div class="res-link-row">
+          <span class="res-link-label">Testing</span>
+          <a href="https://www.daytonastate.edu/testing-center/civic-literacy.html" target="_blank">https://www.daytonastate.edu/testing-center/civic-literacy.html</a>
+        </div>
+        <div class="res-flags">
+          <span class="flag flag-yes">✅ Contains FCLE Study Materials</span>
+          <span class="flag flag-partial">⚠️ Contains Sample Questions (linked resources)</span>
+        </div>
+        <div class="res-description">DSC provides separate Library (practice resources) and Testing Center (exam logistics) pages. The library guide organizes practice materials by format and includes naturalization civics test resources. The Testing Center page clearly explains walk-in availability across five campuses and remote testing options. One of the most user-friendly exam process pages.</div>
+      </div>
+    </div>
+
+    <div class="res-card college">
+      <div class="res-card-top">
+        <span class="res-type-chip">FL College</span>
+        <div class="res-title-group">
+          <div class="res-site-name">Pasco-Hernando State College (PHSC) — Florida Civic Literacy Exam Page</div>
+          <div class="res-updated">Last Updated: 2024–2025 | Publisher: PHSC Testing Services</div>
+        </div>
+      </div>
+      <div class="res-card-body">
+        <div class="res-link-row">
+          <span class="res-link-label">URL</span>
+          <a href="https://testing.phsc.edu/exam/civic/exam" target="_blank">https://testing.phsc.edu/exam/civic/exam</a>
+        </div>
+        <div class="res-flags">
+          <span class="flag flag-yes">✅ Contains FCLE Study Materials (self-enroll Canvas course)</span>
+          <span class="flag flag-partial">⚠️ Contains Sample Questions (linked FLDOE resources)</span>
+        </div>
+        <div class="res-description">PHSC's Social Science department created a FCLE Civic Literacy Study Guide as a self-enroll Canvas course (myPHSC login required). The testing page also covers exam logistics: first attempt is free, retakes are $5, 30-day wait between retakes, and the exam requires a passing score of 48/80. Also references Modern States as a free CLEP-compatible prep option.</div>
+      </div>
+    </div>
+
+    <div class="res-card college">
+      <div class="res-card-top">
+        <span class="res-type-chip">FL College</span>
+        <div class="res-title-group">
+          <div class="res-site-name">Valencia College — FCLE Student Information Page</div>
+          <div class="res-updated">Last Updated: Current academic year | Publisher: Valencia College Assessment</div>
+        </div>
+      </div>
+      <div class="res-card-body">
+        <div class="res-link-row">
+          <span class="res-link-label">URL</span>
+          <a href="https://valenciacollege.edu/students/assessments/fcle.php" target="_blank">https://valenciacollege.edu/students/assessments/fcle.php</a>
+        </div>
+        <div class="res-flags">
+          <span class="flag flag-partial">⚠️ Study Materials (FLDOE links, platform orientation)</span>
+          <span class="flag flag-yes">✅ Contains FCLE Sample Questions (via official practice test link)</span>
+        </div>
+        <div class="res-description">Valencia's page provides clear step-by-step instructions for accessing the official FLDOE practice test on Cambium, exam structure details (80 questions, 4 domains, ~1.5 hours), scheduling guidance, and a note that retakes have no fee and no limit (7-day wait). Simple and well-organized for first-time students.</div>
+      </div>
+    </div>
+
+    <div class="res-card college">
+      <div class="res-card-top">
+        <span class="res-type-chip">FL College</span>
+        <div class="res-title-group">
+          <div class="res-site-name">Tallahassee State College (TSC) — Test Resources &amp; Civic Literacy Workshops</div>
+          <div class="res-updated">Last Updated: Spring 2026 | Publisher: TSC Learning Commons</div>
+        </div>
+      </div>
+      <div class="res-card-body">
+        <div class="res-link-row">
+          <span class="res-link-label">URL</span>
+          <a href="https://www.tsc.fl.edu/academics/academic-divisions/learning-commons/test-resources/" target="_blank">https://www.tsc.fl.edu/academics/academic-divisions/learning-commons/test-resources/</a>
+        </div>
+        <div class="res-flags">
+          <span class="flag flag-yes">✅ Contains FCLE Study Materials</span>
+          <span class="flag flag-partial">⚠️ Contains Sample Questions (via FLDOE links)</span>
+        </div>
+        <div class="res-description">TSC's Learning Commons offers hybrid FCLE Workshops (Spring 2026: Wednesdays 1:30–2:30 PM and Thursdays 2–3 PM, in-person or Zoom). Recorded workshop videos are also available. The page lists recommended resources including the FLDOE Supplemental Guide, FCLE Sample Items PDF, and the USCIS "One Nation, One People" civics textbook (free PDF download).</div>
+      </div>
+    </div>
+
+    <div class="res-card college">
+      <div class="res-card-top">
+        <span class="res-type-chip">FL College</span>
+        <div class="res-title-group">
+          <div class="res-site-name">State College of Florida, Sarasota-Manatee (SCF) — Civic Literacy LibGuide</div>
+          <div class="res-updated">Last Updated: 2024–2025 | Publisher: SCF Libraries</div>
+        </div>
+      </div>
+      <div class="res-card-body">
+        <div class="res-link-row">
+          <span class="res-link-label">URL</span>
+          <a href="https://libguides.scf.edu/CivicLiteracy" target="_blank">https://libguides.scf.edu/CivicLiteracy</a>
+        </div>
+        <div class="res-flags">
+          <span class="flag flag-yes">✅ Contains FCLE Study Materials</span>
+          <span class="flag flag-partial">⚠️ Contains Sample Questions (via FLDOE resources)</span>
+        </div>
+        <div class="res-description">SCF's guide highlights TASC (Testing and Academic Support Center) services including mini-sessions, bootcamps, and a Canvas Review Course. Also references the FLDOE Supplemental Guide and Sample Items. Provides links to both the FLDOE FCLE page and the Florida Board of Governors postsecondary civic literacy page.</div>
+      </div>
+    </div>
+
+    <div class="res-card college">
+      <div class="res-card-top">
+        <span class="res-type-chip">FL College</span>
+        <div class="res-title-group">
+          <div class="res-site-name">South Florida State College (SFSC) — FCLE Student Page</div>
+          <div class="res-updated">Last Updated: Fall 2025 | Publisher: SFSC</div>
+        </div>
+      </div>
+      <div class="res-card-body">
+        <div class="res-link-row">
+          <span class="res-link-label">URL</span>
+          <a href="https://www.southflorida.edu/current-students/graduation/florida-civic-literacy-exam-fcle" target="_blank">https://www.southflorida.edu/current-students/graduation/florida-civic-literacy-exam-fcle</a>
+        </div>
+        <div class="res-flags">
+          <span class="flag flag-yes">✅ Contains FCLE Study Materials</span>
+          <span class="flag flag-partial">⚠️ Contains Sample Questions (via official FLDOE links)</span>
+        </div>
+        <div class="res-description">SFSC's page is notable for aggregating an unusually comprehensive list of external FCLE and civics resources in one place, including the official FLDOE Supplemental Guide and Sample Items PDFs, FAU's YouTube prep videos (Test Prep 1 &amp; 2), Dr. Ali Jencik's Founding Documents bootcamp video, C-SPAN Classroom lesson plans, and Khan Academy AP Government links.</div>
+      </div>
+    </div>
+
+  </div><!-- /college cards -->
+
+
+  <!-- ══════════════════════════════════════════════════════ -->
+  <!-- SECTION 4: SUPPLEMENTAL / THIRD-PARTY                 -->
+  <!-- ══════════════════════════════════════════════════════ -->
+  <div class="section-header supp">
+    <div class="sh-icon">🛠️</div>
+    <div>
+      <h2>Supplemental &amp; Third-Party Resources</h2>
+      <p>Free tools, flashcard platforms, and open courses useful for FCLE preparation — not officially endorsed by FLDOE</p>
+    </div>
+  </div>
+
+  <div class="resource-cards">
+
+    <div class="res-card supp">
+      <div class="res-card-top">
+        <span class="res-type-chip">Supplemental</span>
+        <div class="res-title-group">
+          <div class="res-site-name">FSCJ Open Textbook — Florida Civic Literacy Exam Study Guide (Pressbooks)</div>
+          <div class="res-updated">Last Updated: 2024 (CC-BY 4.0 License) | Publisher: FSCJ Library &amp; Learning Commons</div>
+        </div>
+      </div>
+      <div class="res-card-body">
+        <div class="res-link-row">
+          <span class="res-link-label">URL</span>
+          <a href="https://fscj.pressbooks.pub/fcle/" target="_blank">https://fscj.pressbooks.pub/fcle/</a>
+        </div>
+        <div class="res-flags">
+          <span class="flag flag-yes">✅ Contains FCLE Study Materials</span>
+          <span class="flag flag-no">❌ Does Not Contain FCLE Sample Questions</span>
+        </div>
+        <div class="res-description">A complete, freely downloadable FCLE study textbook published under Creative Commons. Edited by Shannon Dew, Lisa Taylor, and Carson Welch at FSCJ. This is one of the few purpose-built open-access textbooks designed specifically for the FCLE — available in web, PDF, and eBook formats. Any instructor may adapt or reuse under CC-BY 4.0.</div>
+      </div>
+    </div>
+
+    <div class="res-card supp">
+      <div class="res-card-top">
+        <span class="res-type-chip">Supplemental</span>
+        <div class="res-title-group">
+          <div class="res-site-name">Quizlet — FCLE Study Guide Flashcards (Multiple Sets)</div>
+          <div class="res-updated">Last Updated: 2025 | Publisher: Community contributors</div>
+        </div>
+      </div>
+      <div class="res-card-body">
+        <div class="res-link-row">
+          <span class="res-link-label">Set 1</span>
+          <a href="https://quizlet.com/791732754/florida-civic-literacy-exam-fcle-study-guide-flash-cards/" target="_blank">https://quizlet.com/791732754/florida-civic-literacy-exam-fcle-study-guide-flash-cards/</a>
+        </div>
+        <div class="res-link-row">
+          <span class="res-link-label">Set 2</span>
+          <a href="https://quizlet.com/508978803/florida-civic-literacy-test-questions-flash-cards/" target="_blank">https://quizlet.com/508978803/florida-civic-literacy-test-questions-flash-cards/</a>
+        </div>
+        <div class="res-link-row">
+          <span class="res-link-label">Set 3</span>
+          <a href="https://quizlet.com/305202132/civic-literacy-review-flash-cards/" target="_blank">https://quizlet.com/305202132/civic-literacy-review-flash-cards/</a>
+        </div>
+        <div class="res-flags">
+          <span class="flag flag-yes">✅ Contains FCLE Study Materials</span>
+          <span class="flag flag-yes">✅ Contains FCLE Sample Questions</span>
+        </div>
+        <div class="res-description">Quizlet hosts numerous community-created FCLE flashcard sets. The most popular sets (linked above) include 100–153 question-and-answer pairs covering all four FCLE domains. Marked "Verified 2025." Note: these are community-created, not official FLDOE content — verify any answers against authoritative sources. Free to use; some Quizlet features require a paid account.</div>
+      </div>
+    </div>
+
+    <div class="res-card supp">
+      <div class="res-card-top">
+        <span class="res-type-chip">Supplemental</span>
+        <div class="res-title-group">
+          <div class="res-site-name">Modern States — Free American Government Course (CLEP Prep)</div>
+          <div class="res-updated">Last Updated: Continuously maintained | Publisher: Modern States Education Alliance</div>
+        </div>
+      </div>
+      <div class="res-card-body">
+        <div class="res-link-row">
+          <span class="res-link-label">URL</span>
+          <a href="https://modernstates.org/course/american-government/" target="_blank">https://modernstates.org/course/american-government/</a>
+        </div>
+        <div class="res-flags">
+          <span class="flag flag-yes">✅ Contains FCLE Study Materials</span>
+          <span class="flag flag-partial">⚠️ Contains Sample Questions (CLEP-style, not FCLE-specific)</span>
+        </div>
+        <div class="res-description">Modern States offers a 100% free, self-paced 4-week online course (approximately 6 hours/week) covering American Government content that aligns with FCLE competencies. After completing the course, students can apply for a free CLEP exam voucher. Passing the CLEP American Government exam satisfies both the FCLE course and assessment requirements — making this a full alternative pathway to the exam itself. Referenced by virtually every Florida college guide.</div>
+      </div>
+    </div>
+
+    <div class="res-card supp">
+      <div class="res-card-top">
+        <span class="res-type-chip">Supplemental</span>
+        <div class="res-title-group">
+          <div class="res-site-name">Khan Academy — AP/College U.S. Government &amp; Politics</div>
+          <div class="res-updated">Last Updated: Continuously maintained | Publisher: Khan Academy</div>
+        </div>
+      </div>
+      <div class="res-card-body">
+        <div class="res-link-row">
+          <span class="res-link-label">Gov</span>
+          <a href="https://www.khanacademy.org/humanities/ap-us-government-and-politics" target="_blank">https://www.khanacademy.org/humanities/ap-us-government-and-politics</a>
+        </div>
+        <div class="res-link-row">
+          <span class="res-link-label">History</span>
+          <a href="https://www.khanacademy.org/humanities/us-history" target="_blank">https://www.khanacademy.org/humanities/us-history</a>
+        </div>
+        <div class="res-flags">
+          <span class="flag flag-yes">✅ Contains FCLE Study Materials</span>
+          <span class="flag flag-partial">⚠️ Contains Sample Questions (AP-style practice, not FCLE-specific)</span>
+        </div>
+        <div class="res-description">Khan Academy's free AP U.S. Government and U.S. History courses cover nearly all FCLE content areas. Includes video lessons, articles, and AP-style practice questions. Particularly strong on the Constitution, branches of government, civil rights, and landmark Supreme Court cases. Recommended by multiple Florida college LibGuides as a core supplemental resource.</div>
+      </div>
+    </div>
+
+    <div class="res-card supp">
+      <div class="res-card-top">
+        <span class="res-type-chip">Supplemental</span>
+        <div class="res-title-group">
+          <div class="res-site-name">FAU Civic Literacy Prep Videos — YouTube (Florida Atlantic University)</div>
+          <div class="res-updated">Last Updated: 2023–2024 | Publisher: Florida Atlantic University</div>
+        </div>
+      </div>
+      <div class="res-card-body">
+        <div class="res-link-row">
+          <span class="res-link-label">Video 1</span>
+          <a href="https://www.youtube.com/watch?v=_6f7HCGLvug" target="_blank">https://www.youtube.com/watch?v=_6f7HCGLvug</a>
+        </div>
+        <div class="res-link-row">
+          <span class="res-link-label">Video 2</span>
+          <a href="https://www.youtube.com/watch?v=vNeS6GTIyIU" target="_blank">https://www.youtube.com/watch?v=vNeS6GTIyIU</a>
+        </div>
+        <div class="res-flags">
+          <span class="flag flag-yes">✅ Contains FCLE Study Materials</span>
+          <span class="flag flag-partial">⚠️ Contains Sample Questions (embedded in lectures)</span>
+        </div>
+        <div class="res-description">Free YouTube video lectures produced by FAU specifically targeting the FCLE. Referenced and recommended by multiple FCS college LibGuides (Broward, SFSC). FAU Civic Literacy Test Prep 1 and 2 are lecture-format videos covering key civics content areas tested on the FCLE.</div>
+      </div>
+    </div>
+
+    <div class="res-card supp">
+      <div class="res-card-top">
+        <span class="res-type-chip">Supplemental</span>
+        <div class="res-title-group">
+          <div class="res-site-name">Founding Documents Civic Literacy Bootcamp — YouTube (Dr. Ali Jencik)</div>
+          <div class="res-updated">Last Updated: 2022–2023 | Publisher: Dr. Ali Jencik / YouTube</div>
+        </div>
+      </div>
+      <div class="res-card-body">
+        <div class="res-link-row">
+          <span class="res-link-label">URL</span>
+          <a href="https://youtu.be/UG1QztGCaBE?si=2F7W6vlllKCUuj8k" target="_blank">https://youtu.be/UG1QztGCaBE?si=2F7W6vlllKCUuj8k</a>
+        </div>
+        <div class="res-flags">
+          <span class="flag flag-yes">✅ Contains FCLE Study Materials</span>
+          <span class="flag flag-no">❌ Does Not Contain FCLE Sample Questions</span>
+        </div>
+        <div class="res-description">A dedicated YouTube bootcamp video focused on the Founding Documents domain of the FCLE — one of the four exam sections. Specifically recommended by SFSC's student resource page. Covers the Declaration of Independence, Articles of Confederation, Constitution, and other primary founding documents tested on the exam.</div>
+      </div>
+    </div>
+
+    <div class="res-card supp">
+      <div class="res-card-top">
+        <span class="res-type-chip">Supplemental</span>
+        <div class="res-title-group">
+          <div class="res-site-name">Oyez Project — Landmark Supreme Court Cases</div>
+          <div class="res-updated">Last Updated: Continuously maintained | Publisher: Illinois Tech Chicago-Kent College of Law</div>
+        </div>
+      </div>
+      <div class="res-card-body">
+        <div class="res-link-row">
+          <span class="res-link-label">URL</span>
+          <a href="https://www.oyez.org/cases" target="_blank">https://www.oyez.org/cases</a>
+        </div>
+        <div class="res-flags">
+          <span class="flag flag-yes">✅ Contains FCLE Study Materials</span>
+          <span class="flag flag-no">❌ Does Not Contain FCLE Sample Questions</span>
+        </div>
+        <div class="res-description">Oyez is directly hyperlinked in the FLDOE Supplemental Guide as the recommended source for landmark Supreme Court case summaries. Provides plain-language case overviews, oral argument audio, and decision summaries. Essential for FCLE Domain 4 (Landmark Impact on Law &amp; Society). The FLDOE Supplemental Guide lists every case students should know and links directly to Oyez summaries.</div>
+      </div>
+    </div>
+
+    <div class="res-card supp">
+      <div class="res-card-top">
+        <span class="res-type-chip">Supplemental</span>
+        <div class="res-title-group">
+          <div class="res-site-name">National Archives — Founding Documents (Declaration, Constitution, Bill of Rights)</div>
+          <div class="res-updated">Last Updated: Continuously maintained | Publisher: U.S. National Archives and Records Administration</div>
+        </div>
+      </div>
+      <div class="res-card-body">
+        <div class="res-link-row">
+          <span class="res-link-label">URL</span>
+          <a href="https://www.archives.gov/founding-docs" target="_blank">https://www.archives.gov/founding-docs</a>
+        </div>
+        <div class="res-flags">
+          <span class="flag flag-yes">✅ Contains FCLE Study Materials</span>
+          <span class="flag flag-no">❌ Does Not Contain FCLE Sample Questions</span>
+        </div>
+        <div class="res-description">The National Archives hosts official transcripts of the Declaration of Independence, U.S. Constitution, Bill of Rights, and other foundational documents directly referenced on the FCLE. Also referenced in the FLDOE Supplemental Guide. Essential for accurate, authoritative text of primary source documents that appear in exam questions.</div>
+      </div>
+    </div>
+
+    <div class="res-card supp">
+      <div class="res-card-top">
+        <span class="res-type-chip">Supplemental</span>
+        <div class="res-title-group">
+          <div class="res-site-name">National Constitution Center — Interactive Constitution</div>
+          <div class="res-updated">Last Updated: Continuously maintained | Publisher: National Constitution Center</div>
+        </div>
+      </div>
+      <div class="res-card-body">
+        <div class="res-link-row">
+          <span class="res-link-label">URL</span>
+          <a href="https://constitutioncenter.org/the-constitution" target="_blank">https://constitutioncenter.org/the-constitution</a>
+        </div>
+        <div class="res-flags">
+          <span class="flag flag-yes">✅ Contains FCLE Study Materials</span>
+          <span class="flag flag-no">❌ Does Not Contain FCLE Sample Questions</span>
+        </div>
+        <div class="res-description">The NCC's Interactive Constitution provides clause-by-clause analysis of every provision of the Constitution and all 27 amendments, written by leading constitutional scholars from across the political spectrum. Excellent for deep study of Domains 2 (U.S. Constitution) and 3 (Founding Documents). Also hosts the Declaration of Independence, Federalist Papers references, and a historic document library.</div>
+      </div>
+    </div>
+
+  </div><!-- /supp cards -->
+
+</main>
+
+<footer>
+  <p>Florida Civics Literacy Exam (FCLE) Resource Links Directory &nbsp;|&nbsp; Compiled March 2026</p>
+  <p style="margin-top:6px;">Official exam information: <a href="https://www.fldoe.org/accountability/assessments/k-12-student-assessment/fcle.stml" target="_blank">FLDOE FCLE Page</a> &nbsp;|&nbsp; Supplemental Guide: <a href="https://www.fldoe.org/core/fileparse.php/5663/urlt/SuppGuideFCLE.pdf" target="_blank">Download PDF</a></p>
+  <p style="margin-top:6px; font-size:0.74rem;">Links were verified in March 2026. External sites may change without notice. This directory is not affiliated with or endorsed by the Florida Department of Education.</p>
+</footer>
+
+</body>
+</html>

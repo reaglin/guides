@@ -1,0 +1,1266 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>COP 4708 – Module 6: SQL DQL</title>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700;800&family=Source+Sans+3:ital,wght@0,300;0,400;0,600;0,700;1,400&family=Source+Code+Pro:wght@400;600&display=swap" rel="stylesheet"/>
+  <style>
+    *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+    :root{
+      --navy:#0b1929;--deep-teal:#0e4d6e;--teal:#1672a0;--sky:#2196c4;
+      --ice:#d6eaf8;--pale:#eaf4fb;
+      --ind:#2d3a8c;--ind-mid:#3d4eaa;--ind-bright:#5568cc;
+      --ind-light:#eef0fb;--ind-border:#b0bcee;
+      --jade:#1a6b50;--jade-light:#e4f5ef;--jade-border:#8dd4b8;
+      --gold:#8a5c00;--gold-light:#fdf5e0;--gold-border:#e8c87a;
+      --burg:#7b1d3a;--burg-light:#f9eaee;--burg-border:#e0a0b0;
+      --purple:#5040a0;--purple-light:#eeeaff;
+      --red:#aa3030;--red-light:#fdecea;
+      --amber:#c8720c;--amber-light:#fdf0e2;--amber-border:#f5c48a;
+      --white:#fff;--off-white:#f5f8fc;--border:#c4d8ea;
+      --text:#18293c;--muted:#557a92;--radius:10px;
+      --shadow:0 4px 20px rgba(11,25,41,.09);
+      --shadow-lg:0 8px 32px rgba(11,25,41,.14);
+    }
+    html{scroll-behavior:smooth}
+    body{font-family:'Source Sans 3',sans-serif;color:var(--text);background:var(--off-white);line-height:1.72}
+    header{background:linear-gradient(145deg,#080d2a 0%,#14195e 45%,#0b1929 100%);color:#fff;position:relative;overflow:hidden}
+    header::before{content:'';position:absolute;inset:0;
+      background:radial-gradient(ellipse at 72% 22%,rgba(85,104,204,.45) 0%,transparent 55%),
+                 radial-gradient(ellipse at 12% 78%,rgba(14,77,110,.28) 0%,transparent 50%);pointer-events:none}
+    header::after{content:'';position:absolute;right:16px;top:16px;width:360px;height:230px;
+      background:url("data:image/svg+xml,%3Csvg viewBox='0 0 360 230' xmlns='http://www.w3.org/2000/svg'%3E%3Ctext x='10' y='40' font-family='monospace' font-size='22' fill='%235568cc' fill-opacity='.20' font-weight='700'%3ESELECT%3C/text%3E%3Ctext x='10' y='65' font-family='monospace' font-size='13' fill='%235568cc' fill-opacity='.14'%3E    LastName%2C GPA%3C/text%3E%3Ctext x='10' y='84' font-family='monospace' font-size='13' fill='%235568cc' fill-opacity='.12'%3EFROM Student%3C/text%3E%3Ctext x='10' y='103' font-family='monospace' font-size='13' fill='%235568cc' fill-opacity='.12'%3EWHERE GPA %26gt%3B 3.5%3C/text%3E%3Ctext x='10' y='122' font-family='monospace' font-size='13' fill='%235568cc' fill-opacity='.10'%3EORDER BY LastName%3B%3C/text%3E%3Ctext x='10' y='158' font-family='monospace' font-size='16' fill='%231672a0' fill-opacity='.18' font-weight='700'%3EINNER JOIN ... ON ...%3C/text%3E%3Ctext x='10' y='192' font-family='monospace' font-size='15' fill='%23557a92' fill-opacity='.15' font-weight='700'%3EGROUP BY ... HAVING ...%3C/text%3E%3C/svg%3E");
+      background-size:contain;background-repeat:no-repeat;pointer-events:none}
+    .header-inner{position:relative;z-index:1;max-width:980px;margin:0 auto;padding:52px 32px 44px}
+    .course-badge{display:inline-flex;align-items:center;gap:8px;background:rgba(45,58,140,.35);border:1px solid rgba(85,104,204,.45);color:#a8b8f0;font-size:.77rem;font-weight:700;letter-spacing:.12em;text-transform:uppercase;padding:5px 14px;border-radius:20px;margin-bottom:16px}
+    .course-badge::before{content:'◈'}
+    header h1{font-family:'Playfair Display',serif;font-size:2.4rem;line-height:1.18;color:#fff;margin-bottom:10px;max-width:640px}
+    header h1 em{font-style:normal;color:#a8b8f0}
+    header h2{font-size:1.05rem;font-weight:300;color:#90b8d0;margin-bottom:26px;max-width:580px}
+    .header-chips{display:flex;flex-wrap:wrap;gap:10px}
+    .chip{background:rgba(255,255,255,.10);border:1px solid rgba(255,255,255,.18);color:#cce5f5;font-size:.8rem;font-weight:600;padding:5px 14px;border-radius:20px}
+    .outcomes-wrap{background:var(--ind-light);border-left:6px solid var(--ind);max-width:980px;margin:0 auto;border-radius:0 var(--radius) var(--radius) 0;padding:22px 28px}
+    .outcomes-wrap h3{font-family:'Playfair Display',serif;font-size:1rem;color:#1a2060;margin-bottom:14px;display:flex;align-items:center;gap:8px}
+    .outcomes-wrap h3::before{content:'🎯'}
+    .outcomes-wrap ol{padding-left:20px;color:#1a2060;font-size:.93rem}
+    .outcomes-wrap li{margin-bottom:7px}
+    .clo-note{margin-top:14px;font-size:.82rem;color:#1a2060;font-style:italic;font-weight:600}
+    main{max-width:980px;margin:40px auto 64px;padding:0 20px}
+    .progress-nav{background:#fff;border:1px solid var(--border);border-radius:var(--radius);padding:18px 22px;margin-bottom:10px;box-shadow:var(--shadow)}
+    .progress-nav h3{font-size:.77rem;font-weight:700;text-transform:uppercase;letter-spacing:.1em;color:var(--muted);margin-bottom:12px}
+    .nav-links{display:flex;flex-wrap:wrap;gap:8px}
+    .nav-links a{background:var(--pale);border:1px solid var(--border);color:var(--deep-teal);font-size:.8rem;font-weight:600;padding:5px 13px;border-radius:20px;text-decoration:none;transition:all .15s}
+    .nav-links a:hover{background:var(--ind);color:#fff;border-color:var(--ind)}
+    .expand-controls{display:flex;gap:10px;justify-content:flex-end;margin-bottom:16px}
+    .ctrl-btn{background:#fff;border:1px solid var(--border);color:var(--deep-teal);font-size:.8rem;font-weight:700;padding:6px 16px;border-radius:20px;cursor:pointer;transition:all .15s}
+    .ctrl-btn:hover{background:var(--teal);color:#fff;border-color:var(--teal)}
+    .section-label{display:flex;align-items:center;gap:12px;margin:44px 0 8px;flex-wrap:wrap}
+    .section-label .num{background:linear-gradient(135deg,var(--ind),var(--ind-bright));color:#fff;font-family:'Playfair Display',serif;font-size:.95rem;font-weight:700;min-width:36px;height:36px;border-radius:8px;display:flex;align-items:center;justify-content:center;flex-shrink:0;box-shadow:0 3px 10px rgba(45,58,140,.35)}
+    .section-label h2{font-family:'Playfair Display',serif;font-size:1.45rem;color:var(--navy)}
+    .outcome-tag{background:var(--ind-light);border:1px solid var(--ind-border);color:var(--ind);font-size:.72rem;font-weight:700;text-transform:uppercase;letter-spacing:.07em;padding:3px 10px;border-radius:12px}
+    .card{background:#fff;border:1px solid var(--border);border-radius:var(--radius);margin-bottom:14px;box-shadow:var(--shadow);overflow:hidden;transition:box-shadow .2s}
+    .card:hover{box-shadow:var(--shadow-lg)}
+    .card-header{display:flex;align-items:center;justify-content:space-between;padding:17px 22px;cursor:pointer;user-select:none;background:#fff;transition:background .15s;gap:12px}
+    .card-header:hover,.card-header.open{background:var(--pale)}
+    .card-header.open{border-bottom:2px solid var(--ind-bright)}
+    .ch-left{display:flex;align-items:center;gap:12px}
+    .card-icon{font-size:1.35rem;line-height:1}
+    .card-header h3{font-family:'Playfair Display',serif;font-size:1.08rem;color:var(--navy)}
+    .card-header h3 span{display:block;font-family:'Source Sans 3',sans-serif;font-size:.75rem;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.08em;margin-bottom:2px}
+    .toggle-btn{width:28px;height:28px;border-radius:50%;background:var(--ice);border:none;cursor:pointer;display:flex;align-items:center;justify-content:center;flex-shrink:0;transition:background .18s,transform .25s;font-size:.8rem;color:var(--teal);font-weight:700}
+    .toggle-btn.open{background:var(--ind);color:#fff;transform:rotate(180deg)}
+    .card-body{display:none;padding:26px 28px 30px;border-top:1px solid var(--border);animation:fadeSlide .22s ease}
+    .card-body.open{display:block}
+    @keyframes fadeSlide{from{opacity:0;transform:translateY(-8px)}to{opacity:1;transform:translateY(0)}}
+    .card-body h4{font-family:'Playfair Display',serif;font-size:1.02rem;color:var(--deep-teal);margin:24px 0 10px;padding-bottom:6px;border-bottom:1px dashed var(--border)}
+    .card-body h4:first-child{margin-top:0}
+    .card-body p{margin-bottom:14px;font-size:.96rem}
+    .card-body p:last-child{margin-bottom:0}
+    .card-body ul,.card-body ol{padding-left:22px;margin-bottom:14px;font-size:.95rem}
+    .card-body li{margin-bottom:7px}
+    strong{font-weight:700;color:var(--navy)}
+    em{font-style:italic;color:var(--deep-teal)}
+    code{font-family:'Source Code Pro',monospace;font-size:.85em;background:var(--pale);border:1px solid var(--border);color:var(--deep-teal);padding:1px 6px;border-radius:4px}
+    .def-box{background:linear-gradient(135deg,var(--navy) 0%,#080d2a 100%);color:#fff;border-radius:var(--radius);padding:22px 26px;margin:6px 0 18px;position:relative;overflow:hidden}
+    .def-box::before{content:'"';position:absolute;top:-12px;left:16px;font-family:'Playfair Display',serif;font-size:9rem;color:rgba(255,255,255,.04);line-height:1;pointer-events:none}
+    .def-box .def-label{font-size:.7rem;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:#a8b8f0;margin-bottom:8px}
+    .def-box p{font-size:1rem;color:#d8e0f8;font-style:italic;position:relative;z-index:1;margin-bottom:0}
+    .def-box strong{color:#c8d4f8}.def-box em{color:#a8d8f0;font-style:normal;font-weight:600}
+    .callout{border-radius:var(--radius);padding:15px 18px;margin:16px 0;font-size:.93rem;display:flex;gap:12px;align-items:flex-start}
+    .callout-icon{font-size:1.25rem;flex-shrink:0;margin-top:1px}
+    .callout-body{flex:1}
+    .callout-body strong{display:block;margin-bottom:4px}
+    .callout-info{background:var(--ice);border-left:4px solid var(--sky)}
+    .callout-tip{background:var(--jade-light);border-left:4px solid var(--jade)}
+    .callout-warning{background:#fff3e0;border-left:4px solid #e07820}
+    .callout-ind{background:var(--ind-light);border-left:4px solid var(--ind)}
+    .callout-key{background:var(--purple-light);border-left:4px solid var(--purple)}
+    .styled-table{width:100%;border-collapse:collapse;font-size:.91rem;margin:14px 0;border-radius:var(--radius);overflow:hidden;box-shadow:0 2px 12px rgba(11,25,41,.08)}
+    .styled-table thead tr{background:var(--deep-teal);color:#fff}
+    .styled-table thead th{padding:12px 16px;text-align:left;font-weight:700;font-size:.83rem;letter-spacing:.04em;text-transform:uppercase}
+    .styled-table tbody tr{border-bottom:1px solid var(--border);transition:background .12s}
+    .styled-table tbody tr:hover{background:var(--pale)}
+    .styled-table tbody tr:last-child{border-bottom:none}
+    .styled-table tbody td{padding:11px 16px;vertical-align:top}
+    .styled-table td.hl{font-weight:700;color:var(--deep-teal)}
+    .styled-table td.ind{font-weight:700;color:var(--ind)}
+    .styled-table td code{font-size:.83em}
+    .code-wrap{margin:14px 0;border-radius:var(--radius);overflow:hidden;border:1px solid #1a3a55;box-shadow:0 3px 14px rgba(11,25,41,.18)}
+    .code-topbar{background:#152a3e;padding:8px 16px;display:flex;align-items:center;justify-content:space-between}
+    .lang-badge{font-family:'Source Code Pro',monospace;font-size:.72rem;font-weight:600;color:#7ec8e3;text-transform:uppercase;letter-spacing:.1em}
+    .code-dots{display:flex;gap:5px}
+    .code-dots span{width:10px;height:10px;border-radius:50%}
+    .d1{background:#ff5f57}.d2{background:#febc2e}.d3{background:#28c840}
+    pre.code-block{background:#0b1929;color:#c8e6ff;padding:20px 24px;font-family:'Source Code Pro',monospace;font-size:.84rem;line-height:1.85;overflow-x:auto;white-space:pre;word-break:normal;overflow-wrap:normal;margin:0;display:block;tab-size:4}
+    .kw{color:#79b8ff}.nm{color:#ffa07a}.str{color:#9ecbff}.num{color:#f8c555}
+    .cmt{color:#4a7a96;font-style:italic}.grn{color:#7ecb9e}
+    .col{color:#c8f0a0}.tbl{color:#ffd090}
+    .result-wrap{margin:14px 0}
+    .result-label{font-size:.7rem;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--jade);margin-bottom:6px;display:flex;align-items:center;gap:6px}
+    .result-label::before{content:'▶ Result'}
+    .result-table{width:100%;border-collapse:collapse;font-size:.84rem;border-radius:8px;overflow:hidden;box-shadow:0 2px 8px rgba(11,25,41,.10)}
+    .result-table thead tr{background:#1a3020;color:#7ecb9e}
+    .result-table thead th{padding:8px 14px;text-align:left;font-family:'Source Code Pro',monospace;font-size:.79rem;font-weight:600}
+    .result-table tbody tr{border-bottom:1px solid #263a2e;background:#0f2018}
+    .result-table tbody tr:last-child{border-bottom:none}
+    .result-table tbody td{padding:7px 14px;font-family:'Source Code Pro',monospace;font-size:.81rem;color:#a0e8c0}
+    .result-table td.nv{color:#f8c555}
+    .result-footer{font-size:.74rem;color:var(--muted);margin-top:5px;font-family:'Source Code Pro',monospace;padding-left:4px}
+    .kw-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(158px,1fr));gap:11px;margin:14px 0}
+    .kw-card{border-radius:var(--radius);padding:14px 15px;border:1px solid;transition:transform .15s}
+    .kw-card:hover{transform:translateY(-2px)}
+    .kw-name{font-family:'Source Code Pro',monospace;font-size:1rem;font-weight:700;margin-bottom:6px;display:block}
+    .kw-card p{font-size:.82rem;color:var(--text);margin:0}
+    .kw-between{background:var(--jade-light);border-color:var(--jade-border)}.kw-between .kw-name{color:var(--jade)}
+    .kw-like{background:var(--ind-light);border-color:var(--ind-border)}.kw-like .kw-name{color:var(--ind)}
+    .kw-in{background:var(--gold-light);border-color:var(--gold-border)}.kw-in .kw-name{color:var(--gold)}
+    .kw-distinct{background:var(--purple-light);border-color:#c0b0e8}.kw-distinct .kw-name{color:var(--purple)}
+    .kw-and{background:var(--pale);border-color:var(--border)}.kw-and .kw-name{color:var(--deep-teal)}
+    .kw-or{background:var(--amber-light);border-color:var(--amber-border)}.kw-or .kw-name{color:var(--amber)}
+    .kw-not{background:var(--red-light);border-color:#f0b8b8}.kw-not .kw-name{color:var(--red)}
+    .agg-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:11px;margin:14px 0}
+    .agg-card{border-radius:var(--radius);padding:14px 15px;border:2px solid;text-align:center}
+    .agg-fn{font-family:'Source Code Pro',monospace;font-size:1.05rem;font-weight:700;display:block;margin-bottom:5px}
+    .agg-card p{font-size:.81rem;color:var(--text);margin:0}
+    .a-count{background:var(--jade-light);border-color:var(--jade-border)}.a-count .agg-fn{color:var(--jade)}
+    .a-sum{background:var(--ind-light);border-color:var(--ind-border)}.a-sum .agg-fn{color:var(--ind)}
+    .a-avg{background:var(--gold-light);border-color:var(--gold-border)}.a-avg .agg-fn{color:var(--gold)}
+    .a-min{background:var(--burg-light);border-color:var(--burg-border)}.a-min .agg-fn{color:var(--burg)}
+    .a-max{background:var(--purple-light);border-color:#c0b0e8}.a-max .agg-fn{color:var(--purple)}
+    .join-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(210px,1fr));gap:13px;margin:14px 0}
+    .join-card{border-radius:var(--radius);padding:16px 18px;border:2px solid}
+    .jc-title{font-weight:700;font-size:.88rem;text-transform:uppercase;letter-spacing:.06em;margin-bottom:8px}
+    .join-card p{font-size:.84rem;color:var(--text);margin:0 0 6px}
+    .jc-eg{font-size:.78rem;font-style:italic;color:var(--muted);font-family:'Source Code Pro',monospace}
+    .j-inner{background:var(--jade-light);border-color:var(--jade-border)}.j-inner .jc-title{color:var(--jade)}
+    .j-left{background:var(--ind-light);border-color:var(--ind-border)}.j-left .jc-title{color:var(--ind)}
+    .j-right{background:var(--gold-light);border-color:var(--gold-border)}.j-right .jc-title{color:var(--gold)}
+    .j-full{background:var(--purple-light);border-color:#c0b0e8}.j-full .jc-title{color:var(--purple)}
+    .syntax-box{background:#0d2035;border:1px solid #2a4460;border-radius:var(--radius);padding:18px 22px;margin:14px 0}
+    .syn-label{font-size:.7rem;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:#a8b8f0;margin-bottom:10px}
+    pre.syn-block{font-family:'Source Code Pro',monospace;font-size:.84rem;line-height:1.85;color:#c8e6ff;white-space:pre;overflow-x:auto;margin:0}
+    .syn-opt{color:#7a9bb5}.syn-var{color:#a8b8f0;font-style:italic}
+    .strip{background:linear-gradient(90deg,var(--ind) 0%,var(--ind-bright) 100%);color:#fff;border-radius:var(--radius);padding:18px 24px;margin:16px 0;font-size:.95rem}
+    .strip strong{color:#d0d8ff}
+    .checklist{list-style:none;padding:0;margin:0}
+    .checklist li{padding:7px 0;font-size:.93rem;border-bottom:1px dashed var(--border);display:flex;align-items:baseline;gap:10px}
+    .checklist li:last-child{border-bottom:none}
+    .checklist li::before{content:'☐';font-size:1rem;flex-shrink:0}
+    .two-col{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin:14px 0}
+    @media(max-width:660px){.two-col{grid-template-columns:1fr};header h1{font-size:1.85rem}}
+    footer{background:var(--navy);color:#6a90aa;text-align:center;padding:28px 20px;font-size:.82rem}
+    footer span{color:#a0c4dc;font-weight:700}
+  </style>
+</head>
+<body>
+<header>
+  <div class="header-inner">
+    <div class="course-badge">COP 4708 · Introduction to Databases</div>
+    <h1>Module 6: <em>SQL Data Query<br/>Language (DQL)</em></h1>
+    <h2>Retrieving, filtering, sorting, and aggregating data — from basic single-table queries through subqueries and multi-table joins</h2>
+    <div class="header-chips">
+      <span class="chip">📘 Module 6</span>
+      <span class="chip">🎓 CLO 3 Support</span>
+      <span class="chip">⏱ Estimated 80–100 min</span>
+      <span class="chip">7 Learning Outcomes</span>
+    </div>
+  </div>
+</header>
+<div class="outcomes-wrap">
+  <h3>Module Learning Outcomes</h3>
+  <ol>
+    <li>Use the <em>SELECT / FROM / WHERE</em> framework as the basis for all database queries</li>
+    <li>Create SQL queries to retrieve data from a <em>single table</em></li>
+    <li>Create queries using <em>SELECT, FROM, WHERE,</em> and <em>ORDER BY</em></li>
+    <li>Create queries using <em>DISTINCT, AND, OR, NOT, BETWEEN, LIKE,</em> and <em>IN</em></li>
+    <li>Create queries using aggregate functions: <em>SUM, COUNT, MIN, MAX,</em> and <em>AVG</em></li>
+    <li>Retrieve data from a single table restricted by data in another table using a <em>subquery</em></li>
+    <li>Retrieve data from multiple tables using a SQL <em>JOIN</em> operation</li>
+  </ol>
+  <p class="clo-note">📌 Supports CLO 3: Write SQL queries to retrieve and manipulate data.</p>
+</div>
+<main>
+  <div class="progress-nav">
+    <h3>Jump to Section</h3>
+    <div class="nav-links">
+      <a href="#sec1">1. DQL Overview</a>
+      <a href="#sec2">2. SELECT / FROM / WHERE</a>
+      <a href="#sec3">3. ORDER BY &amp; DISTINCT</a>
+      <a href="#sec4">4. AND, OR, NOT, BETWEEN, LIKE, IN</a>
+      <a href="#sec5">5. Aggregate Functions</a>
+      <a href="#sec6">6. GROUP BY &amp; HAVING</a>
+      <a href="#sec7">7. Subqueries</a>
+      <a href="#sec8">8. JOIN Operations</a>
+      <a href="#sec9">9. Summary &amp; Checklist</a>
+    </div>
+  </div>
+  <div class="expand-controls">
+    <button class="ctrl-btn" onclick="setAll(true)">Expand All</button>
+    <button class="ctrl-btn" onclick="setAll(false)">Collapse All</button>
+  </div>
+
+  <!-- ═══ SECTION 1 — DQL OVERVIEW ═══ -->
+  <div class="section-label" id="sec1">
+    <div class="num">1</div>
+    <h2>DQL Overview — The Language of Questions</h2>
+    <span class="outcome-tag">Foundation</span>
+  </div>
+  <div class="card">
+    <div class="card-header open" onclick="toggle(this)">
+      <div class="ch-left"><span class="card-icon">🔍</span>
+        <h3><span>Foundation · What is DQL</span>What SELECT Does and How Queries Are Processed</h3>
+      </div>
+      <button class="toggle-btn open">▲</button>
+    </div>
+    <div class="card-body open">
+      <div class="def-box">
+        <div class="def-label">Definition — Data Query Language (DQL)</div>
+        <p><strong>DQL</strong> is the subset of SQL used to <em>retrieve</em> data from a database. It consists of a single command — <strong>SELECT</strong> — which can be combined with clauses like FROM, WHERE, ORDER BY, GROUP BY, HAVING, and JOIN to answer virtually any question about the data. DQL never modifies data; it only reads it.</p>
+      </div>
+      <h4>The SELECT Statement — Clause Anatomy</h4>
+      <div class="syntax-box">
+        <div class="syn-label">T-SQL · Full SELECT Statement — All Clauses in Execution Order</div>
+        <pre class="syn-block"><span class="kw">SELECT</span>   <span class="syn-var">column_list</span>          <span class="cmt">-- 5. Which columns (or expressions) to return</span>
+<span class="kw">FROM</span>     <span class="syn-var">table_name</span>           <span class="cmt">-- 1. Which table(s) to read from</span>
+<span class="syn-opt">[<span class="kw">JOIN</span>    <span class="syn-var">other_table</span> <span class="kw">ON</span> <span class="syn-var">condition</span>]</span>  <span class="cmt">-- 2. Combine rows from multiple tables</span>
+<span class="syn-opt">[<span class="kw">WHERE</span>   <span class="syn-var">condition</span>]</span>           <span class="cmt">-- 3. Filter individual rows</span>
+<span class="syn-opt">[<span class="kw">GROUP BY</span> <span class="syn-var">column</span>]</span>            <span class="cmt">-- 4. Collapse rows into groups</span>
+<span class="syn-opt">[<span class="kw">HAVING</span>  <span class="syn-var">group_condition</span>]</span>    <span class="cmt">-- 5. Filter groups (like WHERE for groups)</span>
+<span class="syn-opt">[<span class="kw">ORDER BY</span> <span class="syn-var">column</span> <span class="kw">ASC</span>|<span class="kw">DESC</span>]</span>  <span class="cmt">-- 6. Sort the final results</span>
+<span class="syn-opt">[<span class="kw">OFFSET</span>  <span class="syn-var">n</span> <span class="kw">ROWS FETCH NEXT</span> <span class="syn-var">m</span> <span class="kw">ROWS ONLY</span>]</span>  <span class="cmt">-- 7. Pagination</span></pre>
+      </div>
+      <div class="callout callout-ind">
+        <span class="callout-icon">⚙️</span>
+        <div class="callout-body">
+          <strong>Write Order vs. Execution Order</strong>
+          SQL clauses are written in a specific order (SELECT → FROM → WHERE → GROUP BY → HAVING → ORDER BY), but the database engine executes them in a different order: <strong>FROM → JOIN → WHERE → GROUP BY → HAVING → SELECT → ORDER BY</strong>. This explains why you can't reference a SELECT alias in a WHERE clause — WHERE runs before SELECT assigns the alias.
+        </div>
+      </div>
+      <h4>The Sample Database — Used Throughout This Module</h4>
+      <p>All examples use the Student Registration schema from Module 5. Here is the data we'll be querying:</p>
+      <table class="styled-table">
+        <thead><tr><th colspan="5">Student Table (sample data)</th></tr>
+          <tr><th>StudentID</th><th>LastName</th><th>FirstName</th><th>DeclaredMajor</th><th>GPA</th></tr>
+        </thead>
+        <tbody>
+          <tr><td class="nv" style="font-family:monospace">1</td><td>Adams</td><td>Maria</td><td>CIS</td><td class="nv" style="font-family:monospace">3.85</td></tr>
+          <tr><td class="nv" style="font-family:monospace">2</td><td>Brown</td><td>James</td><td>MIS</td><td class="nv" style="font-family:monospace">2.70</td></tr>
+          <tr><td class="nv" style="font-family:monospace">3</td><td>Chen</td><td>Li</td><td>CIS</td><td class="nv" style="font-family:monospace">3.50</td></tr>
+          <tr><td class="nv" style="font-family:monospace">4</td><td>Davis</td><td>Sam</td><td>CS</td><td class="nv" style="font-family:monospace">3.10</td></tr>
+          <tr><td class="nv" style="font-family:monospace">5</td><td>Evans</td><td>Pat</td><td>MIS</td><td class="nv" style="font-family:monospace">2.20</td></tr>
+          <tr><td class="nv" style="font-family:monospace">6</td><td>Flores</td><td>Ana</td><td>CIS</td><td class="nv" style="font-family:monospace">3.92</td></tr>
+          <tr><td class="nv" style="font-family:monospace">7</td><td>Green</td><td>Tom</td><td>CS</td><td class="nv" style="font-family:monospace">1.95</td></tr>
+          <tr><td class="nv" style="font-family:monospace">8</td><td>Harris</td><td>Kim</td><td>MIS</td><td class="nv" style="font-family:monospace">3.40</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- ═══ SECTION 2 — SELECT / FROM / WHERE ═══ -->
+  <div class="section-label" id="sec2">
+    <div class="num">2</div>
+    <h2>SELECT, FROM, and WHERE — The Core Framework</h2>
+    <span class="outcome-tag">Outcomes 1 &amp; 2</span>
+  </div>
+  <div class="card">
+    <div class="card-header open" onclick="toggle(this)">
+      <div class="ch-left"><span class="card-icon">📦</span>
+        <h3><span>Outcomes 1 &amp; 2 · Core Clauses</span>SELECT and FROM — Choosing Columns and Tables</h3>
+      </div>
+      <button class="toggle-btn open">▲</button>
+    </div>
+    <div class="card-body open">
+      <h4>SELECT — Specifying Which Columns to Return</h4>
+      <div class="code-wrap">
+        <div class="code-topbar"><div class="code-dots"><span class="d1"></span><span class="d2"></span><span class="d3"></span></div><span class="lang-badge">T-SQL · SELECT Column Variations</span></div>
+        <pre class="code-block"><span class="cmt">-- Return ALL columns (use sparingly — expensive in production)</span>
+<span class="kw">SELECT</span> *
+<span class="kw">FROM</span>   Student;
+
+<span class="cmt">-- Return specific columns (preferred — only retrieve what you need)</span>
+<span class="kw">SELECT</span> LastName, FirstName, GPA
+<span class="kw">FROM</span>   Student;
+
+<span class="cmt">-- Column alias — rename a column in the output</span>
+<span class="kw">SELECT</span>
+    LastName             <span class="kw">AS</span> <span class="str">'Last Name'</span>,
+    FirstName            <span class="kw">AS</span> <span class="str">'First Name'</span>,
+    DeclaredMajor        <span class="kw">AS</span> Major,
+    GPA                  <span class="kw">AS</span> <span class="str">'Grade Point Average'</span>
+<span class="kw">FROM</span>   Student;
+
+<span class="cmt">-- Computed column — perform math or string operations in SELECT</span>
+<span class="kw">SELECT</span>
+    LastName,
+    FirstName,
+    GPA,
+    GPA * <span class="num">4.0</span>           <span class="kw">AS</span> WeightedScore,
+    <span class="grn">CONCAT</span>(FirstName, <span class="str">' '</span>, LastName)  <span class="kw">AS</span> FullName
+<span class="kw">FROM</span>   Student;</pre>
+      </div>
+      <div class="result-wrap">
+        <div class="result-label"></div>
+        <table class="result-table">
+          <thead><tr><th>Last Name</th><th>First Name</th><th>Major</th><th>Grade Point Average</th></tr></thead>
+          <tbody>
+            <tr><td>Adams</td><td>Maria</td><td>CIS</td><td class="nv">3.85</td></tr>
+            <tr><td>Brown</td><td>James</td><td>MIS</td><td class="nv">2.70</td></tr>
+            <tr><td>Chen</td><td>Li</td><td>CIS</td><td class="nv">3.50</td></tr>
+            <tr><td colspan="4" style="color:#4a7a96;font-style:italic">... 5 more rows</td></tr>
+          </tbody>
+        </table>
+        <div class="result-footer">(8 rows returned)</div>
+      </div>
+
+      <h4>TOP — Limiting the Number of Rows Returned</h4>
+      <div class="code-wrap">
+        <div class="code-topbar"><div class="code-dots"><span class="d1"></span><span class="d2"></span><span class="d3"></span></div><span class="lang-badge">T-SQL · SELECT TOP</span></div>
+        <pre class="code-block"><span class="cmt">-- Return only the first N rows</span>
+<span class="kw">SELECT TOP</span> <span class="num">3</span>
+    LastName, FirstName, GPA
+<span class="kw">FROM</span>   Student;
+
+<span class="cmt">-- Return top N percent of rows</span>
+<span class="kw">SELECT TOP</span> <span class="num">25</span> <span class="kw">PERCENT</span>
+    LastName, GPA
+<span class="kw">FROM</span>   Student
+<span class="kw">ORDER BY</span> GPA <span class="kw">DESC</span>;  <span class="cmt">-- TOP is most useful combined with ORDER BY</span></pre>
+      </div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-header open" onclick="toggle(this)">
+      <div class="ch-left"><span class="card-icon">🔎</span>
+        <h3><span>Outcomes 1 &amp; 3 · WHERE Clause</span>WHERE — Filtering Rows with Conditions</h3>
+      </div>
+      <button class="toggle-btn open">▲</button>
+    </div>
+    <div class="card-body open">
+      <p>The <code>WHERE</code> clause filters which rows are included in the result. Only rows where the condition evaluates to <strong>TRUE</strong> are returned. Rows where the condition is FALSE or UNKNOWN (due to NULL) are excluded.</p>
+      <h4>Comparison Operators</h4>
+      <table class="styled-table">
+        <thead><tr><th>Operator</th><th>Meaning</th><th>Example</th></tr></thead>
+        <tbody>
+          <tr><td class="ind"><code>=</code></td><td>Equal to</td><td><code>WHERE DeclaredMajor = 'CIS'</code></td></tr>
+          <tr><td class="ind"><code>&lt;&gt;</code> or <code>!=</code></td><td>Not equal to</td><td><code>WHERE GPA &lt;&gt; 0.00</code></td></tr>
+          <tr><td class="ind"><code>&gt;</code></td><td>Greater than</td><td><code>WHERE GPA &gt; 3.50</code></td></tr>
+          <tr><td class="ind"><code>&lt;</code></td><td>Less than</td><td><code>WHERE Credits &lt; 3</code></td></tr>
+          <tr><td class="ind"><code>&gt;=</code></td><td>Greater than or equal</td><td><code>WHERE GPA &gt;= 3.00</code></td></tr>
+          <tr><td class="ind"><code>&lt;=</code></td><td>Less than or equal</td><td><code>WHERE GPA &lt;= 2.00</code></td></tr>
+          <tr><td class="ind"><code>IS NULL</code></td><td>Value is NULL</td><td><code>WHERE DeclaredMajor IS NULL</code></td></tr>
+          <tr><td class="ind"><code>IS NOT NULL</code></td><td>Value is not NULL</td><td><code>WHERE Phone IS NOT NULL</code></td></tr>
+        </tbody>
+      </table>
+      <div class="code-wrap">
+        <div class="code-topbar"><div class="code-dots"><span class="d1"></span><span class="d2"></span><span class="d3"></span></div><span class="lang-badge">T-SQL · WHERE — Comparison Examples</span></div>
+        <pre class="code-block"><span class="cmt">-- Students with GPA above 3.50</span>
+<span class="kw">SELECT</span> LastName, FirstName, GPA
+<span class="kw">FROM</span>   Student
+<span class="kw">WHERE</span>  GPA &gt; <span class="num">3.50</span>;
+
+<span class="cmt">-- Students in the CIS major</span>
+<span class="kw">SELECT</span> LastName, FirstName
+<span class="kw">FROM</span>   Student
+<span class="kw">WHERE</span>  DeclaredMajor = <span class="str">'CIS'</span>;
+
+<span class="cmt">-- Students who have NOT declared a major yet</span>
+<span class="kw">SELECT</span> LastName, FirstName
+<span class="kw">FROM</span>   Student
+<span class="kw">WHERE</span>  DeclaredMajor <span class="kw">IS NULL</span>;
+
+<span class="cmt">-- ⚠️  Never use = NULL — it will never match any rows
+--     NULL = NULL evaluates to UNKNOWN, not TRUE</span>
+<span class="kw">WHERE</span>  DeclaredMajor = <span class="kw">NULL</span>    <span class="cmt">-- WRONG: always returns 0 rows</span>
+<span class="kw">WHERE</span>  DeclaredMajor <span class="kw">IS NULL</span>   <span class="cmt">-- CORRECT</span></pre>
+      </div>
+      <div class="result-wrap">
+        <div class="result-label"></div>
+        <table class="result-table">
+          <thead><tr><th>LastName</th><th>FirstName</th><th>GPA</th></tr></thead>
+          <tbody>
+            <tr><td>Adams</td><td>Maria</td><td class="nv">3.85</td></tr>
+            <tr><td>Flores</td><td>Ana</td><td class="nv">3.92</td></tr>
+          </tbody>
+        </table>
+        <div class="result-footer">(2 rows — WHERE GPA &gt; 3.50)</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══ SECTION 3 — ORDER BY & DISTINCT ═══ -->
+  <div class="section-label" id="sec3">
+    <div class="num">3</div>
+    <h2>ORDER BY and DISTINCT</h2>
+    <span class="outcome-tag">Outcomes 3 &amp; 4</span>
+  </div>
+  <div class="card">
+    <div class="card-header open" onclick="toggle(this)">
+      <div class="ch-left"><span class="card-icon">🔀</span>
+        <h3><span>Outcomes 3 &amp; 4 · Sorting &amp; Deduplication</span>ORDER BY — Sorting Results; DISTINCT — Eliminating Duplicates</h3>
+      </div>
+      <button class="toggle-btn open">▲</button>
+    </div>
+    <div class="card-body open">
+      <h4>ORDER BY — Sorting Query Results</h4>
+      <p><code>ORDER BY</code> is always the <strong>last clause</strong> in a SELECT statement. Without it, SQL Server makes no guarantee about row order — results may appear in any sequence.</p>
+      <div class="code-wrap">
+        <div class="code-topbar"><div class="code-dots"><span class="d1"></span><span class="d2"></span><span class="d3"></span></div><span class="lang-badge">T-SQL · ORDER BY — All Variations</span></div>
+        <pre class="code-block"><span class="cmt">-- Sort ascending (default — A→Z, lowest→highest)</span>
+<span class="kw">SELECT</span> LastName, FirstName, GPA
+<span class="kw">FROM</span>   Student
+<span class="kw">ORDER BY</span> LastName <span class="kw">ASC</span>;   <span class="cmt">-- ASC is the default; can be omitted</span>
+
+<span class="cmt">-- Sort descending (Z→A, highest→lowest)</span>
+<span class="kw">SELECT</span> LastName, GPA
+<span class="kw">FROM</span>   Student
+<span class="kw">ORDER BY</span> GPA <span class="kw">DESC</span>;
+
+<span class="cmt">-- Multi-column sort — primary sort first, then tiebreaker</span>
+<span class="kw">SELECT</span> DeclaredMajor, LastName, GPA
+<span class="kw">FROM</span>   Student
+<span class="kw">ORDER BY</span> DeclaredMajor <span class="kw">ASC</span>, GPA <span class="kw">DESC</span>;
+<span class="cmt">-- Groups by major alphabetically; within each major, highest GPA first</span>
+
+<span class="cmt">-- Sort by column position number (column 3 = GPA)</span>
+<span class="kw">SELECT</span> LastName, FirstName, GPA
+<span class="kw">FROM</span>   Student
+<span class="kw">ORDER BY</span> <span class="num">3</span> <span class="kw">DESC</span>;   <span class="cmt">-- works but avoid — fragile if columns reordered</span>
+
+<span class="cmt">-- Sort using a SELECT alias</span>
+<span class="kw">SELECT</span> LastName, <span class="grn">CONCAT</span>(FirstName, <span class="str">' '</span>, LastName) <span class="kw">AS</span> FullName, GPA
+<span class="kw">FROM</span>   Student
+<span class="kw">ORDER BY</span> FullName <span class="kw">ASC</span>;   <span class="cmt">-- ORDER BY CAN use aliases (unlike WHERE)</span></pre>
+      </div>
+
+      <div class="result-wrap">
+        <div class="result-label"></div>
+        <table class="result-table">
+          <thead><tr><th>DeclaredMajor</th><th>LastName</th><th>GPA</th></tr></thead>
+          <tbody>
+            <tr><td>CIS</td><td>Flores</td><td class="nv">3.92</td></tr>
+            <tr><td>CIS</td><td>Adams</td><td class="nv">3.85</td></tr>
+            <tr><td>CIS</td><td>Chen</td><td class="nv">3.50</td></tr>
+            <tr><td>CS</td><td>Davis</td><td class="nv">3.10</td></tr>
+            <tr><td>CS</td><td>Green</td><td class="nv">1.95</td></tr>
+            <tr><td>MIS</td><td>Harris</td><td class="nv">3.40</td></tr>
+            <tr><td>MIS</td><td>Brown</td><td class="nv">2.70</td></tr>
+            <tr><td>MIS</td><td>Evans</td><td class="nv">2.20</td></tr>
+          </tbody>
+        </table>
+        <div class="result-footer">(ORDER BY DeclaredMajor ASC, GPA DESC)</div>
+      </div>
+
+      <h4>DISTINCT — Removing Duplicate Rows</h4>
+      <p><code>DISTINCT</code> is placed immediately after SELECT and removes duplicate rows from the result. It applies to the entire row returned, not just one column.</p>
+      <div class="code-wrap">
+        <div class="code-topbar"><div class="code-dots"><span class="d1"></span><span class="d2"></span><span class="d3"></span></div><span class="lang-badge">T-SQL · DISTINCT — Remove Duplicate Values</span></div>
+        <pre class="code-block"><span class="cmt">-- Without DISTINCT — returns a DeclaredMajor for every student row (with repeats)</span>
+<span class="kw">SELECT</span> DeclaredMajor
+<span class="kw">FROM</span>   Student;
+<span class="cmt">-- Returns: CIS, MIS, CIS, CS, MIS, CIS, CS, MIS  (8 rows)</span>
+
+<span class="cmt">-- With DISTINCT — returns each unique value only once</span>
+<span class="kw">SELECT DISTINCT</span> DeclaredMajor
+<span class="kw">FROM</span>   Student;
+<span class="cmt">-- Returns: CIS, MIS, CS  (3 rows)</span>
+
+<span class="cmt">-- DISTINCT on multiple columns — combination must be unique</span>
+<span class="kw">SELECT DISTINCT</span> DeclaredMajor, IsEnrolled
+<span class="kw">FROM</span>   Student;
+<span class="cmt">-- Returns distinct (Major, IsEnrolled) pairs</span>
+
+<span class="cmt">-- Practical use: find all departments that have at least one instructor</span>
+<span class="kw">SELECT DISTINCT</span> DeptID
+<span class="kw">FROM</span>   Instructor
+<span class="kw">ORDER BY</span> DeptID;</pre>
+      </div>
+      <div class="callout callout-tip">
+        <span class="callout-icon">💡</span>
+        <div class="callout-body">
+          <strong>DISTINCT vs. GROUP BY</strong>
+          DISTINCT and GROUP BY with no aggregation produce the same result, but GROUP BY is more powerful because you can add aggregate functions to it. Use DISTINCT when you simply want unique values; use GROUP BY when you also need counts, sums, or other aggregations per group.
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══ SECTION 4 — AND, OR, NOT, BETWEEN, LIKE, IN ═══ -->
+  <div class="section-label" id="sec4">
+    <div class="num">4</div>
+    <h2>DISTINCT, AND, OR, NOT, BETWEEN, LIKE, and IN</h2>
+    <span class="outcome-tag">Outcome 4</span>
+  </div>
+  <div class="card">
+    <div class="card-header open" onclick="toggle(this)">
+      <div class="ch-left"><span class="card-icon">🧩</span>
+        <h3><span>Outcome 4 · Logical &amp; Range Keywords</span>Combining and Extending WHERE Conditions</h3>
+      </div>
+      <button class="toggle-btn open">▲</button>
+    </div>
+    <div class="card-body open">
+      <div class="kw-grid">
+        <div class="kw-card kw-and"><span class="kw-name">AND</span><p>Both conditions must be TRUE. Narrows the result set.</p></div>
+        <div class="kw-card kw-or"><span class="kw-name">OR</span><p>Either condition may be TRUE. Broadens the result set.</p></div>
+        <div class="kw-card kw-not"><span class="kw-name">NOT</span><p>Inverts a condition. Returns rows where condition is FALSE.</p></div>
+        <div class="kw-card kw-between"><span class="kw-name">BETWEEN</span><p>Tests if a value falls within an inclusive range (a AND b).</p></div>
+        <div class="kw-card kw-like"><span class="kw-name">LIKE</span><p>Pattern matching using wildcards: % (any chars) and _ (one char).</p></div>
+        <div class="kw-card kw-in"><span class="kw-name">IN</span><p>Tests if a value matches any item in a list or subquery.</p></div>
+      </div>
+
+      <h4>AND and OR — Combining Conditions</h4>
+      <div class="code-wrap">
+        <div class="code-topbar"><div class="code-dots"><span class="d1"></span><span class="d2"></span><span class="d3"></span></div><span class="lang-badge">T-SQL · AND / OR</span></div>
+        <pre class="code-block"><span class="cmt">-- AND: both conditions must be true</span>
+<span class="kw">SELECT</span> LastName, DeclaredMajor, GPA
+<span class="kw">FROM</span>   Student
+<span class="kw">WHERE</span>  DeclaredMajor = <span class="str">'CIS'</span>
+   <span class="kw">AND</span>  GPA &gt;= <span class="num">3.50</span>;
+<span class="cmt">-- Returns: Adams (3.85), Chen (3.50), Flores (3.92)</span>
+
+<span class="cmt">-- OR: at least one condition must be true</span>
+<span class="kw">SELECT</span> LastName, DeclaredMajor, GPA
+<span class="kw">FROM</span>   Student
+<span class="kw">WHERE</span>  DeclaredMajor = <span class="str">'CIS'</span>
+   <span class="kw">OR</span>   DeclaredMajor = <span class="str">'CS'</span>;
+<span class="cmt">-- Returns all CIS and CS students</span>
+
+<span class="cmt">-- Mixing AND and OR — use parentheses to control precedence
+-- AND has higher precedence than OR — always use parens when mixing</span>
+<span class="kw">SELECT</span> LastName, DeclaredMajor, GPA
+<span class="kw">FROM</span>   Student
+<span class="kw">WHERE</span>  (DeclaredMajor = <span class="str">'CIS'</span> <span class="kw">OR</span> DeclaredMajor = <span class="str">'CS'</span>)
+   <span class="kw">AND</span>  GPA &gt;= <span class="num">3.00</span>;
+<span class="cmt">-- Without parens, AND would bind tighter and give wrong results</span></pre>
+      </div>
+
+      <h4>NOT — Negating a Condition</h4>
+      <div class="code-wrap">
+        <div class="code-topbar"><div class="code-dots"><span class="d1"></span><span class="d2"></span><span class="d3"></span></div><span class="lang-badge">T-SQL · NOT</span></div>
+        <pre class="code-block"><span class="cmt">-- NOT reverses a condition</span>
+<span class="kw">SELECT</span> LastName, DeclaredMajor
+<span class="kw">FROM</span>   Student
+<span class="kw">WHERE NOT</span> DeclaredMajor = <span class="str">'MIS'</span>;
+<span class="cmt">-- Equivalent to: WHERE DeclaredMajor &lt;&gt; 'MIS'</span>
+
+<span class="cmt">-- NOT combined with other keywords</span>
+<span class="kw">WHERE NOT</span> GPA <span class="kw">BETWEEN</span> <span class="num">3.0</span> <span class="kw">AND</span> <span class="num">4.0</span>   <span class="cmt">-- GPA outside 3.0–4.0</span>
+<span class="kw">WHERE NOT</span> LastName <span class="kw">LIKE</span> <span class="str">'A%'</span>        <span class="cmt">-- last name does NOT start with A</span>
+<span class="kw">WHERE</span>     DeclaredMajor <span class="kw">NOT IN</span> (<span class="str">'CIS'</span>, <span class="str">'CS'</span>)   <span class="cmt">-- not CIS or CS</span></pre>
+      </div>
+
+      <h4>BETWEEN — Inclusive Range Testing</h4>
+      <div class="code-wrap">
+        <div class="code-topbar"><div class="code-dots"><span class="d1"></span><span class="d2"></span><span class="d3"></span></div><span class="lang-badge">T-SQL · BETWEEN</span></div>
+        <pre class="code-block"><span class="cmt">-- BETWEEN is inclusive — includes both the lower and upper bounds</span>
+<span class="kw">SELECT</span> LastName, GPA
+<span class="kw">FROM</span>   Student
+<span class="kw">WHERE</span>  GPA <span class="kw">BETWEEN</span> <span class="num">3.00</span> <span class="kw">AND</span> <span class="num">3.90</span>;
+<span class="cmt">-- Equivalent to: WHERE GPA &gt;= 3.00 AND GPA &lt;= 3.90
+-- Returns: Brown? No. Chen (3.50), Davis (3.10), Harris (3.40)</span>
+
+<span class="cmt">-- BETWEEN with dates</span>
+<span class="kw">SELECT</span> StudentID, LastName, CreatedDate
+<span class="kw">FROM</span>   Student
+<span class="kw">WHERE</span>  CreatedDate <span class="kw">BETWEEN</span> <span class="str">'2024-01-01'</span> <span class="kw">AND</span> <span class="str">'2024-12-31'</span>;
+<span class="cmt">-- Students who enrolled during 2024</span>
+
+<span class="cmt">-- NOT BETWEEN — outside the range</span>
+<span class="kw">SELECT</span> LastName, GPA
+<span class="kw">FROM</span>   Student
+<span class="kw">WHERE</span>  GPA <span class="kw">NOT BETWEEN</span> <span class="num">2.00</span> <span class="kw">AND</span> <span class="num">3.49</span>;
+<span class="cmt">-- Returns students with GPA below 2.00 or above 3.49</span></pre>
+      </div>
+
+      <h4>LIKE — Pattern Matching</h4>
+      <div class="code-wrap">
+        <div class="code-topbar"><div class="code-dots"><span class="d1"></span><span class="d2"></span><span class="d3"></span></div><span class="lang-badge">T-SQL · LIKE — Wildcards % and _</span></div>
+        <pre class="code-block"><span class="cmt">-- % matches any sequence of zero or more characters</span>
+<span class="kw">WHERE</span> LastName <span class="kw">LIKE</span> <span class="str">'A%'</span>       <span class="cmt">-- starts with A  → Adams</span>
+<span class="kw">WHERE</span> LastName <span class="kw">LIKE</span> <span class="str">'%son'</span>     <span class="cmt">-- ends with 'son'</span>
+<span class="kw">WHERE</span> LastName <span class="kw">LIKE</span> <span class="str">'%ar%'</span>    <span class="cmt">-- contains 'ar'  → Harris</span>
+
+<span class="cmt">-- _ matches exactly ONE character</span>
+<span class="kw">WHERE</span> LastName <span class="kw">LIKE</span> <span class="str">'C__n'</span>     <span class="cmt">-- C + any 2 chars + n  → Chen</span>
+<span class="kw">WHERE</span> Phone    <span class="kw">LIKE</span> <span class="str">'305-___-____'</span>  <span class="cmt">-- Miami area code format</span>
+
+<span class="cmt">-- Practical: find all emails from a university domain</span>
+<span class="kw">SELECT</span> LastName, Email
+<span class="kw">FROM</span>   Student
+<span class="kw">WHERE</span>  Email <span class="kw">LIKE</span> <span class="str">'%@fau.edu'</span>;
+
+<span class="cmt">-- NOT LIKE — pattern does not match</span>
+<span class="kw">SELECT</span> LastName
+<span class="kw">FROM</span>   Student
+<span class="kw">WHERE</span>  LastName <span class="kw">NOT LIKE</span> <span class="str">'[AEIOU]%'</span>;  <span class="cmt">-- does not start with a vowel</span></pre>
+      </div>
+
+      <h4>IN — Matching Against a List</h4>
+      <div class="code-wrap">
+        <div class="code-topbar"><div class="code-dots"><span class="d1"></span><span class="d2"></span><span class="d3"></span></div><span class="lang-badge">T-SQL · IN — List of Values</span></div>
+        <pre class="code-block"><span class="cmt">-- IN tests whether a value matches any item in a list
+-- Much cleaner than multiple OR conditions</span>
+<span class="kw">SELECT</span> LastName, DeclaredMajor
+<span class="kw">FROM</span>   Student
+<span class="kw">WHERE</span>  DeclaredMajor <span class="kw">IN</span> (<span class="str">'CIS'</span>, <span class="str">'CS'</span>);
+<span class="cmt">-- Equivalent to: WHERE DeclaredMajor = 'CIS' OR DeclaredMajor = 'CS'</span>
+
+<span class="cmt">-- NOT IN — value not in the list</span>
+<span class="kw">SELECT</span> LastName, DeclaredMajor
+<span class="kw">FROM</span>   Student
+<span class="kw">WHERE</span>  DeclaredMajor <span class="kw">NOT IN</span> (<span class="str">'MIS'</span>);
+
+<span class="cmt">-- IN with numbers</span>
+<span class="kw">SELECT</span> StudentID, LastName
+<span class="kw">FROM</span>   Student
+<span class="kw">WHERE</span>  StudentID <span class="kw">IN</span> (<span class="num">1</span>, <span class="num">3</span>, <span class="num">5</span>, <span class="num">7</span>);
+
+<span class="cmt">-- ⚠️  NOT IN with NULL — dangerous!
+-- If the list contains NULL, NOT IN returns no rows
+-- because: x NOT IN (..., NULL) = x &lt;&gt; NULL = UNKNOWN</span>
+<span class="kw">WHERE</span>  DeclaredMajor <span class="kw">NOT IN</span> (<span class="str">'MIS'</span>, <span class="kw">NULL</span>)  <span class="cmt">-- returns 0 rows!</span></pre>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══ SECTION 5 — AGGREGATE FUNCTIONS ═══ -->
+  <div class="section-label" id="sec5">
+    <div class="num">5</div>
+    <h2>Aggregate Functions — SUM, COUNT, MIN, MAX, AVG</h2>
+    <span class="outcome-tag">Outcome 5</span>
+  </div>
+  <div class="card">
+    <div class="card-header open" onclick="toggle(this)">
+      <div class="ch-left"><span class="card-icon">📊</span>
+        <h3><span>Outcome 5 · Aggregates</span>Computing Summary Statistics Across Rows</h3>
+      </div>
+      <button class="toggle-btn open">▲</button>
+    </div>
+    <div class="card-body open">
+      <p>Aggregate functions collapse multiple rows into a single summary value. They operate on a set of rows and return one result per group (or one result for the entire table if no GROUP BY is used).</p>
+      <div class="agg-grid">
+        <div class="agg-card a-count"><span class="agg-fn">COUNT()</span><p>Counts the number of rows or non-NULL values</p></div>
+        <div class="agg-card a-sum"><span class="agg-fn">SUM()</span><p>Adds all numeric values in a column</p></div>
+        <div class="agg-card a-avg"><span class="agg-fn">AVG()</span><p>Calculates the arithmetic mean of numeric values</p></div>
+        <div class="agg-card a-min"><span class="agg-fn">MIN()</span><p>Returns the smallest value (works on numbers, dates, text)</p></div>
+        <div class="agg-card a-max"><span class="agg-fn">MAX()</span><p>Returns the largest value (works on numbers, dates, text)</p></div>
+      </div>
+
+      <h4>COUNT — Counting Rows and Values</h4>
+      <div class="code-wrap">
+        <div class="code-topbar"><div class="code-dots"><span class="d1"></span><span class="d2"></span><span class="d3"></span></div><span class="lang-badge">T-SQL · COUNT</span></div>
+        <pre class="code-block"><span class="cmt">-- COUNT(*) — counts all rows including NULLs</span>
+<span class="kw">SELECT</span> <span class="grn">COUNT</span>(*) <span class="kw">AS</span> TotalStudents
+<span class="kw">FROM</span>   Student;
+<span class="cmt">-- Returns: 8</span>
+
+<span class="cmt">-- COUNT(column) — counts only non-NULL values in that column</span>
+<span class="kw">SELECT</span> <span class="grn">COUNT</span>(DeclaredMajor) <span class="kw">AS</span> StudentsWithMajor
+<span class="kw">FROM</span>   Student;
+<span class="cmt">-- Returns: 8 (all have a major in our sample)
+-- Would return less if some DeclaredMajor values were NULL</span>
+
+<span class="cmt">-- COUNT(DISTINCT column) — counts unique non-NULL values</span>
+<span class="kw">SELECT</span> <span class="grn">COUNT</span>(<span class="kw">DISTINCT</span> DeclaredMajor) <span class="kw">AS</span> NumberOfMajors
+<span class="kw">FROM</span>   Student;
+<span class="cmt">-- Returns: 3 (CIS, CS, MIS)</span>
+
+<span class="cmt">-- COUNT with WHERE — count rows matching a condition</span>
+<span class="kw">SELECT</span> <span class="grn">COUNT</span>(*) <span class="kw">AS</span> HighAchieverCount
+<span class="kw">FROM</span>   Student
+<span class="kw">WHERE</span>  GPA &gt;= <span class="num">3.50</span>;
+<span class="cmt">-- Returns: 3 (Adams, Chen, Flores)</span></pre>
+      </div>
+
+      <h4>SUM, AVG, MIN, MAX</h4>
+      <div class="code-wrap">
+        <div class="code-topbar"><div class="code-dots"><span class="d1"></span><span class="d2"></span><span class="d3"></span></div><span class="lang-badge">T-SQL · SUM, AVG, MIN, MAX</span></div>
+        <pre class="code-block"><span class="cmt">-- All four in one query</span>
+<span class="kw">SELECT</span>
+    <span class="grn">COUNT</span>(*) <span class="kw">AS</span> TotalStudents,
+    <span class="grn">AVG</span>(GPA)  <span class="kw">AS</span> AverageGPA,
+    <span class="grn">MIN</span>(GPA)  <span class="kw">AS</span> LowestGPA,
+    <span class="grn">MAX</span>(GPA)  <span class="kw">AS</span> HighestGPA,
+    <span class="grn">SUM</span>(GPA)  <span class="kw">AS</span> SumOfGPAs    <span class="cmt">-- not meaningful alone, but shows SUM syntax</span>
+<span class="kw">FROM</span>   Student;
+
+<span class="cmt">-- AVG ignores NULL values — be careful if NULLs exist in the column</span>
+<span class="kw">SELECT</span> <span class="grn">AVG</span>(GPA) <span class="kw">AS</span> AvgGPA
+<span class="kw">FROM</span>   Student
+<span class="kw">WHERE</span>  DeclaredMajor = <span class="str">'CIS'</span>;
+<span class="cmt">-- Average GPA for CIS students only: (3.85 + 3.50 + 3.92) / 3 = 3.757</span>
+
+<span class="cmt">-- MIN and MAX work on text and dates too</span>
+<span class="kw">SELECT</span>
+    <span class="grn">MIN</span>(LastName)    <span class="kw">AS</span> FirstAlphabetically,
+    <span class="grn">MAX</span>(LastName)    <span class="kw">AS</span> LastAlphabetically,
+    <span class="grn">MIN</span>(CreatedDate) <span class="kw">AS</span> EarliestEnrollment,
+    <span class="grn">MAX</span>(CreatedDate) <span class="kw">AS</span> MostRecentEnrollment
+<span class="kw">FROM</span>   Student;</pre>
+      </div>
+      <div class="result-wrap">
+        <div class="result-label"></div>
+        <table class="result-table">
+          <thead><tr><th>TotalStudents</th><th>AverageGPA</th><th>LowestGPA</th><th>HighestGPA</th></tr></thead>
+          <tbody><tr><td class="nv">8</td><td class="nv">3.0775</td><td class="nv">1.95</td><td class="nv">3.92</td></tr></tbody>
+        </table>
+        <div class="result-footer">(1 row — aggregate over all 8 students)</div>
+      </div>
+      <div class="callout callout-warning">
+        <span class="callout-icon">⚠️</span>
+        <div class="callout-body">
+          <strong>Cannot Mix Aggregate and Non-Aggregate in SELECT Without GROUP BY</strong>
+          You cannot write <code>SELECT LastName, AVG(GPA) FROM Student</code> — SQL cannot return 8 names and 1 average in the same row without a GROUP BY. If you mix regular columns and aggregates, every non-aggregate column must appear in the GROUP BY clause.
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══ SECTION 6 — GROUP BY & HAVING ═══ -->
+  <div class="section-label" id="sec6">
+    <div class="num">6</div>
+    <h2>GROUP BY and HAVING — Aggregating by Category</h2>
+    <span class="outcome-tag">Outcome 5</span>
+  </div>
+  <div class="card">
+    <div class="card-header open" onclick="toggle(this)">
+      <div class="ch-left"><span class="card-icon">📂</span>
+        <h3><span>Outcome 5 · GROUP BY &amp; HAVING</span>Grouping Rows into Categories and Filtering Groups</h3>
+      </div>
+      <button class="toggle-btn open">▲</button>
+    </div>
+    <div class="card-body open">
+      <p><code>GROUP BY</code> partitions rows into groups based on shared values, then applies aggregate functions within each group independently. <code>HAVING</code> filters those groups — it is to GROUP BY what WHERE is to individual rows.</p>
+      <div class="code-wrap">
+        <div class="code-topbar"><div class="code-dots"><span class="d1"></span><span class="d2"></span><span class="d3"></span></div><span class="lang-badge">T-SQL · GROUP BY — Aggregates per Category</span></div>
+        <pre class="code-block"><span class="cmt">-- Count students and compute average GPA per major</span>
+<span class="kw">SELECT</span>
+    DeclaredMajor,
+    <span class="grn">COUNT</span>(*)  <span class="kw">AS</span> StudentCount,
+    <span class="grn">AVG</span>(GPA)  <span class="kw">AS</span> AverageGPA,
+    <span class="grn">MIN</span>(GPA)  <span class="kw">AS</span> LowestGPA,
+    <span class="grn">MAX</span>(GPA)  <span class="kw">AS</span> HighestGPA
+<span class="kw">FROM</span>   Student
+<span class="kw">GROUP BY</span> DeclaredMajor
+<span class="kw">ORDER BY</span> AverageGPA <span class="kw">DESC</span>;
+
+<span class="cmt">-- Rule: every column in SELECT that is NOT an aggregate
+--       MUST appear in GROUP BY</span></pre>
+      </div>
+      <div class="result-wrap">
+        <div class="result-label"></div>
+        <table class="result-table">
+          <thead><tr><th>DeclaredMajor</th><th>StudentCount</th><th>AverageGPA</th><th>LowestGPA</th><th>HighestGPA</th></tr></thead>
+          <tbody>
+            <tr><td>CIS</td><td class="nv">3</td><td class="nv">3.757</td><td class="nv">3.50</td><td class="nv">3.92</td></tr>
+            <tr><td>MIS</td><td class="nv">3</td><td class="nv">2.767</td><td class="nv">2.20</td><td class="nv">3.40</td></tr>
+            <tr><td>CS</td><td class="nv">2</td><td class="nv">2.525</td><td class="nv">1.95</td><td class="nv">3.10</td></tr>
+          </tbody>
+        </table>
+        <div class="result-footer">(3 rows — one per major)</div>
+      </div>
+
+      <h4>HAVING — Filtering Groups</h4>
+      <div class="code-wrap">
+        <div class="code-topbar"><div class="code-dots"><span class="d1"></span><span class="d2"></span><span class="d3"></span></div><span class="lang-badge">T-SQL · HAVING — WHERE for Groups</span></div>
+        <pre class="code-block"><span class="cmt">-- Only show majors with more than 2 students AND an average GPA above 3.0</span>
+<span class="kw">SELECT</span>
+    DeclaredMajor,
+    <span class="grn">COUNT</span>(*) <span class="kw">AS</span> StudentCount,
+    <span class="grn">AVG</span>(GPA) <span class="kw">AS</span> AverageGPA
+<span class="kw">FROM</span>   Student
+<span class="kw">GROUP BY</span> DeclaredMajor
+<span class="kw">HAVING</span>   <span class="grn">COUNT</span>(*) &gt; <span class="num">2</span>
+   <span class="kw">AND</span>   <span class="grn">AVG</span>(GPA) &gt; <span class="num">3.0</span>
+<span class="kw">ORDER BY</span> AverageGPA <span class="kw">DESC</span>;
+
+<span class="cmt">-- WHERE vs HAVING — critical distinction:
+--   WHERE   filters individual ROWS   before grouping
+--   HAVING  filters GROUPS            after grouping</span>
+
+<span class="cmt">-- Using both WHERE and HAVING together</span>
+<span class="kw">SELECT</span>
+    DeclaredMajor,
+    <span class="grn">COUNT</span>(*) <span class="kw">AS</span> StudentCount
+<span class="kw">FROM</span>   Student
+<span class="kw">WHERE</span>  IsEnrolled = <span class="num">1</span>          <span class="cmt">-- filter to active students first (row-level)</span>
+<span class="kw">GROUP BY</span> DeclaredMajor
+<span class="kw">HAVING</span>   <span class="grn">COUNT</span>(*) &gt;= <span class="num">2</span>;       <span class="cmt">-- then keep only majors with 2+ active students</span></pre>
+      </div>
+      <table class="styled-table">
+        <thead><tr><th>Clause</th><th>Filters</th><th>Runs</th><th>Can use aggregates?</th></tr></thead>
+        <tbody>
+          <tr><td class="ind"><code>WHERE</code></td><td>Individual rows</td><td>Before GROUP BY</td><td>❌ No</td></tr>
+          <tr><td class="ind"><code>HAVING</code></td><td>Groups of rows</td><td>After GROUP BY</td><td>✅ Yes</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- ═══ SECTION 7 — SUBQUERIES ═══ -->
+  <div class="section-label" id="sec7">
+    <div class="num">7</div>
+    <h2>Subqueries — Queries Inside Queries</h2>
+    <span class="outcome-tag">Outcome 6</span>
+  </div>
+  <div class="card">
+    <div class="card-header open" onclick="toggle(this)">
+      <div class="ch-left"><span class="card-icon">🪆</span>
+        <h3><span>Outcome 6 · Subqueries</span>Using a Query Result as a Filter Condition for Another Table</h3>
+      </div>
+      <button class="toggle-btn open">▲</button>
+    </div>
+    <div class="card-body open">
+      <div class="def-box">
+        <div class="def-label">Definition — Subquery</div>
+        <p>A <strong>subquery</strong> (also called an inner query or nested query) is a SELECT statement embedded inside another SQL statement. The outer query uses the subquery's result as part of its WHERE condition, allowing you to filter one table based on data from another — without a JOIN.</p>
+      </div>
+
+      <h4>Subquery in WHERE with IN — Most Common Pattern</h4>
+      <div class="code-wrap">
+        <div class="code-topbar"><div class="code-dots"><span class="d1"></span><span class="d2"></span><span class="d3"></span></div><span class="lang-badge">T-SQL · Subquery with IN</span></div>
+        <pre class="code-block"><span class="cmt">-- GOAL: Find all students who are enrolled in section 101.
+--        Enrollment table links StudentID to SectionID.
+-- ─────────────────────────────────────────────────────────────────────────</span>
+
+<span class="cmt">-- Step 1 (inner query): get the StudentIDs enrolled in section 101</span>
+<span class="kw">SELECT</span> StudentID
+<span class="kw">FROM</span>   Enrollment
+<span class="kw">WHERE</span>  SectionID = <span class="num">101</span>;
+<span class="cmt">-- Returns: 1, 3, 6</span>
+
+<span class="cmt">-- Step 2 (combined): use that result to filter the Student table</span>
+<span class="kw">SELECT</span> LastName, FirstName, GPA
+<span class="kw">FROM</span>   Student
+<span class="kw">WHERE</span>  StudentID <span class="kw">IN</span>
+    (
+        <span class="kw">SELECT</span> StudentID
+        <span class="kw">FROM</span>   Enrollment
+        <span class="kw">WHERE</span>  SectionID = <span class="num">101</span>
+    );
+<span class="cmt">-- Returns: Adams, Chen, Flores — all enrolled in section 101</span></pre>
+      </div>
+      <div class="result-wrap">
+        <div class="result-label"></div>
+        <table class="result-table">
+          <thead><tr><th>LastName</th><th>FirstName</th><th>GPA</th></tr></thead>
+          <tbody>
+            <tr><td>Adams</td><td>Maria</td><td class="nv">3.85</td></tr>
+            <tr><td>Chen</td><td>Li</td><td class="nv">3.50</td></tr>
+            <tr><td>Flores</td><td>Ana</td><td class="nv">3.92</td></tr>
+          </tbody>
+        </table>
+        <div class="result-footer">(3 rows — students enrolled in section 101)</div>
+      </div>
+
+      <h4>Subquery with NOT IN — Exclusion Pattern</h4>
+      <div class="code-wrap">
+        <div class="code-topbar"><div class="code-dots"><span class="d1"></span><span class="d2"></span><span class="d3"></span></div><span class="lang-badge">T-SQL · Subquery with NOT IN — Find Students NOT Enrolled</span></div>
+        <pre class="code-block"><span class="cmt">-- Find students who are NOT enrolled in ANY section</span>
+<span class="kw">SELECT</span> LastName, FirstName
+<span class="kw">FROM</span>   Student
+<span class="kw">WHERE</span>  StudentID <span class="kw">NOT IN</span>
+    (
+        <span class="kw">SELECT DISTINCT</span> StudentID
+        <span class="kw">FROM</span>   Enrollment
+    );
+
+<span class="cmt">-- ⚠️  NOT IN + NULL danger: if Enrollment.StudentID contains any NULL,
+--     NOT IN returns 0 rows. Use NOT EXISTS instead for NULL safety:</span>
+<span class="kw">SELECT</span> LastName, FirstName
+<span class="kw">FROM</span>   Student s
+<span class="kw">WHERE NOT EXISTS</span>
+    (
+        <span class="kw">SELECT</span> <span class="num">1</span>
+        <span class="kw">FROM</span>   Enrollment e
+        <span class="kw">WHERE</span>  e.StudentID = s.StudentID
+    );</pre>
+      </div>
+
+      <h4>Subquery with Comparison Operators — Single-Value Subqueries</h4>
+      <div class="code-wrap">
+        <div class="code-topbar"><div class="code-dots"><span class="d1"></span><span class="d2"></span><span class="d3"></span></div><span class="lang-badge">T-SQL · Subquery Returning a Single Value</span></div>
+        <pre class="code-block"><span class="cmt">-- Find students whose GPA is above the overall average
+-- Inner query returns ONE value (the average) → use = &gt; &lt; etc.</span>
+<span class="kw">SELECT</span> LastName, FirstName, GPA
+<span class="kw">FROM</span>   Student
+<span class="kw">WHERE</span>  GPA &gt;
+    (
+        <span class="kw">SELECT</span> <span class="grn">AVG</span>(GPA)
+        <span class="kw">FROM</span>   Student
+    )
+<span class="kw">ORDER BY</span> GPA <span class="kw">DESC</span>;
+<span class="cmt">-- AVG(GPA) = 3.0775 — returns Adams (3.85), Chen (3.50), Flores (3.92), Harris (3.40)</span>
+
+<span class="cmt">-- Find the student with the highest GPA</span>
+<span class="kw">SELECT</span> LastName, FirstName, GPA
+<span class="kw">FROM</span>   Student
+<span class="kw">WHERE</span>  GPA =
+    (
+        <span class="kw">SELECT</span> <span class="grn">MAX</span>(GPA)
+        <span class="kw">FROM</span>   Student
+    );
+<span class="cmt">-- Returns: Flores, Ana, 3.92</span></pre>
+      </div>
+
+      <h4>Subquery in SELECT — Scalar Subquery</h4>
+      <div class="code-wrap">
+        <div class="code-topbar"><div class="code-dots"><span class="d1"></span><span class="d2"></span><span class="d3"></span></div><span class="lang-badge">T-SQL · Scalar Subquery in SELECT Column List</span></div>
+        <pre class="code-block"><span class="cmt">-- Show each student's GPA alongside the overall average for comparison</span>
+<span class="kw">SELECT</span>
+    LastName,
+    GPA,
+    (
+        <span class="kw">SELECT</span> <span class="grn">AVG</span>(GPA) <span class="kw">FROM</span> Student
+    )                       <span class="kw">AS</span> SchoolAvgGPA,
+    GPA - (
+        <span class="kw">SELECT</span> <span class="grn">AVG</span>(GPA) <span class="kw">FROM</span> Student
+    )                       <span class="kw">AS</span> DifferenceFromAvg
+<span class="kw">FROM</span>   Student
+<span class="kw">ORDER BY</span> GPA <span class="kw">DESC</span>;</pre>
+      </div>
+      <div class="callout callout-tip">
+        <span class="callout-icon">💡</span>
+        <div class="callout-body">
+          <strong>Subquery vs. JOIN — When to Use Each</strong>
+          Use a <strong>subquery</strong> when you want to filter rows in one table based on data in another, and you don't need to display columns from both tables. Use a <strong>JOIN</strong> when you need to display columns from multiple tables in the same result. JOINs are often more readable and generally perform better on large datasets.
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══ SECTION 8 — JOIN OPERATIONS ═══ -->
+  <div class="section-label" id="sec8">
+    <div class="num">8</div>
+    <h2>JOIN Operations — Combining Data from Multiple Tables</h2>
+    <span class="outcome-tag">Outcome 7</span>
+  </div>
+  <div class="card">
+    <div class="card-header open" onclick="toggle(this)">
+      <div class="ch-left"><span class="card-icon">🔗</span>
+        <h3><span>Outcome 7 · JOIN Types</span>INNER JOIN, LEFT JOIN, RIGHT JOIN, and FULL OUTER JOIN Explained</h3>
+      </div>
+      <button class="toggle-btn open">▲</button>
+    </div>
+    <div class="card-body open">
+      <p>A JOIN combines rows from two or more tables based on a related column — usually a foreign key matching a primary key. The join type determines which rows are included when one side has no match.</p>
+      <div class="join-grid">
+        <div class="join-card j-inner">
+          <div class="jc-title">INNER JOIN</div>
+          <p>Returns only rows that have a <strong>match in both tables</strong>. Unmatched rows from either table are excluded.</p>
+          <div class="jc-eg">Most common join type</div>
+        </div>
+        <div class="join-card j-left">
+          <div class="jc-title">LEFT (OUTER) JOIN</div>
+          <p>Returns <strong>all rows from the left table</strong>, plus matched rows from the right. Unmatched right-side values = NULL.</p>
+          <div class="jc-eg">Find records with/without matches</div>
+        </div>
+        <div class="join-card j-right">
+          <div class="jc-title">RIGHT (OUTER) JOIN</div>
+          <p>Returns <strong>all rows from the right table</strong>, plus matched rows from the left. Unmatched left-side values = NULL.</p>
+          <div class="jc-eg">Less common — LEFT JOIN preferred</div>
+        </div>
+        <div class="join-card j-full">
+          <div class="jc-title">FULL OUTER JOIN</div>
+          <p>Returns <strong>all rows from both tables</strong>. NULLs fill in wherever there is no match on either side.</p>
+          <div class="jc-eg">Find all unmatched rows</div>
+        </div>
+      </div>
+
+      <h4>INNER JOIN — The Most Common Join</h4>
+      <div class="code-wrap">
+        <div class="code-topbar"><div class="code-dots"><span class="d1"></span><span class="d2"></span><span class="d3"></span></div><span class="lang-badge">T-SQL · INNER JOIN</span></div>
+        <pre class="code-block"><span class="cmt">-- INNER JOIN syntax: only rows where the ON condition matches appear in result</span>
+<span class="kw">SELECT</span>
+    s.StudentID,
+    s.LastName,
+    s.FirstName,
+    e.SectionID,
+    e.Grade
+<span class="kw">FROM</span>   Student    s              <span class="cmt">-- table alias 's' for brevity</span>
+<span class="kw">INNER JOIN</span> Enrollment e          <span class="cmt">-- table alias 'e'</span>
+    <span class="kw">ON</span> s.StudentID = e.StudentID  <span class="cmt">-- join condition: match on StudentID</span>
+<span class="kw">ORDER BY</span> s.LastName;
+
+<span class="cmt">-- Students without any enrollment are EXCLUDED from INNER JOIN results
+-- Enrollment rows with no matching student are also excluded</span></pre>
+      </div>
+      <div class="result-wrap">
+        <div class="result-label"></div>
+        <table class="result-table">
+          <thead><tr><th>StudentID</th><th>LastName</th><th>FirstName</th><th>SectionID</th><th>Grade</th></tr></thead>
+          <tbody>
+            <tr><td class="nv">1</td><td>Adams</td><td>Maria</td><td class="nv">101</td><td>A</td></tr>
+            <tr><td class="nv">1</td><td>Adams</td><td>Maria</td><td class="nv">102</td><td>B+</td></tr>
+            <tr><td class="nv">3</td><td>Chen</td><td>Li</td><td class="nv">101</td><td>A-</td></tr>
+            <tr><td colspan="5" style="color:#4a7a96;font-style:italic">... more rows (one per enrollment)</td></tr>
+          </tbody>
+        </table>
+        <div class="result-footer">(Students who have no enrollments do not appear)</div>
+      </div>
+
+      <h4>Three-Table INNER JOIN</h4>
+      <div class="code-wrap">
+        <div class="code-topbar"><div class="code-dots"><span class="d1"></span><span class="d2"></span><span class="d3"></span></div><span class="lang-badge">T-SQL · Three-Table JOIN — Student + Enrollment + Section</span></div>
+        <pre class="code-block"><span class="cmt">-- Show student names, course ID, semester, and grade together</span>
+<span class="kw">SELECT</span>
+    s.LastName,
+    s.FirstName,
+    sec.CourseID,
+    sec.Semester,
+    sec.YearOffered,
+    e.Grade
+<span class="kw">FROM</span>        Student    s
+<span class="kw">INNER JOIN</span>  Enrollment e
+    <span class="kw">ON</span>  s.StudentID   = e.StudentID
+<span class="kw">INNER JOIN</span>  Section    sec
+    <span class="kw">ON</span>  e.SectionID   = sec.SectionID
+<span class="kw">ORDER BY</span> s.LastName, sec.Semester;
+
+<span class="cmt">-- Each JOIN adds another table. Always chain on the FK = PK relationship.</span></pre>
+      </div>
+
+      <h4>LEFT JOIN — Include Unmatched Left-Side Rows</h4>
+      <div class="code-wrap">
+        <div class="code-topbar"><div class="code-dots"><span class="d1"></span><span class="d2"></span><span class="d3"></span></div><span class="lang-badge">T-SQL · LEFT JOIN — All Students, Including Unenrolled</span></div>
+        <pre class="code-block"><span class="cmt">-- LEFT JOIN: every student appears, even if not enrolled in anything
+-- Unenrolled students have NULL for enrollment columns</span>
+<span class="kw">SELECT</span>
+    s.LastName,
+    s.FirstName,
+    e.SectionID,
+    e.Grade
+<span class="kw">FROM</span>       Student    s
+<span class="kw">LEFT JOIN</span>  Enrollment e
+    <span class="kw">ON</span> s.StudentID = e.StudentID
+<span class="kw">ORDER BY</span> s.LastName;</pre>
+      </div>
+      <div class="result-wrap">
+        <div class="result-label"></div>
+        <table class="result-table">
+          <thead><tr><th>LastName</th><th>FirstName</th><th>SectionID</th><th>Grade</th></tr></thead>
+          <tbody>
+            <tr><td>Adams</td><td>Maria</td><td class="nv">101</td><td>A</td></tr>
+            <tr><td>Brown</td><td>James</td><td style="color:#4a7a96;font-style:italic">NULL</td><td style="color:#4a7a96;font-style:italic">NULL</td></tr>
+            <tr><td>Chen</td><td>Li</td><td class="nv">101</td><td>A-</td></tr>
+            <tr><td colspan="4" style="color:#4a7a96;font-style:italic">... Brown has no enrollments — shows as NULL</td></tr>
+          </tbody>
+        </table>
+        <div class="result-footer">(All 8 students appear; unenrolled students show NULL for SectionID/Grade)</div>
+      </div>
+
+      <h4>Using LEFT JOIN to Find Unmatched Rows — "Anti-Join" Pattern</h4>
+      <div class="code-wrap">
+        <div class="code-topbar"><div class="code-dots"><span class="d1"></span><span class="d2"></span><span class="d3"></span></div><span class="lang-badge">T-SQL · LEFT JOIN Anti-Join — Find Students with NO Enrollments</span></div>
+        <pre class="code-block"><span class="cmt">-- Find students who are NOT enrolled in any section
+-- Filter WHERE right-side column IS NULL after LEFT JOIN</span>
+<span class="kw">SELECT</span>
+    s.StudentID,
+    s.LastName,
+    s.FirstName
+<span class="kw">FROM</span>       Student    s
+<span class="kw">LEFT JOIN</span>  Enrollment e
+    <span class="kw">ON</span>  s.StudentID = e.StudentID
+<span class="kw">WHERE</span>      e.StudentID <span class="kw">IS NULL</span>;
+<span class="cmt">-- Only rows where no Enrollment match was found → unenrolled students</span></pre>
+      </div>
+
+      <h4>FULL OUTER JOIN — All Rows from Both Tables</h4>
+      <div class="code-wrap">
+        <div class="code-topbar"><div class="code-dots"><span class="d1"></span><span class="d2"></span><span class="d3"></span></div><span class="lang-badge">T-SQL · FULL OUTER JOIN</span></div>
+        <pre class="code-block"><span class="cmt">-- Returns all students AND all enrollment records
+-- NULLs appear where no match exists on either side</span>
+<span class="kw">SELECT</span>
+    s.LastName,
+    s.FirstName,
+    e.SectionID,
+    e.Grade
+<span class="kw">FROM</span>            Student    s
+<span class="kw">FULL OUTER JOIN</span> Enrollment e
+    <span class="kw">ON</span>  s.StudentID = e.StudentID;
+<span class="cmt">-- Use case: data auditing — find unmatched rows on EITHER side</span></pre>
+      </div>
+
+      <h4>JOIN with WHERE, GROUP BY, and ORDER BY — Full Query</h4>
+      <div class="code-wrap">
+        <div class="code-topbar"><div class="code-dots"><span class="d1"></span><span class="d2"></span><span class="d3"></span></div><span class="lang-badge">T-SQL · Full Multi-Clause Query with JOIN</span></div>
+        <pre class="code-block"><span class="cmt">-- Report: for each CIS student, show how many sections they are enrolled in
+--          and their average grade — sorted by enrollment count descending</span>
+<span class="kw">SELECT</span>
+    s.LastName,
+    s.FirstName,
+    s.GPA,
+    <span class="grn">COUNT</span>(e.SectionID)  <span class="kw">AS</span> SectionsEnrolled,
+    <span class="grn">AVG</span>(
+        <span class="kw">CASE</span> e.Grade
+            <span class="kw">WHEN</span> <span class="str">'A'</span>  <span class="kw">THEN</span> <span class="num">4.0</span>
+            <span class="kw">WHEN</span> <span class="str">'A-'</span> <span class="kw">THEN</span> <span class="num">3.7</span>
+            <span class="kw">WHEN</span> <span class="str">'B+'</span> <span class="kw">THEN</span> <span class="num">3.3</span>
+            <span class="kw">WHEN</span> <span class="str">'B'</span>  <span class="kw">THEN</span> <span class="num">3.0</span>
+            <span class="kw">ELSE</span> <span class="kw">NULL</span>
+        <span class="kw">END</span>
+    )                    <span class="kw">AS</span> AvgGradePoints
+<span class="kw">FROM</span>       Student    s
+<span class="kw">LEFT JOIN</span>  Enrollment e  <span class="kw">ON</span>  s.StudentID = e.StudentID
+<span class="kw">WHERE</span>      s.DeclaredMajor = <span class="str">'CIS'</span>
+<span class="kw">GROUP BY</span>   s.StudentID, s.LastName, s.FirstName, s.GPA
+<span class="kw">HAVING</span>     <span class="grn">COUNT</span>(e.SectionID) &gt; <span class="num">0</span>
+<span class="kw">ORDER BY</span>   SectionsEnrolled <span class="kw">DESC</span>;</pre>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══ SECTION 9 — SUMMARY & CHECKLIST ═══ -->
+  <div class="section-label" id="sec9">
+    <div class="num" style="font-size:1rem">✓</div>
+    <h2>Summary, Quick Reference &amp; Self-Assessment</h2>
+  </div>
+  <div class="card">
+    <div class="card-header open" onclick="toggle(this)">
+      <div class="ch-left"><span class="card-icon">📋</span>
+        <h3><span>Review</span>DQL Quick Reference, Clause Order, Glossary &amp; Outcome Checklist</h3>
+      </div>
+      <button class="toggle-btn open">▲</button>
+    </div>
+    <div class="card-body open">
+      <div class="strip">
+        <strong>Module 6 Complete!</strong> You can now write SELECT queries that retrieve, filter, sort, aggregate, and join data across multiple tables — the core skill that powers every database-driven application.
+      </div>
+
+      <h4>SELECT Clause Order — Write vs. Execute</h4>
+      <table class="styled-table">
+        <thead><tr><th>Write Order</th><th>Clause</th><th>Execute Order</th><th>Purpose</th></tr></thead>
+        <tbody>
+          <tr><td class="ind">1</td><td><code>SELECT</code></td><td>5</td><td>Which columns (and expressions) to return</td></tr>
+          <tr><td class="ind">2</td><td><code>FROM</code></td><td>1</td><td>Which table(s) to read from</td></tr>
+          <tr><td class="ind">3</td><td><code>JOIN ... ON</code></td><td>2</td><td>Combine rows from multiple tables</td></tr>
+          <tr><td class="ind">4</td><td><code>WHERE</code></td><td>3</td><td>Filter individual rows before grouping</td></tr>
+          <tr><td class="ind">5</td><td><code>GROUP BY</code></td><td>4</td><td>Collapse rows into groups</td></tr>
+          <tr><td class="ind">6</td><td><code>HAVING</code></td><td>5</td><td>Filter groups after aggregation</td></tr>
+          <tr><td class="ind">7</td><td><code>ORDER BY</code></td><td>6</td><td>Sort the final result set</td></tr>
+        </tbody>
+      </table>
+
+      <h4>Quick Reference — Keywords and Functions</h4>
+      <table class="styled-table">
+        <thead><tr><th>Keyword / Function</th><th>Usage</th><th>Key Notes</th></tr></thead>
+        <tbody>
+          <tr><td class="ind"><code>SELECT *</code></td><td>Return all columns</td><td>Avoid in production — expensive; use named columns</td></tr>
+          <tr><td class="ind"><code>SELECT TOP n</code></td><td>Limit rows returned</td><td>Most useful paired with ORDER BY</td></tr>
+          <tr><td class="ind"><code>AS</code></td><td>Column or table alias</td><td>Aliases usable in ORDER BY but NOT in WHERE</td></tr>
+          <tr><td class="ind"><code>DISTINCT</code></td><td>Remove duplicate rows</td><td>Applies to entire row, not just one column</td></tr>
+          <tr><td class="ind"><code>WHERE</code></td><td>Filter rows</td><td>Use IS NULL / IS NOT NULL — never = NULL</td></tr>
+          <tr><td class="ind"><code>ORDER BY</code></td><td>Sort results</td><td>ASC (default) or DESC; always last clause written</td></tr>
+          <tr><td class="ind"><code>AND / OR / NOT</code></td><td>Combine conditions</td><td>Use parentheses when mixing AND and OR</td></tr>
+          <tr><td class="ind"><code>BETWEEN a AND b</code></td><td>Inclusive range check</td><td>Equivalent to >= a AND <= b</td></tr>
+          <tr><td class="ind"><code>LIKE 'pattern'</code></td><td>Pattern matching</td><td>% = any chars; _ = exactly one char</td></tr>
+          <tr><td class="ind"><code>IN (list)</code></td><td>Match any in a list</td><td>NOT IN with NULLs in list returns 0 rows — use NOT EXISTS</td></tr>
+          <tr><td class="ind"><code>COUNT(*)</code></td><td>Count all rows</td><td>COUNT(col) skips NULLs; COUNT(DISTINCT col) counts unique</td></tr>
+          <tr><td class="ind"><code>SUM(col)</code></td><td>Total of a numeric column</td><td>Ignores NULL values</td></tr>
+          <tr><td class="ind"><code>AVG(col)</code></td><td>Mean of a numeric column</td><td>Ignores NULLs — may not reflect true average if NULLs exist</td></tr>
+          <tr><td class="ind"><code>MIN(col)</code></td><td>Smallest value</td><td>Works on numbers, dates, and text</td></tr>
+          <tr><td class="ind"><code>MAX(col)</code></td><td>Largest value</td><td>Works on numbers, dates, and text</td></tr>
+          <tr><td class="ind"><code>GROUP BY</code></td><td>Aggregate by category</td><td>All non-aggregate SELECT columns must be in GROUP BY</td></tr>
+          <tr><td class="ind"><code>HAVING</code></td><td>Filter groups</td><td>Runs after GROUP BY; can use aggregates; WHERE cannot</td></tr>
+          <tr><td class="ind"><code>Subquery (IN)</code></td><td>Filter by another table's values</td><td>Inner query runs first; result fed to outer query</td></tr>
+          <tr><td class="ind"><code>INNER JOIN</code></td><td>Matched rows only</td><td>Most common join; excludes unmatched rows from both sides</td></tr>
+          <tr><td class="ind"><code>LEFT JOIN</code></td><td>All left rows + matches</td><td>NULL for right-side columns where no match; use for "find unmatched"</td></tr>
+          <tr><td class="ind"><code>FULL OUTER JOIN</code></td><td>All rows from both sides</td><td>NULLs on both sides where unmatched; used for data auditing</td></tr>
+        </tbody>
+      </table>
+
+      <h4>Key Terms Glossary</h4>
+      <table class="styled-table">
+        <thead><tr><th>Term</th><th>Definition</th></tr></thead>
+        <tbody>
+          <tr><td class="hl">DQL</td><td>Data Query Language — the SELECT-based subset of SQL for retrieving data without modifying it</td></tr>
+          <tr><td class="hl">SELECT</td><td>DQL command that retrieves data; combined with clauses to filter, sort, group, and join</td></tr>
+          <tr><td class="hl">Clause</td><td>A keyword-introduced component of a SELECT statement (FROM, WHERE, ORDER BY, etc.)</td></tr>
+          <tr><td class="hl">Predicate</td><td>A condition in a WHERE or HAVING clause that evaluates to TRUE, FALSE, or UNKNOWN</td></tr>
+          <tr><td class="hl">NULL</td><td>The absence of a value — not zero, not empty string; comparisons with NULL return UNKNOWN</td></tr>
+          <tr><td class="hl">Alias</td><td>A temporary name assigned to a column or table using AS — improves readability</td></tr>
+          <tr><td class="hl">Aggregate function</td><td>A function (COUNT, SUM, AVG, MIN, MAX) that collapses multiple rows into a single summary value</td></tr>
+          <tr><td class="hl">GROUP BY</td><td>Clause that partitions rows into groups for per-group aggregation</td></tr>
+          <tr><td class="hl">HAVING</td><td>Clause that filters groups after GROUP BY; can reference aggregate functions</td></tr>
+          <tr><td class="hl">Subquery</td><td>A SELECT statement nested inside another statement; inner result used by outer query</td></tr>
+          <tr><td class="hl">Correlated subquery</td><td>A subquery that references columns from the outer query; evaluated once per outer row</td></tr>
+          <tr><td class="hl">JOIN</td><td>Operation that combines rows from two or more tables based on a related column condition</td></tr>
+          <tr><td class="hl">INNER JOIN</td><td>Returns rows with a matching value in both tables; excludes non-matching rows</td></tr>
+          <tr><td class="hl">LEFT JOIN</td><td>Returns all rows from the left table plus matching rows from the right; NULLs where no match</td></tr>
+          <tr><td class="hl">Anti-join</td><td>Pattern using LEFT JOIN + WHERE IS NULL to find rows in one table with no match in another</td></tr>
+          <tr><td class="hl">Table alias</td><td>A short name given to a table in a query (e.g. <code>Student s</code>) for cleaner column references</td></tr>
+          <tr><td class="hl">Wildcard</td><td>Special LIKE characters: % (any sequence) and _ (exactly one character)</td></tr>
+        </tbody>
+      </table>
+
+      <h4>Self-Assessment Checklist</h4>
+      <div class="callout callout-tip">
+        <span class="callout-icon">✅</span>
+        <div class="callout-body">
+          <ul class="checklist">
+            <li>I can explain the difference between DQL and other SQL sub-languages (DDL, DML, DCL)</li>
+            <li>I understand the SELECT statement's write order vs. execution order and why it matters</li>
+            <li>I can write a basic SELECT query using SELECT, FROM, and WHERE to retrieve and filter rows from a single table</li>
+            <li>I can use comparison operators (=, &lt;&gt;, &gt;, &lt;, &gt;=, &lt;=) and IS NULL / IS NOT NULL in WHERE conditions</li>
+            <li>I can sort query results using ORDER BY with ASC and DESC, including multi-column sort</li>
+            <li>I can use DISTINCT to remove duplicate values from a result set</li>
+            <li>I can combine conditions using AND, OR, and NOT — and I know to use parentheses when mixing AND and OR</li>
+            <li>I can use BETWEEN for inclusive range checks and understand it is equivalent to >= AND <=</li>
+            <li>I can use LIKE with % and _ wildcards to perform pattern matching on string columns</li>
+            <li>I can use IN to match values against a list, and I know why NOT IN with NULLs is dangerous</li>
+            <li>I can use COUNT, SUM, AVG, MIN, and MAX aggregate functions and understand how each handles NULLs</li>
+            <li>I can write a GROUP BY query and include all non-aggregate SELECT columns in the GROUP BY clause</li>
+            <li>I can use HAVING to filter aggregated groups and I know the difference between WHERE and HAVING</li>
+            <li>I can write a subquery using IN to filter one table based on values from another table</li>
+            <li>I can write INNER JOIN and LEFT JOIN queries, using table aliases and ON conditions</li>
+            <li>I can use the LEFT JOIN anti-join pattern (WHERE right.col IS NULL) to find unmatched rows</li>
+            <li>I can combine JOIN with WHERE, GROUP BY, HAVING, and ORDER BY in a single query</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</main>
+<footer>
+  <span>COP 4708 – Introduction to Databases</span> &nbsp;|&nbsp; Module 6: SQL Data Query Language (DQL)
+  <br/><span style="font-weight:300;color:#4a6a80;font-size:.78rem;margin-top:6px;display:block;">Supports CLO 3: Write SQL queries to retrieve and manipulate data.</span>
+</footer>
+<script>
+  function toggle(header) {
+    const body = header.nextElementSibling;
+    const btn  = header.querySelector('.toggle-btn');
+    const open = body.classList.contains('open');
+    body.classList.toggle('open', !open);
+    header.classList.toggle('open', !open);
+    btn.classList.toggle('open', !open);
+  }
+  function setAll(open) {
+    document.querySelectorAll('.card-body').forEach(b => b.classList.toggle('open', open));
+    document.querySelectorAll('.card-header').forEach(h => h.classList.toggle('open', open));
+    document.querySelectorAll('.toggle-btn').forEach(b => b.classList.toggle('open', open));
+  }
+</script>
+</body>
+</html>

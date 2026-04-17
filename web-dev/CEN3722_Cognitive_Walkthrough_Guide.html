@@ -1,0 +1,1150 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CEN3722 - Guide to Cognitive Walkthrough</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.6;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            padding: 20px;
+            color: #333;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.3);
+            overflow: hidden;
+        }
+
+        header {
+            background: linear-gradient(135deg, #2c3e50 0%, #34495e 100%);
+            color: white;
+            padding: 40px;
+            text-align: center;
+        }
+
+        header h1 {
+            font-size: 2.5em;
+            margin-bottom: 10px;
+        }
+
+        header p {
+            font-size: 1.2em;
+            opacity: 0.9;
+        }
+
+        .content {
+            padding: 40px;
+        }
+
+        .intro-box {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 30px;
+            border-radius: 10px;
+            margin-bottom: 30px;
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.3);
+        }
+
+        .intro-box h2 {
+            margin-bottom: 15px;
+        }
+
+        .collapsible {
+            background-color: #3498db;
+            color: white;
+            cursor: pointer;
+            padding: 18px;
+            width: 100%;
+            border: none;
+            text-align: left;
+            outline: none;
+            font-size: 1.2em;
+            font-weight: 600;
+            margin-top: 10px;
+            border-radius: 8px;
+            transition: all 0.3s ease;
+            position: relative;
+            padding-right: 50px;
+        }
+
+        .collapsible:hover {
+            background-color: #2980b9;
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(52, 152, 219, 0.3);
+        }
+
+        .collapsible.active {
+            background-color: #2c3e50;
+        }
+
+        .collapsible:after {
+            content: '\002B';
+            color: white;
+            font-weight: bold;
+            font-size: 1.5em;
+            position: absolute;
+            right: 20px;
+            top: 50%;
+            transform: translateY(-50%);
+        }
+
+        .collapsible.active:after {
+            content: "\2212";
+        }
+
+        .collapsible-content {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.3s ease-out;
+            background-color: #f8f9fa;
+            border-left: 4px solid #3498db;
+            margin-bottom: 10px;
+            border-radius: 0 0 8px 8px;
+        }
+
+        .collapsible-inner {
+            padding: 30px;
+        }
+
+        .info-block {
+            background: #e3f2fd;
+            border-left: 5px solid #2196F3;
+            padding: 20px;
+            margin: 20px 0;
+            border-radius: 5px;
+        }
+
+        .info-block.warning {
+            background: #fff3cd;
+            border-left-color: #ffc107;
+        }
+
+        .info-block.success {
+            background: #d4edda;
+            border-left-color: #28a745;
+        }
+
+        .info-block.tip {
+            background: #d1ecf1;
+            border-left-color: #17a2b8;
+        }
+
+        .example-box {
+            background: white;
+            border: 2px solid #ddd;
+            border-radius: 8px;
+            padding: 25px;
+            margin: 20px 0;
+            box-shadow: 0 3px 10px rgba(0,0,0,0.1);
+        }
+
+        .example-box h4 {
+            color: #2c3e50;
+            margin-bottom: 15px;
+            font-size: 1.3em;
+            border-bottom: 2px solid #3498db;
+            padding-bottom: 10px;
+        }
+
+        .code-block {
+            background: #282c34;
+            color: #abb2bf;
+            padding: 20px;
+            border-radius: 8px;
+            overflow-x: auto;
+            margin: 15px 0;
+            font-family: 'Courier New', monospace;
+            line-height: 1.5;
+        }
+
+        .highlight {
+            background: #fff3cd;
+            padding: 2px 6px;
+            border-radius: 3px;
+            font-weight: 600;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 20px 0;
+            background: white;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        }
+
+        th {
+            background: linear-gradient(135deg, #3498db 0%, #2980b9 100%);
+            color: white;
+            padding: 15px;
+            text-align: left;
+            font-weight: 600;
+        }
+
+        td {
+            padding: 12px 15px;
+            border-bottom: 1px solid #ddd;
+        }
+
+        tr:hover {
+            background: #f5f5f5;
+        }
+
+        ul, ol {
+            margin: 15px 0 15px 30px;
+        }
+
+        li {
+            margin: 8px 0;
+        }
+
+        h3 {
+            color: #2c3e50;
+            margin: 25px 0 15px 0;
+            font-size: 1.6em;
+        }
+
+        h4 {
+            color: #34495e;
+            margin: 20px 0 10px 0;
+            font-size: 1.3em;
+        }
+
+        .two-column {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+            margin: 20px 0;
+        }
+
+        .card {
+            background: white;
+            border-radius: 8px;
+            padding: 20px;
+            box-shadow: 0 3px 10px rgba(0,0,0,0.1);
+            border-top: 4px solid #3498db;
+        }
+
+        .card h4 {
+            color: #3498db;
+            margin-top: 0;
+        }
+
+        @media (max-width: 768px) {
+            .two-column {
+                grid-template-columns: 1fr;
+            }
+            
+            header h1 {
+                font-size: 1.8em;
+            }
+            
+            .content {
+                padding: 20px;
+            }
+        }
+
+        .key-points {
+            background: linear-gradient(135deg, #11998e 0%, #38ef7d 100%);
+            color: white;
+            padding: 20px;
+            border-radius: 8px;
+            margin: 20px 0;
+        }
+
+        .key-points ul {
+            list-style: none;
+            margin-left: 0;
+        }
+
+        .key-points li:before {
+            content: "✓ ";
+            font-weight: bold;
+            margin-right: 8px;
+        }
+
+        .question-box {
+            background: #fff9e6;
+            border: 2px solid #ffc107;
+            border-radius: 8px;
+            padding: 20px;
+            margin: 20px 0;
+        }
+
+        .question-box h4 {
+            color: #856404;
+            margin-top: 0;
+        }
+
+        .good-example {
+            border-left: 5px solid #28a745;
+            background: #d4edda;
+            padding: 15px;
+            margin: 10px 0;
+            border-radius: 5px;
+        }
+
+        .bad-example {
+            border-left: 5px solid #dc3545;
+            background: #f8d7da;
+            padding: 15px;
+            margin: 10px 0;
+            border-radius: 5px;
+        }
+
+        .step-number {
+            display: inline-block;
+            background: #3498db;
+            color: white;
+            width: 35px;
+            height: 35px;
+            border-radius: 50%;
+            text-align: center;
+            line-height: 35px;
+            font-weight: bold;
+            margin-right: 10px;
+        }
+
+        .severity-badge {
+            display: inline-block;
+            padding: 5px 12px;
+            border-radius: 20px;
+            font-weight: 600;
+            font-size: 0.9em;
+            margin: 3px;
+        }
+
+        .severity-critical {
+            background: #dc3545;
+            color: white;
+        }
+
+        .severity-major {
+            background: #ff6b6b;
+            color: white;
+        }
+
+        .severity-moderate {
+            background: #ffc107;
+            color: #333;
+        }
+
+        .severity-minor {
+            background: #17a2b8;
+            color: white;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>CEN3722: Human-Computer Interaction</h1>
+            <p>Guide to Performing Cognitive Walkthroughs</p>
+        </header>
+
+        <div class="content">
+            <div class="intro-box">
+                <h2>🔍 Module Overview</h2>
+                <p>This guide will teach you how to perform a Cognitive Walkthrough—a systematic method for evaluating the usability of an interface by stepping through tasks from a user's perspective. You'll learn what it is, see a complete example, and understand how to document your findings to provide actionable feedback.</p>
+            </div>
+
+            <!-- Section 1: What is a Cognitive Walkthrough -->
+            <button type="button" class="collapsible">What is a Cognitive Walkthrough?</button>
+            <div class="collapsible-content">
+                <div class="collapsible-inner">
+                    <h3>Definition</h3>
+                    <p>A <span class="highlight">Cognitive Walkthrough (CW)</span> is a usability evaluation method where you systematically walk through an interface, asking yourself at each step: <strong>"Would a user know what to do here?"</strong></p>
+
+                    <p>You act as a "surrogate user," examining whether the interface makes it clear how to accomplish specific tasks, especially for first-time users.</p>
+
+                    <div class="info-block">
+                        <h4>Core Purpose</h4>
+                        <p>The Cognitive Walkthrough focuses on evaluating <strong>learnability</strong>—how easy it is for users to learn to use the interface without extensive training or documentation.</p>
+                    </div>
+
+                    <h3>The Four Key Questions</h3>
+                    <p>At every action point in a task, you ask these four questions:</p>
+
+                    <div class="question-box">
+                        <h4>Q1: Will users know what to do?</h4>
+                        <p>Will users understand what action they need to take next to move toward their goal?</p>
+                    </div>
+
+                    <div class="question-box">
+                        <h4>Q2: Will users see how to do it?</h4>
+                        <p>Is the control or element they need visible and recognizable?</p>
+                    </div>
+
+                    <div class="question-box">
+                        <h4>Q3: Will users understand the connection?</h4>
+                        <p>Will users recognize that this action will achieve their goal?</p>
+                    </div>
+
+                    <div class="question-box">
+                        <h4>Q4: Will users see that progress is being made?</h4>
+                        <p>After taking the action, will users get feedback that they're moving toward their goal?</p>
+                    </div>
+
+                    <h3>What Makes CW Different?</h3>
+
+                    <div class="two-column">
+                        <div class="card">
+                            <h4>Task-Focused</h4>
+                            <p>You evaluate specific user tasks, not the entire interface. This makes the evaluation concrete and actionable.</p>
+                        </div>
+                        <div class="card">
+                            <h4>Question-Driven</h4>
+                            <p>The four questions provide a systematic structure, ensuring you don't miss important usability issues.</p>
+                        </div>
+                        <div class="card">
+                            <h4>User-Centered</h4>
+                            <p>You think from the target user's perspective (their skills, knowledge, context), not your own.</p>
+                        </div>
+                        <div class="card">
+                            <h4>Action-by-Action</h4>
+                            <p>You examine each individual action in the task sequence, not just the overall impression.</p>
+                        </div>
+                    </div>
+
+                    <div class="info-block success">
+                        <h4>Why Use Cognitive Walkthrough?</h4>
+                        <ul>
+                            <li><strong>Finds issues early:</strong> Can be done with prototypes before coding</li>
+                            <li><strong>No users needed:</strong> Expert evaluation, don't need to recruit participants</li>
+                            <li><strong>Systematic:</strong> Structured approach catches issues consistently</li>
+                            <li><strong>Focuses on first-time use:</strong> Reveals learnability problems</li>
+                            <li><strong>Actionable results:</strong> Identifies specific problems at specific locations</li>
+                        </ul>
+                    </div>
+
+                    <h3>When to Use CW</h3>
+                    <table>
+                        <tr>
+                            <th>Good For</th>
+                            <th>Not Ideal For</th>
+                        </tr>
+                        <tr>
+                            <td>
+                                • Evaluating task flows<br>
+                                • Finding learnability issues<br>
+                                • Early design stages<br>
+                                • Prototype evaluation<br>
+                                • Identifying unclear paths
+                            </td>
+                            <td>
+                                • Overall aesthetic evaluation<br>
+                                • Testing performance/speed<br>
+                                • Understanding emotions<br>
+                                • Evaluating visual design<br>
+                                • Gathering user preferences
+                            </td>
+                        </tr>
+                    </table>
+                </div>
+            </div>
+
+            <!-- Section 2: Simple Example -->
+            <button type="button" class="collapsible">Complete Example: Performing a Cognitive Walkthrough</button>
+            <div class="collapsible-content">
+                <div class="collapsible-inner">
+                    <h3>Example Scenario: Recipe App</h3>
+                    <p>Let's walk through a complete example to see exactly how a Cognitive Walkthrough works.</p>
+
+                    <div class="example-box">
+                        <h4>📱 App Context</h4>
+                        <div class="code-block">
+<strong>App:</strong> "QuickMeal" - A recipe discovery app for college students<br>
+<br>
+<strong>Target User:</strong><br>
+Sarah, 20-year-old college student<br>
+- Lives in dorm with shared kitchen<br>
+- Basic smartphone user (uses social media, email)<br>
+- Never used a recipe app before<br>
+- Wants simple, quick meals<br>
+<br>
+<strong>Task:</strong> Save a recipe to favorites for later<br>
+<br>
+<strong>Scenario:</strong><br>
+Sarah is browsing recipes and found "15-Minute Pasta" that looks good. <br>
+She wants to save it so she can make it later this week.<br>
+<br>
+<strong>Starting Point:</strong> Recipe Detail screen (viewing "15-Minute Pasta")<br>
+<br>
+<strong>Goal:</strong> Save the recipe and confirm it's saved
+                        </div>
+                    </div>
+
+                    <h3>Step-by-Step Walkthrough</h3>
+
+                    <div class="example-box">
+                        <h4><span class="step-number">1</span> ACTION 1: Save the Recipe</h4>
+                        
+                        <div class="code-block">
+<strong>Current State:</strong><br>
+Sarah is viewing the "15-Minute Pasta" recipe detail screen.<br>
+Screen shows: recipe photo, title, ingredients list, cooking instructions.<br>
+<br>
+<strong>What Sarah needs to do:</strong><br>
+Find and tap a way to save this recipe for later.<br>
+<br>
+<strong>Correct action:</strong> Tap the bookmark icon in the top-right corner<br>
+<br>
+<strong>───────────────────────────────────────────────</strong><br>
+<br>
+<strong>Q1: Will Sarah know what to do?</strong><br>
+<br>
+Answer: <strong>YES</strong><br>
+<br>
+Reasoning: Sarah wants to save the recipe. She understands she needs to <br>
+find some kind of "save" or "favorite" function. The concept of saving <br>
+content is familiar from social media and other apps.<br>
+<br>
+<strong>───────────────────────────────────────────────</strong><br>
+<br>
+<strong>Q2: Will Sarah see how to do it?</strong><br>
+<br>
+Answer: <strong>MAYBE</strong> ⚠️<br>
+<br>
+Reasoning: There's a bookmark icon in the top-right corner of the screen. <br>
+However:<br>
+- The icon is small (about 24x24 pixels)<br>
+- It's the same dark color as the header, making it blend in<br>
+- There's no text label saying "Save" or "Favorite"<br>
+- Sarah might not immediately notice it, especially if she's focused on <br>
+  reading the recipe content<br>
+<br>
+<strong>🔴 POTENTIAL ISSUE: Icon may not be noticeable enough</strong><br>
+<br>
+<strong>───────────────────────────────────────────────</strong><br>
+<br>
+<strong>Q3: Will Sarah understand the connection?</strong><br>
+<br>
+Answer: <strong>PROBABLY, but with some uncertainty</strong> ⚠️<br>
+<br>
+Reasoning: <br>
+- Bookmark icons typically mean "save for later" in many apps<br>
+- However, some apps use hearts, stars, or plus signs for saving<br>
+- Without a label, Sarah might wonder: "Does this bookmark it? Save it? <br>
+  Add it to a list?"<br>
+- She'll probably try it, but there's slight uncertainty<br>
+<br>
+<strong>🟡 MINOR ISSUE: Lack of label creates ambiguity</strong><br>
+<br>
+<strong>───────────────────────────────────────────────</strong><br>
+<br>
+<strong>Q4: Will Sarah see that progress is being made?</strong><br>
+<br>
+Answer: <strong>YES</strong> ✓<br>
+<br>
+Reasoning: After Sarah taps the bookmark icon:<br>
+- The icon changes from outline to filled (visual feedback)<br>
+- A small message appears at bottom: "Recipe saved!"<br>
+- The change is clear and immediate<br>
+<br>
+Good feedback provided.<br>
+<br>
+<strong>───────────────────────────────────────────────</strong><br>
+<br>
+<strong>SUMMARY OF ACTION 1:</strong><br>
+<br>
+✓ User knows they need to save (Q1)<br>
+⚠️ Icon might not be noticed immediately (Q2)<br>
+⚠️ Icon meaning could be clearer (Q3)<br>
+✓ Good feedback after action (Q4)<br>
+<br>
+<strong>Issues Found: 2 (both moderate severity)</strong>
+                        </div>
+                    </div>
+
+                    <div class="example-box">
+                        <h4><span class="step-number">2</span> ACTION 2: Verify Recipe Was Saved</h4>
+                        
+                        <div class="code-block">
+<strong>Current State:</strong><br>
+Still on Recipe Detail screen. Bookmark icon is now filled in. Toast <br>
+message "Recipe saved!" has appeared and faded away.<br>
+<br>
+<strong>What Sarah needs to do:</strong><br>
+Confirm the recipe is actually saved somewhere she can find it later.<br>
+<br>
+<strong>Correct action:</strong> Navigate to "Saved" section via bottom tab bar<br>
+<br>
+<strong>───────────────────────────────────────────────</strong><br>
+<br>
+<strong>Q1: Will Sarah know what to do?</strong><br>
+<br>
+Answer: <strong>YES</strong><br>
+<br>
+Reasoning: Sarah saw the confirmation message. Now she wants to verify <br>
+where the recipe was saved. She knows she needs to navigate somewhere to <br>
+view her saved recipes.<br>
+<br>
+<strong>───────────────────────────────────────────────</strong><br>
+<br>
+<strong>Q2: Will Sarah see how to do it?</strong><br>
+<br>
+Answer: <strong>YES</strong> ✓<br>
+<br>
+Reasoning: Bottom tab bar is clearly visible with 4 tabs:<br>
+- Home<br>
+- Search<br>
+- Saved<br>
+- Profile<br>
+<br>
+The "Saved" tab with a bookmark icon is easy to spot.<br>
+<br>
+<strong>───────────────────────────────────────────────</strong><br>
+<br>
+<strong>Q3: Will Sarah understand the connection?</strong><br>
+<br>
+Answer: <strong>YES</strong> ✓<br>
+<br>
+Reasoning: The tab is labeled "Saved" which matches her mental model. <br>
+The bookmark icon reinforces this. She'll understand that tapping "Saved" <br>
+will show her saved recipes.<br>
+<br>
+<strong>───────────────────────────────────────────────</strong><br>
+<br>
+<strong>Q4: Will Sarah see that progress is being made?</strong><br>
+<br>
+Answer: <strong>YES</strong> ✓<br>
+<br>
+Reasoning: After tapping "Saved":<br>
+- Screen transitions to Saved Recipes screen<br>
+- She sees a list of saved recipes<br>
+- "15-Minute Pasta" appears at the top with its photo<br>
+- Clear confirmation that her recipe is there<br>
+<br>
+Excellent feedback and verification.<br>
+<br>
+<strong>───────────────────────────────────────────────</strong><br>
+<br>
+<strong>SUMMARY OF ACTION 2:</strong><br>
+<br>
+✓ All four questions answered positively<br>
+✓ No issues found<br>
+✓ Clear navigation and feedback
+                        </div>
+                    </div>
+
+                    <h3>Overall Task Evaluation</h3>
+
+                    <div class="example-box">
+                        <h4>Task Completion Summary</h4>
+                        
+                        <div class="code-block">
+<strong>═══════════════════════════════════════════════</strong><br>
+<strong>TASK: Save a recipe to favorites</strong><br>
+<strong>═══════════════════════════════════════════════</strong><br>
+<br>
+<strong>Result:</strong> ✓ Task can be completed<br>
+<br>
+<strong>Total Actions Evaluated:</strong> 2<br>
+<strong>Issues Found:</strong> 2<br>
+<br>
+<strong>Issue #1: Save icon not prominent enough</strong><br>
+Severity: <span class="severity-moderate">MODERATE</span><br>
+Location: Recipe Detail screen, top-right corner<br>
+Problem: Bookmark icon is small (24px) and blends with header color. <br>
+First-time users might not notice it immediately.<br>
+Impact: Users may spend time looking for save function or may give up.<br>
+Recommendation: Increase icon size to 32-40px, use contrasting color, <br>
+or add text label "Save"<br>
+<br>
+<strong>Issue #2: Save icon lacks text label</strong><br>
+Severity: <span class="severity-minor">MINOR</span><br>
+Location: Recipe Detail screen, top-right corner<br>
+Problem: Bookmark icon has no accompanying text label. Users familiar <br>
+with this convention will understand, but first-time users might be <br>
+briefly uncertain about what it does.<br>
+Impact: Slight hesitation before using feature.<br>
+Recommendation: Add "Save" label below or next to icon<br>
+<br>
+<strong>Positive Aspects:</strong><br>
++ Clear feedback when recipe is saved (icon change + toast message)<br>
++ Easy to find saved recipes (clear "Saved" tab)<br>
++ Recipe appears immediately in saved list (good confirmation)<br>
++ Overall task flow is logical and straightforward<br>
+<br>
+<strong>Overall Assessment:</strong><br>
+The save functionality works and is discoverable, but could be made more <br>
+obvious for first-time users. The issues are not severe but addressing <br>
+them would improve initial learnability.
+                        </div>
+                    </div>
+
+                    <div class="key-points">
+                        <h4>🎯 Key Takeaways from This Example</h4>
+                        <ul>
+                            <li>Every action is evaluated systematically with all four questions</li>
+                            <li>You document both problems AND positive aspects</li>
+                            <li>Severity is based on impact on users, not your personal opinion</li>
+                            <li>Findings include specific recommendations for improvement</li>
+                            <li>You think from the target user's perspective (Sarah, not yourself)</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Section 3: Best Practices for Documentation -->
+            <button type="button" class="collapsible">Best Practices for Documenting Your Cognitive Walkthrough</button>
+            <div class="collapsible-content">
+                <div class="collapsible-inner">
+                    <h3>Documentation Principles</h3>
+                    <p>Good documentation is the key to providing actionable feedback. Your findings should be clear, specific, and constructive.</p>
+
+                    <div class="info-block success">
+                        <h4>What Makes Good Documentation?</h4>
+                        <ul>
+                            <li><strong>Specific:</strong> Exact location, screen, and context</li>
+                            <li><strong>Objective:</strong> Based on CW questions, not personal preference</li>
+                            <li><strong>Actionable:</strong> Designer knows what to fix and how</li>
+                            <li><strong>Complete:</strong> Includes severity, impact, and recommendations</li>
+                            <li><strong>Constructive:</strong> Helps improve the design, not just criticize</li>
+                        </ul>
+                    </div>
+
+                    <h3>Severity Ratings</h3>
+                    <p>Rate each issue by its impact on users:</p>
+
+                    <table>
+                        <tr>
+                            <th>Severity</th>
+                            <th>Definition</th>
+                            <th>Example</th>
+                        </tr>
+                        <tr>
+                            <td><span class="severity-badge severity-critical">CRITICAL</span></td>
+                            <td>Prevents task completion. User cannot proceed.</td>
+                            <td>Button required for next step doesn't work; essential feature is missing; no way to complete the task</td>
+                        </tr>
+                        <tr>
+                            <td><span class="severity-badge severity-major">MAJOR</span></td>
+                            <td>Significant difficulty. Most users struggle or fail.</td>
+                            <td>Critical feature very hard to find; confusing navigation causes errors; no feedback after important action</td>
+                        </tr>
+                        <tr>
+                            <td><span class="severity-badge severity-moderate">MODERATE</span></td>
+                            <td>Causes confusion or inefficiency. Users can work around it.</td>
+                            <td>Feature not obvious; weak feedback; ambiguous labels; requires extra steps</td>
+                        </tr>
+                        <tr>
+                            <td><span class="severity-badge severity-minor">MINOR</span></td>
+                            <td>Small annoyance. Minimal impact on usability.</td>
+                            <td>Slightly unclear wording; small touch target; minor inconsistency</td>
+                        </tr>
+                    </table>
+
+                    <h3>Issue Documentation Template</h3>
+
+                    <div class="example-box">
+                        <h4>Template for Documenting Each Issue</h4>
+                        
+                        <div class="code-block">
+<strong>ISSUE #[Number]: [Brief Descriptive Title]</strong><br>
+<br>
+<strong>Task:</strong> [Which task were you evaluating?]<br>
+<br>
+<strong>Action/Step:</strong> [Which specific action in the task?]<br>
+<br>
+<strong>Screen/Location:</strong> [Where in the interface?]<br>
+<br>
+<strong>Severity:</strong> [Critical / Major / Moderate / Minor]<br>
+<br>
+<strong>CW Questions That Revealed This Issue:</strong><br>
+[Which of the 4 questions had a NO or MAYBE answer? Why?]<br>
+<br>
+<strong>Problem Description:</strong><br>
+[What is the issue? Be specific about what you observed.]<br>
+<br>
+<strong>User Impact:</strong><br>
+[How does this affect the target user? What happens because of this?]<br>
+<br>
+<strong>Recommendation:</strong><br>
+[Specific suggestion for how to fix this issue]<br>
+<br>
+[Screenshot if available]
+                        </div>
+                    </div>
+
+                    <h3>Examples: Good vs. Bad Documentation</h3>
+
+                    <div class="two-column">
+                        <div class="bad-example">
+                            <h4>✗ Bad Example</h4>
+                            <div class="code-block">
+Issue: Button is confusing<br>
+<br>
+Severity: Bad<br>
+<br>
+Fix: Make it better
+                            </div>
+                            <p><strong>Why this is bad:</strong></p>
+                            <ul>
+                                <li>Not specific (which button?)</li>
+                                <li>No context (which screen? which task?)</li>
+                                <li>No explanation (why confusing?)</li>
+                                <li>Not actionable (how to "make it better"?)</li>
+                            </ul>
+                        </div>
+
+                        <div class="good-example">
+                            <h4>✓ Good Example</h4>
+                            <div class="code-block">
+<strong>ISSUE #3: Submit Button Label Unclear</strong><br>
+<br>
+<strong>Task:</strong> Book a fitness class<br>
+<strong>Action:</strong> Confirming the booking<br>
+<strong>Screen:</strong> Booking Summary<br>
+<strong>Severity:</strong> MODERATE<br>
+<br>
+<strong>CW Question:</strong> Q3 (Will users <br>
+understand the connection?)<br>
+Answer: NO - Button says "Submit" but <br>
+users don't know what they're submitting<br>
+or what happens next<br>
+<br>
+<strong>Problem:</strong> After selecting a class and <br>
+time, the confirmation button is labeled <br>
+"Submit." This is vague—users are unsure <br>
+if this books the class, sends a request, <br>
+or moves to another screen.<br>
+<br>
+<strong>Impact:</strong> Users hesitate at a critical <br>
+decision point. They want to be certain <br>
+they understand what clicking will do.<br>
+<br>
+<strong>Recommendation:</strong> Change button label to <br>
+"Confirm Booking" or "Book This Class" <br>
+to clearly communicate the action
+                            </div>
+                        </div>
+                    </div>
+
+                    <h3>Complete Report Structure</h3>
+
+                    <div class="example-box">
+                        <h4>Recommended Report Format</h4>
+                        
+                        <div class="code-block">
+<strong>═══════════════════════════════════════════════</strong><br>
+<strong>COGNITIVE WALKTHROUGH REPORT</strong><br>
+<strong>═══════════════════════════════════════════════</strong><br>
+<br>
+<strong>Evaluator:</strong> [Your Name]<br>
+<strong>Date:</strong> [Evaluation Date]<br>
+<strong>App Evaluated:</strong> [App Name]<br>
+<strong>Designer:</strong> [Designer's Name]<br>
+<br>
+<strong>───────────────────────────────────────────────</strong><br>
+<strong>1. EXECUTIVE SUMMARY</strong><br>
+<strong>───────────────────────────────────────────────</strong><br>
+<br>
+[2-3 sentences describing what you evaluated and overall findings]<br>
+<br>
+<strong>Issues Found:</strong><br>
+- Critical: [#]<br>
+- Major: [#]<br>
+- Moderate: [#]<br>
+- Minor: [#]<br>
+Total: [#]<br>
+<br>
+<strong>Key Findings:</strong><br>
+- [Most important issue]<br>
+- [Second most important issue]<br>
+- [Notable positive aspect]<br>
+<br>
+<strong>───────────────────────────────────────────────</strong><br>
+<strong>2. TASK EVALUATIONS</strong><br>
+<strong>───────────────────────────────────────────────</strong><br>
+<br>
+<strong>TASK 1: [Task Name]</strong><br>
+<br>
+<strong>User Profile:</strong> [Brief description]<br>
+<strong>Starting Point:</strong> [Where task begins]<br>
+<strong>Goal:</strong> [What user wants to accomplish]<br>
+<br>
+<strong>Actions Evaluated:</strong><br>
+<br>
+<strong>Action 1: [Action name]</strong><br>
+Q1: [YES/NO/MAYBE + reasoning]<br>
+Q2: [YES/NO/MAYBE + reasoning]<br>
+Q3: [YES/NO/MAYBE + reasoning]<br>
+Q4: [YES/NO/MAYBE + reasoning]<br>
+Finding: [Issue found or no issue]<br>
+<br>
+<strong>Action 2: [Action name]</strong><br>
+[Repeat for each action]<br>
+<br>
+<strong>Task Completion:</strong> [Success/Failure/Partial]<br>
+<strong>Overall Assessment:</strong> [Brief summary]<br>
+<br>
+[Repeat for each task]<br>
+<br>
+<strong>───────────────────────────────────────────────</strong><br>
+<strong>3. DETAILED ISSUES</strong><br>
+<strong>───────────────────────────────────────────────</strong><br>
+<br>
+[Use the issue template for each problem found]<br>
+<br>
+<strong>ISSUE #1: [Title]</strong><br>
+Task: ...<br>
+Action: ...<br>
+Screen: ...<br>
+Severity: ...<br>
+CW Questions: ...<br>
+Problem: ...<br>
+Impact: ...<br>
+Recommendation: ...<br>
+<br>
+[Continue for all issues]<br>
+<br>
+<strong>───────────────────────────────────────────────</strong><br>
+<strong>4. POSITIVE FINDINGS</strong><br>
+<strong>───────────────────────────────────────────────</strong><br>
+<br>
+[List what worked well - features that scored well on all 4 questions]<br>
+<br>
+<strong>───────────────────────────────────────────────</strong><br>
+<strong>5. RECOMMENDATIONS SUMMARY</strong><br>
+<strong>───────────────────────────────────────────────</strong><br>
+<br>
+<strong>High Priority:</strong><br>
+[Top 3 issues to fix, with brief recommendations]<br>
+<br>
+<strong>Medium Priority:</strong><br>
+[Moderate issues]<br>
+<br>
+<strong>Low Priority:</strong><br>
+[Minor issues]
+                        </div>
+                    </div>
+
+                    <h3>Documentation Best Practices</h3>
+
+                    <div class="key-points">
+                        <h4>✓ Do This</h4>
+                        <ul>
+                            <li>Document as you go, not after finishing all tasks</li>
+                            <li>Take screenshots of every issue you find</li>
+                            <li>Quote the specific CW question(s) that revealed each issue</li>
+                            <li>Include both problems and positive findings</li>
+                            <li>Be specific about locations (name the screen, button, element)</li>
+                            <li>Provide constructive recommendations, not just criticism</li>
+                            <li>Think from the target user's perspective in your reasoning</li>
+                            <li>Use consistent severity ratings based on user impact</li>
+                        </ul>
+                    </div>
+
+                    <div class="info-block warning">
+                        <h4>⚠️ Common Documentation Mistakes</h4>
+                        <ul>
+                            <li><strong>Too vague:</strong> "The app is confusing" (where? why? for whom?)</li>
+                            <li><strong>Personal opinion:</strong> "I don't like the colors" (not a CW finding)</li>
+                            <li><strong>No context:</strong> Listing issues without saying which task or screen</li>
+                            <li><strong>No recommendations:</strong> Identifying problems without suggesting solutions</li>
+                            <li><strong>Inconsistent severity:</strong> Rating all issues as "major" or being too lenient</li>
+                            <li><strong>Only negative:</strong> Not noting what works well</li>
+                            <li><strong>Not tied to CW questions:</strong> Reporting issues without showing which question failed</li>
+                        </ul>
+                    </div>
+
+                    <h3>Tips for Effective Evaluation</h3>
+
+                    <div class="two-column">
+                        <div class="info-block">
+                            <h4>Before You Start</h4>
+                            <ul>
+                                <li>Read all documentation thoroughly</li>
+                                <li>Understand the target user profile</li>
+                                <li>Review all task scenarios</li>
+                                <li>Test that the prototype works</li>
+                                <li>Set up your documentation template</li>
+                            </ul>
+                        </div>
+
+                        <div class="info-block">
+                            <h4>During the Walkthrough</h4>
+                            <ul>
+                                <li>Ask all 4 questions at every step</li>
+                                <li>Think aloud to clarify your reasoning</li>
+                                <li>Be thorough, not rushed</li>
+                                <li>Screenshot every issue</li>
+                                <li>Note positive aspects too</li>
+                            </ul>
+                        </div>
+
+                        <div class="info-block">
+                            <h4>After Completing Tasks</h4>
+                            <ul>
+                                <li>Review all findings for completeness</li>
+                                <li>Ensure severity ratings are consistent</li>
+                                <li>Check that recommendations are specific</li>
+                                <li>Proofread for clarity</li>
+                                <li>Organize by priority</li>
+                            </ul>
+                        </div>
+
+                        <div class="info-block tip">
+                            <h4>Time Management</h4>
+                            <ul>
+                                <li>Allow 30-45 minutes per task</li>
+                                <li>Don't rush through questions</li>
+                                <li>Take breaks between tasks</li>
+                                <li>Budget time for documentation</li>
+                                <li>Review before submitting</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Section 4: Quick Reference -->
+            <button type="button" class="collapsible">Quick Reference Guide</button>
+            <div class="collapsible-content">
+                <div class="collapsible-inner">
+                    <h3>The Four Questions (Quick Reference)</h3>
+
+                    <div class="example-box">
+                        <h4>Ask These at Every Action</h4>
+                        <div class="code-block">
+<strong>Q1: Will users know what to do?</strong><br>
+Will users understand what action is needed to progress toward their goal?<br>
+<br>
+<strong>Q2: Will users see how to do it?</strong><br>
+Is the control/element visible and recognizable?<br>
+<br>
+<strong>Q3: Will users understand the connection?</strong><br>
+Will users recognize that this action achieves their goal?<br>
+<br>
+<strong>Q4: Will users see progress?</strong><br>
+After acting, will users get feedback showing they moved forward?
+                        </div>
+                    </div>
+
+                    <h3>Step-by-Step Process</h3>
+
+                    <div class="example-box">
+                        <h4>Cognitive Walkthrough Procedure</h4>
+                        <ol>
+                            <li><strong>Read the task scenario</strong> - Understand user, context, and goal</li>
+                            <li><strong>Go to starting point</strong> - Navigate to where the task begins</li>
+                            <li><strong>Identify first action</strong> - What does user need to do?</li>
+                            <li><strong>Ask all 4 questions</strong> - Systematically evaluate this action</li>
+                            <li><strong>Document findings</strong> - Record any issues (or note if all good)</li>
+                            <li><strong>Perform the action</strong> - Move to next state</li>
+                            <li><strong>Repeat steps 3-6</strong> - Continue until task is complete (or fails)</li>
+                            <li><strong>Summarize task</strong> - Overall completion status and key findings</li>
+                            <li><strong>Move to next task</strong> - Repeat entire process</li>
+                        </ol>
+                    </div>
+
+                    <h3>Severity Quick Guide</h3>
+
+                    <div class="example-box">
+                        <table>
+                            <tr>
+                                <th>Level</th>
+                                <th>Can task be completed?</th>
+                                <th>Example</th>
+                            </tr>
+                            <tr>
+                                <td><span class="severity-badge severity-critical">Critical</span></td>
+                                <td>NO - Task cannot be completed</td>
+                                <td>Required button missing/broken</td>
+                            </tr>
+                            <tr>
+                                <td><span class="severity-badge severity-major">Major</span></td>
+                                <td>BARELY - Most users fail or struggle significantly</td>
+                                <td>Feature very hard to find</td>
+                            </tr>
+                            <tr>
+                                <td><span class="severity-badge severity-moderate">Moderate</span></td>
+                                <td>YES, but with confusion/extra effort</td>
+                                <td>Ambiguous labels, weak feedback</td>
+                            </tr>
+                            <tr>
+                                <td><span class="severity-badge severity-minor">Minor</span></td>
+                                <td>YES, minimal impact</td>
+                                <td>Small inconsistencies</td>
+                            </tr>
+                        </table>
+                    </div>
+
+                    <h3>Common Pitfalls to Avoid</h3>
+
+                    <div class="info-block warning">
+                        <ul>
+                            <li>❌ Evaluating based on YOUR knowledge, not target user's</li>
+                            <li>❌ Skipping questions because you think you know the answer</li>
+                            <li>❌ Being too lenient ("users will figure it out")</li>
+                            <li>❌ Documenting vague issues without specifics</li>
+                            <li>❌ Only noting problems, not positive aspects</li>
+                            <li>❌ Confusing visual design preferences with usability issues</li>
+                            <li>❌ Rushing through tasks without proper analysis</li>
+                        </ul>
+                    </div>
+
+                    <h3>Final Checklist</h3>
+
+                    <div class="example-box">
+                        <h4>Before Submitting Your Report</h4>
+                        <div class="code-block">
+☐ I evaluated all assigned tasks<br>
+☐ I asked all 4 questions at every action<br>
+☐ Each issue has:<br>
+   ☐ Specific location (task, action, screen)<br>
+   ☐ Clear severity rating<br>
+   ☐ Connection to CW questions<br>
+   ☐ Description of the problem<br>
+   ☐ User impact explanation<br>
+   ☐ Specific recommendation<br>
+☐ I included positive findings<br>
+☐ I evaluated from the target user's perspective<br>
+☐ My severity ratings are consistent<br>
+☐ I provided constructive, actionable feedback<br>
+☐ Screenshots are included for key issues<br>
+☐ Report is well-organized and proofread
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // JavaScript for collapsible sections
+        const collapsibles = document.getElementsByClassName("collapsible");
+        
+        for (let i = 0; i < collapsibles.length; i++) {
+            collapsibles[i].addEventListener("click", function() {
+                this.classList.toggle("active");
+                const content = this.nextElementSibling;
+                
+                if (content.style.maxHeight) {
+                    content.style.maxHeight = null;
+                } else {
+                    content.style.maxHeight = content.scrollHeight + "px";
+                }
+            });
+        }
+
+        // Optional: Open first section by default
+        if (collapsibles.length > 0) {
+            collapsibles[0].click();
+        }
+    </script>
+</body>
+</html>

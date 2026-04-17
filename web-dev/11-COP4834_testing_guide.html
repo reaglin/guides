@@ -1,0 +1,2003 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>COP4834 - Guide to Software Testing</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #0d7377 0%, #14a085 50%, #212f3d 100%);
+            padding: 20px;
+            line-height: 1.6;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.4);
+            overflow: hidden;
+        }
+
+        /* ── Header ── */
+        .header {
+            background: linear-gradient(135deg, #0d7377 0%, #14a085 60%, #1abc9c 100%);
+            color: white;
+            padding: 45px 40px;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .header::before {
+            content: '✓';
+            position: absolute;
+            font-size: 220px;
+            opacity: 0.05;
+            top: -30px;
+            right: 10px;
+            font-weight: bold;
+        }
+
+        .header h1 {
+            font-size: 2.5em;
+            margin-bottom: 10px;
+            text-shadow: 2px 2px 8px rgba(0,0,0,0.4);
+        }
+
+        .header p {
+            font-size: 1.2em;
+            opacity: 0.92;
+        }
+
+        .content {
+            padding: 40px;
+        }
+
+        /* ── Intro box ── */
+        .intro-box {
+            background: linear-gradient(135deg, #0d7377 0%, #14a085 100%);
+            color: white;
+            padding: 30px;
+            border-radius: 10px;
+            margin-bottom: 30px;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.2);
+            border-left: 6px solid #1abc9c;
+        }
+
+        .intro-box h2 {
+            margin-bottom: 15px;
+            font-size: 1.8em;
+        }
+
+        /* ── Collapsible buttons ── */
+        .collapsible {
+            background: linear-gradient(135deg, #0d7377 0%, #14a085 100%);
+            color: white;
+            cursor: pointer;
+            padding: 18px 22px;
+            width: 100%;
+            border: none;
+            text-align: left;
+            outline: none;
+            font-size: 1.15em;
+            font-weight: bold;
+            border-radius: 8px;
+            margin-bottom: 10px;
+            transition: all 0.3s ease;
+            box-shadow: 0 3px 10px rgba(0,0,0,0.2);
+            border-left: 5px solid #1abc9c;
+        }
+
+        .collapsible:hover {
+            background: linear-gradient(135deg, #0a5c60 0%, #0d7377 100%);
+            transform: translateY(-2px);
+            box-shadow: 0 6px 18px rgba(0,0,0,0.3);
+        }
+
+        .collapsible.active {
+            background: linear-gradient(135deg, #1a6b3a 0%, #27ae60 100%);
+            border-left-color: #2ecc71;
+        }
+
+        .collapsible:after {
+            content: '\002B';
+            float: right;
+            font-size: 1.3em;
+            font-weight: bold;
+        }
+
+        .collapsible.active:after {
+            content: '\2212';
+        }
+
+        .collapsible-content {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.35s ease-out;
+            background-color: #f4faf9;
+            border-radius: 0 0 8px 8px;
+            margin-bottom: 20px;
+        }
+
+        .collapsible-inner {
+            padding: 28px;
+        }
+
+        /* ── Callout boxes ── */
+        .info-box {
+            background: #d1f0ec;
+            border-left: 5px solid #0d7377;
+            padding: 20px;
+            margin: 20px 0;
+            border-radius: 5px;
+        }
+
+        .warning-box {
+            background: #fef5e7;
+            border-left: 5px solid #f39c12;
+            padding: 20px;
+            margin: 20px 0;
+            border-radius: 5px;
+        }
+
+        .success-box {
+            background: #d5f4e6;
+            border-left: 5px solid #27ae60;
+            padding: 20px;
+            margin: 20px 0;
+            border-radius: 5px;
+        }
+
+        .tip-box {
+            background: #eaf4fb;
+            border-left: 5px solid #2e86c1;
+            padding: 20px;
+            margin: 20px 0;
+            border-radius: 5px;
+        }
+
+        .danger-box {
+            background: #fdf0f0;
+            border-left: 5px solid #c0392b;
+            padding: 20px;
+            margin: 20px 0;
+            border-radius: 5px;
+        }
+
+        /* ── Step containers ── */
+        .step-container {
+            background: white;
+            border: 2px solid #0d7377;
+            border-radius: 8px;
+            padding: 20px;
+            margin: 15px 0;
+        }
+
+        .step-number {
+            display: inline-block;
+            background: linear-gradient(135deg, #0d7377, #1abc9c);
+            color: white;
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            text-align: center;
+            line-height: 36px;
+            font-weight: bold;
+            margin-right: 10px;
+            flex-shrink: 0;
+        }
+
+        .step-title {
+            display: inline-block;
+            font-size: 1.25em;
+            color: #0d4f52;
+            font-weight: bold;
+            vertical-align: middle;
+        }
+
+        .step-content {
+            margin-top: 15px;
+            padding-left: 46px;
+        }
+
+        /* ── Inline code ── */
+        code {
+            background: #0d7377;
+            color: #ffffff;
+            padding: 3px 8px;
+            border-radius: 4px;
+            font-family: 'Courier New', monospace;
+            font-size: 0.9em;
+        }
+
+        /* ── Typography ── */
+        h3 {
+            color: #0d4f52;
+            margin: 22px 0 10px 0;
+            font-size: 1.45em;
+            border-bottom: 2px solid #14a085;
+            padding-bottom: 6px;
+            display: inline-block;
+        }
+
+        h4 {
+            color: #0d7377;
+            margin: 15px 0 8px 0;
+            font-size: 1.15em;
+        }
+
+        ul, ol {
+            margin-left: 25px;
+            margin-top: 10px;
+        }
+
+        li {
+            margin: 9px 0;
+        }
+
+        strong {
+            color: #0d4f52;
+        }
+
+        p {
+            margin: 8px 0;
+        }
+
+        /* ── Tables ── */
+        .comparison-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 20px 0;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+            border-radius: 8px;
+            overflow: hidden;
+        }
+
+        .comparison-table th {
+            background: linear-gradient(135deg, #0d7377, #14a085);
+            color: white;
+            padding: 14px 16px;
+            text-align: left;
+            font-weight: bold;
+        }
+
+        .comparison-table td {
+            padding: 12px 16px;
+            border-bottom: 1px solid #cde8e5;
+        }
+
+        .comparison-table tr:last-child td {
+            border-bottom: none;
+        }
+
+        .comparison-table tr:hover td {
+            background: #eaf6f4;
+        }
+
+        /* ── Themed cards ── */
+        .concept-card {
+            background: white;
+            border: 2px solid #14a085;
+            border-radius: 10px;
+            padding: 20px;
+            margin: 15px 0;
+        }
+
+        .concept-card h4 {
+            color: #14a085;
+            font-size: 1.2em;
+            margin-bottom: 8px;
+        }
+
+        .role-card {
+            background: white;
+            border: 2px solid #0d7377;
+            border-radius: 10px;
+            padding: 20px;
+            margin: 15px 0;
+        }
+
+        .role-card h4 {
+            color: #0d7377;
+            font-size: 1.2em;
+            margin-bottom: 8px;
+        }
+
+        .platform-card {
+            background: white;
+            border: 2px solid #2e86c1;
+            border-radius: 10px;
+            padding: 20px;
+            margin: 15px 0;
+        }
+
+        .platform-card h4 {
+            color: #2e86c1;
+            font-size: 1.2em;
+            margin-bottom: 8px;
+        }
+
+        /* ── Do / Don't grid ── */
+        .do-dont-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 18px;
+            margin: 18px 0;
+        }
+
+        .do-box {
+            background: #d5f4e6;
+            border: 2px solid #27ae60;
+            border-radius: 8px;
+            padding: 18px;
+        }
+
+        .do-box h4 { color: #1e8449; margin-bottom: 10px; }
+
+        .dont-box {
+            background: #fdf0f0;
+            border: 2px solid #c0392b;
+            border-radius: 8px;
+            padding: 18px;
+        }
+
+        .dont-box h4 { color: #c0392b; margin-bottom: 10px; }
+
+        /* ── Feature / stat grid ── */
+        .feature-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(210px, 1fr));
+            gap: 15px;
+            margin: 18px 0;
+        }
+
+        .feature-item {
+            background: linear-gradient(135deg, #eaf6f4, #d1f0ec);
+            border: 2px solid #14a085;
+            border-radius: 8px;
+            padding: 18px;
+            text-align: center;
+        }
+
+        .feature-item h5 {
+            color: #0d7377;
+            margin-bottom: 8px;
+            font-size: 1.05em;
+        }
+
+        /* ── Pyramid diagram ── */
+        .pyramid-wrapper {
+            text-align: center;
+            margin: 24px 0;
+        }
+
+        .pyramid-level {
+            margin: 0 auto 4px;
+            padding: 14px 10px;
+            color: white;
+            font-weight: bold;
+            border-radius: 4px;
+            position: relative;
+        }
+
+        .pyramid-level span {
+            display: block;
+            font-size: 0.85em;
+            opacity: 0.88;
+            font-weight: normal;
+            margin-top: 3px;
+        }
+
+        .p-l1 { width: 30%;  background: #0d7377; }
+        .p-l2 { width: 50%;  background: #14a085; }
+        .p-l3 { width: 70%;  background: #1abc9c; color: #0d4f52; }
+        .p-l4 { width: 90%;  background: #a8e6cf; color: #0d4f52; }
+
+        /* ── Flow strip ── */
+        .flow-grid {
+            display: flex;
+            align-items: stretch;
+            gap: 0;
+            margin: 20px 0;
+            flex-wrap: wrap;
+        }
+
+        .flow-step {
+            flex: 1;
+            min-width: 120px;
+            background: linear-gradient(135deg, #0d7377, #14a085);
+            color: white;
+            padding: 14px 10px;
+            text-align: center;
+            font-weight: bold;
+            font-size: 0.88em;
+            position: relative;
+        }
+
+        .flow-step:not(:last-child)::after {
+            content: '▶';
+            position: absolute;
+            right: -12px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #1abc9c;
+            font-size: 1.2em;
+            z-index: 10;
+        }
+
+        .flow-step span {
+            display: block;
+            font-size: 1.4em;
+            margin-bottom: 4px;
+        }
+
+        /* ── Checklist ── */
+        .checklist {
+            background: #eaf6f4;
+            border: 2px solid #14a085;
+            border-radius: 8px;
+            padding: 20px;
+            margin: 15px 0;
+        }
+
+        .checklist h4 { color: #0d7377; margin-bottom: 12px; }
+
+        .checklist ul { list-style: none; margin-left: 0; }
+
+        .checklist li { margin: 8px 0; }
+
+        .checklist li::before {
+            content: "☐ ";
+            color: #0d7377;
+            font-weight: bold;
+        }
+
+        /* ── Badge ── */
+        .badge {
+            display: inline-block;
+            padding: 3px 10px;
+            border-radius: 20px;
+            font-size: 0.8em;
+            font-weight: bold;
+            margin-left: 6px;
+            vertical-align: middle;
+        }
+
+        .badge-auto    { background: #0d7377; color: white; }
+        .badge-manual  { background: #8e44ad; color: white; }
+        .badge-both    { background: #2e86c1; color: white; }
+        .badge-high    { background: #c0392b; color: white; }
+        .badge-medium  { background: #e67e22; color: white; }
+        .badge-low     { background: #27ae60; color: white; }
+
+        /* ── Footer ── */
+        .footer {
+            background: linear-gradient(135deg, #0d7377 0%, #14a085 60%, #1abc9c 100%);
+            color: white;
+            padding: 25px 20px;
+            text-align: center;
+        }
+
+        .footer p { opacity: 0.92; margin: 4px 0; }
+
+        @media (max-width: 700px) {
+            .do-dont-grid { grid-template-columns: 1fr; }
+            .flow-step:not(:last-child)::after { display: none; }
+            .p-l1, .p-l2, .p-l3, .p-l4 { width: 100%; }
+        }
+    </style>
+</head>
+<body>
+<div class="container">
+
+    <div class="header">
+        <h1>🧪 COP4834 Web Systems II</h1>
+        <p>Guide to Software Testing — Methodology, Tools, and Client-Server Systems</p>
+    </div>
+
+    <div class="content">
+
+        <div class="intro-box">
+            <h2>📚 Module Overview</h2>
+            <p>Testing is not a phase at the end of development — it is a continuous practice that runs parallel to everything you build. This guide covers the full spectrum of software testing as it applies to client-server and full-stack web applications: how testing is structured, who does it, how to automate it, and how to cover every layer of a modern web system. By the end of this module you will know how to build a testing strategy from scratch, choose the right tools, and verify that your application works correctly at every tier.</p>
+        </div>
+
+
+        <!-- ═══════════════════════════════════════════ -->
+        <!-- SECTION 1 -->
+        <!-- ═══════════════════════════════════════════ -->
+        <button class="collapsible">1. Why Testing Matters — The Foundation</button>
+        <div class="collapsible-content">
+            <div class="collapsible-inner">
+
+                <h3>The Cost of Bugs Over Time</h3>
+
+                <div class="info-box">
+                    <h4>📖 Core Principle</h4>
+                    <p>Every bug found after deployment costs significantly more to fix than one caught during development. Testing is an investment that reduces total cost, protects reputation, and accelerates long-term delivery speed by keeping the codebase healthy.</p>
+                </div>
+
+                <table class="comparison-table">
+                    <thead>
+                        <tr><th>When Bug is Found</th><th>Relative Cost to Fix</th><th>Impact</th></tr>
+                    </thead>
+                    <tbody>
+                        <tr><td>During development (unit test)</td><td>1×</td><td>Developer fixes immediately</td></tr>
+                        <tr><td>During integration testing</td><td>3–6×</td><td>Requires coordination across components</td></tr>
+                        <tr><td>During QA / pre-release</td><td>10–15×</td><td>Release delayed, re-testing required</td></tr>
+                        <tr><td>After deployment (user report)</td><td>25–50×</td><td>Rollback, hotfix, user trust damaged</td></tr>
+                        <tr><td>After a security incident</td><td>100×+</td><td>Legal, regulatory, reputational consequences</td></tr>
+                    </tbody>
+                </table>
+
+                <h3>What Good Testing Achieves</h3>
+
+                <div class="feature-grid">
+                    <div class="feature-item">
+                        <h5>🛡️ Confidence to Change</h5>
+                        <p>Tests act as a safety net — developers can refactor and add features without fear of unknowingly breaking existing behavior.</p>
+                    </div>
+                    <div class="feature-item">
+                        <h5>📖 Living Documentation</h5>
+                        <p>Well-written tests describe exactly what the system is supposed to do, serving as always-current documentation.</p>
+                    </div>
+                    <div class="feature-item">
+                        <h5>🚀 Faster Delivery</h5>
+                        <p>Automated tests catch regressions instantly, so teams can ship more frequently with confidence.</p>
+                    </div>
+                    <div class="feature-item">
+                        <h5>🐛 Earlier Bug Detection</h5>
+                        <p>Issues surface during development, when they are cheapest and fastest to fix.</p>
+                    </div>
+                    <div class="feature-item">
+                        <h5>👥 Better Design</h5>
+                        <p>Writing tests forces cleaner, more modular code — hard-to-test code is usually badly designed code.</p>
+                    </div>
+                    <div class="feature-item">
+                        <h5>🔒 Security Assurance</h5>
+                        <p>Security tests catch vulnerabilities before attackers do and verify that fixes remain in place.</p>
+                    </div>
+                </div>
+
+                <h3>Common Testing Misconceptions</h3>
+
+                <div class="do-dont-grid">
+                    <div class="dont-box">
+                        <h4>❌ Myths That Hurt Teams</h4>
+                        <ul>
+                            <li>"We don't have time to test" — undetected bugs take far more time to fix later</li>
+                            <li>"Testing is QA's job, not mine" — developers are responsible for testing their own code</li>
+                            <li>"The app works on my machine" — manual checks are not a substitute for systematic testing</li>
+                            <li>"100% code coverage means no bugs" — coverage measures which lines execute, not whether behavior is correct</li>
+                            <li>"If users haven't complained, it's fine" — users often leave silently rather than report problems</li>
+                        </ul>
+                    </div>
+                    <div class="do-box">
+                        <h4>✅ Testing Truths</h4>
+                        <ul>
+                            <li>Testing is a core development activity, not optional cleanup</li>
+                            <li>Every team member shares responsibility for quality</li>
+                            <li>Automated tests scale; manual testing doesn't</li>
+                            <li>A failing test is good news — it found a problem before users did</li>
+                            <li>Tests that are never red are not being run meaningfully</li>
+                        </ul>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+
+
+        <!-- ═══════════════════════════════════════════ -->
+        <!-- SECTION 2 -->
+        <!-- ═══════════════════════════════════════════ -->
+        <button class="collapsible">2. The Testing Pyramid — Levels of Testing</button>
+        <div class="collapsible-content">
+            <div class="collapsible-inner">
+
+                <div class="info-box">
+                    <h4>📖 The Testing Pyramid</h4>
+                    <p>The testing pyramid is a model for thinking about how many tests to write at each level. Tests at the base are fast, cheap, and numerous. Tests toward the top are slower, more expensive, and fewer. A healthy project has a <strong>wide base and narrow top</strong> — not the inverse.</p>
+                </div>
+
+                <div class="pyramid-wrapper">
+                    <div class="pyramid-level p-l1">
+                        End-to-End / UI Tests
+                        <span>Few — slow, costly, test full journeys</span>
+                    </div>
+                    <div class="pyramid-level p-l2">
+                        Integration Tests
+                        <span>Moderate — test components working together</span>
+                    </div>
+                    <div class="pyramid-level p-l3">
+                        API / Contract Tests
+                        <span>Many — test API boundaries and responses</span>
+                    </div>
+                    <div class="pyramid-level p-l4">
+                        Unit Tests
+                        <span>Most — fast, isolated, test individual functions</span>
+                    </div>
+                </div>
+
+                <h3>Level 1 — Unit Tests</h3>
+
+                <div class="concept-card">
+                    <h4>What They Test</h4>
+                    <p>The smallest testable unit of the application — a single function, method, or class — in complete isolation from the rest of the system.</p>
+
+                    <p><strong>Characteristics:</strong></p>
+                    <ul>
+                        <li>Extremely fast — thousands can run in seconds</li>
+                        <li>Isolated — external dependencies (databases, APIs, file systems) are replaced with <strong>mocks</strong> or <strong>stubs</strong></li>
+                        <li>Deterministic — same input always produces same output</li>
+                        <li>Written by the developer alongside the feature code</li>
+                    </ul>
+
+                    <p><strong>What to test at this level:</strong></p>
+                    <ul>
+                        <li>Individual business logic functions (tax calculations, date formatting, validation rules)</li>
+                        <li>Helper and utility functions</li>
+                        <li>Edge cases: empty input, null values, boundary numbers, maximum lengths</li>
+                        <li>Error handling paths within a function</li>
+                    </ul>
+
+                    <p><strong>What NOT to test at this level:</strong></p>
+                    <ul>
+                        <li>Framework behavior (trust that React renders, that Express routes)</li>
+                        <li>Database queries — those belong in integration tests</li>
+                        <li>Full user workflows</li>
+                    </ul>
+                </div>
+
+                <h3>Level 2 — API / Contract Tests</h3>
+
+                <div class="concept-card">
+                    <h4>What They Test</h4>
+                    <p>The API layer — verifying that each endpoint returns the correct status codes, response shapes, and behavior under different inputs. For client-server systems, this is one of the most valuable test layers.</p>
+
+                    <ul>
+                        <li>Does the endpoint return 200 for valid input?</li>
+                        <li>Does it return 400 for invalid input, with a useful error message?</li>
+                        <li>Does it return 401 when no authentication token is provided?</li>
+                        <li>Does it return 403 when the user lacks permission?</li>
+                        <li>Is the response body shape correct?</li>
+                        <li>Are edge cases handled gracefully?</li>
+                    </ul>
+
+                    <p><strong>Contract testing</strong> goes further — it formally documents and verifies the agreement between the API provider and its consumers, so changes on one side don't silently break the other.</p>
+                </div>
+
+                <h3>Level 3 — Integration Tests</h3>
+
+                <div class="concept-card">
+                    <h4>What They Test</h4>
+                    <p>How components work together — a function interacting with the real database, an API endpoint interacting with a real service, or a module interacting with the file system.</p>
+
+                    <ul>
+                        <li>Slower than unit tests but test more realistic scenarios</li>
+                        <li>Use real (or near-real) dependencies — test databases, in-memory databases</li>
+                        <li>Verify that the pieces fit together correctly, not just that each piece works alone</li>
+                        <li>Catch issues that only appear at the boundaries between components</li>
+                    </ul>
+
+                    <p><strong>Examples in a client-server context:</strong></p>
+                    <ul>
+                        <li>Does the user repository correctly save a user to the database and retrieve them?</li>
+                        <li>Does the email service correctly invoke the third-party email provider?</li>
+                        <li>Does the authentication middleware correctly validate tokens?</li>
+                    </ul>
+                </div>
+
+                <h3>Level 4 — End-to-End (E2E) Tests</h3>
+
+                <div class="concept-card">
+                    <h4>What They Test</h4>
+                    <p>Complete user journeys through the full, running application — browser to server to database and back — exactly as a real user would experience the system.</p>
+
+                    <ul>
+                        <li>Slowest and most expensive tests — a full suite may take 20–60+ minutes</li>
+                        <li>Run against a real deployed environment (staging)</li>
+                        <li>Test critical paths: login, checkout, core workflows</li>
+                        <li>Provide the highest confidence that the system works as intended</li>
+                        <li>Fragile — UI changes break tests frequently, requiring maintenance</li>
+                    </ul>
+
+                    <div class="warning-box">
+                        <h4>⚠️ The Inverted Pyramid Anti-Pattern</h4>
+                        <p>Many teams write too many E2E tests and too few unit tests. This produces a test suite that is slow, fragile, and expensive to maintain. A good rule of thumb: for every E2E test, write 5–10 integration tests and 20–50 unit tests.</p>
+                    </div>
+                </div>
+
+                <h3>Additional Test Types</h3>
+
+                <table class="comparison-table">
+                    <thead>
+                        <tr><th>Type</th><th>Purpose</th><th>When Applied</th></tr>
+                    </thead>
+                    <tbody>
+                        <tr><td><strong>Smoke Tests</strong></td><td>Quick sanity check — does the system start and respond at all?</td><td>After every deployment</td></tr>
+                        <tr><td><strong>Regression Tests</strong></td><td>Verify that a bug that was fixed stays fixed</td><td>After every bug fix</td></tr>
+                        <tr><td><strong>Performance Tests</strong></td><td>Verify the system meets speed and throughput requirements</td><td>Pre-release, major changes</td></tr>
+                        <tr><td><strong>Load Tests</strong></td><td>Verify behavior under expected and peak user volumes</td><td>Pre-release, scaling events</td></tr>
+                        <tr><td><strong>Security Tests</strong></td><td>Verify the system resists known attacks and exposures</td><td>Ongoing; before major releases</td></tr>
+                        <tr><td><strong>Accessibility Tests</strong></td><td>Verify the UI is usable by people with disabilities</td><td>Ongoing; before release</td></tr>
+                        <tr><td><strong>Usability Tests</strong></td><td>Verify real users can accomplish tasks effectively</td><td>Design and pre-release phases</td></tr>
+                        <tr><td><strong>Compatibility Tests</strong></td><td>Verify behavior across browsers, devices, and OS versions</td><td>Pre-release</td></tr>
+                        <tr><td><strong>Chaos / Resilience Tests</strong></td><td>Verify the system recovers from component failures</td><td>Ongoing in mature systems</td></tr>
+                    </tbody>
+                </table>
+
+            </div>
+        </div>
+
+
+        <!-- ═══════════════════════════════════════════ -->
+        <!-- SECTION 3 -->
+        <!-- ═══════════════════════════════════════════ -->
+        <button class="collapsible">3. Establishing a Testing Methodology</button>
+        <div class="collapsible-content">
+            <div class="collapsible-inner">
+
+                <div class="info-box">
+                    <h4>📖 A Methodology is a Systematic Approach</h4>
+                    <p>A testing methodology is a set of guiding principles and practices that define <em>how</em> your team writes, organizes, and runs tests. It answers: what do we test, when do we test it, who writes the tests, and what does passing look like?</p>
+                </div>
+
+                <h3>Choosing an Approach</h3>
+
+                <div class="concept-card">
+                    <h4>Test-Driven Development (TDD)</h4>
+                    <p>Write the test <em>before</em> writing the implementation. The test fails, then you write the minimum code to make it pass, then you refactor.</p>
+
+                    <div class="flow-grid">
+                        <div class="flow-step"><span>🔴</span>Write a failing test</div>
+                        <div class="flow-step"><span>🟢</span>Write code to pass it</div>
+                        <div class="flow-step"><span>♻️</span>Refactor the code</div>
+                        <div class="flow-step"><span>🔁</span>Repeat</div>
+                    </div>
+
+                    <p><strong>Benefits:</strong></p>
+                    <ul>
+                        <li>Forces clear thinking about what a function <em>should</em> do before writing it</li>
+                        <li>Results in 100% test coverage of all deliberately written code</li>
+                        <li>Produces simpler, more focused code (hard-to-test code is a design smell)</li>
+                        <li>Built-in regression protection from day one</li>
+                    </ul>
+
+                    <p><strong>Best for:</strong> Teams disciplined enough to follow the cycle, projects with well-defined requirements, core business logic.</p>
+                </div>
+
+                <div class="concept-card">
+                    <h4>Behavior-Driven Development (BDD)</h4>
+                    <p>Tests are written in plain English describing <em>behavior</em> from the user's perspective, using a Given / When / Then structure. This bridges the gap between business stakeholders and developers.</p>
+
+                    <div class="info-box">
+                        <p><strong>Given</strong> I am logged in as a customer<br>
+                        <strong>When</strong> I add a product to my cart and check out<br>
+                        <strong>Then</strong> I should receive a confirmation email and see my order in my account history</p>
+                    </div>
+
+                    <p><strong>Benefits:</strong></p>
+                    <ul>
+                        <li>Non-technical stakeholders can read and validate test scenarios</li>
+                        <li>Tests reflect actual user requirements, not just implementation details</li>
+                        <li>Tools like Cucumber, Gherkin, and Behave formalize this approach</li>
+                    </ul>
+                </div>
+
+                <div class="concept-card">
+                    <h4>Risk-Based Testing</h4>
+                    <p>Prioritize test effort based on the likelihood and impact of failure. Not all features are equal — testing resources should be concentrated where failures hurt most.</p>
+
+                    <table class="comparison-table">
+                        <thead><tr><th>Risk Level</th><th>Testing Investment</th><th>Examples</th></tr></thead>
+                        <tbody>
+                            <tr><td><strong>Critical</strong></td><td>Comprehensive automated + manual tests</td><td>Authentication, payment, data integrity</td></tr>
+                            <tr><td><strong>High</strong></td><td>Full automated test coverage</td><td>Core user workflows, data validation, API contracts</td></tr>
+                            <tr><td><strong>Medium</strong></td><td>Key scenarios covered</td><td>Secondary features, edge cases</td></tr>
+                            <tr><td><strong>Low</strong></td><td>Smoke tests only</td><td>Static content, cosmetic features</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <h3>Setting Up Your Testing Strategy</h3>
+
+                <div class="step-container">
+                    <span class="step-number">1</span>
+                    <span class="step-title">Define What "Done" Means for Testing</span>
+                    <div class="step-content">
+                        <p>Establish a <strong>Definition of Done</strong> that includes testing requirements. A feature is not complete until its tests pass. Document this as a team agreement.</p>
+                        <ul>
+                            <li>Unit tests written and passing</li>
+                            <li>Integration tests covering API endpoints</li>
+                            <li>No regressions in existing tests</li>
+                            <li>Code review includes test review</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <div class="step-container">
+                    <span class="step-number">2</span>
+                    <span class="step-title">Identify What Needs to Be Tested</span>
+                    <div class="step-content">
+                        <p>Map out the system's components and classify each by risk level. For a client-server application this includes:</p>
+                        <ul>
+                            <li>All API endpoints and their expected behaviors</li>
+                            <li>Business logic and calculation functions</li>
+                            <li>Authentication and authorization flows</li>
+                            <li>Data validation rules</li>
+                            <li>Critical user journeys in the UI</li>
+                            <li>Database operations and data integrity</li>
+                            <li>External service integrations</li>
+                            <li>Error and edge case handling</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <div class="step-container">
+                    <span class="step-number">3</span>
+                    <span class="step-title">Choose Your Test Stack</span>
+                    <div class="step-content">
+                        <p>Select testing frameworks appropriate for each layer of the stack. Align choices with the technologies already in use. (See Section 6 for platform details.)</p>
+                        <ul>
+                            <li>Unit test framework for your backend language</li>
+                            <li>Unit test framework for your frontend</li>
+                            <li>API testing tool (Postman, REST Assured, Supertest)</li>
+                            <li>E2E browser automation (Playwright, Cypress, Selenium)</li>
+                            <li>Performance testing tool (k6, JMeter, Locust)</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <div class="step-container">
+                    <span class="step-number">4</span>
+                    <span class="step-title">Establish Test Data Management</span>
+                    <div class="step-content">
+                        <p>Tests need data to run against. Plan how you will manage this.</p>
+                        <ul>
+                            <li><strong>Test databases:</strong> Separate from development and production</li>
+                            <li><strong>Seed data:</strong> Scripts that populate a known, consistent starting state</li>
+                            <li><strong>Factories:</strong> Code that generates test data on demand</li>
+                            <li><strong>Fixtures:</strong> Pre-defined data files used in tests</li>
+                            <li><strong>Cleanup:</strong> Each test should clean up after itself to avoid leaking state</li>
+                            <li><strong>Production data:</strong> Never use real production data in tests without masking PII</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <div class="step-container">
+                    <span class="step-number">5</span>
+                    <span class="step-title">Integrate Tests into Your Pipeline</span>
+                    <div class="step-content">
+                        <p>Tests that are not automatically run are tests that will eventually be ignored. Integrate your tests into a Continuous Integration (CI) pipeline so they run on every commit and pull request. (See Section 7.)</p>
+                    </div>
+                </div>
+
+                <div class="step-container">
+                    <span class="step-number">6</span>
+                    <span class="step-title">Set Coverage Goals (Thoughtfully)</span>
+                    <div class="step-content">
+                        <p>Code coverage measures what percentage of your code is executed by tests. It is a useful signal but not a goal in itself.</p>
+                        <ul>
+                            <li>A realistic starting target for most projects is <strong>70–80% coverage</strong></li>
+                            <li>Critical business logic and security code should be at or near 100%</li>
+                            <li>Generated code, configuration, and boilerplate can be excluded</li>
+                            <li>100% coverage does not mean 0 bugs — focus on testing behavior, not hitting lines</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <h3>Writing Good Tests — The AAA Pattern</h3>
+
+                <div class="concept-card">
+                    <h4>Arrange — Act — Assert</h4>
+                    <p>Every test should follow a clear three-part structure:</p>
+                    <ul>
+                        <li><strong>Arrange:</strong> Set up the test data, objects, and state needed for the test</li>
+                        <li><strong>Act:</strong> Execute the behavior being tested — call the function, make the API request</li>
+                        <li><strong>Assert:</strong> Verify that the outcome matches what was expected</li>
+                    </ul>
+                    <p>Each test should verify <strong>one thing</strong>. A test with multiple unrelated assertions is doing too much and will be hard to diagnose when it fails.</p>
+                </div>
+
+                <h3>Naming Tests Well</h3>
+
+                <div class="tip-box">
+                    <h4>💡 Good Test Names Are Specifications</h4>
+                    <p>A failing test's name should tell you exactly what broke without reading the test body. Use a consistent naming pattern such as:</p>
+                    <p style="font-family: monospace; background: white; padding: 10px; border-radius: 4px; margin-top: 10px;">
+                        <strong>[Unit Under Test] — [Condition/Scenario] — [Expected Outcome]</strong><br><br>
+                        ✅ "calculateTax — when item is exempt — returns zero"<br>
+                        ✅ "POST /api/users — when email is missing — returns 400 with error message"<br>
+                        ❌ "test1"<br>
+                        ❌ "should work"
+                    </p>
+                </div>
+
+            </div>
+        </div>
+
+
+        <!-- ═══════════════════════════════════════════ -->
+        <!-- SECTION 4 -->
+        <!-- ═══════════════════════════════════════════ -->
+        <button class="collapsible">4. The Role of a Test Engineer</button>
+        <div class="collapsible-content">
+            <div class="collapsible-inner">
+
+                <div class="info-box">
+                    <h4>📖 Quality is Everyone's Responsibility — But QA Engineers Are Specialists</h4>
+                    <p>In modern agile teams, quality is a shared responsibility — every developer tests their own code. However, dedicated test/QA engineers bring specialist expertise that elevates the entire team's output. Understanding these roles helps you work effectively alongside QA professionals and build quality-conscious habits yourself.</p>
+                </div>
+
+                <h3>Core Roles in Software Quality</h3>
+
+                <div class="role-card">
+                    <h4>QA Engineer (Quality Assurance)</h4>
+                    <p>Focuses on preventing defects by establishing processes, standards, and methodologies before and during development.</p>
+                    <p><strong>Responsibilities:</strong></p>
+                    <ul>
+                        <li>Define testing standards and test plans for the team</li>
+                        <li>Review requirements for ambiguity and testability</li>
+                        <li>Write and maintain manual test cases</li>
+                        <li>Perform exploratory and regression testing</li>
+                        <li>Track and report defects systematically</li>
+                        <li>Participate in sprint planning to estimate testing effort</li>
+                        <li>Advise developers on testable design</li>
+                        <li>Sign off on features before release</li>
+                    </ul>
+                </div>
+
+                <div class="role-card">
+                    <h4>SDET — Software Development Engineer in Test</h4>
+                    <p>A hybrid role combining software development skills with testing expertise. SDETs build the testing infrastructure and automated test suites that the whole team benefits from.</p>
+                    <p><strong>Responsibilities:</strong></p>
+                    <ul>
+                        <li>Design and build automated test frameworks</li>
+                        <li>Write automated tests at all levels (unit, integration, E2E)</li>
+                        <li>Build and maintain CI/CD testing pipelines</li>
+                        <li>Create test data management systems and utilities</li>
+                        <li>Develop performance and load testing suites</li>
+                        <li>Identify and implement testing best practices</li>
+                        <li>Debug and resolve flaky (intermittently failing) tests</li>
+                    </ul>
+                </div>
+
+                <div class="role-card">
+                    <h4>Performance / Load Test Engineer</h4>
+                    <p>Specialist focused on how systems behave under stress — verifying throughput, response times, and resilience at scale.</p>
+                    <p><strong>Responsibilities:</strong></p>
+                    <ul>
+                        <li>Define performance requirements and acceptance criteria</li>
+                        <li>Design and execute load, stress, and spike tests</li>
+                        <li>Profile applications to identify bottlenecks</li>
+                        <li>Analyze and report on performance test results</li>
+                        <li>Recommend infrastructure and code-level optimizations</li>
+                        <li>Establish performance monitoring baselines</li>
+                    </ul>
+                </div>
+
+                <div class="role-card">
+                    <h4>Security Test Engineer / Penetration Tester</h4>
+                    <p>Specialist who attempts to find security vulnerabilities through both automated scanning and manual exploitation techniques.</p>
+                    <p><strong>Responsibilities:</strong></p>
+                    <ul>
+                        <li>Perform application-level penetration testing</li>
+                        <li>Run automated vulnerability scanners (OWASP ZAP, Burp Suite)</li>
+                        <li>Review code for security flaws</li>
+                        <li>Write security-specific test cases (auth bypass, injection, etc.)</li>
+                        <li>Produce actionable security assessment reports</li>
+                        <li>Verify that reported vulnerabilities have been correctly fixed</li>
+                    </ul>
+                </div>
+
+                <h3>Skills Every Test Professional Needs</h3>
+
+                <div class="feature-grid">
+                    <div class="feature-item">
+                        <h5>🧠 Analytical Thinking</h5>
+                        <p>Breaking complex systems into testable scenarios and identifying what can go wrong</p>
+                    </div>
+                    <div class="feature-item">
+                        <h5>📝 Requirements Analysis</h5>
+                        <p>Understanding what the system should do — and what it explicitly should not do</p>
+                    </div>
+                    <div class="feature-item">
+                        <h5>💻 Technical Fluency</h5>
+                        <p>Understanding the system architecture well enough to test it effectively</p>
+                    </div>
+                    <div class="feature-item">
+                        <h5>🔍 Attention to Detail</h5>
+                        <p>Finding edge cases, inconsistencies, and unexpected behaviors that users would encounter</p>
+                    </div>
+                    <div class="feature-item">
+                        <h5>🗣️ Communication</h5>
+                        <p>Writing clear, reproducible bug reports that developers can act on</p>
+                    </div>
+                    <div class="feature-item">
+                        <h5>🔄 Automation Skills</h5>
+                        <p>Building reliable, maintainable automated test suites (increasingly essential in all QA roles)</p>
+                    </div>
+                </div>
+
+                <h3>What Makes a Good Bug Report</h3>
+
+                <div class="concept-card">
+                    <h4>A Bug Report That Gets Fixed Quickly</h4>
+                    <p>A vague bug report wastes everyone's time. A good bug report contains:</p>
+                    <ol>
+                        <li><strong>Title:</strong> One-line summary of the problem</li>
+                        <li><strong>Environment:</strong> Browser, OS, version, user account type used</li>
+                        <li><strong>Steps to Reproduce:</strong> Exact, numbered steps that reliably trigger the bug</li>
+                        <li><strong>Expected Result:</strong> What should happen according to the requirements</li>
+                        <li><strong>Actual Result:</strong> What actually happened</li>
+                        <li><strong>Severity / Priority:</strong> How badly this affects users</li>
+                        <li><strong>Evidence:</strong> Screenshots, screen recordings, error messages, log snippets</li>
+                        <li><strong>Test Data:</strong> Specific data that triggers the issue (anonymized if needed)</li>
+                    </ol>
+                </div>
+
+                <h3>The QA Role in Agile Teams</h3>
+
+                <div class="success-box">
+                    <h4>✅ QA in Modern Agile Development</h4>
+                    <p>In agile and DevOps environments, QA engineers are embedded in development teams rather than sitting in a separate department at the end of the pipeline. They participate in sprint planning, review user stories, contribute test cases to acceptance criteria, test features during the sprint rather than after, and collaborate directly with developers to resolve issues quickly. The goal is <strong>continuous quality</strong>, not a quality gate at the end.</p>
+                </div>
+
+            </div>
+        </div>
+
+
+        <!-- ═══════════════════════════════════════════ -->
+        <!-- SECTION 5 -->
+        <!-- ═══════════════════════════════════════════ -->
+        <button class="collapsible">5. User Testing — Testing With Real Users</button>
+        <div class="collapsible-content">
+            <div class="collapsible-inner">
+
+                <div class="info-box">
+                    <h4>📖 The Difference User Testing Makes</h4>
+                    <p>Technical tests verify that the system does what developers intended. <strong>User testing</strong> verifies whether what was intended actually meets users' real needs and expectations. You can build a technically perfect system that real users cannot use effectively.</p>
+                </div>
+
+                <h3>Types of User Testing</h3>
+
+                <div class="concept-card">
+                    <h4>Usability Testing</h4>
+                    <p>Observing real users attempting to complete tasks with the application, identifying where they struggle, confuse, or fail.</p>
+                    <ul>
+                        <li>Typically 5–8 participants reveal 80%+ of major usability issues</li>
+                        <li>Moderated (researcher present) or unmoderated (remote, recorded)</li>
+                        <li>Think-aloud protocol: participants narrate what they're thinking as they interact</li>
+                        <li>Focus on behavior, not self-reported preferences — watch what users do, not what they say they'd do</li>
+                    </ul>
+                </div>
+
+                <div class="concept-card">
+                    <h4>Acceptance Testing (UAT — User Acceptance Testing)</h4>
+                    <p>Formal testing where stakeholders or end users verify that the system meets the agreed business requirements before sign-off and release.</p>
+                    <ul>
+                        <li>Based on predefined acceptance criteria written before development</li>
+                        <li>Performed by actual intended users or business representatives</li>
+                        <li>Pass/fail against specific requirements — not exploratory</li>
+                        <li>Final gate before a feature goes to production</li>
+                        <li>In agile teams, this is often embedded in the sprint review</li>
+                    </ul>
+                </div>
+
+                <div class="concept-card">
+                    <h4>Beta Testing</h4>
+                    <p>Releasing the application to a limited real-world audience before full launch to gather feedback under real conditions.</p>
+                    <ul>
+                        <li><strong>Open beta:</strong> Anyone can participate — maximizes feedback volume</li>
+                        <li><strong>Closed beta:</strong> Selected users — more controlled, often used for sensitive products</li>
+                        <li>Surfaces issues that controlled test environments miss (unexpected hardware, network conditions, real data)</li>
+                        <li>Requires a feedback mechanism (in-app feedback, bug reports, surveys)</li>
+                    </ul>
+                </div>
+
+                <div class="concept-card">
+                    <h4>A/B Testing</h4>
+                    <p>Simultaneously serving two versions of a feature to different user segments and measuring which performs better against defined metrics.</p>
+                    <ul>
+                        <li>Requires sufficient user volume to achieve statistical significance</li>
+                        <li>Only change one variable at a time — otherwise you cannot attribute the difference</li>
+                        <li>Define success metrics before running the test, not after</li>
+                        <li>Common for UI decisions, copy, CTAs, and checkout flows</li>
+                        <li>Tools: Optimizely, Google Optimize, LaunchDarkly feature flags</li>
+                    </ul>
+                </div>
+
+                <h3>Planning a Usability Test Session</h3>
+
+                <div class="step-container">
+                    <span class="step-number">1</span>
+                    <span class="step-title">Define Your Research Questions</span>
+                    <div class="step-content">
+                        <p>What specifically do you want to learn? Examples:</p>
+                        <ul>
+                            <li>Can users find the product they are looking for without help?</li>
+                            <li>Is the checkout process clear enough to complete without errors?</li>
+                            <li>Do users understand what the dashboard is telling them?</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <div class="step-container">
+                    <span class="step-number">2</span>
+                    <span class="step-title">Recruit Representative Participants</span>
+                    <div class="step-content">
+                        <p>Participants should match your real user base. A B2B application should not be tested by random people off the street if your users are financial analysts. Recruit based on role, technical proficiency, and relevant experience.</p>
+                    </div>
+                </div>
+
+                <div class="step-container">
+                    <span class="step-number">3</span>
+                    <span class="step-title">Create Realistic Scenarios and Tasks</span>
+                    <div class="step-content">
+                        <p>Write tasks as real-world goals, not instructions. Tell participants <em>what</em> to accomplish, not <em>how</em> to do it.</p>
+                        <ul>
+                            <li>✅ "You want to find a pair of running shoes in your size and add them to your cart."</li>
+                            <li>❌ "Click on 'Shoes', then select 'Running', then filter by size."</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <div class="step-container">
+                    <span class="step-number">4</span>
+                    <span class="step-title">Prepare the Test Environment</span>
+                    <div class="step-content">
+                        <ul>
+                            <li>Use a dedicated test environment — never production</li>
+                            <li>Pre-populate with realistic test data</li>
+                            <li>Set up screen recording and note-taking</li>
+                            <li>Prepare a consent form for recording</li>
+                            <li>Run a pilot session to catch setup issues</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <div class="step-container">
+                    <span class="step-number">5</span>
+                    <span class="step-title">Facilitate Without Leading</span>
+                    <div class="step-content">
+                        <p>During the session, your role is to observe, not teach. Critical rules:</p>
+                        <ul>
+                            <li>Do not help participants when they struggle — that struggle is your most valuable data</li>
+                            <li>Avoid leading questions ("Did you find that confusing?")</li>
+                            <li>Use open questions: "What would you expect to happen next?"</li>
+                            <li>Keep a neutral, encouraging tone regardless of what happens</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <div class="step-container">
+                    <span class="step-number">6</span>
+                    <span class="step-title">Analyze and Act on Findings</span>
+                    <div class="step-content">
+                        <ul>
+                            <li>Review recordings with the team — watch together, don't summarize alone</li>
+                            <li>Categorize issues by frequency and severity</li>
+                            <li>Distinguish usability issues (design) from bugs (implementation)</li>
+                            <li>Create actionable recommendations, not just a list of problems</li>
+                            <li>Prioritize fixes and schedule follow-up testing to verify improvements</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <h3>Accessibility Testing With Users</h3>
+
+                <div class="tip-box">
+                    <h4>💡 Include Users With Disabilities in Testing</h4>
+                    <p>Automated accessibility tools catch roughly 30–40% of accessibility issues. The rest are only discoverable through testing with actual users who rely on assistive technologies — screen readers, switch controls, voice input. Include users with visual, motor, and cognitive differences in your testing pool for any public-facing application.</p>
+                </div>
+
+            </div>
+        </div>
+
+
+        <!-- ═══════════════════════════════════════════ -->
+        <!-- SECTION 6 -->
+        <!-- ═══════════════════════════════════════════ -->
+        <button class="collapsible">6. Automated Testing — Tools and Platforms</button>
+        <div class="collapsible-content">
+            <div class="collapsible-inner">
+
+                <div class="info-box">
+                    <h4>📖 Why Automate?</h4>
+                    <p>Manual testing is essential but does not scale. A developer can manually test a handful of scenarios; an automated suite runs thousands of tests in minutes. Automation is what makes continuous integration and continuous deployment practical.</p>
+                </div>
+
+                <h3>Unit and Integration Testing Frameworks</h3>
+
+                <div class="platform-card">
+                    <h4>Jest <span class="badge badge-auto">Automated</span></h4>
+                    <p><strong>Best for:</strong> JavaScript / TypeScript (Node.js, React, Vue, Angular)</p>
+                    <ul>
+                        <li>Zero-config setup — works out of the box for most JS projects</li>
+                        <li>Built-in test runner, assertion library, and mocking framework</li>
+                        <li>Snapshot testing for UI component output</li>
+                        <li>Built-in code coverage reporting</li>
+                        <li>Watch mode for running only changed tests</li>
+                        <li>Parallel test execution across workers</li>
+                    </ul>
+                </div>
+
+                <div class="platform-card">
+                    <h4>Vitest <span class="badge badge-auto">Automated</span></h4>
+                    <p><strong>Best for:</strong> Vite-based JavaScript / TypeScript projects</p>
+                    <ul>
+                        <li>Extremely fast — powered by Vite's native ES modules</li>
+                        <li>Jest-compatible API — easy migration from Jest</li>
+                        <li>First-class TypeScript support</li>
+                        <li>Excellent for Vue and React applications built with Vite</li>
+                    </ul>
+                </div>
+
+                <div class="platform-card">
+                    <h4>JUnit / TestNG <span class="badge badge-auto">Automated</span></h4>
+                    <p><strong>Best for:</strong> Java / Spring Boot applications</p>
+                    <ul>
+                        <li>Industry standard for Java testing</li>
+                        <li>JUnit 5 (Jupiter) is the current version with rich extension support</li>
+                        <li>TestNG offers more flexible configuration for large test suites</li>
+                        <li>Both integrate natively with Maven, Gradle, and Spring Boot Test</li>
+                    </ul>
+                </div>
+
+                <div class="platform-card">
+                    <h4>PyTest <span class="badge badge-auto">Automated</span></h4>
+                    <p><strong>Best for:</strong> Python applications (Django, Flask, FastAPI)</p>
+                    <ul>
+                        <li>Simple, readable test syntax — no boilerplate classes required</li>
+                        <li>Powerful fixture system for test data and setup</li>
+                        <li>Rich plugin ecosystem (pytest-cov, pytest-mock, pytest-asyncio)</li>
+                        <li>Excellent for both unit and integration tests</li>
+                    </ul>
+                </div>
+
+                <div class="platform-card">
+                    <h4>xUnit / NUnit / MSTest <span class="badge badge-auto">Automated</span></h4>
+                    <p><strong>Best for:</strong> .NET / C# applications (ASP.NET, Blazor)</p>
+                    <ul>
+                        <li>xUnit is the modern standard recommended by the .NET team</li>
+                        <li>NUnit is mature with strong data-driven test support</li>
+                        <li>MSTest is Microsoft's built-in framework, tightly integrated with Visual Studio</li>
+                        <li>All work with FluentAssertions for readable test assertions</li>
+                    </ul>
+                </div>
+
+                <h3>API Testing Tools</h3>
+
+                <div class="platform-card">
+                    <h4>Postman / Newman <span class="badge badge-both">Manual + Auto</span></h4>
+                    <p><strong>Best for:</strong> API exploration, manual testing, and automatable collection runs</p>
+                    <ul>
+                        <li>Visual interface for crafting and sending HTTP requests</li>
+                        <li>Collections organize related requests into test suites</li>
+                        <li>Write JavaScript assertions in the Tests tab on each request</li>
+                        <li><strong>Newman</strong> is the Postman CLI — runs collections in CI/CD pipelines</li>
+                        <li>Environment variables allow easy switching between dev, staging, and production</li>
+                        <li>Mock servers simulate APIs during frontend development</li>
+                    </ul>
+                </div>
+
+                <div class="platform-card">
+                    <h4>REST Assured <span class="badge badge-auto">Automated</span></h4>
+                    <p><strong>Best for:</strong> Java projects needing fluent API test syntax</p>
+                    <ul>
+                        <li>Fluent DSL for writing HTTP API tests in Java</li>
+                        <li>Integrates with JUnit and TestNG</li>
+                        <li>JSON and XML path querying with GPath</li>
+                        <li>Schema validation support</li>
+                    </ul>
+                </div>
+
+                <div class="platform-card">
+                    <h4>Supertest <span class="badge badge-auto">Automated</span></h4>
+                    <p><strong>Best for:</strong> Node.js / Express API testing in Jest or Mocha</p>
+                    <ul>
+                        <li>HTTP assertion library for Node.js servers</li>
+                        <li>Tests the full HTTP stack without starting a network listener</li>
+                        <li>Integrates naturally with Jest test suites</li>
+                        <li>Simple chainable assertion syntax</li>
+                    </ul>
+                </div>
+
+                <div class="platform-card">
+                    <h4>Hoppscotch (formerly Postwoman) <span class="badge badge-both">Manual + Auto</span></h4>
+                    <p><strong>Best for:</strong> Open-source, web-based alternative to Postman</p>
+                    <ul>
+                        <li>Free and open-source</li>
+                        <li>Runs in the browser — no installation</li>
+                        <li>Supports REST, GraphQL, WebSocket, and gRPC</li>
+                        <li>Test scripts and environment variables</li>
+                    </ul>
+                </div>
+
+                <h3>End-to-End Browser Testing</h3>
+
+                <div class="platform-card">
+                    <h4>Playwright <span class="badge badge-auto">Automated</span></h4>
+                    <p><strong>Best for:</strong> Modern cross-browser E2E testing (recommended for new projects)</p>
+                    <ul>
+                        <li>Supports Chromium, Firefox, and WebKit (Safari) from one API</li>
+                        <li>Auto-waiting: automatically waits for elements to be ready — eliminates most timing issues</li>
+                        <li>Trace Viewer: records test execution for debugging failures</li>
+                        <li>Codegen: records user actions and generates test code automatically</li>
+                        <li>API testing built in — can also test your REST API in the same suite</li>
+                        <li>Supports TypeScript, JavaScript, Python, Java, and C#</li>
+                        <li>Mobile emulation built in</li>
+                    </ul>
+                </div>
+
+                <div class="platform-card">
+                    <h4>Cypress <span class="badge badge-auto">Automated</span></h4>
+                    <p><strong>Best for:</strong> JavaScript-centric teams, excellent developer experience</p>
+                    <ul>
+                        <li>Runs directly in the browser — fast, no WebDriver</li>
+                        <li>Excellent interactive test runner with time-travel debugging</li>
+                        <li>Automatic retries on failing assertions reduce flakiness</li>
+                        <li>Real-time test reloading during development</li>
+                        <li>Network request interception and stubbing built in</li>
+                        <li>Cypress Cloud provides test parallelization and dashboards</li>
+                        <li>JavaScript only (TypeScript supported)</li>
+                    </ul>
+                </div>
+
+                <div class="platform-card">
+                    <h4>Selenium WebDriver <span class="badge badge-auto">Automated</span></h4>
+                    <p><strong>Best for:</strong> Enterprise environments, legacy systems, broad language support</p>
+                    <ul>
+                        <li>The original browser automation framework — very widely used</li>
+                        <li>Supports all major browsers and multiple programming languages</li>
+                        <li>More verbose and requires more setup than Playwright or Cypress</li>
+                        <li>Selenium Grid enables parallel execution across multiple machines</li>
+                        <li>Selenium IDE provides a record-and-playback tool for non-developers</li>
+                    </ul>
+                </div>
+
+                <h3>Performance and Load Testing</h3>
+
+                <div class="platform-card">
+                    <h4>k6 <span class="badge badge-auto">Automated</span></h4>
+                    <p><strong>Best for:</strong> Developer-friendly load testing as code</p>
+                    <ul>
+                        <li>Write tests in JavaScript — version-controlled alongside application code</li>
+                        <li>Designed for CI/CD integration</li>
+                        <li>Define virtual users and ramp-up patterns</li>
+                        <li>Rich metrics output; integrates with Grafana for visualization</li>
+                        <li>Grafana k6 Cloud provides managed load generation and dashboards</li>
+                    </ul>
+                </div>
+
+                <div class="platform-card">
+                    <h4>Apache JMeter <span class="badge badge-auto">Automated</span></h4>
+                    <p><strong>Best for:</strong> Java teams, complex load scenarios, GUI-based setup</p>
+                    <ul>
+                        <li>Open-source, mature, and widely used in enterprise environments</li>
+                        <li>Visual GUI for building test plans</li>
+                        <li>Supports HTTP, HTTPS, WebSocket, database, FTP, and more</li>
+                        <li>Distributed testing for high-volume load generation</li>
+                        <li>Plugins ecosystem extends functionality significantly</li>
+                    </ul>
+                </div>
+
+                <div class="platform-card">
+                    <h4>Locust <span class="badge badge-auto">Automated</span></h4>
+                    <p><strong>Best for:</strong> Python teams, scriptable and readable load tests</p>
+                    <ul>
+                        <li>Define user behavior in plain Python</li>
+                        <li>Web UI for running and monitoring tests in real time</li>
+                        <li>Easily distributed for large-scale load generation</li>
+                        <li>Lightweight and easy to get started with</li>
+                    </ul>
+                </div>
+
+                <h3>Accessibility Testing Tools</h3>
+
+                <table class="comparison-table">
+                    <thead>
+                        <tr><th>Tool</th><th>Type</th><th>What It Tests</th></tr>
+                    </thead>
+                    <tbody>
+                        <tr><td><strong>axe-core</strong></td><td>Automated library</td><td>WCAG violations in DOM; integrates with Jest, Playwright, Cypress</td></tr>
+                        <tr><td><strong>Lighthouse</strong></td><td>Automated (Chrome)</td><td>Accessibility score plus performance, SEO, best practices</td></tr>
+                        <tr><td><strong>WAVE</strong></td><td>Browser extension</td><td>Visual accessibility feedback overlaid on the page</td></tr>
+                        <tr><td><strong>NVDA / JAWS</strong></td><td>Screen reader (manual)</td><td>How the page sounds to visually impaired users on Windows</td></tr>
+                        <tr><td><strong>VoiceOver</strong></td><td>Screen reader (manual)</td><td>How the page sounds on macOS and iOS</td></tr>
+                        <tr><td><strong>Colour Contrast Analyser</strong></td><td>Manual tool</td><td>WCAG color contrast compliance</td></tr>
+                    </tbody>
+                </table>
+
+            </div>
+        </div>
+
+
+        <!-- ═══════════════════════════════════════════ -->
+        <!-- SECTION 7 -->
+        <!-- ═══════════════════════════════════════════ -->
+        <button class="collapsible">7. Continuous Integration and Test Pipelines</button>
+        <div class="collapsible-content">
+            <div class="collapsible-inner">
+
+                <div class="info-box">
+                    <h4>📖 CI is What Makes Testing Sustainable</h4>
+                    <p><strong>Continuous Integration (CI)</strong> is the practice of automatically building and testing the application every time code is pushed. It catches regressions before they are merged, ensures the main branch always remains in a deployable state, and removes the bottleneck of "integration day" surprises.</p>
+                </div>
+
+                <h3>The CI Pipeline — What Happens on Every Push</h3>
+
+                <div class="flow-grid">
+                    <div class="flow-step"><span>📤</span>Developer Pushes Code</div>
+                    <div class="flow-step"><span>🔍</span>Linting &amp; Type Check</div>
+                    <div class="flow-step"><span>⚡</span>Unit Tests</div>
+                    <div class="flow-step"><span>🔗</span>Integration Tests</div>
+                    <div class="flow-step"><span>🌐</span>E2E Tests</div>
+                    <div class="flow-step"><span>✅</span>Pass / ❌ Fail</div>
+                </div>
+
+                <h3>CI/CD Platform Options</h3>
+
+                <div class="platform-card">
+                    <h4>GitHub Actions</h4>
+                    <ul>
+                        <li>Tightly integrated with GitHub repositories — no external setup</li>
+                        <li>YAML-based workflow definitions stored in the repository</li>
+                        <li>Huge marketplace of pre-built actions</li>
+                        <li>Free for public repositories; generous free tier for private</li>
+                        <li>Matrix builds: run the same tests against multiple Node/Java versions simultaneously</li>
+                    </ul>
+                </div>
+
+                <div class="platform-card">
+                    <h4>GitLab CI/CD</h4>
+                    <ul>
+                        <li>Built into GitLab — pipelines defined in <code>.gitlab-ci.yml</code></li>
+                        <li>Excellent support for Docker-based test environments</li>
+                        <li>Built-in container registry and artifact storage</li>
+                        <li>Strong for organizations self-hosting their own GitLab</li>
+                    </ul>
+                </div>
+
+                <div class="platform-card">
+                    <h4>Jenkins</h4>
+                    <ul>
+                        <li>Open-source, self-hosted, extremely flexible</li>
+                        <li>Largest plugin ecosystem of any CI tool</li>
+                        <li>Pipelines defined in Jenkinsfile (Groovy DSL)</li>
+                        <li>Requires more infrastructure management than SaaS alternatives</li>
+                        <li>Common in large enterprise environments</li>
+                    </ul>
+                </div>
+
+                <div class="platform-card">
+                    <h4>CircleCI / Travis CI / Azure Pipelines</h4>
+                    <ul>
+                        <li>CircleCI: powerful caching and parallel jobs, strong performance</li>
+                        <li>Travis CI: historically popular for open source, simpler setup</li>
+                        <li>Azure Pipelines: Microsoft ecosystem, strong integration with Azure DevOps and Visual Studio</li>
+                    </ul>
+                </div>
+
+                <h3>Designing Your Pipeline Stages</h3>
+
+                <div class="concept-card">
+                    <h4>Stage 1: Fast Feedback (Every Commit)</h4>
+                    <p>This stage must complete in under 5 minutes to remain useful for developers.</p>
+                    <ul>
+                        <li>Code linting and formatting checks</li>
+                        <li>Static type checking (TypeScript, mypy, etc.)</li>
+                        <li>Full unit test suite</li>
+                        <li>Code coverage threshold check</li>
+                    </ul>
+                </div>
+
+                <div class="concept-card">
+                    <h4>Stage 2: Integration Verification (Every Pull Request)</h4>
+                    <p>Runs after fast feedback passes. May take 5–15 minutes.</p>
+                    <ul>
+                        <li>Integration tests against a test database</li>
+                        <li>API contract tests</li>
+                        <li>Security dependency scanning</li>
+                        <li>Accessibility automated checks</li>
+                        <li>Build artifacts successfully</li>
+                    </ul>
+                </div>
+
+                <div class="concept-card">
+                    <h4>Stage 3: Full Verification (Before Merge to Main / Release)</h4>
+                    <p>Most thorough stage — may take 20–60 minutes.</p>
+                    <ul>
+                        <li>E2E tests against a staging environment</li>
+                        <li>Performance baseline checks</li>
+                        <li>Cross-browser compatibility tests</li>
+                        <li>Security scanning (SAST, DAST)</li>
+                    </ul>
+                </div>
+
+                <h3>Managing Flaky Tests</h3>
+
+                <div class="warning-box">
+                    <h4>⚠️ Flaky Tests Are a Team Danger</h4>
+                    <p>A <strong>flaky test</strong> is one that sometimes passes and sometimes fails without any code changes. Flaky tests erode trust in the test suite — teams start ignoring failures, which defeats the purpose of CI entirely. Treat flaky tests as production bugs.</p>
+                    <ul>
+                        <li>Track flaky tests explicitly — flag them and prioritize fixing them</li>
+                        <li>Common causes: timing/race conditions, shared state between tests, external service dependencies, order-dependent tests</li>
+                        <li>Fixes: proper waiting (avoid sleep/timeouts), test isolation, mocking external services, randomizing test order to expose order dependencies</li>
+                        <li>Do not rerun-to-pass as a strategy — find and fix the root cause</li>
+                    </ul>
+                </div>
+
+                <h3>Test Parallelization</h3>
+                <ul>
+                    <li>Run independent test suites in parallel across multiple CI workers to reduce total pipeline time</li>
+                    <li>Split large test suites by module, feature, or randomly across workers</li>
+                    <li>Most CI platforms support matrix jobs and parallel execution natively</li>
+                    <li>Playwright and Cypress both support built-in sharding for parallel E2E execution</li>
+                </ul>
+
+            </div>
+        </div>
+
+
+        <!-- ═══════════════════════════════════════════ -->
+        <!-- SECTION 8 -->
+        <!-- ═══════════════════════════════════════════ -->
+        <button class="collapsible">8. Testing Every Layer of a Client-Server System</button>
+        <div class="collapsible-content">
+            <div class="collapsible-inner">
+
+                <div class="info-box">
+                    <h4>📖 Every Layer Has Unique Testing Needs</h4>
+                    <p>A client-server web application spans multiple distinct layers, each with different failure modes and testing strategies. Effective testing means covering all of them — not just the most visible parts.</p>
+                </div>
+
+                <h3>Layer Map — What to Test at Each Tier</h3>
+
+                <table class="comparison-table">
+                    <thead>
+                        <tr><th>Layer</th><th>Test Types</th><th>Key Concerns</th></tr>
+                    </thead>
+                    <tbody>
+                        <tr><td><strong>Frontend / UI</strong></td><td>Unit, Component, E2E, Accessibility</td><td>Rendering, user interaction, state, responsiveness</td></tr>
+                        <tr><td><strong>API / Controllers</strong></td><td>API, Integration, Security</td><td>Status codes, request/response contracts, auth enforcement</td></tr>
+                        <tr><td><strong>Business Logic / Services</strong></td><td>Unit, Integration</td><td>Correctness, edge cases, calculation accuracy</td></tr>
+                        <tr><td><strong>Data Access / Repository</strong></td><td>Integration</td><td>CRUD accuracy, query correctness, transaction integrity</td></tr>
+                        <tr><td><strong>Database</strong></td><td>Integration, Migration tests</td><td>Constraints, indexes, migrations, referential integrity</td></tr>
+                        <tr><td><strong>External Services</strong></td><td>Contract, Integration</td><td>API contracts, failure handling, timeouts</td></tr>
+                        <tr><td><strong>Infrastructure</strong></td><td>Smoke, Performance, Security</td><td>Deployment success, SSL, headers, firewall, uptime</td></tr>
+                    </tbody>
+                </table>
+
+                <h3>Frontend Testing in Detail</h3>
+
+                <div class="concept-card">
+                    <h4>Component Testing</h4>
+                    <p>Testing individual UI components in isolation — verifying they render correctly, handle props, respond to user interactions, and manage state as expected.</p>
+                    <ul>
+                        <li><strong>React Testing Library:</strong> Tests components as users interact with them — finds elements by role, label, and text rather than implementation details</li>
+                        <li><strong>Vue Test Utils:</strong> Official testing library for Vue components</li>
+                        <li><strong>Angular Testing (TestBed):</strong> Angular's built-in component testing harness</li>
+                        <li>Test rendered output, click handlers, form submissions, and error states</li>
+                        <li>Mock API calls and external dependencies in component tests</li>
+                    </ul>
+                </div>
+
+                <div class="concept-card">
+                    <h4>What to Test in the Frontend</h4>
+                    <ul>
+                        <li>Components render without errors in their default state</li>
+                        <li>Conditional rendering — does the right thing show/hide based on props or state?</li>
+                        <li>User events (clicks, form input, keyboard navigation) trigger correct behavior</li>
+                        <li>Form validation displays appropriate errors for invalid input</li>
+                        <li>Loading, error, and empty states are handled and displayed correctly</li>
+                        <li>Data from API calls is displayed correctly when it arrives</li>
+                        <li>Routing — navigation leads to correct pages</li>
+                        <li>Accessibility — labels, roles, and keyboard navigability</li>
+                    </ul>
+                </div>
+
+                <h3>API Layer Testing in Detail</h3>
+
+                <div class="concept-card">
+                    <h4>What Every API Test Should Verify</h4>
+                    <p>For each endpoint, test all of these scenarios:</p>
+
+                    <p><strong>Happy path (valid input, authenticated user):</strong></p>
+                    <ul>
+                        <li>Returns the expected HTTP status code (200, 201, 204)</li>
+                        <li>Returns the correct response body shape and data types</li>
+                        <li>Performs the expected side effect (record created, email sent)</li>
+                    </ul>
+
+                    <p><strong>Authentication scenarios:</strong></p>
+                    <ul>
+                        <li>No token provided → 401 Unauthorized</li>
+                        <li>Expired token → 401 Unauthorized</li>
+                        <li>Invalid token → 401 Unauthorized</li>
+                    </ul>
+
+                    <p><strong>Authorization scenarios:</strong></p>
+                    <ul>
+                        <li>Authenticated but insufficient permissions → 403 Forbidden</li>
+                        <li>Accessing another user's resource by ID manipulation → 403 or 404</li>
+                    </ul>
+
+                    <p><strong>Validation scenarios:</strong></p>
+                    <ul>
+                        <li>Missing required fields → 400 with specific field errors</li>
+                        <li>Wrong data types → 400 with clear error message</li>
+                        <li>Values outside acceptable range → 400</li>
+                        <li>Duplicate record where unique is required → 409 Conflict</li>
+                    </ul>
+
+                    <p><strong>Not found:</strong></p>
+                    <ul>
+                        <li>Request for non-existent resource → 404 Not Found</li>
+                    </ul>
+                </div>
+
+                <h3>Database Layer Testing</h3>
+
+                <div class="concept-card">
+                    <h4>What to Test at the Database Layer</h4>
+                    <ul>
+                        <li><strong>CRUD operations:</strong> Create, read, update, and delete operations store and retrieve data correctly</li>
+                        <li><strong>Constraints:</strong> Unique constraints, not-null constraints, and foreign keys are enforced correctly by the database</li>
+                        <li><strong>Queries:</strong> Complex queries return the expected results with the expected sort order, filtering, and pagination</li>
+                        <li><strong>Transactions:</strong> Operations that must succeed or fail together do so correctly — partial failures are rolled back</li>
+                        <li><strong>Migrations:</strong> Database schema migrations run cleanly, are reversible where needed, and do not break existing data</li>
+                    </ul>
+
+                    <div class="tip-box">
+                        <h4>💡 Use a Separate Test Database</h4>
+                        <p>Database tests must run against a dedicated test database that can be freely created, seeded, and wiped without affecting development or production. Many teams use a local Docker container or an in-memory SQLite database for unit-level data access tests, and a shared test server database for integration-level tests.</p>
+                    </div>
+                </div>
+
+                <h3>External Service and Third-Party Integration Testing</h3>
+
+                <div class="concept-card">
+                    <h4>The Challenge of External Dependencies</h4>
+                    <p>Your application may depend on payment gateways, email services, SMS providers, mapping APIs, or other external systems. Testing these presents a unique challenge — you cannot control or rely on their availability in automated tests.</p>
+
+                    <p><strong>Strategies:</strong></p>
+                    <ul>
+                        <li><strong>Mocking:</strong> Replace the real external service with a fake implementation in unit and integration tests — fast and reliable</li>
+                        <li><strong>Sandbox environments:</strong> Most providers (Stripe, SendGrid, Twilio) offer test/sandbox environments that behave like production but do not charge or send real messages</li>
+                        <li><strong>Contract testing:</strong> Define and verify the API contract between your code and the external service, so changes to the external API are detected immediately</li>
+                        <li><strong>Graceful degradation testing:</strong> Test what happens when the external service is unavailable, times out, or returns errors — your application should degrade gracefully</li>
+                    </ul>
+                </div>
+
+                <h3>Performance Testing a Client-Server Application</h3>
+
+                <div class="concept-card">
+                    <h4>Types of Performance Tests</h4>
+
+                    <table class="comparison-table">
+                        <thead><tr><th>Test Type</th><th>What it Simulates</th><th>Goal</th></tr></thead>
+                        <tbody>
+                            <tr><td><strong>Load Test</strong></td><td>Expected normal and peak traffic</td><td>Verify acceptable response times and error rates</td></tr>
+                            <tr><td><strong>Stress Test</strong></td><td>Beyond expected peak load</td><td>Find the breaking point and failure mode</td></tr>
+                            <tr><td><strong>Spike Test</strong></td><td>Sudden massive traffic increase</td><td>Verify recovery from sudden demand spikes</td></tr>
+                            <tr><td><strong>Soak / Endurance Test</strong></td><td>Sustained load over hours</td><td>Detect memory leaks and degradation over time</td></tr>
+                            <tr><td><strong>Scalability Test</strong></td><td>Gradually increasing load</td><td>Verify that adding servers improves capacity proportionally</td></tr>
+                        </tbody>
+                    </table>
+
+                    <p><strong>Key metrics to measure:</strong></p>
+                    <ul>
+                        <li><strong>Response time</strong> — average, 95th percentile, 99th percentile</li>
+                        <li><strong>Throughput</strong> — requests per second the system can handle</li>
+                        <li><strong>Error rate</strong> — percentage of requests that fail</li>
+                        <li><strong>Resource utilization</strong> — CPU, memory, database connections at various load levels</li>
+                        <li><strong>Concurrent users</strong> — how many simultaneous users the system can serve within SLA targets</li>
+                    </ul>
+                </div>
+
+                <h3>Security Testing</h3>
+
+                <div class="concept-card">
+                    <h4>Types of Security Testing</h4>
+                    <ul>
+                        <li><strong>SAST (Static Application Security Testing):</strong> Analyzes source code for vulnerabilities without running it. Tools: SonarQube, Semgrep, Checkmarx. Run in CI on every commit.</li>
+                        <li><strong>DAST (Dynamic Application Security Testing):</strong> Attacks the running application from the outside. Tools: OWASP ZAP, Burp Suite. Run against staging environments.</li>
+                        <li><strong>Dependency scanning:</strong> Checks third-party packages for known CVEs. Tools: npm audit, Snyk, Dependabot. Run automatically in CI.</li>
+                        <li><strong>Secret scanning:</strong> Detects accidentally committed API keys, passwords, or tokens. Tools: Gitleaks, GitHub Secret Scanning. Run as a pre-commit hook and in CI.</li>
+                        <li><strong>Penetration testing:</strong> Manual expert-led attack simulation. Performed periodically or before major releases.</li>
+                    </ul>
+                </div>
+
+            </div>
+        </div>
+
+
+        <!-- ═══════════════════════════════════════════ -->
+        <!-- SECTION 9 -->
+        <!-- ═══════════════════════════════════════════ -->
+        <button class="collapsible">9. Test Environments and Environment Management</button>
+        <div class="collapsible-content">
+            <div class="collapsible-inner">
+
+                <h3>The Environment Ladder</h3>
+
+                <table class="comparison-table">
+                    <thead>
+                        <tr><th>Environment</th><th>Purpose</th><th>Who Uses It</th><th>Data</th></tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td><strong>Local / Dev</strong></td>
+                            <td>Day-to-day development, unit tests, fast iteration</td>
+                            <td>Individual developers</td>
+                            <td>Minimal seed data, no real PII</td>
+                        </tr>
+                        <tr>
+                            <td><strong>CI</strong></td>
+                            <td>Automated testing on every commit and PR</td>
+                            <td>CI system (automated)</td>
+                            <td>Freshly created per test run, wiped after</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Staging / QA</strong></td>
+                            <td>Integration testing, UAT, pre-release verification</td>
+                            <td>QA engineers, stakeholders</td>
+                            <td>Realistic volume, anonymized production copy or realistic synthetic data</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Production</strong></td>
+                            <td>Live system serving real users</td>
+                            <td>Real users</td>
+                            <td>Real data — never test here</td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <h3>Environment Parity</h3>
+
+                <div class="success-box">
+                    <h4>✅ Staging Should Mirror Production as Closely as Possible</h4>
+                    <p>Differences between staging and production are the source of "works in staging, breaks in production" failures. Aim for:</p>
+                    <ul>
+                        <li>Same OS, runtime versions, and dependency versions</li>
+                        <li>Same infrastructure configuration (load balancers, caches, queues)</li>
+                        <li>Same environment variables and feature flags (values differ, but names match)</li>
+                        <li>Realistic data volumes — a staging database with 10 rows doesn't reveal the performance issues that 10 million rows will</li>
+                    </ul>
+                    <p>Docker and infrastructure-as-code (Terraform, Ansible) make environment parity much easier to maintain.</p>
+                </div>
+
+                <h3>Test Data Management Strategies</h3>
+
+                <div class="concept-card">
+                    <h4>Seed Scripts</h4>
+                    <p>Database scripts that populate a known, consistent starting state before tests run. Every CI run starts from the same data, eliminating order-dependent failures.</p>
+                </div>
+
+                <div class="concept-card">
+                    <h4>Factories and Builders</h4>
+                    <p>Functions that generate test data objects on demand, with sensible defaults and easy overrides. Instead of duplicating data setup in every test, call a factory that creates exactly what you need. Keeps tests concise and readable.</p>
+                </div>
+
+                <div class="concept-card">
+                    <h4>Transactional Rollback</h4>
+                    <p>Wrap each test in a database transaction and roll it back when the test completes. The database returns to its pre-test state without a full wipe-and-reseed cycle. Fast and reliable for integration tests.</p>
+                </div>
+
+                <div class="concept-card">
+                    <h4>Production Data Masking</h4>
+                    <p>When realistic data volume is needed in staging, copy production data but mask or anonymize all PII — replace real names, emails, and phone numbers with generated equivalents. Tools like Faker, Mimesis, and dedicated data masking solutions automate this.</p>
+                </div>
+
+                <div class="danger-box">
+                    <h4>🚨 Never Use Production Data in Tests Unmasked</h4>
+                    <p>Using real customer data in test environments violates user trust, may breach privacy regulations (GDPR, HIPAA, CCPA), and exposes sensitive information to a wider circle of people. Always mask PII before using production data in any non-production environment.</p>
+                </div>
+
+            </div>
+        </div>
+
+
+        <!-- ═══════════════════════════════════════════ -->
+        <!-- SECTION 10 -->
+        <!-- ═══════════════════════════════════════════ -->
+        <button class="collapsible">10. Testing Best Practices and Checklist</button>
+        <div class="collapsible-content">
+            <div class="collapsible-inner">
+
+                <h3>Writing Maintainable Tests</h3>
+
+                <div class="do-dont-grid">
+                    <div class="do-box">
+                        <h4>✅ DO</h4>
+                        <ul>
+                            <li>Test behavior and outcomes, not implementation details — tests should not break when you refactor without changing behavior</li>
+                            <li>Keep each test focused on one thing — one assertion or closely related set of assertions</li>
+                            <li>Use clear, descriptive test names that read as specifications</li>
+                            <li>Set up test data in the test itself or in a shared beforeEach — don't rely on external state</li>
+                            <li>Clean up after tests — reset state, clear databases, remove created files</li>
+                            <li>Use factories and helpers to reduce duplication across tests</li>
+                            <li>Review test code with the same rigor as production code</li>
+                            <li>Delete tests that no longer reflect real requirements</li>
+                        </ul>
+                    </div>
+                    <div class="dont-box">
+                        <h4>❌ DON'T</h4>
+                        <ul>
+                            <li>Test private methods directly — if you need to, the design likely needs revisiting</li>
+                            <li>Write tests that test the testing framework or language itself</li>
+                            <li>Let tests share mutable state without isolation</li>
+                            <li>Ignore or skip failing tests without tracking them</li>
+                            <li>Write tests after the fact just to hit a coverage number</li>
+                            <li>Use real external services in unit or integration tests</li>
+                            <li>Put business logic in test helpers — tests should be as simple as possible</li>
+                            <li>Test UI implementation details like class names or DOM structure that aren't visible to users</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <h3>Testing Anti-Patterns to Avoid</h3>
+
+                <div class="concept-card">
+                    <h4>The Ice Cream Cone (Inverted Pyramid)</h4>
+                    <p>Many E2E tests, few unit tests. Results in a slow, fragile, expensive test suite. Fix by identifying what each E2E test is really verifying and pushing that logic down to a unit or integration test.</p>
+                </div>
+
+                <div class="concept-card">
+                    <h4>Testing the Framework</h4>
+                    <p>Writing tests that verify that Express routes requests, that React renders JSX, or that the ORM executes SQL. Trust your tools. Test your logic.</p>
+                </div>
+
+                <div class="concept-card">
+                    <h4>Fragile Selectors in UI Tests</h4>
+                    <p>E2E tests that find elements by CSS class names, XPath, or auto-generated IDs break every time the UI is refactored. Use <code>data-testid</code> attributes or semantic selectors (by role, label, text) that reflect what users actually see and interact with.</p>
+                </div>
+
+                <div class="concept-card">
+                    <h4>Sleeping and Fixed Waits</h4>
+                    <p>Adding <code>sleep(2000)</code> to wait for things to happen in E2E tests is fragile — too short in slow environments, too slow in fast ones. Use explicit waits for specific conditions (element visible, network request complete, text appears).</p>
+                </div>
+
+                <h3>Pre-Release Testing Checklist</h3>
+
+                <div class="checklist">
+                    <h4>🧪 Unit and Integration Tests</h4>
+                    <ul>
+                        <li>All unit tests are passing on the CI build</li>
+                        <li>Code coverage meets the defined threshold</li>
+                        <li>All integration tests are passing</li>
+                        <li>No tests are skipped without a documented reason</li>
+                        <li>New features have corresponding tests</li>
+                        <li>Bug fixes include regression tests</li>
+                    </ul>
+                </div>
+
+                <div class="checklist">
+                    <h4>🌐 API Tests</h4>
+                    <ul>
+                        <li>All new and modified endpoints have API tests</li>
+                        <li>Authentication and authorization scenarios are covered</li>
+                        <li>Validation error responses are tested</li>
+                        <li>API contracts match what the frontend expects</li>
+                    </ul>
+                </div>
+
+                <div class="checklist">
+                    <h4>🖥️ End-to-End Tests</h4>
+                    <ul>
+                        <li>All critical user journeys have E2E coverage</li>
+                        <li>Tests run in CI against the staging environment</li>
+                        <li>Tests pass on all supported browsers</li>
+                        <li>Mobile viewports are tested</li>
+                    </ul>
+                </div>
+
+                <div class="checklist">
+                    <h4>♿ Accessibility</h4>
+                    <ul>
+                        <li>Automated accessibility scan shows no critical violations</li>
+                        <li>New UI components are keyboard navigable</li>
+                        <li>All images have meaningful alt text</li>
+                        <li>Color contrast meets WCAG 2.1 AA requirements</li>
+                        <li>Forms have associated labels</li>
+                    </ul>
+                </div>
+
+                <div class="checklist">
+                    <h4>⚡ Performance</h4>
+                    <ul>
+                        <li>Performance baseline has not regressed from previous release</li>
+                        <li>Page load time meets targets on a simulated slow connection</li>
+                        <li>Load test confirms system meets expected concurrent user requirements</li>
+                        <li>Database query performance reviewed for new queries</li>
+                    </ul>
+                </div>
+
+                <div class="checklist">
+                    <h4>🔒 Security</h4>
+                    <ul>
+                        <li>Dependency scan shows no high or critical CVEs</li>
+                        <li>SAST scan has been run and findings reviewed</li>
+                        <li>New authentication / authorization logic has been tested for bypass</li>
+                        <li>No secrets or API keys committed to the repository</li>
+                    </ul>
+                </div>
+
+                <div class="checklist">
+                    <h4>👥 User Acceptance</h4>
+                    <ul>
+                        <li>Stakeholders or representative users have reviewed new features</li>
+                        <li>All acceptance criteria from user stories are met</li>
+                        <li>Any usability feedback has been addressed or tracked</li>
+                        <li>Feature works correctly in the staging environment with realistic data</li>
+                    </ul>
+                </div>
+
+                <div class="checklist">
+                    <h4>🗄️ Data and Migrations</h4>
+                    <ul>
+                        <li>Database migrations run cleanly without errors</li>
+                        <li>Migration has been tested against a copy of production data</li>
+                        <li>Rollback plan exists if migration needs to be reversed</li>
+                        <li>Existing data integrity maintained after migration</li>
+                    </ul>
+                </div>
+
+                <div class="tip-box">
+                    <h4>💡 Key References and Resources</h4>
+                    <ul>
+                        <li><strong>ISTQB (istqb.org)</strong> — International Software Testing Qualifications Board: industry-standard testing certifications and syllabi</li>
+                        <li><strong>Playwright Docs (playwright.dev)</strong> — Official documentation for Playwright E2E testing</li>
+                        <li><strong>Cypress Docs (docs.cypress.io)</strong> — Comprehensive guide to Cypress testing</li>
+                        <li><strong>Testing Library (testing-library.com)</strong> — Guides for testing React, Vue, and Angular components</li>
+                        <li><strong>k6 Docs (k6.io/docs)</strong> — Load testing scripting reference and tutorials</li>
+                        <li><strong>OWASP Testing Guide (owasp.org)</strong> — Comprehensive security testing methodology</li>
+                        <li><strong>Google Testing Blog (testing.googleblog.com)</strong> — Engineering practices from Google's testing team</li>
+                        <li><strong>Martin Fowler's Test Pyramid (martinfowler.com)</strong> — Original article defining the testing pyramid model</li>
+                    </ul>
+                </div>
+
+            </div>
+        </div>
+
+    </div><!-- /.content -->
+
+    <div class="footer">
+        <p>&copy; 2024 COP4834 Web Systems II | Guide to Software Testing</p>
+        <p>Quality is not an act — it is a habit built into every commit.</p>
+    </div>
+
+</div><!-- /.container -->
+
+<script>
+    const collapsibles = document.getElementsByClassName("collapsible");
+
+    for (let i = 0; i < collapsibles.length; i++) {
+        collapsibles[i].addEventListener("click", function () {
+            this.classList.toggle("active");
+            const content = this.nextElementSibling;
+            if (content.style.maxHeight) {
+                content.style.maxHeight = null;
+            } else {
+                content.style.maxHeight = content.scrollHeight + "px";
+            }
+        });
+    }
+
+    if (collapsibles.length > 0) {
+        collapsibles[0].click();
+    }
+</script>
+</body>
+</html>

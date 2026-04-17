@@ -1,0 +1,22 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(xargs grep *)",
+      "Bash(cp '/c/Users/ronal/OneDrive - Daytona State College/Documents/My Classes/COP3530/Guides/1-COP3530 Overview of Data Structures.html' '/c/Users/ronal/OneDrive - Daytona State College/Documents/My Github/Guides/algorithms/')",
+      "Bash(cp '/c/Users/ronal/OneDrive - Daytona State College/Documents/My Classes/COP3530/Guides/2-COP3530 Guide to Arrays.html' '/c/Users/ronal/OneDrive - Daytona State College/Documents/My Github/Guides/algorithms/')",
+      "Bash(cp '/c/Users/ronal/OneDrive - Daytona State College/Documents/My Classes/COP3530/Guides/4-COP3530 Guide to Lists.html' '/c/Users/ronal/OneDrive - Daytona State College/Documents/My Github/Guides/algorithms/')",
+      "Bash(cp '/c/Users/ronal/OneDrive - Daytona State College/Documents/My Classes/COP3530/Guides/5-COP3530 Guide to Stacks and Queues.html' '/c/Users/ronal/OneDrive - Daytona State College/Documents/My Github/Guides/algorithms/')",
+      "Bash(cp '/c/Users/ronal/OneDrive - Daytona State College/Documents/My Classes/COP3530/Guides/7-COP3530 Guide to Recursion.html' '/c/Users/ronal/OneDrive - Daytona State College/Documents/My Github/Guides/algorithms/')",
+      "Bash(cp '/c/Users/ronal/OneDrive - Daytona State College/Documents/My Classes/COP4709/Guides/3-Stored_Procedures.html' '/c/Users/ronal/OneDrive - Daytona State College/Documents/My Github/Guides/database/')",
+      "Bash(cp '/c/Users/ronal/OneDrive - Daytona State College/Documents/My Classes/COP4709/Guides/4-Stored_Functions.html' '/c/Users/ronal/OneDrive - Daytona State College/Documents/My Github/Guides/database/')",
+      "Bash(cp '/c/Users/ronal/OneDrive - Daytona State College/Documents/My Classes/COP4709/Guides/5-Transactions.html' '/c/Users/ronal/OneDrive - Daytona State College/Documents/My Github/Guides/database/')",
+      "Bash(cp '/c/Users/ronal/OneDrive - Daytona State College/Documents/My Classes/COP4709/Guides/6-Cursor_Guide.html' '/c/Users/ronal/OneDrive - Daytona State College/Documents/My Github/Guides/database/')",
+      "Bash(cp '/c/Users/ronal/OneDrive - Daytona State College/Documents/My Classes/COP4709/Guides/7-Database_Reports_Guide.html' '/c/Users/ronal/OneDrive - Daytona State College/Documents/My Github/Guides/database/')",
+      "Bash(cp '/c/Users/ronal/OneDrive - Daytona State College/Documents/My Classes/CEN3722/Guides/6-CEN3722 Guide to User Login Systems.html' '/c/Users/ronal/OneDrive - Daytona State College/Documents/My Github/Guides/web-dev/')",
+      "Bash(cp '/c/Users/ronal/OneDrive - Daytona State College/Documents/My Classes/CEN3722/Guides/CEN3722_Cognitive_Walkthrough_Guide.html' '/c/Users/ronal/OneDrive - Daytona State College/Documents/My Github/Guides/web-dev/')",
+      "Bash(cp '/c/Users/ronal/OneDrive - Daytona State College/Documents/My Classes/CEN3722/Guides/CEN3722_Creating_Good_Surveys.html' '/c/Users/ronal/OneDrive - Daytona State College/Documents/My Github/Guides/web-dev/')",
+      "Bash(cp '/c/Users/ronal/OneDrive - Daytona State College/Documents/My Classes/CEN3722/Guides/CEN3722_Heuristic_Evaluation_Guide.html' '/c/Users/ronal/OneDrive - Daytona State College/Documents/My Github/Guides/web-dev/')",
+      "Bash(cp '/c/Users/ronal/OneDrive - Daytona State College/Documents/My Classes/CEN3722/Guides/CEN3722_Prototype_Guide.html' '/c/Users/ronal/OneDrive - Daytona State College/Documents/My Github/Guides/web-dev/')"
+    ]
+  }
+}

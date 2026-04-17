@@ -1,0 +1,1647 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>COP4834 - Planning and Tracking Software Projects</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #2d1b69 0%, #6a3de8 50%, #a855f7 100%);
+            padding: 20px;
+            line-height: 1.6;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.45);
+            overflow: hidden;
+        }
+
+        /* ── Header ── */
+        .header {
+            background: linear-gradient(135deg, #2d1b69 0%, #6a3de8 60%, #a855f7 100%);
+            color: white;
+            padding: 45px 40px;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+        }
+        .header::before {
+            content: '📋';
+            position: absolute;
+            font-size: 200px;
+            opacity: 0.05;
+            top: -20px;
+            right: 0;
+        }
+        .header h1 { font-size: 2.5em; margin-bottom: 10px; text-shadow: 2px 2px 8px rgba(0,0,0,0.4); }
+        .header p  { font-size: 1.2em; opacity: 0.92; }
+
+        /* ── Content ── */
+        .content { padding: 40px; }
+
+        /* ── Intro box ── */
+        .intro-box {
+            background: linear-gradient(135deg, #2d1b69 0%, #6a3de8 100%);
+            color: white;
+            padding: 30px;
+            border-radius: 10px;
+            margin-bottom: 30px;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.25);
+            border-left: 6px solid #a855f7;
+        }
+        .intro-box h2 { margin-bottom: 12px; font-size: 1.8em; }
+
+        /* ── Collapsibles ── */
+        .collapsible {
+            background: linear-gradient(135deg, #2d1b69 0%, #6a3de8 100%);
+            color: white;
+            cursor: pointer;
+            padding: 18px 22px;
+            width: 100%;
+            border: none;
+            text-align: left;
+            outline: none;
+            font-size: 1.15em;
+            font-weight: bold;
+            border-radius: 8px;
+            margin-bottom: 10px;
+            transition: all 0.3s ease;
+            box-shadow: 0 3px 10px rgba(0,0,0,0.2);
+            border-left: 5px solid #a855f7;
+        }
+        .collapsible:hover {
+            background: linear-gradient(135deg, #1e1050 0%, #5028c8 100%);
+            transform: translateY(-2px);
+            box-shadow: 0 6px 18px rgba(0,0,0,0.3);
+        }
+        .collapsible.active {
+            background: linear-gradient(135deg, #1a5c3a 0%, #27ae60 100%);
+            border-left-color: #2ecc71;
+        }
+        .collapsible:after { content: '\002B'; float: right; font-size: 1.3em; font-weight: bold; }
+        .collapsible.active:after { content: '\2212'; }
+
+        .collapsible-content {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.35s ease-out;
+            background-color: #faf8ff;
+            border-radius: 0 0 8px 8px;
+            margin-bottom: 20px;
+        }
+        .collapsible-inner { padding: 28px; }
+
+        /* ── Callout boxes ── */
+        .info-box    { background: #ede9fe; border-left: 5px solid #6a3de8; padding: 20px; margin: 20px 0; border-radius: 5px; }
+        .warning-box { background: #fef5e7; border-left: 5px solid #f39c12; padding: 20px; margin: 20px 0; border-radius: 5px; }
+        .success-box { background: #d5f4e6; border-left: 5px solid #27ae60; padding: 20px; margin: 20px 0; border-radius: 5px; }
+        .tip-box     { background: #eaf4fb; border-left: 5px solid #2e86c1; padding: 20px; margin: 20px 0; border-radius: 5px; }
+        .danger-box  { background: #fdf0f0; border-left: 5px solid #c0392b; padding: 20px; margin: 20px 0; border-radius: 5px; }
+
+        /* ── Step containers ── */
+        .step-container {
+            background: white;
+            border: 2px solid #6a3de8;
+            border-radius: 8px;
+            padding: 20px;
+            margin: 15px 0;
+        }
+        .step-number {
+            display: inline-block;
+            background: linear-gradient(135deg, #2d1b69, #a855f7);
+            color: white;
+            width: 36px; height: 36px;
+            border-radius: 50%;
+            text-align: center;
+            line-height: 36px;
+            font-weight: bold;
+            margin-right: 10px;
+        }
+        .step-title {
+            display: inline-block;
+            font-size: 1.25em;
+            color: #2d1b69;
+            font-weight: bold;
+            vertical-align: middle;
+        }
+        .step-content { margin-top: 15px; padding-left: 46px; }
+
+        /* ── Inline code ── */
+        code {
+            background: #2d1b69;
+            color: #e9d5ff;
+            padding: 3px 8px;
+            border-radius: 4px;
+            font-family: 'Courier New', monospace;
+            font-size: 0.9em;
+        }
+
+        /* ── Typography ── */
+        h3 {
+            color: #2d1b69;
+            margin: 22px 0 10px 0;
+            font-size: 1.45em;
+            border-bottom: 2px solid #a855f7;
+            padding-bottom: 6px;
+            display: inline-block;
+        }
+        h4 { color: #6a3de8; margin: 15px 0 8px 0; font-size: 1.15em; }
+        ul, ol { margin-left: 25px; margin-top: 10px; }
+        li { margin: 9px 0; }
+        strong { color: #2d1b69; }
+        p { margin: 8px 0; }
+
+        /* ── Tables ── */
+        .comparison-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 20px 0;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+            border-radius: 8px;
+            overflow: hidden;
+        }
+        .comparison-table th {
+            background: linear-gradient(135deg, #2d1b69, #6a3de8);
+            color: white;
+            padding: 14px 16px;
+            text-align: left;
+            font-weight: bold;
+        }
+        .comparison-table td {
+            padding: 12px 16px;
+            border-bottom: 1px solid #e5d9ff;
+        }
+        .comparison-table tr:last-child td { border-bottom: none; }
+        .comparison-table tr:hover td { background: #f5f0ff; }
+
+        /* ── Cards ── */
+        .concept-card {
+            background: white;
+            border: 2px solid #6a3de8;
+            border-radius: 10px;
+            padding: 20px;
+            margin: 15px 0;
+        }
+        .concept-card h4 { color: #6a3de8; font-size: 1.2em; margin-bottom: 8px; }
+
+        .budget-card {
+            background: white;
+            border: 2px solid #a855f7;
+            border-radius: 10px;
+            padding: 20px;
+            margin: 15px 0;
+        }
+        .budget-card h4 { color: #a855f7; font-size: 1.2em; margin-bottom: 8px; }
+
+        .tool-card {
+            background: white;
+            border: 2px solid #2e86c1;
+            border-radius: 10px;
+            padding: 20px;
+            margin: 15px 0;
+        }
+        .tool-card h4 { color: #2e86c1; font-size: 1.2em; margin-bottom: 8px; }
+
+        .alert-card {
+            background: white;
+            border: 2px solid #e67e22;
+            border-radius: 10px;
+            padding: 20px;
+            margin: 15px 0;
+        }
+        .alert-card h4 { color: #e67e22; font-size: 1.2em; margin-bottom: 8px; }
+
+        /* ── Do / Don't ── */
+        .do-dont-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 18px; margin: 18px 0; }
+        .do-box   { background: #d5f4e6; border: 2px solid #27ae60; border-radius: 8px; padding: 18px; }
+        .do-box h4   { color: #1e8449; margin-bottom: 10px; }
+        .dont-box { background: #fdf0f0; border: 2px solid #c0392b; border-radius: 8px; padding: 18px; }
+        .dont-box h4 { color: #c0392b; margin-bottom: 10px; }
+
+        /* ── Feature grid ── */
+        .feature-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(210px, 1fr));
+            gap: 15px;
+            margin: 18px 0;
+        }
+        .feature-item {
+            background: linear-gradient(135deg, #f5f0ff, #ede9fe);
+            border: 2px solid #6a3de8;
+            border-radius: 8px;
+            padding: 18px;
+            text-align: center;
+        }
+        .feature-item h5 { color: #2d1b69; margin-bottom: 8px; font-size: 1.05em; }
+
+        /* ── Budget estimate boxes ── */
+        .estimate-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 18px;
+            margin: 20px 0;
+        }
+        .estimate-box {
+            border-radius: 10px;
+            padding: 20px;
+            text-align: center;
+        }
+        .estimate-small  { background: #d5f4e6; border: 2px solid #27ae60; }
+        .estimate-medium { background: #ede9fe; border: 2px solid #6a3de8; }
+        .estimate-large  { background: #fef5e7; border: 2px solid #e67e22; }
+        .estimate-box h4 { font-size: 1.3em; margin-bottom: 8px; }
+        .estimate-box .cost { font-size: 2em; font-weight: bold; margin: 10px 0; }
+        .estimate-small  h4, .estimate-small  .cost { color: #1e8449; }
+        .estimate-medium h4, .estimate-medium .cost { color: #2d1b69; }
+        .estimate-large  h4, .estimate-large  .cost { color: #935116; }
+
+        /* ── Flow strip ── */
+        .flow-grid {
+            display: flex;
+            align-items: stretch;
+            gap: 0;
+            margin: 20px 0;
+            flex-wrap: wrap;
+        }
+        .flow-step {
+            flex: 1;
+            min-width: 110px;
+            background: linear-gradient(135deg, #2d1b69, #6a3de8);
+            color: white;
+            padding: 14px 10px;
+            text-align: center;
+            font-weight: bold;
+            font-size: 0.87em;
+            position: relative;
+        }
+        .flow-step:not(:last-child)::after {
+            content: '▶';
+            position: absolute;
+            right: -12px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #a855f7;
+            font-size: 1.2em;
+            z-index: 10;
+        }
+        .flow-step span { display: block; font-size: 1.4em; margin-bottom: 4px; }
+
+        /* ── Badges ── */
+        .badge {
+            display: inline-block;
+            padding: 3px 10px;
+            border-radius: 20px;
+            font-size: 0.8em;
+            font-weight: bold;
+            margin-left: 6px;
+            vertical-align: middle;
+        }
+        .badge-small  { background: #27ae60; color: white; }
+        .badge-medium { background: #6a3de8; color: white; }
+        .badge-both   { background: #2e86c1; color: white; }
+        .badge-risk   { background: #c0392b; color: white; }
+        .badge-warn   { background: #e67e22; color: white; }
+
+        /* ── Velocity / burn chart box ── */
+        .chart-mock {
+            background: #f9f8ff;
+            border: 2px solid #6a3de8;
+            border-radius: 8px;
+            padding: 20px;
+            margin: 15px 0;
+            font-family: 'Courier New', monospace;
+            font-size: 0.85em;
+            line-height: 1.8;
+            white-space: pre-wrap;
+        }
+
+        /* ── Checklist ── */
+        .checklist {
+            background: #f0ebff;
+            border: 2px solid #6a3de8;
+            border-radius: 8px;
+            padding: 20px;
+            margin: 15px 0;
+        }
+        .checklist h4 { color: #2d1b69; margin-bottom: 12px; }
+        .checklist ul { list-style: none; margin-left: 0; }
+        .checklist li { margin: 8px 0; }
+        .checklist li::before { content: "☐ "; color: #6a3de8; font-weight: bold; }
+
+        /* ── Formula box ── */
+        .formula-box {
+            background: #fff8e1;
+            border: 2px solid #f39c12;
+            border-radius: 8px;
+            padding: 15px 20px;
+            margin: 15px 0;
+            font-family: 'Courier New', monospace;
+            font-size: 0.95em;
+            white-space: pre-wrap;
+        }
+
+        /* ── Footer ── */
+        .footer {
+            background: linear-gradient(135deg, #2d1b69 0%, #6a3de8 60%, #a855f7 100%);
+            color: white;
+            padding: 25px 20px;
+            text-align: center;
+        }
+        .footer p { opacity: 0.92; margin: 4px 0; }
+
+        @media (max-width: 700px) {
+            .do-dont-grid { grid-template-columns: 1fr; }
+            .flow-step:not(:last-child)::after { display: none; }
+            .estimate-grid { grid-template-columns: 1fr; }
+        }
+    </style>
+</head>
+<body>
+<div class="container">
+
+    <div class="header">
+        <h1>📋 COP4834 Web Systems II</h1>
+        <p>Planning and Tracking Software Projects — Budget, Estimation, and Progress Management</p>
+    </div>
+
+    <div class="content">
+
+        <div class="intro-box">
+            <h2>📚 Module Overview</h2>
+            <p>Shipping a working application is only half the challenge. Delivering it on time, within budget, and meeting the client's actual needs is the other half — and for small development teams of 1–5 developers, that requires deliberate planning from day one. This guide covers how to scope and estimate a client-server project, build a realistic budget, set up a planning framework that fits a small team, and use tracking methods to stay on course (or update the plan when reality diverges from the estimate).</p>
+        </div>
+
+
+        <!-- ═══════════════════════════════ SECTION 1 ═══════════════════════════════ -->
+        <button class="collapsible">1. The Project Lifecycle — From Idea to Delivery</button>
+        <div class="collapsible-content">
+            <div class="collapsible-inner">
+
+                <div class="info-box">
+                    <h4>📖 Why a Lifecycle Matters for Small Teams</h4>
+                    <p>On a 1–5 person team, there is no project manager insulating the developers from the chaos. Everyone shares responsibility for delivery. Understanding the project lifecycle ensures nothing critical falls through the cracks — scope, budget, schedule, and quality are all managed deliberately rather than reactively.</p>
+                </div>
+
+                <h3>The Five Phases of a Software Project</h3>
+
+                <div class="flow-grid">
+                    <div class="flow-step"><span>🔍</span>Initiation &amp; Scope</div>
+                    <div class="flow-step"><span>📐</span>Planning &amp; Estimation</div>
+                    <div class="flow-step"><span>⚙️</span>Development</div>
+                    <div class="flow-step"><span>✅</span>Testing &amp; QA</div>
+                    <div class="flow-step"><span>🚀</span>Deployment &amp; Handoff</div>
+                </div>
+
+                <h3>Types of Projects This Guide Covers</h3>
+
+                <div class="estimate-grid">
+                    <div class="estimate-box estimate-small">
+                        <h4>Small Project</h4>
+                        <div class="cost">1–2 Devs</div>
+                        <p>Simple CRUD web app, internal tool, MVP with limited features, 1–3 months duration</p>
+                        <p><strong>Examples:</strong> Staff scheduling app, simple booking system, small e-commerce site</p>
+                    </div>
+                    <div class="estimate-box estimate-medium">
+                        <h4>Medium Project</h4>
+                        <div class="cost">3–5 Devs</div>
+                        <p>Multi-role application, external-facing system, integrations, 3–9 months duration</p>
+                        <p><strong>Examples:</strong> Customer portal, SaaS platform MVP, full-featured e-commerce, management system with reporting</p>
+                    </div>
+                    <div class="estimate-box estimate-large">
+                        <h4>Growth Trajectory</h4>
+                        <div class="cost">5+ Devs</div>
+                        <p>Projects that succeed and grow require the same planning discipline — just scaled up</p>
+                        <p><strong>Note:</strong> Beyond 5 developers, dedicated PM and QA roles become essential</p>
+                    </div>
+                </div>
+
+                <h3>The Iron Triangle — The Core Constraint</h3>
+
+                <div class="concept-card">
+                    <h4>Scope, Time, and Cost — Pick Two (Sort Of)</h4>
+                    <p>Every project is constrained by three forces. Changing one forces a trade-off with the others.</p>
+                    <ul>
+                        <li><strong>Scope:</strong> What the system must do — features, quality, and complexity</li>
+                        <li><strong>Time:</strong> How long it takes to deliver</li>
+                        <li><strong>Cost:</strong> How much it costs — largely driven by time × team size × rates</li>
+                    </ul>
+                    <p>If a client insists the scope stays fixed and demands an earlier deadline, the only lever left is cost — more people, more hours, more money. If the budget is fixed, scope or timeline must flex. <strong>Help your client understand this before the project starts.</strong></p>
+
+                    <div class="warning-box">
+                        <h4>⚠️ The Most Common Project Failure Pattern</h4>
+                        <p>A client sets all three constraints ("we need all features, in 3 months, for $20,000") with no room for negotiation. Developers agree because they want the work. Reality hits mid-project. The team is expected to absorb the gap through unpaid overtime. Set realistic expectations early — this conversation is much harder to have after the contract is signed.</p>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+
+
+        <!-- ═══════════════════════════════ SECTION 2 ═══════════════════════════════ -->
+        <button class="collapsible">2. Defining Scope — What Are You Actually Building?</button>
+        <div class="collapsible-content">
+            <div class="collapsible-inner">
+
+                <div class="info-box">
+                    <h4>📖 Scope Is the Foundation of Every Estimate</h4>
+                    <p>You cannot estimate time or cost accurately without knowing what you are building. Rushing past scope definition is the single most common cause of blown budgets and missed deadlines. Invest time here — it pays dividends throughout the project.</p>
+                </div>
+
+                <h3>Scope Definition Documents</h3>
+
+                <div class="concept-card">
+                    <h4>Project Brief / Statement of Work (SOW)</h4>
+                    <p>A high-level document that defines the project in plain language, agreed to by both the development team and the client before any work begins.</p>
+                    <p><strong>Key sections:</strong></p>
+                    <ul>
+                        <li><strong>Project Purpose:</strong> What problem does this solve? Who are the users?</li>
+                        <li><strong>Deliverables:</strong> Exactly what will be delivered — a deployed web application, a mobile app, an API, documentation</li>
+                        <li><strong>Features In Scope:</strong> Explicit list of what will be built</li>
+                        <li><strong>Features Out of Scope:</strong> Equally important — what will NOT be built in this engagement</li>
+                        <li><strong>Assumptions:</strong> What you're assuming is true (e.g., client provides hosting, client provides content, third-party API access is available)</li>
+                        <li><strong>Constraints:</strong> Known limitations — technology stack required, regulatory requirements, hard deadlines</li>
+                        <li><strong>Acceptance Criteria:</strong> How will both parties agree the project is done?</li>
+                    </ul>
+                </div>
+
+                <div class="concept-card">
+                    <h4>User Stories and Feature List</h4>
+                    <p>Break scope down into user stories — small, user-centered descriptions of desired behavior. This forms the backlog that will be estimated, prioritized, and tracked throughout development.</p>
+
+                    <p><strong>User story format:</strong></p>
+                    <div class="formula-box">As a [type of user],
+I want to [perform some action],
+So that [I achieve some goal / benefit].</div>
+
+                    <p><strong>Examples for a booking system:</strong></p>
+                    <ul>
+                        <li>As a customer, I want to search available time slots so that I can book an appointment that fits my schedule.</li>
+                        <li>As a staff member, I want to view my daily bookings so that I can plan my workday.</li>
+                        <li>As an admin, I want to generate a monthly booking report so that I can review revenue performance.</li>
+                    </ul>
+                    <p>Each user story becomes an estimatable, trackable unit of work. Keep them small enough to complete in 1–3 days.</p>
+                </div>
+
+                <h3>Scoping a Client-Server Application</h3>
+
+                <p>For web applications specifically, ensure scope explicitly addresses all of these areas:</p>
+
+                <table class="comparison-table">
+                    <thead>
+                        <tr><th>Area</th><th>Scope Questions to Answer</th></tr>
+                    </thead>
+                    <tbody>
+                        <tr><td><strong>User Roles</strong></td><td>How many distinct user types? What can each do? Is there a public (unauthenticated) view?</td></tr>
+                        <tr><td><strong>Authentication</strong></td><td>Username/password? Social login? MFA? Password reset flow?</td></tr>
+                        <tr><td><strong>Data Model</strong></td><td>What entities does the system manage? Rough number of database tables?</td></tr>
+                        <tr><td><strong>API</strong></td><td>How many endpoints? REST or GraphQL? Will an external app consume the API?</td></tr>
+                        <tr><td><strong>UI Complexity</strong></td><td>How many distinct pages/screens? Custom design or component library? Mobile responsive?</td></tr>
+                        <tr><td><strong>Integrations</strong></td><td>Which third-party services? (payment, email, SMS, maps, analytics)</td></tr>
+                        <tr><td><strong>Reporting</strong></td><td>What reports are needed? Exported to PDF, Excel? Real-time or scheduled?</td></tr>
+                        <tr><td><strong>File Handling</strong></td><td>File uploads? What types and sizes? Storage location?</td></tr>
+                        <tr><td><strong>Performance</strong></td><td>Expected user volume? Peak concurrent users? Data retention period?</td></tr>
+                        <tr><td><strong>Deployment</strong></td><td>Cloud hosting? Client's own servers? CI/CD pipeline? Who manages it?</td></tr>
+                        <tr><td><strong>Post-Launch</strong></td><td>Who maintains it? Is ongoing support in scope? For how long?</td></tr>
+                    </tbody>
+                </table>
+
+                <h3>Scope Creep — Your Greatest Budget Risk</h3>
+
+                <div class="danger-box">
+                    <h4>🚨 Scope Creep Is Inevitable Without Controls</h4>
+                    <p><strong>Scope creep</strong> is the gradual expansion of project scope beyond what was originally agreed — usually through informal requests ("can you just add…"), evolving requirements, or unclear initial scope. It is the leading cause of project overruns in small teams.</p>
+                    <ul>
+                        <li><strong>Prevention:</strong> Document scope in writing, get it signed off, and define a formal change request process</li>
+                        <li><strong>Change requests:</strong> Any request that changes agreed scope must go through a written change request — estimated, priced, and approved before work begins</li>
+                        <li><strong>Language to use:</strong> "That's a great idea — let me log it as a change request and estimate the time and cost impact"</li>
+                        <li><strong>For fixed-price contracts:</strong> Be especially vigilant — every out-of-scope addition directly reduces your margin</li>
+                    </ul>
+                </div>
+
+                <h3>MoSCoW Prioritization</h3>
+
+                <div class="concept-card">
+                    <h4>Prioritizing Features Before You Estimate</h4>
+                    <p>Not all features are equally important. Use MoSCoW to classify each feature before estimation — this protects the project if time or budget runs short.</p>
+                    <ul>
+                        <li><strong>Must Have:</strong> Non-negotiable — the project fails without these. Core functionality that justifies the project's existence.</li>
+                        <li><strong>Should Have:</strong> Important but not critical for launch. Would be delivered if time allows.</li>
+                        <li><strong>Could Have:</strong> Nice to have. Cut first if pressure increases.</li>
+                        <li><strong>Won't Have (this time):</strong> Explicitly deferred to a later phase. Acknowledges the idea without committing to it now.</li>
+                    </ul>
+                    <div class="success-box">
+                        <p>A well-scoped MVP (Minimum Viable Product) consists almost entirely of Must Have features. This is the safest way to ship on time and on budget — deliver core value, then iterate.</p>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+
+
+        <!-- ═══════════════════════════════ SECTION 3 ═══════════════════════════════ -->
+        <button class="collapsible">3. Estimating Effort — How Long Will It Take?</button>
+        <div class="collapsible-content">
+            <div class="collapsible-inner">
+
+                <div class="info-box">
+                    <h4>📖 Estimation is an Art with a Scientific Backbone</h4>
+                    <p>No estimate is a guarantee. Good estimates are well-reasoned ranges, not precise predictions. The goal is to be accurate enough to plan, budget, and set expectations — not to predict the future perfectly. Multiple estimation techniques improve accuracy.</p>
+                </div>
+
+                <h3>Why Developers Underestimate (Always)</h3>
+
+                <div class="warning-box">
+                    <h4>⚠️ The Planning Fallacy</h4>
+                    <p>Humans are systematically optimistic when estimating their own tasks. Developers routinely forget to account for:</p>
+                    <ul>
+                        <li>Code review and revision cycles</li>
+                        <li>Setting up infrastructure and development environments</li>
+                        <li>Writing tests and fixing bugs discovered in testing</li>
+                        <li>Meetings, client communication, and question-answering</li>
+                        <li>Unexpected technical complexity ("I thought that would be easy")</li>
+                        <li>Rework from changing requirements</li>
+                        <li>Deployment, DevOps, and go-live issues</li>
+                        <li>Learning new tools or APIs mid-project</li>
+                        <li>Sick days, interruptions, and other commitments</li>
+                    </ul>
+                    <p><strong>Rule of thumb:</strong> Take your initial estimate, double it, then add 20%. You will be closer to reality.</p>
+                </div>
+
+                <h3>Estimation Techniques</h3>
+
+                <div class="concept-card">
+                    <h4>Story Points (Relative Sizing)</h4>
+                    <p>Assign each user story a relative complexity score using a modified Fibonacci scale: <strong>1, 2, 3, 5, 8, 13, 21</strong>. Points represent complexity, uncertainty, and effort relative to each other — not hours.</p>
+                    <ul>
+                        <li><strong>1 point:</strong> Trivial — a label change, a simple config setting</li>
+                        <li><strong>2–3 points:</strong> Small, well-understood — a simple CRUD form</li>
+                        <li><strong>5 points:</strong> Medium complexity — a feature with multiple states, moderate UI</li>
+                        <li><strong>8 points:</strong> Complex — multiple components, integration, non-trivial logic</li>
+                        <li><strong>13 points:</strong> Very complex — consider breaking it down further</li>
+                        <li><strong>21 points:</strong> Too large — must be decomposed into smaller stories before estimation</li>
+                    </ul>
+                    <p>Once the team has a few sprints completed, their <strong>velocity</strong> (points completed per sprint) becomes a reliable forecasting tool. See Section 7.</p>
+                </div>
+
+                <div class="concept-card">
+                    <h4>Planning Poker</h4>
+                    <p>A group estimation technique that prevents anchoring bias — where the first number heard skews everyone's estimate.</p>
+                    <ol>
+                        <li>Present a user story to the team</li>
+                        <li>Each team member privately selects a story point card</li>
+                        <li>Everyone reveals their card simultaneously</li>
+                        <li>Discuss outliers — the highest and lowest estimates explain their reasoning</li>
+                        <li>Re-vote until consensus is reached</li>
+                    </ol>
+                    <p>The discussion in step 4 is where the real value lies — it surfaces different assumptions and hidden complexity that might otherwise go unnoticed.</p>
+                </div>
+
+                <div class="concept-card">
+                    <h4>T-Shirt Sizing (Quick Estimation)</h4>
+                    <p>For rough early estimates when detailed stories don't yet exist, classify features as XS, S, M, L, XL. Later convert to hours or story points for detailed planning.</p>
+                    <table class="comparison-table">
+                        <thead><tr><th>Size</th><th>Rough Hours</th><th>Example Feature</th></tr></thead>
+                        <tbody>
+                            <tr><td>XS (Extra Small)</td><td>1–4 hrs</td><td>Static content page, minor UI tweak</td></tr>
+                            <tr><td>S (Small)</td><td>4–16 hrs</td><td>Simple form with validation, basic list view</td></tr>
+                            <tr><td>M (Medium)</td><td>16–40 hrs</td><td>CRUD feature with search and filtering</td></tr>
+                            <tr><td>L (Large)</td><td>40–80 hrs</td><td>Authentication system, payment integration</td></tr>
+                            <tr><td>XL (Extra Large)</td><td>80+ hrs</td><td>Real-time chat, reporting engine — should be decomposed</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <div class="concept-card">
+                    <h4>Three-Point Estimation (PERT)</h4>
+                    <p>For high-stakes features or unfamiliar territory, estimate three scenarios and calculate a weighted average.</p>
+                    <div class="formula-box">O = Optimistic estimate (everything goes perfectly)
+M = Most Likely estimate (normal conditions)
+P = Pessimistic estimate (things go wrong)
+
+PERT Estimate = (O + 4M + P) / 6
+Standard Deviation = (P - O) / 6
+
+Example — Building a payment integration:
+  O = 16 hrs,  M = 32 hrs,  P = 60 hrs
+  PERT = (16 + 128 + 60) / 6 = 34 hrs
+  Std Dev = (60 - 16) / 6 = 7.3 hrs
+  Range: 27–41 hrs (one standard deviation)</div>
+                    <p>Present estimates as ranges, not single numbers. "We estimate 27–41 hours" is more honest and more useful than "32 hours."</p>
+                </div>
+
+                <h3>Estimation Reference Guide — Common Client-Server Features</h3>
+
+                <div class="warning-box">
+                    <h4>⚠️ Use These as Starting Points Only</h4>
+                    <p>These ranges assume an experienced developer with a modern framework. Actual times vary significantly based on team experience, chosen stack, existing infrastructure, and requirement complexity. Always adjust for your specific context.</p>
+                </div>
+
+                <table class="comparison-table">
+                    <thead>
+                        <tr><th>Feature / Component</th><th>Estimate Range (Dev Hours)</th><th>Key Variables</th></tr>
+                    </thead>
+                    <tbody>
+                        <tr><td>Project setup, repo, CI/CD pipeline</td><td>8–24 hrs</td><td>Existing templates, cloud provider familiarity</td></tr>
+                        <tr><td>Database design and initial schema</td><td>8–32 hrs</td><td>Number of entities, normalization complexity</td></tr>
+                        <tr><td>User authentication (login, register, logout)</td><td>16–40 hrs</td><td>MFA, social login, email verification</td></tr>
+                        <tr><td>Password reset flow</td><td>8–16 hrs</td><td>Token expiry, email service integration</td></tr>
+                        <tr><td>Role-based authorization</td><td>12–32 hrs</td><td>Number of roles, resource-level permissions</td></tr>
+                        <tr><td>Simple CRUD feature (one entity)</td><td>8–20 hrs</td><td>Validation complexity, relationships</td></tr>
+                        <tr><td>Search and filtering</td><td>8–24 hrs</td><td>Fields searched, pagination, full-text search</td></tr>
+                        <tr><td>File upload and management</td><td>12–32 hrs</td><td>Validation, storage (S3 vs local), image processing</td></tr>
+                        <tr><td>Payment integration (Stripe)</td><td>24–60 hrs</td><td>One-time vs subscriptions, refunds, webhooks</td></tr>
+                        <tr><td>Email notification system</td><td>8–24 hrs</td><td>Number of templates, HTML formatting</td></tr>
+                        <tr><td>Dashboard with charts</td><td>16–48 hrs</td><td>Number of metrics, data complexity, real-time vs cached</td></tr>
+                        <tr><td>PDF report generation</td><td>12–32 hrs</td><td>Layout complexity, data volume</td></tr>
+                        <tr><td>REST API (per 10 endpoints)</td><td>20–60 hrs</td><td>Complexity, auth requirements, documentation</td></tr>
+                        <tr><td>Third-party API integration</td><td>16–48 hrs</td><td>API quality, rate limits, error handling</td></tr>
+                        <tr><td>Admin panel (basic)</td><td>24–60 hrs</td><td>Number of managed entities, custom features</td></tr>
+                        <tr><td>Real-time features (WebSocket)</td><td>32–80 hrs</td><td>Complexity, concurrent user volume</td></tr>
+                        <tr><td>Mobile-responsive UI</td><td>Add 20–40%</td><td>Design complexity, number of breakpoints</td></tr>
+                        <tr><td>Deployment + DevOps setup</td><td>16–48 hrs</td><td>Environment count, monitoring, SSL, CDN</td></tr>
+                        <tr><td>Testing (unit + integration)</td><td>Add 20–30%</td><td>Coverage targets, complexity of logic</td></tr>
+                        <tr><td>Documentation (technical)</td><td>8–24 hrs</td><td>API docs, user guides, deployment runbook</td></tr>
+                    </tbody>
+                </table>
+
+                <h3>Converting Features to a Total Estimate</h3>
+
+                <div class="step-container">
+                    <span class="step-number">1</span>
+                    <span class="step-title">List All Features and Estimate Each</span>
+                    <div class="step-content">
+                        <p>Go through the full feature list from your SOW and assign a PERT estimate range to each item. Use the reference table above as a starting point.</p>
+                    </div>
+                </div>
+                <div class="step-container">
+                    <span class="step-number">2</span>
+                    <span class="step-title">Sum the Estimates</span>
+                    <div class="step-content">
+                        <p>Add up all feature estimates to get a total development hour range. Use the optimistic totals for the low end and pessimistic totals for the high end.</p>
+                    </div>
+                </div>
+                <div class="step-container">
+                    <span class="step-number">3</span>
+                    <span class="step-title">Add Project Management and Overhead</span>
+                    <div class="step-content">
+                        <p>Add <strong>15–25%</strong> on top of development time for project management, client communication, meetings, code review, and administrative overhead. On a 1–2 person team, this overhead is often higher proportionally.</p>
+                    </div>
+                </div>
+                <div class="step-container">
+                    <span class="step-number">4</span>
+                    <span class="step-title">Apply a Contingency Buffer</span>
+                    <div class="step-content">
+                        <p>Add a contingency buffer based on how well-defined the project is:</p>
+                        <ul>
+                            <li><strong>Well-defined, familiar technology:</strong> +15–20%</li>
+                            <li><strong>Moderate uncertainty or new technology:</strong> +25–35%</li>
+                            <li><strong>High uncertainty or prototype work:</strong> +40–60%</li>
+                        </ul>
+                    </div>
+                </div>
+                <div class="step-container">
+                    <span class="step-number">5</span>
+                    <span class="step-title">Convert Hours to Calendar Time</span>
+                    <div class="step-content">
+                        <p>Developers are not productive 8 hours per day on a single project. A realistic productivity factor for a developer on a single client project is <strong>4–6 focused hours per day</strong> after accounting for meetings, context switching, and overhead.</p>
+                        <div class="formula-box">Calendar Days = Total Hours ÷ (Developers × Productive Hours per Day)
+
+Example: 400 hours total, 2 developers, 5 productive hrs/day
+Calendar Days = 400 ÷ (2 × 5) = 40 working days = ~8 weeks</div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+
+
+        <!-- ═══════════════════════════════ SECTION 4 ═══════════════════════════════ -->
+        <button class="collapsible">4. Budget Planning — Translating Hours Into Dollars</button>
+        <div class="collapsible-content">
+            <div class="collapsible-inner">
+
+                <div class="info-box">
+                    <h4>📖 A Budget Is a Communication Tool, Not a Promise</h4>
+                    <p>A project budget translates time estimates into financial terms. It helps the client understand total investment, helps the team understand commercial viability, and creates a shared reference point for trade-off decisions throughout the project. Present it as a range and communicate uncertainty clearly.</p>
+                </div>
+
+                <h3>The Components of a Project Budget</h3>
+
+                <table class="comparison-table">
+                    <thead>
+                        <tr><th>Budget Category</th><th>What It Includes</th><th>Typical % of Budget</th></tr>
+                    </thead>
+                    <tbody>
+                        <tr><td><strong>Development Labor</strong></td><td>Hours × developer rate for all coding, testing, code review</td><td>55–70%</td></tr>
+                        <tr><td><strong>Project Management</strong></td><td>Planning, tracking, client meetings, reporting</td><td>10–15%</td></tr>
+                        <tr><td><strong>Design / UX</strong></td><td>Wireframes, mockups, design system (if in scope)</td><td>5–15%</td></tr>
+                        <tr><td><strong>Infrastructure / Hosting</strong></td><td>Cloud servers, database hosting, CDN, SSL, domain</td><td>2–8%</td></tr>
+                        <tr><td><strong>Third-Party Services</strong></td><td>Payment processor fees, email service, SMS, maps API</td><td>1–5%</td></tr>
+                        <tr><td><strong>Software / Licenses</strong></td><td>Tools, libraries, development software</td><td>1–3%</td></tr>
+                        <tr><td><strong>Contingency</strong></td><td>Buffer for unexpected work and risk mitigation</td><td>10–20%</td></tr>
+                    </tbody>
+                </table>
+
+                <h3>Developer Hourly Rates</h3>
+
+                <div class="concept-card">
+                    <h4>Market Rate Ranges (US-Based, 2024)</h4>
+                    <p>Rates vary significantly by location, experience, specialization, and whether the developer is a freelancer, contractor, or agency.</p>
+                    <table class="comparison-table">
+                        <thead><tr><th>Developer Type</th><th>Hourly Rate Range</th><th>Notes</th></tr></thead>
+                        <tbody>
+                            <tr><td>Junior developer (0–2 yrs)</td><td>$25–$60/hr</td><td>Higher oversight needed; factor in review time</td></tr>
+                            <tr><td>Mid-level developer (2–5 yrs)</td><td>$60–$120/hr</td><td>Most productive range for typical projects</td></tr>
+                            <tr><td>Senior developer (5+ yrs)</td><td>$120–$200+/hr</td><td>Faster delivery, better decisions, less rework</td></tr>
+                            <tr><td>Full-stack freelancer (mid)</td><td>$75–$150/hr</td><td>Single point of contact; no agency overhead</td></tr>
+                            <tr><td>Development agency</td><td>$100–$250/hr blended</td><td>Team provided; higher overhead, structured PM</td></tr>
+                            <tr><td>Offshore contractor</td><td>$20–$60/hr</td><td>Significant communication/timezone overhead to manage</td></tr>
+                        </tbody>
+                    </table>
+                    <div class="tip-box">
+                        <h4>💡 The True Cost of a Cheaper Developer</h4>
+                        <p>A junior developer at $40/hr who takes 3× longer than a senior at $130/hr is not cheaper. Factor in productivity multipliers: senior developers typically produce 3–5× the output in the same time, with significantly less rework. For critical path features, optimize for speed and quality, not rate.</p>
+                    </div>
+                </div>
+
+                <h3>Sample Budget Estimates — Three Project Sizes</h3>
+
+                <div class="budget-card">
+                    <h4>Small Project Example — Internal Staff Scheduling App</h4>
+                    <p><strong>Team:</strong> 1 mid-level full-stack developer | <strong>Duration:</strong> 6–8 weeks</p>
+                    <p><strong>Scope:</strong> Auth, employee profiles, schedule creation, email notifications, mobile-responsive UI</p>
+                    <table class="comparison-table">
+                        <thead><tr><th>Item</th><th>Hours</th><th>Rate</th><th>Cost</th></tr></thead>
+                        <tbody>
+                            <tr><td>Project setup, DB design</td><td>16</td><td>$90/hr</td><td>$1,440</td></tr>
+                            <tr><td>Authentication &amp; authorization</td><td>24</td><td>$90/hr</td><td>$2,160</td></tr>
+                            <tr><td>Schedule CRUD features</td><td>32</td><td>$90/hr</td><td>$2,880</td></tr>
+                            <tr><td>Email notifications</td><td>12</td><td>$90/hr</td><td>$1,080</td></tr>
+                            <tr><td>UI and mobile responsive</td><td>24</td><td>$90/hr</td><td>$2,160</td></tr>
+                            <tr><td>Testing and bug fixes</td><td>20</td><td>$90/hr</td><td>$1,800</td></tr>
+                            <tr><td>Deployment and DevOps</td><td>12</td><td>$90/hr</td><td>$1,080</td></tr>
+                            <tr><td>Project management</td><td>16</td><td>$90/hr</td><td>$1,440</td></tr>
+                            <tr><td><strong>Subtotal (Labor)</strong></td><td><strong>156 hrs</strong></td><td></td><td><strong>$14,040</strong></td></tr>
+                            <tr><td>Infrastructure (6 months)</td><td>—</td><td>—</td><td>$300</td></tr>
+                            <tr><td>Email service</td><td>—</td><td>—</td><td>$120</td></tr>
+                            <tr><td>Contingency (20%)</td><td>—</td><td>—</td><td>$2,808</td></tr>
+                            <tr><td><strong>TOTAL ESTIMATE</strong></td><td></td><td></td><td><strong>$17,268 – $21,000</strong></td></tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <div class="budget-card">
+                    <h4>Medium Project Example — Customer Portal with E-Commerce</h4>
+                    <p><strong>Team:</strong> 3 developers (1 senior, 2 mid) | <strong>Duration:</strong> 16–20 weeks</p>
+                    <p><strong>Scope:</strong> Auth + roles, product catalog, shopping cart, Stripe payments, order management, email notifications, admin panel, reporting dashboard, deployment</p>
+                    <table class="comparison-table">
+                        <thead><tr><th>Category</th><th>Estimated Hours</th><th>Blended Rate</th><th>Estimated Cost</th></tr></thead>
+                        <tbody>
+                            <tr><td>Architecture &amp; setup</td><td>32</td><td>$110/hr</td><td>$3,520</td></tr>
+                            <tr><td>Auth, roles, user management</td><td>48</td><td>$110/hr</td><td>$5,280</td></tr>
+                            <tr><td>Product catalog &amp; search</td><td>60</td><td>$110/hr</td><td>$6,600</td></tr>
+                            <tr><td>Cart, checkout, Stripe</td><td>72</td><td>$110/hr</td><td>$7,920</td></tr>
+                            <tr><td>Order management</td><td>40</td><td>$110/hr</td><td>$4,400</td></tr>
+                            <tr><td>Email notifications</td><td>24</td><td>$110/hr</td><td>$2,640</td></tr>
+                            <tr><td>Admin panel</td><td>48</td><td>$110/hr</td><td>$5,280</td></tr>
+                            <tr><td>Reporting dashboard</td><td>40</td><td>$110/hr</td><td>$4,400</td></tr>
+                            <tr><td>Testing suite</td><td>60</td><td>$110/hr</td><td>$6,600</td></tr>
+                            <tr><td>Deployment, CI/CD, DevOps</td><td>32</td><td>$110/hr</td><td>$3,520</td></tr>
+                            <tr><td>Project management (15%)</td><td>69</td><td>$110/hr</td><td>$7,590</td></tr>
+                            <tr><td><strong>Subtotal (Labor)</strong></td><td><strong>525 hrs</strong></td><td></td><td><strong>$57,750</strong></td></tr>
+                            <tr><td>Infrastructure (12 months)</td><td>—</td><td>—</td><td>$1,800</td></tr>
+                            <tr><td>Third-party services (annual)</td><td>—</td><td>—</td><td>$1,200</td></tr>
+                            <tr><td>Contingency (25%)</td><td>—</td><td>—</td><td>$14,438</td></tr>
+                            <tr><td><strong>TOTAL ESTIMATE</strong></td><td></td><td></td><td><strong>$75,188 – $95,000</strong></td></tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <h3>Recurring / Ongoing Costs to Include</h3>
+
+                <div class="concept-card">
+                    <h4>Don't Forget Post-Launch Costs</h4>
+                    <p>Many clients are surprised by ongoing costs. Make these explicit in the budget conversation.</p>
+                    <ul>
+                        <li><strong>Cloud hosting:</strong> $20–$500+/month depending on scale (AWS, Azure, GCP, DigitalOcean, Heroku)</li>
+                        <li><strong>Database hosting:</strong> Often included in cloud costs or $15–$200/month separate</li>
+                        <li><strong>SSL certificates:</strong> Free (Let's Encrypt) to $200/year for EV certificates</li>
+                        <li><strong>Domain registration:</strong> $10–$50/year</li>
+                        <li><strong>Email service:</strong> $10–$100/month (SendGrid, Mailgun, Postmark)</li>
+                        <li><strong>Monitoring and alerting:</strong> $0–$100/month (Datadog, Sentry, free tiers available)</li>
+                        <li><strong>Payment processor fees:</strong> Stripe charges ~2.9% + 30¢ per transaction</li>
+                        <li><strong>Maintenance and support:</strong> 15–20% of development cost annually is a common benchmark</li>
+                        <li><strong>Security patches and updates:</strong> Should be factored into maintenance contract</li>
+                    </ul>
+                </div>
+
+                <h3>Contract Pricing Models</h3>
+
+                <div class="do-dont-grid">
+                    <div class="do-box">
+                        <h4>✅ Fixed Price</h4>
+                        <p><strong>How it works:</strong> Client pays a set amount regardless of actual hours</p>
+                        <p><strong>Good when:</strong> Scope is very well-defined and stable</p>
+                        <p><strong>Risk to developer:</strong> High — you absorb cost overruns</p>
+                        <p><strong>Protection:</strong> Detailed SOW, change request process, and a robust contingency buffer are essential</p>
+                    </div>
+                    <div class="do-box">
+                        <h4>✅ Time and Materials (T&amp;M)</h4>
+                        <p><strong>How it works:</strong> Client pays for actual hours worked at agreed rates</p>
+                        <p><strong>Good when:</strong> Scope is evolving or uncertain</p>
+                        <p><strong>Risk to client:</strong> Budget overrun if team is not closely managed</p>
+                        <p><strong>Protection:</strong> Regular progress reports, budget caps or alerts, clear communication</p>
+                    </div>
+                </div>
+
+                <div class="concept-card">
+                    <h4>Milestone-Based Billing (Recommended for Small Teams)</h4>
+                    <p>A hybrid approach: fixed price per milestone, with defined deliverables for each. Protects both parties.</p>
+                    <ul>
+                        <li><strong>Example milestones:</strong> Project kickoff (20%), working prototype (25%), core features complete (30%), testing complete &amp; deployment (25%)</li>
+                        <li>Client pays only on delivery of agreed milestones</li>
+                        <li>Team gets regular cash flow rather than waiting for final delivery</li>
+                        <li>Change requests are handled between milestones with fresh estimates</li>
+                    </ul>
+                </div>
+
+            </div>
+        </div>
+
+
+        <!-- ═══════════════════════════════ SECTION 5 ═══════════════════════════════ -->
+        <button class="collapsible">5. Choosing a Project Methodology for Small Teams</button>
+        <div class="collapsible-content">
+            <div class="collapsible-inner">
+
+                <div class="info-box">
+                    <h4>📖 The Right Methodology Depends on Team Size and Project Clarity</h4>
+                    <p>There is no universally correct methodology. The best choice fits your team's size, the client's involvement, and how well the requirements are understood up front. Small teams benefit from lightweight processes that provide structure without bureaucratic overhead.</p>
+                </div>
+
+                <h3>Waterfall vs. Agile</h3>
+
+                <table class="comparison-table">
+                    <thead>
+                        <tr><th>Dimension</th><th>Waterfall</th><th>Agile</th></tr>
+                    </thead>
+                    <tbody>
+                        <tr><td><strong>Planning</strong></td><td>Complete upfront — all requirements defined before development</td><td>Iterative — high-level plan upfront, detailed planning per sprint</td></tr>
+                        <tr><td><strong>Delivery</strong></td><td>Single delivery at end of project</td><td>Working software delivered every 1–2 weeks</td></tr>
+                        <tr><td><strong>Change tolerance</strong></td><td>Low — changes are costly and disruptive mid-project</td><td>High — designed to accommodate evolving requirements</td></tr>
+                        <tr><td><strong>Client involvement</strong></td><td>Low — client reviews at start and end</td><td>High — client reviews every sprint</td></tr>
+                        <tr><td><strong>Risk of late surprises</strong></td><td>High — problems often surface at integration</td><td>Low — issues surface early in each iteration</td></tr>
+                        <tr><td><strong>Best for</strong></td><td>Well-defined, stable requirements; regulatory environments</td><td>Most modern software projects</td></tr>
+                    </tbody>
+                </table>
+
+                <h3>Lightweight Agile for Small Teams</h3>
+
+                <div class="concept-card">
+                    <h4>Scrum — Adapted for 1–5 Developers</h4>
+                    <p>Full Scrum requires defined roles (Scrum Master, Product Owner, Development Team) and ceremonies that can feel heavy for a 2-person team. Use the core ideas without the ceremony overhead.</p>
+
+                    <p><strong>Core elements to keep:</strong></p>
+                    <ul>
+                        <li><strong>Sprint:</strong> Fixed 1–2 week development cycle with a specific set of committed stories</li>
+                        <li><strong>Backlog:</strong> Prioritized list of all features to be built</li>
+                        <li><strong>Sprint Planning:</strong> 1-hour meeting at the start of each sprint to select and commit to stories</li>
+                        <li><strong>Daily Standup:</strong> 15-minute daily sync — what did I do yesterday, what am I doing today, any blockers?</li>
+                        <li><strong>Sprint Review:</strong> Demo completed features to the client at end of sprint</li>
+                        <li><strong>Sprint Retrospective:</strong> What went well, what didn't, what to improve next sprint</li>
+                        <li><strong>Sprint Velocity:</strong> Points completed per sprint — used to forecast future delivery dates</li>
+                    </ul>
+
+                    <p><strong>What to simplify for small teams:</strong></p>
+                    <ul>
+                        <li>One person can wear the Product Owner hat (often the client or a designated lead)</li>
+                        <li>No dedicated Scrum Master needed — rotate facilitation</li>
+                        <li>Standups can be async (written update in a Slack channel) for fully remote teams</li>
+                        <li>Retrospectives can be 20 minutes on a 2-person team</li>
+                    </ul>
+                </div>
+
+                <div class="concept-card">
+                    <h4>Kanban — For Ongoing or Maintenance Work</h4>
+                    <p>Kanban works better than Scrum for maintenance, support, or projects with highly variable and unpredictable work arriving continuously.</p>
+                    <ul>
+                        <li>Work items flow through columns: <strong>Backlog → In Progress → Review → Done</strong></li>
+                        <li><strong>WIP (Work In Progress) limits:</strong> Restrict how many items can be In Progress at once — typically 2× the number of developers. This forces completion before starting new work.</li>
+                        <li>No fixed sprint cycles — work flows continuously</li>
+                        <li>Track <strong>cycle time</strong> (how long a card takes from start to done) as a performance metric</li>
+                        <li>Great for a team of 1–2 people or for post-launch support phases</li>
+                    </ul>
+                </div>
+
+                <h3>Sprint Planning in Practice</h3>
+
+                <div class="step-container">
+                    <span class="step-number">1</span>
+                    <span class="step-title">Groom the Backlog Before Planning</span>
+                    <div class="step-content">
+                        <p>Before sprint planning, ensure the top-priority items are well-defined: acceptance criteria are written, dependencies are identified, and stories are estimated. Stories that aren't ready cannot be committed to.</p>
+                    </div>
+                </div>
+                <div class="step-container">
+                    <span class="step-number">2</span>
+                    <span class="step-title">Select Stories Based on Velocity</span>
+                    <div class="step-content">
+                        <p>Use the team's historical velocity (average points completed per sprint) to determine how many points to commit to. For a new team with no history, use a conservative 60% of estimated capacity for the first sprint.</p>
+                    </div>
+                </div>
+                <div class="step-container">
+                    <span class="step-number">3</span>
+                    <span class="step-title">Break Stories into Tasks</span>
+                    <div class="step-content">
+                        <p>Each committed story should be decomposed into specific technical tasks during sprint planning. Tasks should ideally be 2–8 hours each. Larger tasks need further decomposition.</p>
+                    </div>
+                </div>
+                <div class="step-container">
+                    <span class="step-number">4</span>
+                    <span class="step-title">Set the Sprint Goal</span>
+                    <div class="step-content">
+                        <p>Define one sentence that describes what the team will accomplish this sprint. "Complete user authentication and basic profile management" is a sprint goal. It guides decisions when unexpected work arrives mid-sprint.</p>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+
+
+        <!-- ═══════════════════════════════ SECTION 6 ═══════════════════════════════ -->
+        <button class="collapsible">6. Setting Up the Project Plan</button>
+        <div class="collapsible-content">
+            <div class="collapsible-inner">
+
+                <h3>The Project Plan Artifact</h3>
+
+                <div class="concept-card">
+                    <h4>What a Project Plan Contains</h4>
+                    <p>A project plan documents how the work will be organized and delivered. For a small team, it doesn't need to be elaborate — but it must exist and must be kept current.</p>
+                    <ul>
+                        <li><strong>Project overview:</strong> Purpose, scope summary, team, key stakeholders</li>
+                        <li><strong>Timeline:</strong> Start date, sprint schedule, milestone dates, target delivery date</li>
+                        <li><strong>Backlog:</strong> All stories, prioritized and estimated</li>
+                        <li><strong>Sprint plan:</strong> Current sprint stories and tasks</li>
+                        <li><strong>Risks and mitigations:</strong> Known risks and contingency plans</li>
+                        <li><strong>Communication plan:</strong> How and when will you update the client?</li>
+                        <li><strong>Definition of Done:</strong> How do you know when a story is truly complete?</li>
+                    </ul>
+                </div>
+
+                <h3>Building the Initial Timeline</h3>
+
+                <div class="concept-card">
+                    <h4>Mapping Features to Sprints</h4>
+                    <p>Once stories are estimated and prioritized, map them to sprints based on priority, dependencies, and team capacity. This gives you a projected delivery date for each feature and the overall project.</p>
+
+                    <div class="chart-mock">Sprint Planning Overview — Example: Booking System (2-dev team, 2-week sprints)
+
+Sprint 1 (Wks 1–2):  [AUTH] [DB SETUP] [USER MGMT]                   ▓▓▓▓▓▓▓▓░░  18 pts
+Sprint 2 (Wks 3–4):  [SCHEDULING CORE] [CALENDAR UI]                  ▓▓▓▓▓▓░░░░  15 pts
+Sprint 3 (Wks 5–6):  [BOOKING WORKFLOW] [VALIDATION]                  ▓▓▓▓▓▓▓░░░  16 pts
+Sprint 4 (Wks 7–8):  [EMAIL NOTIF] [ADMIN PANEL]                      ▓▓▓▓▓▓░░░░  14 pts
+Sprint 5 (Wks 9–10): [REPORTS] [POLISH] [BUG FIX BUFFER]              ▓▓▓▓▓░░░░░  12 pts
+Sprint 6 (Wks 11–12):[TESTING] [UAT] [DEPLOYMENT]                     ▓▓▓▓░░░░░░  10 pts
+
+▓ = planned  ░ = capacity buffer
+Legend: [FEATURE] = user story or group of related stories</div>
+
+                    <div class="tip-box">
+                        <h4>💡 Leave Buffer in Every Sprint</h4>
+                        <p>Never plan to 100% capacity. Leave 20–30% of sprint capacity unplanned to absorb unexpected complexity, bug fixes discovered during development, and client feedback from the previous sprint's demo. Teams that plan to 100% consistently carry work over, which compounds sprint to sprint.</p>
+                    </div>
+                </div>
+
+                <h3>Dependency Mapping</h3>
+
+                <div class="concept-card">
+                    <h4>Technical Dependencies Must Drive Sequencing</h4>
+                    <p>Features cannot be built in arbitrary order. Identify dependencies before finalizing the sprint plan.</p>
+                    <ul>
+                        <li>Authentication must be complete before any authenticated feature can be tested end-to-end</li>
+                        <li>Database schema should be designed before business logic that reads/writes data</li>
+                        <li>The payment integration must be working before checkout flow testing</li>
+                        <li>Core API endpoints must be available before the frontend components that consume them can be fully built</li>
+                        <li>Infrastructure setup should happen in Sprint 1 so the team can deploy and test continuously from the start</li>
+                    </ul>
+                </div>
+
+                <h3>Risk Register</h3>
+
+                <div class="concept-card">
+                    <h4>Identify Risks Before They Become Problems</h4>
+                    <p>A risk register documents known risks, their likelihood, their impact, and the mitigation strategy. Review it at each sprint retrospective.</p>
+                    <table class="comparison-table">
+                        <thead><tr><th>Risk</th><th>Likelihood</th><th>Impact</th><th>Mitigation</th></tr></thead>
+                        <tbody>
+                            <tr>
+                                <td>Third-party payment API is harder to integrate than expected</td>
+                                <td><span class="badge badge-warn">Medium</span></td>
+                                <td><span class="badge badge-risk">High</span></td>
+                                <td>Spike task in Sprint 1 to evaluate; use Stripe's well-documented API; contingency hours allocated</td>
+                            </tr>
+                            <tr>
+                                <td>Client is slow to provide feedback or approvals</td>
+                                <td><span class="badge badge-risk">High</span></td>
+                                <td><span class="badge badge-warn">Medium</span></td>
+                                <td>Defined SLA in contract: 48-hr feedback window; demo scheduled weekly; decisions logged in writing</td>
+                            </tr>
+                            <tr>
+                                <td>Requirements change significantly mid-project</td>
+                                <td><span class="badge badge-warn">Medium</span></td>
+                                <td><span class="badge badge-risk">High</span></td>
+                                <td>Formal change request process; MoSCoW priority system; regular backlog review</td>
+                            </tr>
+                            <tr>
+                                <td>Key developer becomes unavailable (illness, emergency)</td>
+                                <td><span class="badge badge-both">Low</span></td>
+                                <td><span class="badge badge-risk">High</span></td>
+                                <td>Up-to-date documentation; code in shared repo; timeline buffer accounts for some absence</td>
+                            </tr>
+                            <tr>
+                                <td>Performance issues at scale discovered late</td>
+                                <td><span class="badge badge-both">Low</span></td>
+                                <td><span class="badge badge-warn">Medium</span></td>
+                                <td>Load testing in Sprint 5; database indexes reviewed early; caching layer planned from start</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <h3>Communication Plan</h3>
+
+                <div class="concept-card">
+                    <h4>Set Communication Expectations Upfront</h4>
+                    <p>Ambiguous communication is a major source of scope creep and client frustration. Define this in the project kickoff.</p>
+                    <table class="comparison-table">
+                        <thead><tr><th>Communication Type</th><th>Frequency</th><th>Format</th><th>Audience</th></tr></thead>
+                        <tbody>
+                            <tr><td>Sprint Demo</td><td>Every 2 weeks (end of sprint)</td><td>Live video call, screen share</td><td>Client + team</td></tr>
+                            <tr><td>Status Report</td><td>Weekly</td><td>Written email or shared doc</td><td>Client stakeholders</td></tr>
+                            <tr><td>Internal Standup</td><td>Daily</td><td>15-min call or async Slack</td><td>Development team</td></tr>
+                            <tr><td>Backlog Review</td><td>Mid-sprint</td><td>Internal meeting or async</td><td>Development team</td></tr>
+                            <tr><td>Budget Update</td><td>Monthly or milestone-based</td><td>Written report with actuals vs. plan</td><td>Client</td></tr>
+                            <tr><td>Change Request Review</td><td>As needed</td><td>Written document with estimate</td><td>Client for approval</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+
+            </div>
+        </div>
+
+
+        <!-- ═══════════════════════════════ SECTION 7 ═══════════════════════════════ -->
+        <button class="collapsible">7. Tracking Progress — Knowing Where You Stand</button>
+        <div class="collapsible-content">
+            <div class="collapsible-inner">
+
+                <div class="info-box">
+                    <h4>📖 Tracking is How You Stay Honest</h4>
+                    <p>The purpose of tracking is not to report success — it is to surface problems while there is still time to respond. A project that appears on track in week 3 and catastrophically fails in week 10 had a tracking problem. Effective tracking makes the real status visible at all times.</p>
+                </div>
+
+                <h3>Key Tracking Metrics</h3>
+
+                <div class="feature-grid">
+                    <div class="feature-item">
+                        <h5>📊 Velocity</h5>
+                        <p>Story points completed per sprint. Used to forecast remaining sprints needed.</p>
+                    </div>
+                    <div class="feature-item">
+                        <h5>📉 Burndown</h5>
+                        <p>Remaining points vs. time. Shows whether you're on track to complete the sprint or release.</p>
+                    </div>
+                    <div class="feature-item">
+                        <h5>💰 Budget Burn Rate</h5>
+                        <p>Actual hours/dollars spent vs. planned. Signals budget overrun early.</p>
+                    </div>
+                    <div class="feature-item">
+                        <h5>🎯 Scope Completion</h5>
+                        <p>Stories accepted vs. total stories. Shows overall project progress.</p>
+                    </div>
+                    <div class="feature-item">
+                        <h5>🐛 Defect Rate</h5>
+                        <p>Bugs opened per sprint. Rising defect rates signal quality problems.</p>
+                    </div>
+                    <div class="feature-item">
+                        <h5>🚧 Blockers</h5>
+                        <p>Items stuck in progress. Unresolved blockers compound rapidly.</p>
+                    </div>
+                </div>
+
+                <h3>Velocity and Forecasting</h3>
+
+                <div class="concept-card">
+                    <h4>Using Velocity to Forecast Delivery</h4>
+
+                    <div class="formula-box">Average Velocity = Total Points Completed / Number of Sprints
+
+Remaining Sprints = Remaining Points in Backlog / Average Velocity
+
+Estimated Completion = Today + (Remaining Sprints × Sprint Length)
+
+Example:
+  Sprint 1: 18 pts  |  Sprint 2: 14 pts  |  Sprint 3: 16 pts
+  Average Velocity = (18 + 14 + 16) / 3 = 16 pts/sprint
+  Remaining Backlog = 64 points
+  Remaining Sprints = 64 / 16 = 4 sprints
+  At 2-week sprints → 8 weeks to completion</div>
+
+                    <div class="tip-box">
+                        <h4>💡 Velocity Stabilizes After 3–4 Sprints</h4>
+                        <p>The first sprint's velocity is unreliable — the team is getting organized. By Sprint 3 or 4, velocity typically stabilizes and becomes a dependable forecasting tool. Don't panic if Sprint 1 velocity is lower than expected.</p>
+                    </div>
+                </div>
+
+                <h3>The Burndown Chart</h3>
+
+                <div class="concept-card">
+                    <h4>Reading a Burndown Chart</h4>
+                    <p>A burndown chart plots remaining work (points or hours) on the Y-axis against time on the X-axis. The ideal line goes from total points on Day 1 to zero on the last day of the sprint.</p>
+
+                    <div class="chart-mock">Sprint Burndown — Sprint 3 (16 pts committed, 10 working days)
+
+Points
+Remaining
+  16 |●
+  14 |  ●  ← actual (above ideal = behind schedule)
+  12 |    ╲  ●
+  10 |      ╲    ●  ← ideal line
+   8 |        ╲
+   6 |          ╲    ●  ← actual recovers
+   4 |            ╲    ●
+   2 |              ╲    ●
+   0 |________________╲__●__
+     D1  D2  D3  D4  D5  D6  D7  D8  D9  D10
+                         Day
+
+●── Actual Remaining    ──╲── Ideal Burndown</div>
+
+                    <p><strong>What different patterns mean:</strong></p>
+                    <ul>
+                        <li><strong>Actual above ideal (early sprint):</strong> Team is behind — investigate blockers</li>
+                        <li><strong>Flat line:</strong> No progress — something is blocked or team is not updating the board</li>
+                        <li><strong>Sudden drop:</strong> Batch of work closed at once — may indicate work wasn't tracked daily</li>
+                        <li><strong>Actual below ideal:</strong> Ahead of schedule — consider pulling in additional stories</li>
+                    </ul>
+                </div>
+
+                <h3>Budget Tracking — Earned Value Concepts (Simplified)</h3>
+
+                <div class="concept-card">
+                    <h4>Tracking Actual vs. Planned Spend</h4>
+                    <p>For small teams, a simplified version of Earned Value Management (EVM) is practical and valuable.</p>
+
+                    <div class="formula-box">Planned Value (PV)   = Budget allocated for work planned to be done by now
+Earned Value (EV)    = Budget equivalent of work actually completed by now
+Actual Cost (AC)     = Real money/hours spent by now
+
+Schedule Variance (SV) = EV - PV
+  → Positive: ahead of schedule  |  Negative: behind schedule
+
+Cost Variance (CV) = EV - AC
+  → Positive: under budget  |  Negative: over budget
+
+Schedule Performance Index (SPI) = EV / PV
+  → SPI > 1.0: ahead  |  SPI < 1.0: behind  |  SPI = 0.7 means doing 70% of planned work
+
+Cost Performance Index (CPI) = EV / AC
+  → CPI > 1.0: under budget  |  CPI < 1.0: over budget  |  CPI = 0.85 means $1.18 spent per $1 of work done
+
+Example — Month 2 of a $60,000, 20-week project:
+  PV  = $12,000 (20% planned complete)
+  EV  = $9,000  (15% actually complete)
+  AC  = $11,000 (hours actually logged)
+
+  SV = $9,000 - $12,000 = -$3,000  ← Behind schedule
+  CV = $9,000 - $11,000 = -$2,000  ← Over budget
+  SPI = 9,000 / 12,000 = 0.75      ← Only 75% of planned work done
+  CPI = 9,000 / 11,000 = 0.82      ← Spending $1.22 for every $1 of value</div>
+
+                    <div class="danger-box">
+                        <h4>🚨 If CPI &lt; 0.85 by Midpoint, Escalate Immediately</h4>
+                        <p>A CPI of 0.85 or lower at project midpoint is a strong predictor of a significant budget overrun at completion. This is the signal to stop, review the plan with the client, and discuss options — add budget, reduce scope, or extend timeline. Do not wait until the money runs out.</p>
+                    </div>
+                </div>
+
+                <h3>The Weekly Status Report</h3>
+
+                <div class="concept-card">
+                    <h4>What a Good Status Report Contains</h4>
+                    <p>Keep it concise and honest. A status report that always says "on track" with no specifics provides no value.</p>
+                    <ul>
+                        <li><strong>Overall Status:</strong> 🟢 On Track / 🟡 At Risk / 🔴 Off Track</li>
+                        <li><strong>Completed This Week:</strong> Features shipped, decisions made, milestones hit</li>
+                        <li><strong>Planned Next Week:</strong> What the team is committed to delivering</li>
+                        <li><strong>Blockers / Issues:</strong> Anything slowing progress and who is resolving it</li>
+                        <li><strong>Budget Update:</strong> Hours spent this period, cumulative hours, % of budget used vs. % complete</li>
+                        <li><strong>Schedule Update:</strong> Revised completion forecast if different from plan</li>
+                        <li><strong>Decisions Needed:</strong> Any client input required to unblock work</li>
+                    </ul>
+                </div>
+
+            </div>
+        </div>
+
+
+        <!-- ═══════════════════════════════ SECTION 8 ═══════════════════════════════ -->
+        <button class="collapsible">8. Re-Estimation and Budget Updates During Development</button>
+        <div class="collapsible-content">
+            <div class="collapsible-inner">
+
+                <div class="info-box">
+                    <h4>📖 All Estimates Are Wrong — The Question is By How Much and What You Do About It</h4>
+                    <p>No project runs exactly to plan. The best teams are not those who estimate perfectly — they are those who detect deviation early, communicate transparently, and adapt quickly. Re-estimation is a normal, expected part of professional project management, not an admission of failure.</p>
+                </div>
+
+                <h3>When to Trigger a Re-Estimate</h3>
+
+                <div class="alert-card">
+                    <h4>🔔 Re-Estimate Triggers</h4>
+                    <ul>
+                        <li>Velocity is consistently 20%+ below the plan for two consecutive sprints</li>
+                        <li>A major technical assumption proved wrong (integration is much harder than expected)</li>
+                        <li>Scope change requests have been approved that add significant work</li>
+                        <li>A key team member is lost or significantly reduced in availability</li>
+                        <li>CPI drops below 0.85 (spending $1.17+ per dollar of value delivered)</li>
+                        <li>A new risk materializes that significantly changes delivery outlook</li>
+                        <li>A milestone is missed by more than one sprint</li>
+                        <li>Discovery of significant rework needed in already-completed features</li>
+                    </ul>
+                </div>
+
+                <h3>The Re-Estimation Process</h3>
+
+                <div class="step-container">
+                    <span class="step-number">1</span>
+                    <span class="step-title">Assess Current State Honestly</span>
+                    <div class="step-content">
+                        <ul>
+                            <li>Calculate actual velocity over the last 2–3 sprints</li>
+                            <li>Count remaining story points in the backlog</li>
+                            <li>Calculate actual hours/budget spent to date vs. planned</li>
+                            <li>Identify any scope additions since the original estimate</li>
+                        </ul>
+                    </div>
+                </div>
+                <div class="step-container">
+                    <span class="step-number">2</span>
+                    <span class="step-title">Identify Root Causes</span>
+                    <div class="step-content">
+                        <p>Understand <em>why</em> the project has deviated before proposing solutions. Common causes:</p>
+                        <ul>
+                            <li><strong>Scope underestimation:</strong> Features were more complex than estimated</li>
+                            <li><strong>Scope creep:</strong> Informal additions accumulated without budget adjustment</li>
+                            <li><strong>External dependencies:</strong> Waiting on client, third-party APIs, or approvals</li>
+                            <li><strong>Technical debt:</strong> Rework required to fix earlier decisions</li>
+                            <li><strong>Resource issues:</strong> Team capacity was lower than planned</li>
+                        </ul>
+                    </div>
+                </div>
+                <div class="step-container">
+                    <span class="step-number">3</span>
+                    <span class="step-title">Re-Estimate the Remaining Work</span>
+                    <div class="step-content">
+                        <p>Using actual velocity and remaining backlog, produce a new delivery forecast:</p>
+                        <div class="formula-box">Revised Completion = Today + (Remaining Points ÷ Actual Velocity × Sprint Length)
+
+Revised Budget = Spent to Date + (Remaining Points ÷ Actual Velocity × Cost per Sprint)
+
+Example:
+  Spent: $28,000 (of original $60,000 budget)
+  Remaining points: 48 pts
+  Actual velocity: 10 pts/sprint (vs. planned 16 pts)
+  Cost per sprint: $6,000
+
+  Remaining sprints = 48 / 10 = 4.8 sprints → round up to 5
+  Remaining cost = 5 × $6,000 = $30,000
+  Revised total = $28,000 + $30,000 = $58,000
+  Schedule: +3 sprints (6 weeks) beyond original plan</div>
+                    </div>
+                </div>
+                <div class="step-container">
+                    <span class="step-number">4</span>
+                    <span class="step-title">Identify Options and Trade-Offs</span>
+                    <div class="step-content">
+                        <p>Present the client with concrete options. Frame each one with its trade-offs.</p>
+                        <ul>
+                            <li><strong>Option A — Increase Budget:</strong> Maintain current scope and schedule by increasing the budget</li>
+                            <li><strong>Option B — Extend Timeline:</strong> Maintain scope and budget by extending the deadline</li>
+                            <li><strong>Option C — Reduce Scope:</strong> Maintain budget and deadline by cutting lower-priority features to a Phase 2</li>
+                            <li><strong>Option D — Hybrid:</strong> Small budget increase + small scope reduction + modest timeline extension</li>
+                        </ul>
+                    </div>
+                </div>
+                <div class="step-container">
+                    <span class="step-number">5</span>
+                    <span class="step-title">Communicate Early and In Writing</span>
+                    <div class="step-content">
+                        <p>Have this conversation as soon as the data indicates a problem — not when the budget is exhausted. Early warning gives the client maximum time to respond. Document the conversation, the decision made, and any revised contract terms in writing before resuming work.</p>
+                    </div>
+                </div>
+                <div class="step-container">
+                    <span class="step-number">6</span>
+                    <span class="step-title">Update the Plan and Track Against New Baseline</span>
+                    <div class="step-content">
+                        <p>Once a decision is made, update the project plan, backlog, sprint schedule, and budget baseline. All future tracking is against the revised plan — do not continue to measure against an outdated original that everyone knows is no longer valid.</p>
+                    </div>
+                </div>
+
+                <h3>Communicating Budget Issues to Clients</h3>
+
+                <div class="do-dont-grid">
+                    <div class="do-box">
+                        <h4>✅ Effective Communication</h4>
+                        <ul>
+                            <li>Bring data — show velocity, spend, completion percentages</li>
+                            <li>Explain causes factually, without blame</li>
+                            <li>Come with options, not just problems</li>
+                            <li>Make it a collaborative conversation — the client is a partner</li>
+                            <li>Communicate early — when 30% over budget, not 90%</li>
+                            <li>Confirm all decisions in writing immediately after the meeting</li>
+                        </ul>
+                    </div>
+                    <div class="dont-box">
+                        <h4>❌ Common Mistakes</h4>
+                        <ul>
+                            <li>Waiting until the money runs out to say anything</li>
+                            <li>Presenting problems without solutions</li>
+                            <li>Blaming the client (even if some blame is warranted)</li>
+                            <li>Making commitments verbally without writing them down</li>
+                            <li>Continuing to work on a changed scope without a signed change request</li>
+                            <li>Absorbing overruns silently to avoid a difficult conversation</li>
+                        </ul>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+
+
+        <!-- ═══════════════════════════════ SECTION 9 ═══════════════════════════════ -->
+        <button class="collapsible">9. Tools for Planning and Tracking</button>
+        <div class="collapsible-content">
+            <div class="collapsible-inner">
+
+                <h3>Project Management Platforms</h3>
+
+                <div class="tool-card">
+                    <h4>Jira <span class="badge badge-medium">Medium teams</span></h4>
+                    <p><strong>Best for:</strong> Teams that need full Scrum/Kanban support with robust reporting</p>
+                    <ul>
+                        <li>Full backlog management, sprint planning, and board views</li>
+                        <li>Velocity charts, burndown charts, and cumulative flow diagrams built in</li>
+                        <li>Highly customizable workflows</li>
+                        <li>Integrates with GitHub, Bitbucket, Confluence, Slack</li>
+                        <li>Free tier up to 10 users — more than sufficient for small teams</li>
+                        <li>Can feel heavy for very small (1–2 person) projects</li>
+                    </ul>
+                </div>
+
+                <div class="tool-card">
+                    <h4>Linear <span class="badge badge-small">Small teams</span></h4>
+                    <p><strong>Best for:</strong> Developer-first teams that want speed and a clean interface</p>
+                    <ul>
+                        <li>Extremely fast and keyboard-first UI</li>
+                        <li>Cycles (like sprints), backlog, and roadmap views</li>
+                        <li>GitHub and Slack integration</li>
+                        <li>Designed specifically for software teams</li>
+                        <li>Free for small teams</li>
+                        <li>Less customizable than Jira but much faster to use</li>
+                    </ul>
+                </div>
+
+                <div class="tool-card">
+                    <h4>Trello <span class="badge badge-small">Small projects</span></h4>
+                    <p><strong>Best for:</strong> Very small teams, simple Kanban workflows, non-technical clients</p>
+                    <ul>
+                        <li>Visual card-based Kanban boards</li>
+                        <li>Extremely easy for non-developers to use</li>
+                        <li>Good for sharing progress with clients who don't want to learn Jira</li>
+                        <li>Limited built-in reporting — use Power-Ups for velocity tracking</li>
+                        <li>Free tier is generous</li>
+                    </ul>
+                </div>
+
+                <div class="tool-card">
+                    <h4>GitHub Projects / GitLab Issues</h4>
+                    <p><strong>Best for:</strong> Developers who want tracking integrated with their code repository</p>
+                    <ul>
+                        <li>Issues, milestones, and project boards built into GitHub/GitLab</li>
+                        <li>Directly links tasks to code commits and pull requests</li>
+                        <li>GitHub Projects now supports Kanban and sprint-style tracking</li>
+                        <li>Zero additional tool to manage — everything in one place</li>
+                        <li>Less polished for client-facing reporting</li>
+                    </ul>
+                </div>
+
+                <div class="tool-card">
+                    <h4>Notion / Basecamp / ClickUp</h4>
+                    <p><strong>Best for:</strong> Teams that want planning, docs, and communication in one workspace</p>
+                    <ul>
+                        <li><strong>Notion:</strong> Highly flexible — databases, docs, roadmaps, wikis in one tool. Steep initial setup.</li>
+                        <li><strong>Basecamp:</strong> Client communication-focused, simple task tracking. Popular for agency work.</li>
+                        <li><strong>ClickUp:</strong> Feature-rich alternative to Jira with a generous free tier</li>
+                    </ul>
+                </div>
+
+                <h3>Time Tracking Tools</h3>
+
+                <div class="concept-card">
+                    <h4>Why Time Tracking Matters on Small Teams</h4>
+                    <p>Time tracking is not about surveillance — it is the data that powers your budget reports, re-estimates, and invoices. Without actual hours logged, budget management is guesswork.</p>
+
+                    <table class="comparison-table">
+                        <thead><tr><th>Tool</th><th>Best For</th><th>Cost</th></tr></thead>
+                        <tbody>
+                            <tr><td><strong>Toggl Track</strong></td><td>Simple per-developer time tracking, clean reports</td><td>Free / $9/user/month</td></tr>
+                            <tr><td><strong>Harvest</strong></td><td>Time tracking + invoicing + expense tracking</td><td>$12/user/month</td></tr>
+                            <tr><td><strong>Clockify</strong></td><td>Free unlimited time tracking, reasonable reports</td><td>Free / paid plans available</td></tr>
+                            <tr><td><strong>Jira Tempo</strong></td><td>Time tracking integrated directly in Jira tickets</td><td>Add-on cost</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <h3>Communication and Collaboration</h3>
+
+                <div class="concept-card">
+                    <h4>Choosing Your Communication Stack</h4>
+                    <table class="comparison-table">
+                        <thead><tr><th>Tool</th><th>Best Use</th></tr></thead>
+                        <tbody>
+                            <tr><td><strong>Slack</strong></td><td>Team chat, async standups, channel-based organization, extensive integrations</td></tr>
+                            <tr><td><strong>Microsoft Teams</strong></td><td>Organizations in the Microsoft ecosystem; video, chat, file sharing</td></tr>
+                            <tr><td><strong>Zoom / Google Meet</strong></td><td>Sprint demos, client meetings, planning sessions</td></tr>
+                            <tr><td><strong>Loom</strong></td><td>Async video updates — record a sprint demo to share with clients who can't attend live</td></tr>
+                            <tr><td><strong>Confluence / Notion</strong></td><td>Team wiki, project documentation, meeting notes, decision log</td></tr>
+                            <tr><td><strong>Email</strong></td><td>Formal decisions, change requests, status reports — always follow up verbal decisions with email</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <h3>Budget Tracking Spreadsheet (When You Don't Need a Full Tool)</h3>
+
+                <div class="concept-card">
+                    <h4>Minimum Viable Budget Tracker</h4>
+                    <p>For simple projects, a well-structured spreadsheet in Google Sheets or Excel is sufficient. Track at minimum:</p>
+                    <ul>
+                        <li><strong>Budget summary tab:</strong> Total budget by category, spent to date, remaining, % complete</li>
+                        <li><strong>Time log tab:</strong> Date, developer, hours, task/story, billable rate, cost</li>
+                        <li><strong>Expenses tab:</strong> Infrastructure, tools, licenses, any other non-labor costs</li>
+                        <li><strong>Forecast tab:</strong> Remaining stories, estimated hours remaining, projected final cost</li>
+                    </ul>
+                    <p>Update weekly. Share a read-only version with the client so they always have visibility.</p>
+                </div>
+
+            </div>
+        </div>
+
+
+        <!-- ═══════════════════════════════ SECTION 10 ═══════════════════════════════ -->
+        <button class="collapsible">10. Checklists — Project Kickoff to Closeout</button>
+        <div class="collapsible-content">
+            <div class="collapsible-inner">
+
+                <div class="checklist">
+                    <h4>🚀 Project Kickoff Checklist</h4>
+                    <ul>
+                        <li>Statement of Work is signed by both parties</li>
+                        <li>Scope (features In Scope and Out of Scope) is documented and agreed</li>
+                        <li>MoSCoW priorities applied to all features</li>
+                        <li>Initial budget agreed with a defined contingency</li>
+                        <li>Contract pricing model (fixed, T&amp;M, milestone) agreed and signed</li>
+                        <li>Change request process defined and accepted by client</li>
+                        <li>Team roles and responsibilities are clear</li>
+                        <li>Development environment and tooling are set up</li>
+                        <li>Version control repository created with initial structure</li>
+                        <li>Project management tool set up with initial backlog</li>
+                        <li>Sprint schedule and milestone dates agreed with client</li>
+                        <li>Communication plan established (meeting cadence, status report format)</li>
+                        <li>Risk register created with top 5 risks identified</li>
+                        <li>Definition of Done agreed with the team</li>
+                    </ul>
+                </div>
+
+                <div class="checklist">
+                    <h4>🔁 Sprint Start Checklist</h4>
+                    <ul>
+                        <li>Backlog is prioritized and top stories are refined and estimated</li>
+                        <li>Stories selected for the sprint based on current velocity</li>
+                        <li>Sprint goal is defined and communicated</li>
+                        <li>Stories are broken into tasks and assigned</li>
+                        <li>Blockers from the previous sprint are resolved or escalated</li>
+                        <li>Any scope changes since the last sprint have been estimated and approved</li>
+                        <li>Sprint board is up to date</li>
+                    </ul>
+                </div>
+
+                <div class="checklist">
+                    <h4>📅 Weekly Tracking Checklist</h4>
+                    <ul>
+                        <li>Time logs are up to date for all team members</li>
+                        <li>Sprint board reflects current actual status</li>
+                        <li>Burndown chart is updated</li>
+                        <li>Blockers are identified and have an owner</li>
+                        <li>Budget actuals vs. plan have been reviewed</li>
+                        <li>Status report drafted and sent to client</li>
+                        <li>Any new scope requests are logged as change requests, not started</li>
+                        <li>Risk register reviewed for any new or changed risks</li>
+                    </ul>
+                </div>
+
+                <div class="checklist">
+                    <h4>🔚 Sprint End Checklist</h4>
+                    <ul>
+                        <li>All committed stories are reviewed against Definition of Done</li>
+                        <li>Sprint demo conducted with client</li>
+                        <li>Client feedback logged and added to backlog as appropriate</li>
+                        <li>Velocity for the sprint recorded</li>
+                        <li>Sprint retrospective completed (what went well, what to improve)</li>
+                        <li>Carry-over stories identified and root cause understood</li>
+                        <li>Delivery forecast updated based on actual velocity</li>
+                        <li>Milestone billing triggered if milestone was reached</li>
+                    </ul>
+                </div>
+
+                <div class="checklist">
+                    <h4>🔄 Re-Estimation Trigger Checklist</h4>
+                    <ul>
+                        <li>Actual velocity compared to planned velocity — is gap &gt;20% for 2+ sprints?</li>
+                        <li>CPI calculated — is it below 0.85?</li>
+                        <li>Total scope additions estimated — do they exceed original contingency?</li>
+                        <li>Any major technical risks materialized?</li>
+                        <li>Revised completion forecast calculated with actual velocity</li>
+                        <li>Options (scope reduction, budget increase, timeline extension) documented</li>
+                        <li>Client meeting scheduled to discuss revised outlook</li>
+                        <li>Decision documented in writing and plan updated</li>
+                    </ul>
+                </div>
+
+                <div class="checklist">
+                    <h4>🏁 Project Closeout Checklist</h4>
+                    <ul>
+                        <li>All Must Have features are delivered and accepted by client</li>
+                        <li>Final testing completed and sign-off received</li>
+                        <li>Application is deployed to production</li>
+                        <li>All access credentials handed over to client (securely)</li>
+                        <li>Technical documentation completed and delivered</li>
+                        <li>User documentation or training completed</li>
+                        <li>Source code transferred to client or access confirmed</li>
+                        <li>Final invoice issued</li>
+                        <li>Post-project retrospective conducted with client and team</li>
+                        <li>Lessons learned documented for future projects</li>
+                        <li>Maintenance/support agreement in place (if applicable)</li>
+                        <li>Monitoring and alerting confirmed as operational</li>
+                    </ul>
+                </div>
+
+                <div class="tip-box">
+                    <h4>💡 Recommended Resources</h4>
+                    <ul>
+                        <li><strong>PMI (pmi.org)</strong> — Project Management Institute: PMBOK Guide, certifications, and standards</li>
+                        <li><strong>Scrum.org / Scrumguides.org</strong> — Official Scrum Guide (free) — the primary reference for Scrum methodology</li>
+                        <li><strong>Agile Alliance (agilealliance.org)</strong> — Agile Manifesto, practices library, and resources</li>
+                        <li><strong>"The Pragmatic Programmer"</strong> by Hunt &amp; Thomas — includes estimation and project management wisdom</li>
+                        <li><strong>"Peopleware" by DeMarco &amp; Lister</strong> — Classic on managing software development teams</li>
+                        <li><strong>"Software Estimation: Demystifying the Black Art"</strong> by Steve McConnell — Deep dive into software estimation techniques</li>
+                        <li><strong>Atlassian Agile Coach (atlassian.com/agile)</strong> — Free practical guides to sprints, standups, retrospectives</li>
+                    </ul>
+                </div>
+
+            </div>
+        </div>
+
+    </div><!-- /.content -->
+
+    <div class="footer">
+        <p>&copy; 2024 COP4834 Web Systems II | Planning and Tracking Software Projects</p>
+        <p>A project plan is not a prediction — it is a shared commitment to communicate honestly as reality unfolds.</p>
+    </div>
+
+</div><!-- /.container -->
+
+<script>
+    const collapsibles = document.getElementsByClassName("collapsible");
+    for (let i = 0; i < collapsibles.length; i++) {
+        collapsibles[i].addEventListener("click", function () {
+            this.classList.toggle("active");
+            const content = this.nextElementSibling;
+            if (content.style.maxHeight) {
+                content.style.maxHeight = null;
+            } else {
+                content.style.maxHeight = content.scrollHeight + "px";
+            }
+        });
+    }
+    if (collapsibles.length > 0) { collapsibles[0].click(); }
+</script>
+</body>
+</html>

@@ -1,0 +1,1683 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>COP 3530 – The Tree Data Structure: Hierarchical Organization in Nature &amp; Computing</title>
+<link href="https://fonts.googleapis.com/css2?family=Merriweather:wght@300;400;700;900&family=Fira+Code:wght@400;500;600&family=Open+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --forest-dark:   #0d2818;
+    --forest-mid:    #1a4c32;
+    --forest-light:  #2d6e4e;
+    --moss:          #4a7c59;
+    --sage:          #87a96b;
+    --jade:          #50c878;
+    --gold-leaf:     #daa520;
+    --amber:         #ffbf00;
+    --copper:        #b87333;
+    --bark:          #8b4513;
+    --earth:         #3c2415;
+    --cream:         #f5f5dc;
+    --text:          #f0f8e8;
+    --text-dim:      #b8d3a6;
+    --card-bg:       #1f4a35;
+    --border:        #3a6b4f;
+    --accent:        #ff6b47;
+    --warning:       #ffa500;
+  }
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: 'Open Sans', sans-serif;
+    background: linear-gradient(135deg, var(--forest-dark) 0%, var(--forest-mid) 100%);
+    color: var(--text);
+    line-height: 1.65;
+    font-size: 15px;
+    min-height: 100vh;
+  }
+
+  /* ── ORGANIC FOREST BACKGROUND ── */
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background: 
+      radial-gradient(ellipse at 20% 30%, rgba(80,200,120,0.04) 0%, transparent 50%),
+      radial-gradient(ellipse at 80% 70%, rgba(135,169,107,0.03) 0%, transparent 50%),
+      radial-gradient(ellipse at 50% 10%, rgba(218,165,32,0.02) 0%, transparent 50%);
+    pointer-events: none;
+    z-index: -1;
+  }
+
+  /* Organic texture overlay */
+  body::after {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background: 
+      repeating-radial-gradient(
+        circle at 25% 25%,
+        transparent 0px,
+        transparent 100px,
+        rgba(80,200,120,0.01) 100px,
+        rgba(80,200,120,0.01) 105px
+      ),
+      repeating-radial-gradient(
+        circle at 75% 75%,
+        transparent 0px,
+        transparent 120px,
+        rgba(135,169,107,0.01) 120px,
+        rgba(135,169,107,0.01) 125px
+      );
+    pointer-events: none;
+    z-index: -1;
+  }
+
+  /* ── HERO HEADER ── */
+  .hero {
+    background: linear-gradient(135deg, #0d2818 0%, #1a4c32 50%, #0f2a1c 100%);
+    border-bottom: 4px solid var(--jade);
+    padding: 52px 44px 46px;
+    position: relative;
+    overflow: hidden;
+  }
+  .hero::before {
+    content: '';
+    position: absolute; inset: 0;
+    background: 
+      linear-gradient(45deg, rgba(80,200,120,0.06) 0%, transparent 30%, transparent 70%, rgba(80,200,120,0.06) 100%);
+    pointer-events: none;
+  }
+  .hero-badge {
+    display: inline-block;
+    background: linear-gradient(90deg, var(--jade), var(--sage));
+    color: var(--forest-dark);
+    font-family: 'Fira Code', monospace;
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 1.8px;
+    text-transform: uppercase;
+    padding: 6px 20px;
+    border-radius: 25px;
+    margin-bottom: 22px;
+    box-shadow: 0 4px 15px rgba(80,200,120,0.3);
+  }
+  .hero h1 {
+    font-family: 'Merriweather', serif;
+    font-size: clamp(36px, 5.8vw, 58px);
+    font-weight: 900;
+    color: var(--text);
+    line-height: 1.1;
+    letter-spacing: -0.8px;
+    text-shadow: 0 3px 12px rgba(0,0,0,0.4);
+  }
+  .hero h1 .accent { 
+    color: var(--jade); 
+    text-shadow: 0 3px 15px rgba(80,200,120,0.5);
+  }
+  .hero-sub {
+    font-family: 'Merriweather', serif;
+    font-size: 19px;
+    color: var(--sage);
+    margin-top: 16px;
+    font-weight: 300;
+    letter-spacing: 0.4px;
+    font-style: italic;
+  }
+  .hero-meta {
+    display: flex;
+    gap: 38px;
+    margin-top: 32px;
+    flex-wrap: wrap;
+  }
+  .hero-meta span {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-size: 13px;
+    color: var(--text-dim);
+    font-family: 'Fira Code', monospace;
+  }
+  .hero-meta span b { 
+    color: var(--jade); 
+  }
+
+  /* ── MAIN CONTENT ── */
+  .container { max-width: 1200px; margin: 0 auto; padding: 44px 34px 80px; }
+
+  /* ── SECTION TITLES ── */
+  .section-title {
+    font-family: 'Merriweather', serif;
+    font-size: 30px;
+    font-weight: 700;
+    color: var(--jade);
+    border-left: 5px solid var(--gold-leaf);
+    padding-left: 22px;
+    margin: 56px 0 28px;
+    letter-spacing: 0.2px;
+    text-shadow: 0 2px 8px rgba(80,200,120,0.2);
+  }
+  .section-title.first { margin-top: 20px; }
+
+  /* ── INTRO CARD ── */
+  .intro-card {
+    background: var(--card-bg);
+    border: 1px solid var(--border);
+    border-left: 5px solid var(--jade);
+    border-radius: 12px;
+    padding: 30px 34px;
+    margin-bottom: 20px;
+    font-size: 15px;
+    color: var(--text);
+    line-height: 1.75;
+    box-shadow: 0 6px 25px rgba(0,0,0,0.15);
+  }
+  .intro-card p + p { margin-top: 18px; }
+  .intro-card strong { color: var(--sage); }
+  .intro-card em { color: var(--jade); font-style: normal; }
+
+  /* ── COLLAPSIBLE DETAILS ── */
+  details {
+    background: var(--card-bg);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    margin-bottom: 20px;
+    overflow: hidden;
+    transition: box-shadow 0.3s, border-color 0.3s;
+  }
+  details[open] { 
+    box-shadow: 0 8px 35px rgba(80,200,120,0.12); 
+    border-color: var(--jade);
+  }
+  details[open] summary { 
+    border-bottom: 1px solid var(--border);
+    background: rgba(80,200,120,0.06);
+  }
+
+  summary {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+    padding: 24px 28px;
+    cursor: pointer;
+    list-style: none;
+    font-family: 'Merriweather', serif;
+    font-size: 18px;
+    font-weight: 700;
+    color: var(--text);
+    user-select: none;
+    transition: background 0.25s;
+  }
+  summary::-webkit-details-marker { display: none; }
+  summary::after {
+    content: '▶';
+    margin-left: auto;
+    color: var(--jade);
+    font-size: 16px;
+    transition: transform 0.3s;
+    text-shadow: 0 2px 6px rgba(80,200,120,0.4);
+  }
+  details[open] summary::after { transform: rotate(90deg); }
+  summary:hover { background: rgba(80,200,120,0.08); }
+
+  .summary-icon {
+    width: 48px; height: 48px;
+    border-radius: 10px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 22px;
+    flex-shrink: 0;
+    border: 2px solid;
+  }
+
+  .details-body { padding: 28px 32px 38px; }
+
+  /* ── TREE VISUALIZATION ── */
+  .tree-visual {
+    background: var(--forest-light);
+    border: 2px solid var(--border);
+    border-radius: 12px;
+    padding: 30px;
+    margin: 20px 0;
+    text-align: center;
+    font-family: 'Fira Code', monospace;
+    position: relative;
+  }
+  .tree-node {
+    background: linear-gradient(135deg, var(--jade), var(--sage));
+    color: var(--forest-dark);
+    padding: 12px 18px;
+    border-radius: 50%;
+    font-size: 14px;
+    font-weight: 600;
+    display: inline-block;
+    margin: 8px;
+    box-shadow: 0 4px 15px rgba(80,200,120,0.3);
+    position: relative;
+    min-width: 45px;
+  }
+  .tree-branch {
+    color: var(--gold-leaf);
+    font-size: 18px;
+    font-weight: bold;
+    margin: 0 10px;
+    text-shadow: 0 2px 6px rgba(218,165,32,0.4);
+  }
+  .tree-level {
+    margin: 18px 0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-wrap: wrap;
+  }
+
+  /* ── CONCEPT CARDS ── */
+  .concept-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(380px, 1fr));
+    gap: 22px;
+    margin-top: 12px;
+  }
+  .concept-card {
+    background: var(--moss);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 26px 30px;
+    transition: transform 0.3s, box-shadow 0.3s;
+    position: relative;
+    overflow: hidden;
+  }
+  .concept-card:hover { 
+    transform: translateY(-6px); 
+    box-shadow: 0 15px 50px rgba(80,200,120,0.1);
+  }
+  .concept-card::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0; height: 4px;
+    background: linear-gradient(90deg, var(--jade), var(--gold-leaf));
+  }
+  .concept-card-header {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 16px;
+    margin-bottom: 18px;
+  }
+  .concept-card-name {
+    font-family: 'Merriweather', serif;
+    font-weight: 700;
+    font-size: 19px;
+    color: var(--text);
+    text-shadow: 0 1px 4px rgba(0,0,0,0.3);
+  }
+  .concept-card p {
+    font-size: 14px;
+    color: var(--text-dim);
+    line-height: 1.7;
+    margin-bottom: 16px;
+  }
+
+  /* ── TREE TYPE BADGES ── */
+  .tree-types {
+    display: flex;
+    gap: 12px;
+    flex-wrap: wrap;
+    margin-top: 18px;
+  }
+  .type-badge {
+    font-family: 'Fira Code', monospace;
+    font-size: 11px;
+    font-weight: 500;
+    padding: 5px 16px;
+    border-radius: 8px;
+    text-align: center;
+    border: 1px solid;
+  }
+  .type-balanced   { background: rgba(80,200,120,0.15); color: var(--jade); border-color: var(--jade); }
+  .type-binary     { background: rgba(135,169,107,0.15); color: var(--sage); border-color: var(--sage); }
+  .type-search     { background: rgba(218,165,32,0.15); color: var(--gold-leaf); border-color: var(--gold-leaf); }
+  .type-special    { background: rgba(255,191,0,0.15); color: var(--amber); border-color: var(--amber); }
+  .type-advanced   { background: rgba(184,115,51,0.15); color: var(--copper); border-color: var(--copper); }
+
+  /* ── APPLICATION CARDS ── */
+  .app-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(340px, 1fr));
+    gap: 20px;
+    margin-top: 12px;
+  }
+  .app-card {
+    background: var(--moss);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 24px 28px;
+    transition: transform 0.25s;
+    position: relative;
+  }
+  .app-card:hover { transform: translateY(-4px); }
+  .app-card::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0; height: 3px;
+    background: var(--jade);
+  }
+  .app-card-header {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    margin-bottom: 16px;
+  }
+  .app-icon {
+    width: 42px; height: 42px;
+    border-radius: 10px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 20px;
+    flex-shrink: 0;
+    background: rgba(80,200,120,0.2);
+    color: var(--jade);
+  }
+  .app-title {
+    font-family: 'Merriweather', serif;
+    font-weight: 700;
+    font-size: 17px;
+    color: var(--text);
+  }
+  .app-card p { font-size: 14px; color: var(--text-dim); line-height: 1.7; }
+  .app-examples {
+    margin-top: 16px;
+    padding-top: 16px;
+    border-top: 1px solid var(--border);
+    font-size: 13px;
+    font-family: 'Fira Code', monospace;
+    color: var(--text-dim);
+  }
+  .app-examples strong { color: var(--sage); }
+
+  /* ── COMPARISON TABLE ── */
+  .comparison-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 14px;
+    margin-top: 14px;
+    background: var(--moss);
+    border-radius: 12px;
+    overflow: hidden;
+    box-shadow: 0 6px 25px rgba(0,0,0,0.15);
+  }
+  .comparison-table thead tr {
+    background: var(--forest-light);
+    font-family: 'Merriweather', serif;
+    font-weight: 700;
+    font-size: 13px;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    color: var(--jade);
+  }
+  .comparison-table th, .comparison-table td {
+    padding: 18px 20px;
+    text-align: left;
+    border-bottom: 1px solid var(--border);
+  }
+  .comparison-table tbody tr:hover { 
+    background: rgba(80,200,120,0.08); 
+  }
+  .comparison-table .mono { 
+    font-family: 'Fira Code', monospace; 
+    color: var(--sage);
+  }
+
+  /* ── PROS/CONS LISTS ── */
+  .pros-cons {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 22px;
+    margin-top: 20px;
+  }
+  .pros, .cons {
+    background: var(--moss);
+    border-radius: 10px;
+    padding: 20px 24px;
+    border: 1px solid var(--border);
+  }
+  .pros h4, .cons h4 {
+    font-family: 'Merriweather', serif;
+    font-size: 15px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    margin-bottom: 14px;
+  }
+  .pros h4 { color: var(--jade); }
+  .cons h4 { color: var(--accent); }
+  .pros ul, .cons ul { font-size: 14px; line-height: 1.7; }
+  .pros li, .cons li {
+    margin-bottom: 8px;
+    color: var(--text-dim);
+    list-style: none;
+    padding-left: 20px;
+    position: relative;
+  }
+  .pros li::before { content: '✓'; position: absolute; left: 0; color: var(--jade); font-weight: bold; }
+  .cons li::before { content: '✗'; position: absolute; left: 0; color: var(--accent); font-weight: bold; }
+
+  /* ── CALLOUTS ── */
+  .callout {
+    border-radius: 12px;
+    padding: 22px 26px;
+    margin: 20px 0;
+    font-size: 14px;
+    line-height: 1.8;
+    display: flex;
+    gap: 20px;
+    align-items: flex-start;
+    border: 2px solid;
+  }
+  .callout-info { 
+    background: rgba(80,200,120,0.08); 
+    border-color: var(--jade);
+    box-shadow: 0 4px 20px rgba(80,200,120,0.06);
+  }
+  .callout-tip { 
+    background: rgba(135,169,107,0.08); 
+    border-color: var(--sage);
+    box-shadow: 0 4px 20px rgba(135,169,107,0.06);
+  }
+  .callout-warn { 
+    background: rgba(255,165,0,0.08); 
+    border-color: var(--warning);
+    box-shadow: 0 4px 20px rgba(255,165,0,0.06);
+  }
+  .callout-icon { 
+    font-size: 24px; 
+    flex-shrink: 0; 
+    margin-top: 2px;
+  }
+  .callout-content { flex: 1; }
+  .callout-content strong { 
+    display: block; 
+    margin-bottom: 12px; 
+    font-family: 'Merriweather', serif; 
+    font-size: 16px; 
+    letter-spacing: 0.4px; 
+    color: var(--text);
+  }
+
+  /* ── FOOTER ── */
+  footer {
+    text-align: center;
+    padding: 42px 20px;
+    border-top: 2px solid var(--border);
+    font-size: 12px;
+    font-family: 'Fira Code', monospace;
+    color: var(--text-dim);
+    margin-top: 38px;
+    background: var(--forest-light);
+  }
+  footer span { 
+    color: var(--jade); 
+  }
+
+  /* ── RESPONSIVE ── */
+  @media (max-width: 768px) {
+    .hero-meta { flex-direction: column; gap: 20px; }
+    .concept-grid { grid-template-columns: 1fr; }
+    .app-grid { grid-template-columns: 1fr; }
+    .pros-cons { grid-template-columns: 1fr; }
+  }
+</style>
+</head>
+<body>
+
+<!-- ═══════════════════════════════════ HERO ═══════════════════════════════════ -->
+<header class="hero">
+  <div class="hero-badge">COP 3530 · Data Structures</div>
+  <h1>The <span class="accent">Tree</span> Data Structure</h1>
+  <div class="hero-sub">Hierarchical Organization in Nature &amp; Computing</div>
+  <div class="hero-meta">
+    <span>🌳 <b>Structure:</b> Hierarchical, non-linear organization</span>
+    <span>🔄 <b>Relationships:</b> Parent-child connections</span>
+    <span>📊 <b>Performance:</b> O(log n) to O(n) operations</span>
+    <span>🎯 <b>Applications:</b> Search, storage, organization</span>
+  </div>
+</header>
+
+<div class="container">
+
+  <!-- ═══════════════════ SECTION 1: UNDERSTANDING TREES ═══════════════════ -->
+  <div class="section-title first">Understanding Tree Data Structures</div>
+
+  <div class="intro-card">
+    <p><strong>Trees</strong> are hierarchical data structures that mirror the branching patterns found throughout nature — from the family trees that trace our ancestry to the decision trees that guide our choices. In computing, trees provide an elegant solution to organizing data in parent-child relationships where each element can have multiple descendants but only one parent.</p>
+    <p>Unlike linear data structures such as arrays or linked lists, trees are <em>non-linear</em>, allowing data to branch and spread in multiple directions. This branching creates natural hierarchies that reflect how we think about organization: departments within companies, folders within file systems, categories within taxonomies, and decisions within logical processes.</p>
+    <p>The power of trees lies in their ability to represent complex relationships while maintaining <strong>efficient access patterns</strong>. By organizing data hierarchically, trees enable logarithmic-time operations that would be linear in unsorted lists, making them fundamental to efficient algorithms and data organization strategies throughout computer science.</p>
+  </div>
+
+  <div class="callout callout-info">
+    <span class="callout-icon" style="color:var(--jade);">🌲</span>
+    <div class="callout-content">
+      <strong>The Natural Metaphor</strong>
+      The terminology of tree data structures directly mirrors botanical trees: we have roots, branches, leaves, parents, children, and ancestors. This isn't just poetic language — it reflects the fundamental similarity between how trees grow in nature and how data naturally organizes itself hierarchically. Both spread from a single origin point, branch into specialized paths, and maintain structural relationships that enable efficient resource distribution.
+    </div>
+  </div>
+
+  <!-- ═══════════════════ SECTION 2: FUNDAMENTAL CONCEPTS ═══════════════════ -->
+  <div class="section-title">Fundamental Tree Concepts</div>
+
+  <details open>
+    <summary>
+      <div class="summary-icon" style="background:rgba(80,200,120,0.15); color:var(--jade); border-color:var(--jade);">📚</div>
+      Core Terminology &amp; Properties
+    </summary>
+    <div class="details-body">
+      <p style="color:var(--text-dim); margin-bottom:18px; font-size:14px;">Every tree data structure is built from fundamental concepts and relationships. Understanding this vocabulary is essential for discussing tree algorithms, analyzing performance, and designing efficient hierarchical systems.</p>
+
+      <div class="tree-visual">
+        <div style="color:var(--jade); font-weight:700; margin-bottom:15px; font-size:16px;">Basic Tree Structure</div>
+        
+        <div class="tree-level">
+          <div class="tree-node">A</div>
+          <span style="margin:0 20px; color:var(--text-dim); font-size:12px;">← Root</span>
+        </div>
+        
+        <div class="tree-level">
+          <span class="tree-branch">├─</span>
+          <span class="tree-branch">┬─</span>
+          <span class="tree-branch">─┤</span>
+        </div>
+        
+        <div class="tree-level">
+          <div class="tree-node">B</div>
+          <span style="margin:0 15px;"></span>
+          <div class="tree-node">C</div>
+          <span style="margin:0 15px;"></span>
+          <div class="tree-node">D</div>
+        </div>
+        
+        <div class="tree-level">
+          <span class="tree-branch">├─</span>
+          <span style="margin:0 40px;"></span>
+          <span class="tree-branch">─┤</span>
+        </div>
+        
+        <div class="tree-level">
+          <div class="tree-node">E</div>
+          <div class="tree-node">F</div>
+          <span style="margin:0 20px;"></span>
+          <div class="tree-node">G</div>
+          <span style="margin:0 5px; color:var(--text-dim); font-size:12px;">← Leaves</span>
+        </div>
+      </div>
+
+      <div class="concept-grid">
+        <div class="concept-card">
+          <div class="concept-card-header">
+            <div class="concept-card-name">Node</div>
+          </div>
+          <p>The fundamental building block of a tree. Each node contains data and maintains references (pointers or links) to its child nodes. Nodes can store any type of data: numbers, strings, objects, or complex structures.</p>
+          <div class="tree-types">
+            <span class="type-badge type-binary">Contains data</span>
+            <span class="type-badge type-search">Links to children</span>
+          </div>
+        </div>
+
+        <div class="concept-card">
+          <div class="concept-card-header">
+            <div class="concept-card-name">Root</div>
+          </div>
+          <p>The topmost node in the tree, serving as the single entry point. Every tree has exactly one root node, which has no parent. All other nodes in the tree are descendants of the root.</p>
+          <div class="tree-types">
+            <span class="type-badge type-special">Single entry point</span>
+            <span class="type-badge type-binary">No parent</span>
+          </div>
+        </div>
+
+        <div class="concept-card">
+          <div class="concept-card-header">
+            <div class="concept-card-name">Parent & Children</div>
+          </div>
+          <p>A parent node has direct connections to one or more child nodes. Each child has exactly one parent (except the root). This parent-child relationship defines the hierarchical structure and determines tree navigation.</p>
+          <div class="tree-types">
+            <span class="type-badge type-balanced">One-to-many</span>
+            <span class="type-badge type-binary">Directional</span>
+          </div>
+        </div>
+
+        <div class="concept-card">
+          <div class="concept-card-header">
+            <div class="concept-card-name">Leaves</div>
+          </div>
+          <p>Nodes with no children are called leaves (or terminal nodes). These represent the endpoints of all paths through the tree. In many algorithms, leaves receive special handling as base cases or final results.</p>
+          <div class="tree-types">
+            <span class="type-badge type-special">No children</span>
+            <span class="type-badge type-search">Path endpoints</span>
+          </div>
+        </div>
+
+        <div class="concept-card">
+          <div class="concept-card-header">
+            <div class="concept-card-name">Height & Depth</div>
+          </div>
+          <p><strong>Height:</strong> The longest path from a node to any leaf below it. Tree height is the height of the root. <strong>Depth:</strong> The path length from the root to a specific node. These metrics determine algorithm complexity.</p>
+          <div class="tree-types">
+            <span class="type-badge type-advanced">Performance metric</span>
+            <span class="type-badge type-balanced">Path lengths</span>
+          </div>
+        </div>
+
+        <div class="concept-card">
+          <div class="concept-card-header">
+            <div class="concept-card-name">Subtree</div>
+          </div>
+          <p>Any node and all of its descendants form a subtree. This recursive property means that tree algorithms can often be applied to subtrees, making trees naturally suited for recursive problem-solving approaches.</p>
+          <div class="tree-types">
+            <span class="type-badge type-balanced">Recursive structure</span>
+            <span class="type-badge type-advanced">Self-similar</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="callout callout-tip">
+        <span class="callout-icon" style="color:var(--sage);">💡</span>
+        <div class="callout-content">
+          <strong>Recursive Nature</strong>
+          Trees are inherently recursive structures — every subtree is itself a complete tree. This property makes recursive algorithms natural for tree operations: to process a tree, process its root and recursively process each subtree. This fundamental insight drives the design of most tree algorithms.
+        </div>
+      </div>
+    </div>
+  </details>
+
+  <!-- ═══════════════════ SECTION 3: TREE CLASSIFICATIONS ═══════════════════ -->
+  <div class="section-title">Tree Classifications &amp; Types</div>
+
+  <details>
+    <summary>
+      <div class="summary-icon" style="background:rgba(135,169,107,0.15); color:var(--sage); border-color:var(--sage);">🌿</div>
+      From Binary Trees to Specialized Structures
+    </summary>
+    <div class="details-body">
+      <p style="color:var(--text-dim); margin-bottom:18px; font-size:14px;">Trees come in many varieties, each optimized for specific use cases and performance characteristics. Understanding these classifications helps you choose the right tree structure for your particular problem and performance requirements.</p>
+
+      <div class="concept-grid">
+        <div class="concept-card">
+          <div class="concept-card-header">
+            <div class="concept-card-name">Binary Trees</div>
+          </div>
+          <p>The most fundamental tree type where each node has at most two children, typically called "left" and "right." This constraint creates a natural binary decision structure that forms the foundation for many efficient algorithms.</p>
+          <div class="tree-types">
+            <span class="type-badge type-binary">≤ 2 children per node</span>
+            <span class="type-badge type-search">Left/right structure</span>
+            <span class="type-badge type-balanced">Foundation type</span>
+          </div>
+        </div>
+
+        <div class="concept-card">
+          <div class="concept-card-header">
+            <div class="concept-card-name">Binary Search Trees (BST)</div>
+          </div>
+          <p>Binary trees with ordering property: left subtree contains values smaller than parent, right subtree contains larger values. This ordering enables efficient search, insertion, and deletion operations.</p>
+          <div class="tree-types">
+            <span class="type-badge type-search">Ordered structure</span>
+            <span class="type-badge type-balanced">O(log n) average</span>
+            <span class="type-badge type-advanced">Self-organizing</span>
+          </div>
+        </div>
+
+        <div class="concept-card">
+          <div class="concept-card-header">
+            <div class="concept-card-name">Balanced Trees</div>
+          </div>
+          <p>Trees that maintain height balance to guarantee logarithmic performance. Examples include AVL trees, Red-Black trees, and B-trees. Balance prevents degeneration into linear structures.</p>
+          <div class="tree-types">
+            <span class="type-badge type-balanced">Height-balanced</span>
+            <span class="type-badge type-advanced">Guaranteed O(log n)</span>
+            <span class="type-badge type-special">Auto-rebalancing</span>
+          </div>
+        </div>
+
+        <div class="concept-card">
+          <div class="concept-card-header">
+            <div class="concept-card-name">Complete Trees</div>
+          </div>
+          <p>Binary trees where all levels are completely filled except possibly the last level, which fills from left to right. This structure enables efficient array representation and heap properties.</p>
+          <div class="tree-types">
+            <span class="type-badge type-special">Level-filled</span>
+            <span class="type-badge type-binary">Array-friendly</span>
+            <span class="type-badge type-balanced">Heap foundation</span>
+          </div>
+        </div>
+
+        <div class="concept-card">
+          <div class="concept-card-header">
+            <div class="concept-card-name">N-ary Trees</div>
+          </div>
+          <p>Trees where nodes can have more than two children. Examples include file systems (directories), organizational hierarchies, and decision trees. The "arity" refers to the maximum number of children.</p>
+          <div class="tree-types">
+            <span class="type-badge type-advanced">Multiple children</span>
+            <span class="type-badge type-special">Flexible structure</span>
+            <span class="type-badge type-search">Natural hierarchies</span>
+          </div>
+        </div>
+
+        <div class="concept-card">
+          <div class="concept-card-header">
+            <div class="concept-card-name">Expression Trees</div>
+          </div>
+          <p>Binary trees representing mathematical or logical expressions. Internal nodes store operators, leaves store operands. Tree structure captures operator precedence and enables expression evaluation.</p>
+          <div class="tree-types">
+            <span class="type-badge type-binary">Operators/operands</span>
+            <span class="type-badge type-special">Expression parsing</span>
+            <span class="type-badge type-advanced">Precedence encoding</span>
+          </div>
+        </div>
+      </div>
+
+      <table class="comparison-table">
+        <thead>
+          <tr>
+            <th>Tree Type</th>
+            <th>Max Children</th>
+            <th>Ordering</th>
+            <th>Balance Guarantee</th>
+            <th>Best Use Case</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><strong>Binary Tree</strong></td>
+            <td><span class="mono">2</span></td>
+            <td>None</td>
+            <td>None</td>
+            <td>General hierarchy</td>
+          </tr>
+          <tr>
+            <td><strong>Binary Search Tree</strong></td>
+            <td><span class="mono">2</span></td>
+            <td>Ordered</td>
+            <td>None</td>
+            <td>Dynamic searching</td>
+          </tr>
+          <tr>
+            <td><strong>AVL Tree</strong></td>
+            <td><span class="mono">2</span></td>
+            <td>Ordered</td>
+            <td>Height-balanced</td>
+            <td>Guaranteed performance</td>
+          </tr>
+          <tr>
+            <td><strong>Red-Black Tree</strong></td>
+            <td><span class="mono">2</span></td>
+            <td>Ordered</td>
+            <td>Color-balanced</td>
+            <td>Standard libraries</td>
+          </tr>
+          <tr>
+            <td><strong>B-Tree</strong></td>
+            <td><span class="mono">Variable</span></td>
+            <td>Ordered</td>
+            <td>Multi-way balanced</td>
+            <td>Database indexes</td>
+          </tr>
+          <tr>
+            <td><strong>Heap</strong></td>
+            <td><span class="mono">2</span></td>
+            <td>Heap property</td>
+            <td>Complete tree</td>
+            <td>Priority queues</td>
+          </tr>
+        </tbody>
+      </table>
+
+      <div class="callout callout-warn">
+        <span class="callout-icon" style="color:var(--warning);">⚠️</span>
+        <div class="callout-content">
+          <strong>Performance Degradation Risk</strong>
+          Unbalanced trees can degenerate into linear structures (essentially linked lists) with O(n) operations instead of the desired O(log n). This happens when data is inserted in sorted order into a basic BST. Balanced tree variants like AVL and Red-Black trees prevent this degradation through automatic rebalancing operations.
+        </div>
+      </div>
+    </div>
+  </details>
+
+
+  <!-- ═══════════════════ SECTION 4: COMMON TREE TYPES ═══════════════════ -->
+  <div class="section-title">Common Tree Types &amp; Their Applications</div>
+
+  <details>
+    <summary>
+      <div class="summary-icon" style="background:rgba(218,165,32,0.15); color:var(--gold-leaf); border-color:var(--gold-leaf);">🏗️</div>
+      Production-Ready Tree Structures
+    </summary>
+    <div class="details-body">
+      <p style="color:var(--text-dim); margin-bottom:18px; font-size:14px;">These are the tree structures you'll encounter most frequently in production systems, libraries, and real-world applications. Each has been refined through decades of use and represents an optimal solution for specific problem domains.</p>
+
+      <div class="app-grid">
+        <div class="app-card">
+          <div class="app-card-header">
+            <div class="app-icon">🔍</div>
+            <div class="app-title">Binary Search Trees</div>
+          </div>
+          <p>The workhorse of searchable data structures. Maintains sorted order while providing logarithmic search, insertion, and deletion. Forms the foundation for many other advanced tree structures.</p>
+          <div class="app-examples">
+            <strong>Real Uses:</strong> Symbol tables, database indexes, expression parsing, autocomplete systems, range queries
+          </div>
+          <div class="pros-cons">
+            <div class="pros">
+              <h4>Strengths</h4>
+              <ul>
+                <li>Simple to understand and implement</li>
+                <li>In-order traversal gives sorted sequence</li>
+                <li>Dynamic size adjustment</li>
+                <li>Good average-case performance</li>
+              </ul>
+            </div>
+            <div class="cons">
+              <h4>Weaknesses</h4>
+              <ul>
+                <li>Can degenerate to O(n) with sorted input</li>
+                <li>No balance guarantees</li>
+                <li>Vulnerable to worst-case scenarios</li>
+                <li>Requires rebalancing for optimal performance</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+
+        <div class="app-card">
+          <div class="app-card-header">
+            <div class="app-icon">⚖️</div>
+            <div class="app-title">AVL Trees</div>
+          </div>
+          <p>Self-balancing binary search trees that maintain height difference of at most 1 between subtrees. Guarantees O(log n) operations through automatic rotation operations during insertions and deletions.</p>
+          <div class="app-examples">
+            <strong>Real Uses:</strong> Database indexes requiring guaranteed performance, real-time systems, embedded systems with strict timing requirements
+          </div>
+          <div class="pros-cons">
+            <div class="pros">
+              <h4>Strengths</h4>
+              <ul>
+                <li>Guaranteed O(log n) operations</li>
+                <li>Strictly balanced structure</li>
+                <li>Predictable performance</li>
+                <li>Excellent for search-heavy applications</li>
+              </ul>
+            </div>
+            <div class="cons">
+              <h4>Weaknesses</h4>
+              <ul>
+                <li>More rotations during insertion/deletion</li>
+                <li>Higher overhead than basic BST</li>
+                <li>Complex implementation</li>
+                <li>Less flexible than Red-Black trees</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+
+        <div class="app-card">
+          <div class="app-card-header">
+            <div class="app-icon">🔴</div>
+            <div class="app-title">Red-Black Trees</div>
+          </div>
+          <p>Self-balancing trees using color coding (red/black nodes) with specific rules to maintain balance. Slightly more relaxed than AVL trees but still guarantee O(log n) operations with fewer rotations.</p>
+          <div class="app-examples">
+            <strong>Real Uses:</strong> Java TreeMap, C++ std::map, Linux kernel scheduler, GNU C++ library implementations
+          </div>
+          <div class="pros-cons">
+            <div class="pros">
+              <h4>Strengths</h4>
+              <ul>
+                <li>Guaranteed O(log n) operations</li>
+                <li>Fewer rotations than AVL trees</li>
+                <li>Good balance of search and modification</li>
+                <li>Widely used in standard libraries</li>
+              </ul>
+            </div>
+            <div class="cons">
+              <h4>Weaknesses</h4>
+              <ul>
+                <li>Complex coloring rules</li>
+                <li>Difficult to implement correctly</li>
+                <li>More memory per node (color bit)</li>
+                <li>Not as strictly balanced as AVL</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+
+        <div class="app-card">
+          <div class="app-card-header">
+            <div class="app-icon">📚</div>
+            <div class="app-title">B-Trees</div>
+          </div>
+          <p>Multi-way balanced trees designed for systems with large block sizes. Each node can contain multiple keys and children, making them ideal for disk-based storage systems and databases.</p>
+          <div class="app-examples">
+            <strong>Real Uses:</strong> Database indexes (MySQL, PostgreSQL), file system indexes (NTFS, ext4), operating system disk caches
+          </div>
+          <div class="pros-cons">
+            <div class="pros">
+              <h4>Strengths</h4>
+              <ul>
+                <li>Optimized for disk I/O operations</li>
+                <li>High branching factor reduces tree height</li>
+                <li>Excellent for large datasets</li>
+                <li>Supports range queries efficiently</li>
+              </ul>
+            </div>
+            <div class="cons">
+              <h4>Weaknesses</h4>
+              <ul>
+                <li>Complex split and merge operations</li>
+                <li>Higher memory overhead per node</li>
+                <li>Overkill for in-memory applications</li>
+                <li>More complex implementation</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+
+        <div class="app-card">
+          <div class="app-card-header">
+            <div class="app-icon">⛰️</div>
+            <div class="app-title">Heaps (Binary)</div>
+          </div>
+          <p>Complete binary trees satisfying the heap property: parent nodes are either greater (max-heap) or smaller (min-heap) than their children. Implemented using arrays for efficiency.</p>
+          <div class="app-examples">
+            <strong>Real Uses:</strong> Priority queues, heap sort algorithm, Dijkstra's algorithm, A* pathfinding, operating system schedulers
+          </div>
+          <div class="pros-cons">
+            <div class="pros">
+              <h4>Strengths</h4>
+              <ul>
+                <li>O(log n) insertion and deletion</li>
+                <li>O(1) access to min/max element</li>
+                <li>Efficient array representation</li>
+                <li>Excellent cache locality</li>
+              </ul>
+            </div>
+            <div class="cons">
+              <h4>Weaknesses</h4>
+              <ul>
+                <li>No efficient searching for arbitrary elements</li>
+                <li>Not suitable for general-purpose storage</li>
+                <li>Limited to priority-based access</li>
+                <li>Array resizing can be expensive</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+
+        <div class="app-card">
+          <div class="app-card-header">
+            <div class="app-icon">🌐</div>
+            <div class="app-title">Tries (Prefix Trees)</div>
+          </div>
+          <p>Trees where each path from root to leaf represents a string, with each node representing a character. Excellent for string-based operations like autocomplete, spell checking, and IP routing.</p>
+          <div class="app-examples">
+            <strong>Real Uses:</strong> Autocomplete systems, spell checkers, IP routing tables, dictionary implementations, genome analysis
+          </div>
+          <div class="pros-cons">
+            <div class="pros">
+              <h4>Strengths</h4>
+              <ul>
+                <li>Fast string prefix matching</li>
+                <li>Supports prefix-based queries</li>
+                <li>Space efficient for common prefixes</li>
+                <li>Natural for string collections</li>
+              </ul>
+            </div>
+            <div class="cons">
+              <h4>Weaknesses</h4>
+              <ul>
+                <li>High memory overhead for sparse trees</li>
+                <li>Complex implementation for some operations</li>
+                <li>Not suitable for non-string data</li>
+                <li>Cache performance can be poor</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+
+        <div class="app-card">
+          <div class="app-card-header">
+            <div class="app-icon">🌲</div>
+            <div class="app-title">Decision Trees</div>
+          </div>
+          <p>Trees representing decision-making processes where internal nodes represent tests on attributes, branches represent test outcomes, and leaves represent final decisions or classifications.</p>
+          <div class="app-examples">
+            <strong>Real Uses:</strong> Machine learning classification, expert systems, game AI, medical diagnosis, financial risk assessment
+          </div>
+          <div class="pros-cons">
+            <div class="pros">
+              <h4>Strengths</h4>
+              <ul>
+                <li>Intuitive and interpretable</li>
+                <li>Handles both categorical and numerical data</li>
+                <li>Requires minimal data preparation</li>
+                <li>Naturally handles missing values</li>
+              </ul>
+            </div>
+            <div class="cons">
+              <h4>Weaknesses</h4>
+              <ul>
+                <li>Prone to overfitting</li>
+                <li>Can be unstable with small data changes</li>
+                <li>Bias toward features with many levels</li>
+                <li>Not optimal for linear relationships</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+
+        <div class="app-card">
+          <div class="app-card-header">
+            <div class="app-icon">📁</div>
+            <div class="app-title">File System Trees</div>
+          </div>
+          <p>N-ary trees representing hierarchical file and directory structures. Each directory can contain files (leaves) and subdirectories (internal nodes), creating the familiar folder hierarchy.</p>
+          <div class="app-examples">
+            <strong>Real Uses:</strong> Operating system file systems, version control systems (Git), XML/JSON document structures, organizational hierarchies
+          </div>
+          <div class="pros-cons">
+            <div class="pros">
+              <h4>Strengths</h4>
+              <ul>
+                <li>Natural representation of hierarchies</li>
+                <li>Intuitive navigation and organization</li>
+                <li>Supports arbitrary branching</li>
+                <li>Efficient path-based access</li>
+              </ul>
+            </div>
+            <div class="cons">
+              <h4>Weaknesses</h4>
+              <ul>
+                <li>Deep nesting can cause performance issues</li>
+                <li>No built-in search optimization</li>
+                <li>Vulnerable to imbalanced structures</li>
+                <li>Path length limitations in some systems</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="callout callout-info">
+        <span class="callout-icon" style="color:var(--jade);">🎯</span>
+        <div class="callout-content">
+          <strong>Choosing the Right Tree</strong>
+          The choice of tree structure depends on your specific requirements: BSTs for general searching, AVL/Red-Black for guaranteed performance, B-trees for disk-based systems, heaps for priority-based access, and tries for string operations. Consider your data patterns, performance requirements, and the trade-offs between simplicity and optimization.
+        </div>
+      </div>
+    </div>
+  </details>
+
+
+  <!-- ═══════════════════ SECTION 5: TREE OPERATIONS & TRAVERSALS ═══════════════════ -->
+  <div class="section-title">Tree Operations &amp; Traversal Methods</div>
+
+  <details>
+    <summary>
+      <div class="summary-icon" style="background:rgba(255,191,0,0.15); color:var(--amber); border-color:var(--amber);">🔄</div>
+      How We Navigate &amp; Manipulate Tree Structures
+    </summary>
+    <div class="details-body">
+      <p style="color:var(--text-dim); margin-bottom:18px; font-size:14px;">Tree operations define how we interact with tree structures: how we visit nodes, search for data, insert new elements, and maintain structural properties. Understanding these operations is essential for designing efficient tree-based algorithms.</p>
+
+      <div class="concept-grid">
+        <div class="concept-card">
+          <div class="concept-card-header">
+            <div class="concept-card-name">Tree Traversals</div>
+          </div>
+          <p><strong>Inorder (Left-Root-Right):</strong> Visits nodes in sorted order for BSTs<br>
+          <strong>Preorder (Root-Left-Right):</strong> Useful for copying or serializing trees<br>
+          <strong>Postorder (Left-Right-Root):</strong> Useful for deletion or calculating sizes<br>
+          <strong>Level-order (Breadth-first):</strong> Visits nodes level by level</p>
+          <div class="tree-types">
+            <span class="type-badge type-advanced">Systematic visiting</span>
+            <span class="type-badge type-search">Different orderings</span>
+          </div>
+        </div>
+
+        <div class="concept-card">
+          <div class="concept-card-header">
+            <div class="concept-card-name">Search Operations</div>
+          </div>
+          <p><strong>Find:</strong> Locate a specific value in the tree<br>
+          <strong>Contains:</strong> Check if a value exists<br>
+          <strong>Minimum/Maximum:</strong> Find extreme values<br>
+          <strong>Predecessor/Successor:</strong> Find neighboring values in sorted order</p>
+          <div class="tree-types">
+            <span class="type-badge type-search">O(log n) average</span>
+            <span class="type-badge type-balanced">Path-based</span>
+          </div>
+        </div>
+
+        <div class="concept-card">
+          <div class="concept-card-header">
+            <div class="concept-card-name">Modification Operations</div>
+          </div>
+          <p><strong>Insert:</strong> Add new nodes while maintaining tree properties<br>
+          <strong>Delete:</strong> Remove nodes with proper restructuring<br>
+          <strong>Update:</strong> Modify existing node values<br>
+          <strong>Rebalance:</strong> Maintain optimal tree structure</p>
+          <div class="tree-types">
+            <span class="type-badge type-advanced">Structure-preserving</span>
+            <span class="type-badge type-balanced">Property maintenance</span>
+          </div>
+        </div>
+
+        <div class="concept-card">
+          <div class="concept-card-header">
+            <div class="concept-card-name">Structural Operations</div>
+          </div>
+          <p><strong>Height/Depth Calculation:</strong> Measure tree dimensions<br>
+          <strong>Size Counting:</strong> Count total nodes or subtree sizes<br>
+          <strong>Balance Checking:</strong> Verify structural properties<br>
+          <strong>Path Finding:</strong> Find routes between nodes</p>
+          <div class="tree-types">
+            <span class="type-badge type-special">Metrics & analysis</span>
+            <span class="type-badge type-advanced">Recursive algorithms</span>
+          </div>
+        </div>
+
+        <div class="concept-card">
+          <div class="concept-card-header">
+            <div class="concept-card-name">Range Operations</div>
+          </div>
+          <p><strong>Range Queries:</strong> Find all values within a range<br>
+          <strong>Range Counting:</strong> Count elements in a range<br>
+          <strong>Nearest Neighbor:</strong> Find closest values<br>
+          <strong>K-th Element:</strong> Find element at specific rank</p>
+          <div class="tree-types">
+            <span class="type-badge type-search">Multi-element queries</span>
+            <span class="type-badge type-special">Order-dependent</span>
+          </div>
+        </div>
+
+        <div class="concept-card">
+          <div class="concept-card-header">
+            <div class="concept-card-name">Balancing Operations</div>
+          </div>
+          <p><strong>Rotations:</strong> Restructure subtrees to maintain balance<br>
+          <strong>Split/Merge:</strong> Divide or combine trees<br>
+          <strong>Heapify:</strong> Restore heap properties after modifications<br>
+          <strong>Recoloring:</strong> Adjust colors in Red-Black trees</p>
+          <div class="tree-types">
+            <span class="type-badge type-balanced">Performance optimization</span>
+            <span class="type-badge type-advanced">Complex algorithms</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="callout callout-tip">
+        <span class="callout-icon" style="color:var(--sage);">🧭</span>
+        <div class="callout-content">
+          <strong>Traversal Strategy Selection</strong>
+          Choose traversal methods based on your goal: inorder for sorted processing, preorder for structure copying, postorder for safe deletion, and level-order for breadth-first analysis. The recursive nature of trees makes most operations naturally recursive, leading to elegant and intuitive algorithm designs.
+        </div>
+      </div>
+    </div>
+  </details>
+
+  <!-- ═══════════════════ SECTION 6: TREES IN COMPUTING SYSTEMS ═══════════════════ -->
+  <div class="section-title">Trees in Computing Systems</div>
+
+  <details open>
+    <summary>
+      <div class="summary-icon" style="background:rgba(184,115,51,0.15); color:var(--copper); border-color:var(--copper);">💻</div>
+      Where Trees Power Modern Computing
+    </summary>
+    <div class="details-body">
+      <p style="color:var(--text-dim); margin-bottom:18px; font-size:14px;">Tree structures form the backbone of countless computing systems, from the databases that store our information to the compilers that translate our code. Understanding these applications reveals why trees are fundamental to computer science.</p>
+
+      <div class="app-grid">
+        <div class="app-card">
+          <div class="app-card-header">
+            <div class="app-icon">🗄️</div>
+            <div class="app-title">Database Systems</div>
+          </div>
+          <p>Database indexes use B+ trees to enable fast searching across millions of records. Query optimizers build execution trees to find optimal query plans. Hierarchical data models use trees for nested structures.</p>
+          <div class="app-examples"><strong>Examples:</strong> MySQL B+ tree indexes, PostgreSQL query plans, MongoDB document hierarchies, Neo4j graph relationships</div>
+        </div>
+
+        <div class="app-card">
+          <div class="app-card-header">
+            <div class="app-icon">📁</div>
+            <div class="app-title">File Systems</div>
+          </div>
+          <p>Operating systems organize files and directories in tree hierarchies. File allocation tables use tree structures for efficient space management. Version control systems track file history in tree formats.</p>
+          <div class="app-examples"><strong>Examples:</strong> Unix/Linux directory trees, NTFS file allocation, Git commit trees, SVN repository structures</div>
+        </div>
+
+        <div class="app-card">
+          <div class="app-card-header">
+            <div class="app-icon">🔤</div>
+            <div class="app-title">Compilers & Interpreters</div>
+          </div>
+          <p>Programming language processors build abstract syntax trees (ASTs) from source code. Parse trees represent grammatical structure. Symbol tables use trees for scope management and variable lookup.</p>
+          <div class="app-examples"><strong>Examples:</strong> GCC parser trees, JavaScript V8 ASTs, Python bytecode trees, Java syntax trees</div>
+        </div>
+
+        <div class="app-card">
+          <div class="app-card-header">
+            <div class="app-icon">🌐</div>
+            <div class="app-title">Web Technologies</div>
+          </div>
+          <p>HTML documents form DOM trees that browsers manipulate. CSS selectors traverse DOM hierarchies. XML parsing creates tree structures for data interchange and processing.</p>
+          <div class="app-examples"><strong>Examples:</strong> Browser DOM manipulation, React virtual DOM, XML/JSON parsers, XPath query engines</div>
+        </div>
+
+        <div class="app-card">
+          <div class="app-card-header">
+            <div class="app-icon">🎮</div>
+            <div class="app-title">Game Development</div>
+          </div>
+          <p>Scene graphs organize 3D objects hierarchically. AI behavior trees control character actions. Spatial partitioning trees (BSP, octrees) optimize collision detection and rendering.</p>
+          <div class="app-examples"><strong>Examples:</strong> Unity scene hierarchies, Unreal Engine behavior trees, 3D graphics octrees, pathfinding trees</div>
+        </div>
+
+        <div class="app-card">
+          <div class="app-card-header">
+            <div class="app-icon">🤖</div>
+            <div class="app-title">Artificial Intelligence</div>
+          </div>
+          <p>Decision trees classify data and make predictions. Search trees explore solution spaces. Neural networks can use tree-like architectures for specialized tasks like parsing and reasoning.</p>
+          <div class="app-examples"><strong>Examples:</strong> Random forest classifiers, game tree search (chess, Go), decision tree learning, hierarchical clustering</div>
+        </div>
+
+        <div class="app-card">
+          <div class="app-card-header">
+            <div class="app-icon">🌍</div>
+            <div class="app-title">Geographic Information Systems</div>
+          </div>
+          <p>Spatial indexing uses R-trees and quad-trees to organize geographic data. Map rendering uses hierarchical levels of detail. Route planning builds shortest path trees across road networks.</p>
+          <div class="app-examples"><strong>Examples:</strong> Google Maps spatial indexes, GPS navigation trees, GIS quad-tree indexing, OpenStreetMap hierarchies</div>
+        </div>
+
+        <div class="app-card">
+          <div class="app-card-header">
+            <div class="app-icon">📊</div>
+            <div class="app-title">Data Processing</div>
+          </div>
+          <p>Expression trees evaluate mathematical formulas. Parsing trees process structured data formats. Aggregation trees compute statistics over hierarchical data efficiently.</p>
+          <div class="app-examples"><strong>Examples:</strong> Apache Spark query plans, pandas hierarchical indexing, Excel formula trees, statistical computation trees</div>
+        </div>
+
+        <div class="app-card">
+          <div class="app-card-header">
+            <div class="app-icon">🔒</div>
+            <div class="app-title">Security Systems</div>
+          </div>
+          <p>Certificate chains form trees of trust. Access control uses hierarchy trees for permission inheritance. Firewall rules organize into tree structures for efficient packet filtering.</p>
+          <div class="app-examples"><strong>Examples:</strong> PKI certificate hierarchies, LDAP directory trees, firewall rule trees, OAuth permission trees</div>
+        </div>
+      </div>
+
+      <div class="callout callout-info">
+        <span class="callout-icon" style="color:var(--jade);">🌟</span>
+        <div class="callout-content">
+          <strong>Universal Pattern</strong>
+          Trees appear throughout computing because they naturally represent hierarchical relationships that exist in real-world problems. From organizational structures to decision processes, from file organization to data relationships — hierarchical thinking is fundamental to how humans organize information, making trees an essential bridge between human cognition and computational efficiency.
+        </div>
+      </div>
+    </div>
+  </details>
+
+
+  <!-- ═══════════════════ SECTION 7: ADVANTAGES & DISADVANTAGES ═══════════════════ -->
+  <div class="section-title">Advantages &amp; Disadvantages of Tree Structures</div>
+
+  <details>
+    <summary>
+      <div class="summary-icon" style="background:rgba(80,200,120,0.15); color:var(--jade); border-color:var(--jade);">⚖️</div>
+      Understanding Tree Trade-offs &amp; Limitations
+    </summary>
+    <div class="details-body">
+      <p style="color:var(--text-dim); margin-bottom:18px; font-size:14px;">Like any data structure, trees come with inherent advantages and disadvantages. Understanding these trade-offs is crucial for making informed decisions about when to use tree structures and which specific tree type best fits your requirements.</p>
+
+      <div class="pros-cons">
+        <div class="pros">
+          <h4>Major Advantages</h4>
+          <ul>
+            <li><strong>Efficient Search Operations:</strong> O(log n) average-case search time in balanced trees</li>
+            <li><strong>Natural Hierarchy Representation:</strong> Perfect for modeling parent-child relationships</li>
+            <li><strong>Ordered Data Management:</strong> BSTs maintain sorted order with dynamic insertion/deletion</li>
+            <li><strong>Flexible Size:</strong> Can grow and shrink dynamically without pre-allocation</li>
+            <li><strong>Recursive Structure:</strong> Enables elegant algorithm design using divide-and-conquer</li>
+            <li><strong>Range Query Support:</strong> Efficient searching within value ranges</li>
+            <li><strong>Memory Efficiency:</strong> Only allocate space for existing elements</li>
+            <li><strong>Balanced Performance:</strong> Good trade-off between search, insertion, and deletion</li>
+            <li><strong>Natural Sorting:</strong> In-order traversal produces sorted sequence</li>
+            <li><strong>Path-based Access:</strong> Intuitive navigation through hierarchical structures</li>
+          </ul>
+        </div>
+
+        <div class="cons">
+          <h4>Significant Disadvantages</h4>
+          <ul>
+            <li><strong>Balance Maintenance:</strong> Requires complex algorithms to prevent degeneration</li>
+            <li><strong>Worst-case Performance:</strong> Can degrade to O(n) operations in unbalanced trees</li>
+            <li><strong>Memory Overhead:</strong> Pointer storage adds significant space overhead</li>
+            <li><strong>Cache Performance:</strong> Poor locality of reference compared to arrays</li>
+            <li><strong>Implementation Complexity:</strong> Balanced trees are difficult to implement correctly</li>
+            <li><strong>No Constant-time Access:</strong> Cannot access arbitrary elements by index in O(1)</li>
+            <li><strong>Recursive Overhead:</strong> Function call overhead in recursive algorithms</li>
+            <li><strong>Memory Fragmentation:</strong> Dynamic allocation can lead to fragmented memory</li>
+            <li><strong>Thread Safety:</strong> Concurrent access requires careful synchronization</li>
+            <li><strong>Space Inefficiency:</strong> Small datasets may waste space due to pointer overhead</li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="concept-grid" style="margin-top: 24px;">
+        <div class="concept-card">
+          <div class="concept-card-header">
+            <div class="concept-card-name">When Trees Excel</div>
+          </div>
+          <p><strong>Hierarchical Data:</strong> Natural fit for organizational charts, file systems, taxonomies<br>
+          <strong>Search-Heavy Applications:</strong> Frequent lookups with occasional updates<br>
+          <strong>Dynamic Datasets:</strong> Size changes frequently during execution<br>
+          <strong>Range Queries:</strong> Need to find all elements within value ranges<br>
+          <strong>Ordered Processing:</strong> Need to process data in sorted order</p>
+        </div>
+
+        <div class="concept-card">
+          <div class="concept-card-header">
+            <div class="concept-card-name">When to Consider Alternatives</div>
+          </div>
+          <p><strong>Small Datasets:</strong> Arrays may be faster due to cache locality<br>
+          <strong>Random Access:</strong> Arrays provide O(1) indexed access<br>
+          <strong>Memory Constraints:</strong> Hash tables or arrays more space-efficient<br>
+          <strong>Simple Operations:</strong> Basic lists sufficient for sequential processing<br>
+          <strong>High-Performance Requirements:</strong> Specialized structures may be better</p>
+        </div>
+
+        <div class="concept-card">
+          <div class="concept-card-header">
+            <div class="concept-card-name">Performance Characteristics</div>
+          </div>
+          <p><strong>Best Case:</strong> Perfectly balanced tree - O(log n) all operations<br>
+          <strong>Average Case:</strong> Reasonably balanced - O(log n) expected performance<br>
+          <strong>Worst Case:</strong> Degenerate tree - O(n) linear performance<br>
+          <strong>Space Complexity:</strong> O(n) for n elements plus pointer overhead<br>
+          <strong>Cache Behavior:</strong> Generally poor due to pointer-chasing</p>
+        </div>
+      </div>
+
+      <div class="callout callout-warn">
+        <span class="callout-icon" style="color:var(--warning);">⚠️</span>
+        <div class="callout-content">
+          <strong>The Balance Imperative</strong>
+          The key advantage of trees — logarithmic performance — depends entirely on maintaining balanced structure. An unbalanced tree can perform as poorly as a linked list. This is why self-balancing trees like AVL and Red-Black trees are crucial for production systems, despite their implementation complexity.
+        </div>
+      </div>
+    </div>
+  </details>
+
+  <!-- ═══════════════════ SECTION 8: MASTERY SUMMARY ═══════════════════ -->
+  <div class="section-title">Tree Data Structure Mastery</div>
+
+  <details open>
+    <summary>
+      <div class="summary-icon" style="background:rgba(80,200,120,0.15); color:var(--jade); border-color:var(--jade);">🎯</div>
+      Complete Understanding of Hierarchical Data Structures
+    </summary>
+    <div class="details-body">
+      <div class="callout callout-info">
+        <span class="callout-icon" style="color:var(--jade);">✅</span>
+        <div class="callout-content">
+          <strong>Fundamental Concepts Mastered</strong>
+          ✅ Understand tree terminology: nodes, roots, leaves, height, depth<br>
+          ✅ Recognize different tree types and their specific use cases<br>
+          ✅ Know when trees provide advantages over linear data structures<br>
+          ✅ Understand the importance of balance in tree performance<br>
+          ✅ Recognize trees throughout computing systems and applications<br>
+          ✅ Appreciate the recursive nature of tree structures and algorithms
+        </div>
+      </div>
+
+      <div class="concept-grid">
+        <div class="concept-card">
+          <div class="concept-card-header">
+            <div class="concept-card-name">Core Knowledge Gained</div>
+          </div>
+          <p><strong>Structural Understanding:</strong> How hierarchical relationships create efficient access patterns<br>
+          <strong>Performance Analysis:</strong> Why balance determines complexity and how to maintain it<br>
+          <strong>Application Recognition:</strong> Where trees naturally solve computational problems<br>
+          <strong>Design Trade-offs:</strong> When to choose trees vs. other data structures<br>
+          <strong>Implementation Awareness:</strong> Complexity of building production-ready tree structures</p>
+        </div>
+
+        <div class="concept-card">
+          <div class="concept-card-header">
+            <div class="concept-card-name">Practical Applications</div>
+          </div>
+          <p><strong>System Design:</strong> Using trees for scalable hierarchical data organization<br>
+          <strong>Algorithm Selection:</strong> Choosing appropriate tree types for specific problems<br>
+          <strong>Performance Optimization:</strong> Understanding when tree overhead is justified<br>
+          <strong>Data Modeling:</strong> Representing real-world hierarchies in computational systems<br>
+          <strong>Problem Solving:</strong> Recognizing tree-based solutions to complex problems</p>
+        </div>
+
+        <div class="concept-card">
+          <div class="concept-card-header">
+            <div class="concept-card-name">Advanced Understanding</div>
+          </div>
+          <p><strong>Balance Mechanisms:</strong> Why AVL, Red-Black, and B-trees prevent performance degradation<br>
+          <strong>Traversal Strategies:</strong> How different visiting orders serve different algorithmic needs<br>
+          <strong>Specialization Benefits:</strong> How specific tree types optimize for particular use cases<br>
+          <strong>System Integration:</strong> How trees form the backbone of modern computing infrastructure<br>
+          <strong>Recursive Thinking:</strong> How tree structure naturally supports divide-and-conquer approaches</p>
+        </div>
+      </div>
+
+      <table class="comparison-table">
+        <thead>
+          <tr>
+            <th>Tree Family</th>
+            <th>Primary Strength</th>
+            <th>Best Application</th>
+            <th>Key Limitation</th>
+            <th>When to Choose</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><strong>Binary Search Trees</strong></td>
+            <td>Simple ordered structure</td>
+            <td>General searching</td>
+            <td>Can become unbalanced</td>
+            <td>Learning, prototyping</td>
+          </tr>
+          <tr>
+            <td><strong>Balanced Trees</strong></td>
+            <td>Guaranteed performance</td>
+            <td>Production systems</td>
+            <td>Implementation complexity</td>
+            <td>Critical applications</td>
+          </tr>
+          <tr>
+            <td><strong>B-Trees</strong></td>
+            <td>Disk-optimized structure</td>
+            <td>Database indexes</td>
+            <td>Overhead for small data</td>
+            <td>Large, persistent datasets</td>
+          </tr>
+          <tr>
+            <td><strong>Heaps</strong></td>
+            <td>Priority-based access</td>
+            <td>Priority queues</td>
+            <td>No general searching</td>
+            <td>Scheduling, optimization</td>
+          </tr>
+          <tr>
+            <td><strong>Tries</strong></td>
+            <td>String prefix matching</td>
+            <td>Text processing</td>
+            <td>High memory usage</td>
+            <td>Autocomplete, dictionaries</td>
+          </tr>
+          <tr>
+            <td><strong>Decision Trees</strong></td>
+            <td>Interpretable decisions</td>
+            <td>Machine learning</td>
+            <td>Overfitting tendency</td>
+            <td>Classification problems</td>
+          </tr>
+        </tbody>
+      </table>
+
+      <div class="tree-visual" style="margin-top: 24px;">
+        <div style="color:var(--jade); font-weight:700; margin-bottom:15px; font-size:16px;">Your Tree Knowledge Journey</div>
+        
+        <div class="tree-level">
+          <div class="tree-node" style="background:var(--gold-leaf); color:var(--forest-dark);">Foundation</div>
+        </div>
+        
+        <div class="tree-level">
+          <span class="tree-branch">├────┬────┤</span>
+        </div>
+        
+        <div class="tree-level">
+          <div class="tree-node">Types</div>
+          <div class="tree-node">Operations</div>
+          <div class="tree-node">Applications</div>
+        </div>
+        
+        <div class="tree-level">
+          <span class="tree-branch">├─┤</span>
+          <span style="margin:0 20px;"></span>
+          <span class="tree-branch">├─┤</span>
+          <span style="margin:0 20px;"></span>
+          <span class="tree-branch">├─┤</span>
+        </div>
+        
+        <div class="tree-level">
+          <div class="tree-node" style="font-size:12px;">BST</div>
+          <div class="tree-node" style="font-size:12px;">AVL</div>
+          <div class="tree-node" style="font-size:12px;">Traversal</div>
+          <div class="tree-node" style="font-size:12px;">Search</div>
+          <div class="tree-node" style="font-size:12px;">Systems</div>
+          <div class="tree-node" style="font-size:12px;">AI</div>
+        </div>
+        
+        <div style="margin-top:20px; color:var(--text-dim); font-size:13px;">
+          Each branch of knowledge builds upon the foundation, creating deep understanding
+        </div>
+      </div>
+
+      <div class="callout callout-tip">
+        <span class="callout-icon" style="color:var(--sage);">🌱</span>
+        <div class="callout-content">
+          <strong>Growing Your Tree Knowledge</strong>
+          This foundational understanding of trees prepares you for deeper specialization in specific tree types, advanced algorithms, and system design. Trees are fundamental to computer science because they mirror how we naturally think about hierarchy, organization, and relationships — making them essential tools for solving complex computational problems efficiently and intuitively.
+        </div>
+      </div>
+    </div>
+  </details>
+
+  <!-- Footer -->
+  <footer>
+    <span>COP 3530</span> · Data Structures · The Tree Data Structure: Complete Overview
+    &nbsp;|&nbsp; Hierarchical organization in nature and computing
+    &nbsp;|&nbsp; <span>Foundation for efficient algorithms</span>
+  </footer>
+
+</div><!-- end .container -->
+
+<script>
+  // Natural, organic interactions for the botanical forest aesthetic
+  document.addEventListener('DOMContentLoaded', () => {
+    // Smooth section opening with gentle, natural transitions
+    document.querySelectorAll('summary').forEach(summary => {
+      summary.addEventListener('click', (e) => {
+        const details = summary.parentElement;
+        if (!details.open) {
+          setTimeout(() => {
+            details.scrollIntoView({ 
+              behavior: 'smooth', 
+              block: 'start' 
+            });
+          }, 250);
+        }
+      });
+    });
+
+    // Organic growth-like hover effects for concept cards
+    document.querySelectorAll('.concept-card').forEach(card => {
+      card.addEventListener('mouseenter', () => {
+        card.style.transform = 'translateY(-8px)';
+        card.style.boxShadow = '0 18px 55px rgba(80,200,120,0.12)';
+        card.style.borderColor = 'var(--jade)';
+      });
+      card.addEventListener('mouseleave', () => {
+        card.style.transform = 'translateY(-6px)';
+        card.style.boxShadow = '';
+        card.style.borderColor = 'var(--border)';
+      });
+    });
+
+    // Natural badge interactions with growth effects
+    const badges = document.querySelectorAll('.type-badge');
+    badges.forEach(badge => {
+      badge.style.transition = 'all 0.3s ease';
+      badge.addEventListener('mouseenter', () => {
+        badge.style.transform = 'scale(1.1)';
+        badge.style.boxShadow = '0 4px 15px rgba(80,200,120,0.2)';
+      });
+      badge.addEventListener('mouseleave', () => {
+        badge.style.transform = 'scale(1)';
+        badge.style.boxShadow = 'none';
+      });
+    });
+
+    // Application card hover effects with organic movement
+    document.querySelectorAll('.app-card').forEach(card => {
+      card.addEventListener('mouseenter', () => {
+        card.style.transform = 'translateY(-6px)';
+        card.style.boxShadow = '0 15px 45px rgba(80,200,120,0.1)';
+      });
+      card.addEventListener('mouseleave', () => {
+        card.style.transform = 'translateY(-4px)';
+        card.style.boxShadow = 'none';
+      });
+    });
+
+    // Tree node interactions with natural growth effects
+    document.querySelectorAll('.tree-node').forEach(node => {
+      node.addEventListener('mouseenter', () => {
+        node.style.transform = 'scale(1.1)';
+        node.style.boxShadow = '0 6px 20px rgba(80,200,120,0.4)';
+      });
+      node.addEventListener('mouseleave', () => {
+        node.style.transform = 'scale(1)';
+        node.style.boxShadow = '0 4px 15px rgba(80,200,120,0.3)';
+      });
+    });
+
+    // Table row highlighting with natural accent
+    document.querySelectorAll('.comparison-table tbody tr').forEach(row => {
+      row.addEventListener('mouseenter', () => {
+        row.style.backgroundColor = 'rgba(80,200,120,0.08)';
+      });
+      row.addEventListener('mouseleave', () => {
+        row.style.backgroundColor = '';
+      });
+    });
+
+    // Hero badge with natural glow effect
+    const badge = document.querySelector('.hero-badge');
+    if (badge) {
+      badge.addEventListener('mouseenter', () => {
+        badge.style.transform = 'scale(1.05)';
+        badge.style.boxShadow = '0 6px 20px rgba(80,200,120,0.4)';
+      });
+      badge.addEventListener('mouseleave', () => {
+        badge.style.transform = 'scale(1)';
+        badge.style.boxShadow = '0 4px 15px rgba(80,200,120,0.3)';
+      });
+    }
+  });
+</script>
+
+</div></div></body>
+</html>

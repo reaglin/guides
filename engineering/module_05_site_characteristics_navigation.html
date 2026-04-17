@@ -1,0 +1,1588 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Module 5: Site Characteristics and Navigation — BMPFast Learning System</title>
+<link href="https://fonts.googleapis.com/css2?family=Source+Serif+4:ital,wght@0,300;0,400;0,600;0,700;1,400&family=Playfair+Display:wght@400;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --forest:       #2D5016;
+    --forest-mid:   #3D6B20;
+    --forest-light: #4E8A2A;
+    --forest-pale:  #EAF2E0;
+    --forest-rule:  #C2D9A8;
+    --warm-white:   #FAF8F3;
+    --warm-off:     #F3EFE6;
+    --ink:          #1A1A18;
+    --ink-mid:      #3A3A36;
+    --ink-light:    #6B6B60;
+    --accent:       #8B5E0A;
+    --accent-light: #F5EDD8;
+    --rule:         #D4CFC3;
+    --sidebar-w:    260px;
+  }
+
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  html { scroll-behavior: smooth; }
+
+  body {
+    background: var(--warm-white);
+    color: var(--ink);
+    font-family: 'Source Serif 4', Georgia, serif;
+    font-size: 17px;
+    line-height: 1.72;
+  }
+
+  /* ── NAV SIDEBAR ── */
+  nav#sidebar {
+    position: fixed;
+    top: 0; left: 0;
+    width: var(--sidebar-w);
+    height: 100vh;
+    background: var(--forest);
+    overflow-y: auto;
+    z-index: 100;
+    display: flex;
+    flex-direction: column;
+  }
+
+  .nav-brand {
+    padding: 28px 22px 18px;
+    border-bottom: 1px solid rgba(255,255,255,0.12);
+  }
+
+  .nav-brand .module-tag {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--forest-rule);
+    display: block;
+    margin-bottom: 6px;
+  }
+
+  .nav-brand .series-title {
+    font-family: 'Playfair Display', serif;
+    font-size: 13px;
+    font-weight: 600;
+    color: #fff;
+    line-height: 1.35;
+  }
+
+  nav#sidebar ul {
+    list-style: none;
+    padding: 16px 0 24px;
+    flex: 1;
+  }
+
+  nav#sidebar ul li a {
+    display: block;
+    padding: 8px 22px;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    color: rgba(255,255,255,0.72);
+    text-decoration: none;
+    letter-spacing: 0.02em;
+    transition: background 0.15s, color 0.15s;
+    border-left: 3px solid transparent;
+    line-height: 1.45;
+  }
+
+  nav#sidebar ul li a:hover,
+  nav#sidebar ul li a.active {
+    background: rgba(255,255,255,0.08);
+    color: #fff;
+    border-left-color: var(--forest-rule);
+  }
+
+  nav#sidebar ul li.section-head {
+    padding: 16px 22px 4px;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 9px;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    color: var(--forest-rule);
+    opacity: 0.7;
+  }
+
+  /* ── MAIN CONTENT ── */
+  main {
+    margin-left: var(--sidebar-w);
+    min-height: 100vh;
+  }
+
+  /* ── HERO ── */
+  .hero {
+    background: linear-gradient(135deg, var(--forest) 0%, var(--forest-mid) 60%, var(--forest-light) 100%);
+    padding: 64px 72px 52px;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .hero::after {
+    content: '';
+    position: absolute;
+    bottom: 0; left: 0; right: 0;
+    height: 4px;
+    background: linear-gradient(90deg, var(--forest-rule), transparent);
+  }
+
+  .hero-meta {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--forest-rule);
+    margin-bottom: 18px;
+  }
+
+  .hero h1 {
+    font-family: 'Playfair Display', serif;
+    font-size: 38px;
+    font-weight: 700;
+    color: #fff;
+    line-height: 1.2;
+    margin-bottom: 10px;
+    max-width: 700px;
+  }
+
+  .hero-sub {
+    font-size: 18px;
+    color: rgba(255,255,255,0.82);
+    font-style: italic;
+    max-width: 600px;
+    margin-bottom: 32px;
+  }
+
+  .hero-byline {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11.5px;
+    color: rgba(255,255,255,0.6);
+    letter-spacing: 0.06em;
+  }
+
+  /* ── CONTENT WRAPPER ── */
+  .content-wrap {
+    max-width: 860px;
+    padding: 56px 72px 80px;
+  }
+
+  /* ── SECTION HEADERS ── */
+  .section-number {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    letter-spacing: 0.14em;
+    color: var(--forest-light);
+    text-transform: uppercase;
+    display: block;
+    margin-bottom: 6px;
+  }
+
+  h2 {
+    font-family: 'Playfair Display', serif;
+    font-size: 28px;
+    font-weight: 700;
+    color: var(--forest);
+    line-height: 1.25;
+    margin-bottom: 20px;
+    padding-bottom: 10px;
+    border-bottom: 2px solid var(--forest-rule);
+  }
+
+  h3 {
+    font-family: 'Playfair Display', serif;
+    font-size: 20px;
+    font-weight: 600;
+    color: var(--forest-mid);
+    margin-top: 34px;
+    margin-bottom: 12px;
+  }
+
+  h4 {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 13px;
+    font-weight: 500;
+    color: var(--ink-mid);
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    margin-top: 24px;
+    margin-bottom: 10px;
+  }
+
+  p { margin-bottom: 16px; }
+
+  section { margin-bottom: 52px; }
+
+  /* ── CALLOUT BOXES ── */
+  .callout {
+    border-left: 4px solid var(--forest-light);
+    background: var(--forest-pale);
+    padding: 18px 24px;
+    border-radius: 0 6px 6px 0;
+    margin: 24px 0;
+  }
+
+  .callout.accent {
+    border-left-color: var(--accent);
+    background: var(--accent-light);
+  }
+
+  .callout.note {
+    border-left-color: #5B7FA6;
+    background: #EDF2F8;
+  }
+
+  .callout p:last-child { margin-bottom: 0; }
+
+  .callout-label {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--forest);
+    display: block;
+    margin-bottom: 6px;
+    font-weight: 500;
+  }
+
+  .callout.accent .callout-label { color: var(--accent); }
+  .callout.note .callout-label { color: #3D5F82; }
+
+  /* ── OBJECTIVES BOX ── */
+  .objectives-box {
+    background: var(--forest);
+    color: #fff;
+    border-radius: 8px;
+    padding: 32px 36px;
+    margin: 28px 0 36px;
+  }
+
+  .objectives-box h3 {
+    color: var(--forest-rule);
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    margin-top: 0;
+    margin-bottom: 18px;
+  }
+
+  .objectives-box ol {
+    padding-left: 22px;
+  }
+
+  .objectives-box ol li {
+    font-family: 'Source Serif 4', serif;
+    font-size: 16px;
+    color: rgba(255,255,255,0.9);
+    margin-bottom: 10px;
+    line-height: 1.5;
+  }
+
+  /* ── ORDERED / UNORDERED LISTS ── */
+  ul, ol { padding-left: 26px; margin-bottom: 18px; }
+  li { margin-bottom: 8px; line-height: 1.65; }
+
+  ul li::marker { color: var(--forest-light); }
+  ol li::marker { color: var(--forest-light); font-weight: 600; }
+
+  /* ── TABLE ── */
+  .table-wrap {
+    overflow-x: auto;
+    margin: 24px 0 32px;
+    border-radius: 6px;
+    box-shadow: 0 1px 6px rgba(0,0,0,0.08);
+  }
+
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 14.5px;
+  }
+
+  thead th {
+    background: var(--forest);
+    color: #fff;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    padding: 12px 16px;
+    text-align: left;
+    white-space: nowrap;
+  }
+
+  tbody tr:nth-child(even) { background: var(--forest-pale); }
+  tbody tr:nth-child(odd)  { background: #fff; }
+
+  tbody td {
+    padding: 11px 16px;
+    border-bottom: 1px solid var(--forest-rule);
+    vertical-align: top;
+    line-height: 1.5;
+  }
+
+  tbody tr:last-child td { border-bottom: none; }
+
+  td.highlight {
+    font-weight: 600;
+    color: var(--forest);
+  }
+
+  /* ── FIELD REFERENCE GRID ── */
+  .field-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 14px;
+    margin: 20px 0 28px;
+  }
+
+  .field-item {
+    background: var(--warm-off);
+    border: 1px solid var(--rule);
+    border-radius: 6px;
+    padding: 14px 16px;
+  }
+
+  .field-item .field-name {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11.5px;
+    color: var(--forest);
+    font-weight: 500;
+    margin-bottom: 4px;
+  }
+
+  .field-item p {
+    font-size: 13.5px;
+    color: var(--ink-mid);
+    margin: 0;
+    line-height: 1.5;
+  }
+
+  /* ── WORKFLOW STEPS ── */
+  .workflow {
+    counter-reset: step;
+    margin: 20px 0;
+  }
+
+  .workflow-step {
+    display: flex;
+    gap: 18px;
+    align-items: flex-start;
+    margin-bottom: 16px;
+  }
+
+  .workflow-step::before {
+    counter-increment: step;
+    content: counter(step);
+    flex-shrink: 0;
+    width: 34px;
+    height: 34px;
+    background: var(--forest);
+    color: #fff;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 13px;
+    font-weight: 500;
+    margin-top: 2px;
+  }
+
+  .workflow-step-body { flex: 1; }
+
+  .workflow-step-title {
+    font-family: 'Playfair Display', serif;
+    font-weight: 600;
+    color: var(--forest-mid);
+    margin-bottom: 4px;
+  }
+
+  .workflow-step-body p { margin: 0; font-size: 15px; }
+
+  /* ── IMAGE PLACEHOLDERS ── */
+  .img-placeholder {
+    width: 100%;
+    background: var(--warm-off);
+    border: 2px dashed var(--forest-rule);
+    border-radius: 6px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 36px 24px;
+    margin: 24px 0;
+    text-align: center;
+  }
+
+  .img-placeholder .img-icon {
+    font-size: 36px;
+    margin-bottom: 10px;
+    opacity: 0.5;
+  }
+
+  .img-placeholder .img-label {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--forest-light);
+    margin-bottom: 6px;
+  }
+
+  .img-placeholder .img-caption {
+    font-size: 14px;
+    color: var(--ink-light);
+    font-style: italic;
+    max-width: 480px;
+  }
+
+  .img-placeholder.tall { min-height: 300px; }
+  .img-placeholder.short { min-height: 160px; }
+
+  /* ── SCREEN MOCKUP ── */
+  .screen-mock {
+    background: #f4f4f4;
+    border: 1.5px solid #ccc;
+    border-radius: 6px;
+    margin: 20px 0 28px;
+    overflow: hidden;
+    font-size: 13.5px;
+  }
+
+  .screen-mock-bar {
+    background: #e0e0e0;
+    padding: 6px 14px;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10.5px;
+    color: #555;
+    border-bottom: 1px solid #ccc;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  .screen-mock-bar .dot { width: 10px; height: 10px; border-radius: 50%; }
+  .screen-mock-bar .dot.r { background: #e05252; }
+  .screen-mock-bar .dot.y { background: #e0bc52; }
+  .screen-mock-bar .dot.g { background: #52a852; }
+
+  .screen-mock-body { padding: 18px 22px; }
+
+  .screen-row {
+    display: flex;
+    align-items: baseline;
+    gap: 12px;
+    margin-bottom: 10px;
+    flex-wrap: wrap;
+  }
+
+  .screen-label {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 12px;
+    color: var(--ink-mid);
+    min-width: 240px;
+    flex-shrink: 0;
+  }
+
+  .screen-value {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 12px;
+    background: #fff;
+    border: 1px solid #bbb;
+    border-radius: 3px;
+    padding: 3px 10px;
+    color: var(--ink);
+  }
+
+  .screen-value.dropdown::after {
+    content: ' ▾';
+    font-size: 10px;
+    color: #777;
+  }
+
+  .screen-divider {
+    border: none;
+    border-top: 1px solid #ddd;
+    margin: 12px 0;
+  }
+
+  .screen-buttons {
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
+    margin-top: 12px;
+  }
+
+  .screen-btn {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11.5px;
+    background: #e8e8e8;
+    border: 1px solid #bbb;
+    border-radius: 4px;
+    padding: 5px 14px;
+    cursor: default;
+    color: var(--ink-mid);
+  }
+
+  .screen-btn.primary {
+    background: var(--forest-pale);
+    border-color: var(--forest-rule);
+    color: var(--forest);
+    font-weight: 500;
+  }
+
+  .screen-nav-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+  }
+
+  .screen-nav-list li {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 12px;
+    padding: 5px 12px;
+    border-radius: 3px;
+    margin-bottom: 2px;
+    color: var(--ink-mid);
+  }
+
+  .screen-nav-list li.active-nav {
+    background: var(--forest-pale);
+    color: var(--forest);
+    font-weight: 500;
+  }
+
+  .screen-nav-list li.dim { opacity: 0.45; }
+
+  .screen-two-col {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 16px;
+    margin-top: 10px;
+  }
+
+  /* ── DROPDOWN OPTIONS ── */
+  .dropdown-list {
+    background: #fff;
+    border: 1px solid #bbb;
+    border-radius: 4px;
+    overflow: hidden;
+    margin: 4px 0 16px;
+    display: inline-block;
+    min-width: 260px;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 12.5px;
+  }
+
+  .dropdown-list .dd-item {
+    padding: 5px 14px;
+    border-bottom: 1px solid #eee;
+    color: var(--ink-mid);
+  }
+
+  .dropdown-list .dd-item:last-child { border-bottom: none; }
+  .dropdown-list .dd-item.selected { background: #1E4E90; color: #fff; }
+
+  /* ── HORIZONTAL RULE ── */
+  .section-rule {
+    border: none;
+    border-top: 1px solid var(--rule);
+    margin: 48px 0;
+  }
+
+  /* ── FOOTNOTE / DISCLAIMER ── */
+  .disclaimer {
+    background: var(--accent-light);
+    border-left: 4px solid var(--accent);
+    padding: 14px 20px;
+    border-radius: 0 6px 6px 0;
+    margin: 20px 0;
+    font-size: 14.5px;
+    font-style: italic;
+    color: var(--ink-mid);
+  }
+
+  /* ── SUMMARY CHECKLIST ── */
+  .checklist {
+    list-style: none;
+    padding: 0;
+    margin: 16px 0;
+  }
+
+  .checklist li {
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+    margin-bottom: 10px;
+    font-size: 15px;
+    line-height: 1.55;
+  }
+
+  .checklist li::before {
+    content: '✓';
+    flex-shrink: 0;
+    width: 22px;
+    height: 22px;
+    background: var(--forest);
+    color: #fff;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 11px;
+    font-weight: 700;
+    margin-top: 1px;
+  }
+
+  /* ── FIGURE REFERENCES ── */
+  #figure-references { background: var(--warm-off); border-top: 2px solid var(--rule); padding: 48px 72px 64px; margin-top: 0; }
+  #figure-references h2 { color: var(--ink-mid); border-bottom-color: var(--rule); }
+
+  .figure-ref-item {
+    display: flex;
+    gap: 24px;
+    align-items: flex-start;
+    padding: 20px 0;
+    border-bottom: 1px solid var(--rule);
+  }
+
+  .figure-ref-item:last-child { border-bottom: none; }
+
+  .figure-ref-thumb {
+    flex-shrink: 0;
+    width: 120px;
+    height: 80px;
+    background: var(--forest-pale);
+    border: 1px dashed var(--forest-rule);
+    border-radius: 4px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10px;
+    color: var(--forest-light);
+    text-align: center;
+    padding: 8px;
+  }
+
+  .figure-ref-body {}
+
+  .figure-ref-id {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10.5px;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--forest-light);
+    margin-bottom: 4px;
+  }
+
+  .figure-ref-title {
+    font-family: 'Playfair Display', serif;
+    font-size: 16px;
+    font-weight: 600;
+    color: var(--ink);
+    margin-bottom: 6px;
+  }
+
+  .figure-ref-desc {
+    font-size: 13.5px;
+    color: var(--ink-light);
+    line-height: 1.55;
+    margin: 0;
+  }
+
+  /* ── RESPONSIVE ── */
+  @media (max-width: 900px) {
+    nav#sidebar { display: none; }
+    main { margin-left: 0; }
+    .hero, .content-wrap { padding-left: 28px; padding-right: 28px; }
+    #figure-references { padding-left: 28px; padding-right: 28px; }
+    .field-grid { grid-template-columns: 1fr; }
+  }
+</style>
+</head>
+<body>
+
+<!-- ══════════════ SIDEBAR NAV ══════════════ -->
+<nav id="sidebar">
+  <div class="nav-brand">
+    <span class="module-tag">BMPFast Learning System</span>
+    <span class="series-title">Module 5<br>Site Characteristics &amp; Navigation</span>
+  </div>
+  <ul>
+    <li class="section-head">Introduction</li>
+    <li><a href="#objectives">Learning Objectives</a></li>
+    <li><a href="#background">Background &amp; Purpose</a></li>
+    <li><a href="#software-criteria">Software Selection Criteria</a></li>
+
+    <li class="section-head">Software Navigation</li>
+    <li><a href="#startup">Starting BMPFast</a></li>
+    <li><a href="#structure">Navigation &amp; Structure</a></li>
+    <li><a href="#site-worksheet">Site Characteristics Worksheet</a></li>
+    <li><a href="#general-site">General Site Info Fields</a></li>
+    <li><a href="#performance-standards">Performance Standards</a></li>
+
+    <li class="section-head">Rainfall Data</li>
+    <li><a href="#met-zones">Meteorological Zones</a></li>
+    <li><a href="#recent-data">2024 Annual Rainfall</a></li>
+    <li><a href="#rainfall-comparison">2000 vs. 2024 Comparison</a></li>
+
+    <li class="section-head">Catchment Data</li>
+    <li><a href="#catchment-entry">Entering Catchment Data</a></li>
+    <li><a href="#workflow">Project Workflow</a></li>
+
+    <li class="section-head">Reference</li>
+    <li><a href="#figure-references">Figure References</a></li>
+  </ul>
+</nav>
+
+<!-- ══════════════ MAIN ══════════════ -->
+<main>
+
+  <!-- HERO -->
+  <header class="hero">
+    <p class="hero-meta">BMPFast Learning System &nbsp;·&nbsp; Module 5 &nbsp;·&nbsp; December 28, 2025</p>
+    <h1>Site Characteristics and Navigation</h1>
+    <p class="hero-sub">Navigation, Worksheets, and Site &amp; Catchment Data Input in BMPFast</p>
+    <p class="hero-byline">Prepared by: Marty Wanielista &nbsp;·&nbsp; Environmental Research &amp; Design, Inc. / Daytona State College / University of Central Florida</p>
+  </header>
+
+  <!-- CONTENT -->
+  <div class="content-wrap">
+
+    <!-- ── SECTION 1: LEARNING OBJECTIVES ── -->
+    <section id="objectives">
+      <span class="section-number">Section 1</span>
+      <h2>Learning Objectives</h2>
+
+      <div class="objectives-box">
+        <h3>Upon completion of this module, participants will be able to:</h3>
+        <ol>
+          <li>Navigate the BMPFast software interface, worksheets, and button controls.</li>
+          <li>Enter and interpret rainfall data, including meteorological zone selection and mean annual rainfall input.</li>
+          <li>Understand and apply performance standards to surface discharge analysis.</li>
+          <li>Enter and review catchment characteristics including land use, curve numbers, DCIA, and pollutant loading data.</li>
+          <li>Identify the function of data fields, drop-down menus, and library support tools within BMPFast.</li>
+        </ol>
+      </div>
+
+      <div class="callout">
+        <span class="callout-label">Design Guidance</span>
+        <p>BMPFast is designed to be easy to use by preserving information standards already accepted by the engineering profession. The software is flexible enough to respond to varying conditions across Florida's Water Management Districts (WMDs) and FDEP, and draws on the regulatory guidance contained in the Applicant's Handbooks (A.H.s).</p>
+      </div>
+    </section>
+
+    <hr class="section-rule">
+
+    <!-- ── SECTION 2: BACKGROUND ── -->
+    <section id="background">
+      <span class="section-number">Section 2</span>
+      <h2>Background and Purpose</h2>
+
+      <p>BMPFast was developed to address four fundamental needs in Florida stormwater management practice:</p>
+
+      <h3>1. Consistency in ERP Assessment</h3>
+      <p>There is a recognized need for consistency in evaluating stormwater management plans submitted as part of Environmental Resource Permit (ERP) applications. Results generated by BMPFast may also support flood control permits and consumptive water use permit reviews.</p>
+
+      <h3>2. Credit for Creative and Low-Impact Solutions</h3>
+      <p>The software is designed to incorporate and grant appropriate credit for creative stormwater designs. Examples of recognized innovative practices include green roofs, depression storage (rain gardens), pervious pavements, filters, swales, harvesting systems, exfiltration trenches, vegetated filter strips (VFS), tree wells, and others.</p>
+
+      <h3>3. Florida-Based Applications</h3>
+      <p>The analysis engine is grounded in Florida-specific rainfall patterns, soils, and land use conditions — not adapted from programs designed for different climates or regulatory environments. Effectiveness is evaluated on an annual basis, consistent with Florida regulatory expectations.</p>
+
+      <h3>4. Professional Discovery and Better Design</h3>
+      <p>The tool supports professional understanding of hydrologic events and encourages improved design outcomes. For example, the software facilitates analysis of disconnected impervious areas (DCIA), enabling engineers to demonstrate the water quality benefit of routing runoff away from directly connected impervious surfaces.</p>
+    </section>
+
+    <hr class="section-rule">
+
+    <!-- ── SECTION 3: SOFTWARE CRITERIA ── -->
+    <section id="software-criteria">
+      <span class="section-number">Section 3</span>
+      <h2>Software Selection Criteria</h2>
+
+      <p>BMPFast was selected and developed to meet all of the following evaluation criteria for Florida stormwater BMP analysis software:</p>
+
+      <ul class="checklist">
+        <li>Uses Florida rainfall data as the basis for hydrologic analysis.</li>
+        <li>Incorporates Florida soils and physical land use conditions.</li>
+        <li>Uses event mean concentration (EMC) data from Florida-based research studies.</li>
+        <li>Incorporates removal effectiveness values for structural BMPs, Green Stormwater Infrastructure (GSI), and Low-Impact Development (LID) practices.</li>
+        <li>Evaluates the combined effectiveness of BMPs arranged in series and in parallel.</li>
+        <li>Has been peer reviewed by practicing professionals.</li>
+        <li>Provides guidance to support timely completion of ERP applications.</li>
+        <li>Is accepted by a broad cross-section of practicing professionals.</li>
+        <li>Is accepted by local, regional (WMD), and FDEP regulatory and review staff.</li>
+      </ul>
+    </section>
+
+    <hr class="section-rule">
+
+    <!-- ── SECTION 4: STARTING BMPFAST ── -->
+    <section id="startup">
+      <span class="section-number">Section 4</span>
+      <h2>Starting the BMPFast Software</h2>
+
+      <p>Upon launching BMPFast 2025, users are presented with a welcome screen containing attribution information, a disclaimer, and options to proceed with or without email validation.</p>
+
+      <div class="img-placeholder tall">
+        <div class="img-icon">🖥️</div>
+        <div class="img-label">Figure Reference — Fig. 1</div>
+        <div class="img-caption">BMPFast 2025 Welcome / Login Screen — showing project attribution, disclaimer, email validation fields, and Continue buttons. See Figure References at end of document.</div>
+      </div>
+
+      <h3>Welcome Screen Elements</h3>
+
+      <div class="field-grid">
+        <div class="field-item">
+          <div class="field-name">Software Credits</div>
+          <p>BMPFast 2025 was developed by Marty Wanielista, Ron Eaglin, Harvey Harper, and Dingbao Wang, with input from professionals in local government, state agencies, academia, and consulting.</p>
+        </div>
+        <div class="field-item">
+          <div class="field-name">Regulatory Currency</div>
+          <p>The software reflects state laws on intellectual property distribution and is consistent with current applicant handbooks, research findings, and regulatory decisions through 2025.</p>
+        </div>
+        <div class="field-item">
+          <div class="field-name">User Responsibility Disclaimer</div>
+          <p><em>The user is responsible for all input data and an understanding and navigation of the software.</em></p>
+        </div>
+        <div class="field-item">
+          <div class="field-name">Validation Options</div>
+          <p>Users may enter a valid email address and validation code to run a validated session, or proceed via "Continue without Validation." Both paths provide access to all software functionality.</p>
+        </div>
+      </div>
+
+      <div class="callout note">
+        <span class="callout-label">Training Note</span>
+        <p>In the training version of BMPFast, certain functions (Summary Report, Save Project, Open Project) are intentionally disabled. Training is strongly recommended before using the full production version. Basic competency in BMPFast helps reduce Requests for Additional Information (RAIs) and supports timely permit approval.</p>
+      </div>
+    </section>
+
+    <hr class="section-rule">
+
+    <!-- ── SECTION 5: NAVIGATION AND STRUCTURE ── -->
+    <section id="structure">
+      <span class="section-number">Section 5</span>
+      <h2>Navigation and Structure of the Software</h2>
+
+      <p>BMPFast is organized around a series of worksheets that guide the user through data entry and report generation. The interface uses several standard control types to manage input.</p>
+
+      <div class="img-placeholder">
+        <div class="img-icon">🗂️</div>
+        <div class="img-label">Figure Reference — Fig. 2</div>
+        <div class="img-caption">BMPFast General Site Information Worksheet — annotated diagram showing navigation buttons, data cells, drop-down menus, and unlimited entry fields. See Figure References.</div>
+      </div>
+
+      <h3>Interface Control Types</h3>
+
+      <div class="field-grid">
+        <div class="field-item">
+          <div class="field-name">Worksheets</div>
+          <p>The primary interface for entering data and retrieving results. Each worksheet corresponds to a specific phase of analysis (site info, catchment, treatment, configuration, reporting).</p>
+        </div>
+        <div class="field-item">
+          <div class="field-name">Navigation Buttons</div>
+          <p>Numbered buttons (1–6) on the main screen allow direct access to each workflow phase: Enter Catchment, Enter Treatment, Configure Catchments, Summary Treatment Report, Complete Report, and Cost Comparisons.</p>
+        </div>
+        <div class="field-item">
+          <div class="field-name">Data Cells (Unlimited Entries)</div>
+          <p>Free-entry text or numeric fields where the user types values directly. These fields have no fixed list of options and accept any appropriate input.</p>
+        </div>
+        <div class="field-item">
+          <div class="field-name">Drop-Down Menus (Limited Choices)</div>
+          <p>Fields that present a restricted list of pre-defined options. Used for meteorological zone selection, performance standards, groundwater analysis options, and similar constrained parameters.</p>
+        </div>
+      </div>
+
+      <h3>Main Worksheet Navigation Buttons</h3>
+
+      <div class="screen-mock">
+        <div class="screen-mock-bar">
+          <div class="dot r"></div><div class="dot y"></div><div class="dot g"></div>
+          <span>General Site Information for Project File</span>
+        </div>
+        <div class="screen-mock-body">
+          <div class="screen-two-col">
+            <div>
+              <div class="screen-row">
+                <span class="screen-label">Open Project</span>
+                <span class="screen-btn">Open Project</span>
+              </div>
+              <div class="screen-row">
+                <span class="screen-label">New Project</span>
+                <span class="screen-btn">New Project</span>
+              </div>
+              <div class="screen-row">
+                <span class="screen-label">Save Project</span>
+                <span class="screen-btn">Save Project</span>
+              </div>
+              <div class="screen-row">
+                <span class="screen-label">Exit</span>
+                <span class="screen-btn">Exit BMPTrains</span>
+              </div>
+            </div>
+            <div>
+              <ul class="screen-nav-list">
+                <li class="active-nav">1. &nbsp;Enter Catchment</li>
+                <li class="dim">2. &nbsp;Enter Treatment</li>
+                <li class="dim">3. &nbsp;Configure Catchments</li>
+                <li class="dim">4. &nbsp;Summary Treatment Report</li>
+                <li class="dim">5. &nbsp;Complete Report</li>
+                <li class="dim">6. &nbsp;Cost Comparisons</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="callout">
+        <span class="callout-label">Navigation Tip</span>
+        <p>The numbered navigation buttons on the right side of the main worksheet are activated progressively as the user completes each prior step. Items 2 through 6 remain greyed out until the preceding data entry step has been completed.</p>
+      </div>
+    </section>
+
+    <hr class="section-rule">
+
+    <!-- ── SECTION 6: SITE CHARACTERISTICS WORKSHEET ── -->
+    <section id="site-worksheet">
+      <span class="section-number">Section 6</span>
+      <h2>The First Worksheet: Site Characteristics</h2>
+
+      <p>The General Site Information worksheet is the entry point for every new BMPFast project. Data entered here establishes the foundational parameters that govern all subsequent catchment and treatment calculations. The user begins data entry in this worksheet immediately after the welcome screen.</p>
+
+      <div class="img-placeholder">
+        <div class="img-icon">📋</div>
+        <div class="img-label">Figure Reference — Fig. 3</div>
+        <div class="img-caption">General Site Information Worksheet — showing Project Name field, meteorological zone dropdown (Florida Zone 1), mean annual rainfall entry (52 inches), performance standard selection, and navigation button panel. See Figure References.</div>
+      </div>
+
+      <h3>Key Features of the Site Characteristics Worksheet</h3>
+
+      <ul>
+        <li><strong>Dynamic input:</strong> Any field value can be changed at any time without reloading or restarting the project. The software recalculates results based on the updated inputs.</li>
+        <li><strong>Library and support access:</strong> A library/support button (magnifying glass icon) is available next to several fields to access reference information, zone maps, and rainfall data tables without leaving the worksheet.</li>
+        <li><strong>Drop-down menus:</strong> Constrained fields (meteorological zone, performance standard) present a limited set of regulatory options consistent with WMD and FDEP requirements.</li>
+      </ul>
+
+      <h3>Site Information Fields</h3>
+
+      <div class="screen-mock">
+        <div class="screen-mock-bar">
+          <div class="dot r"></div><div class="dot y"></div><div class="dot g"></div>
+          <span>General Site Information for Project File</span>
+        </div>
+        <div class="screen-mock-body">
+          <div class="screen-row">
+            <span class="screen-label">Project Name:</span>
+            <span class="screen-value">[user-defined project name]</span>
+          </div>
+          <div class="screen-row">
+            <span class="screen-label">Select Meteorological Zone for Project:</span>
+            <span class="screen-value dropdown">Florida Zone 1</span>
+            <span class="screen-btn primary">📖 Library</span>
+          </div>
+          <div class="screen-row">
+            <span class="screen-label">Enter the Mean Annual Rainfall:</span>
+            <span class="screen-value">52</span>
+            <span style="font-family:JetBrains Mono,monospace;font-size:12px;color:#555;">inches</span>
+          </div>
+          <div class="screen-row">
+            <span class="screen-label">Performance Standard of Surface Discharge Analysis:</span>
+            <span class="screen-value dropdown">All sites non-exempted</span>
+            <span class="screen-btn primary">📖</span>
+          </div>
+          <div class="screen-row">
+            <span class="screen-label">Conduct Groundwater Discharge Analysis:</span>
+            <span class="screen-value dropdown">[Yes / No]</span>
+          </div>
+          <hr class="screen-divider">
+          <div class="screen-row">
+            <span class="screen-label">Nitrogen Removal Efficiency (%):</span>
+            <span class="screen-value">55</span>
+            <span class="screen-label" style="min-width:unset;margin-left:28px;">Phosphorus Removal Efficiency (%):</span>
+            <span class="screen-value">80</span>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <hr class="section-rule">
+
+    <!-- ── SECTION 7: GENERAL SITE INFO FIELDS ── -->
+    <section id="general-site">
+      <span class="section-number">Section 7</span>
+      <h2>General Site Information Fields Explained</h2>
+
+      <h3>Project Name</h3>
+      <p>A free-text identifier for the project file. The project name is displayed in the title bar of every worksheet and appears in all generated reports.</p>
+
+      <h3>Meteorological Zone</h3>
+      <p>Florida is divided into five designated meteorological zones for stormwater analysis purposes. The user selects the zone that corresponds to the project location from a drop-down menu. A library button opens the Meteorological Zones and Mean Annual Rainfall Map, which displays the entire state or can be filtered by region (Northwest, Northeast, Central, South) and includes access to recent data. Zone selection determines the rainfall frequency distributions and storm event data applied in the analysis.</p>
+
+      <h3>Mean Annual Rainfall</h3>
+      <p>The user enters the site-specific mean annual rainfall in inches. This value is obtained from the zone map and recent NOAA data. The software includes the 2024 updated rainfall isopleth map (based on NOAA 2022 data) for reference. The software provides an open entry field to accommodate locations where updated values differ from zone defaults or where future revisions are anticipated.</p>
+
+      <h3>Performance Standard of Surface Discharge Analysis</h3>
+      <p>This drop-down field defines the regulatory performance standard against which the stormwater management system will be evaluated. The selection determines the required removal efficiencies for Total Phosphorus (TP) and Total Nitrogen (TN), and sets any additional criteria such as post-development loading limits or water quality targets in receiving waters.</p>
+
+      <h3>Conduct Groundwater Discharge Analysis</h3>
+      <p>When set to "Yes," BMPFast activates an additional analysis pathway for groundwater-influenced systems. Groundwater pollutant loadings are calculated and added to the surface water loadings for a combined analysis. This setting is required for BMP systems such as exfiltration trenches, retention ponds with groundwater interaction, and rain gardens in areas with shallow water tables.</p>
+
+      <h3>Nitrogen and Phosphorus Removal Efficiency Display</h3>
+      <p>Once the performance standard is selected, the worksheet displays the applicable Nitrogen Removal Efficiency (%) and Phosphorus Removal Efficiency (%) targets. These values are auto-populated from the regulatory table and update when the performance standard selection is changed. For example, "All sites non-exempted" yields 55% TN removal and 80% TP removal.</p>
+    </section>
+
+    <hr class="section-rule">
+
+    <!-- ── SECTION 8: PERFORMANCE STANDARDS ── -->
+    <section id="performance-standards">
+      <span class="section-number">Section 8</span>
+      <h2>Performance Standards</h2>
+
+      <p>The performance standard selection is one of the most consequential inputs in the General Site Information worksheet. It determines the required removal targets for both Total Phosphorus and Total Nitrogen across the entire project. The table below summarizes the available performance standard options and their associated criteria.</p>
+
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr>
+              <th>Project Scenario</th>
+              <th>TP Removal (%)</th>
+              <th>TN Removal (%)</th>
+              <th>Additional Criteria</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td class="highlight">All Sites (non-exempted)</td>
+              <td>80</td>
+              <td>55</td>
+              <td>or Post ≤ Pre</td>
+            </tr>
+            <tr>
+              <td class="highlight">OFW</td>
+              <td>90</td>
+              <td>80</td>
+              <td>or Post ≤ Pre</td>
+            </tr>
+            <tr>
+              <td class="highlight">Impaired Water</td>
+              <td>80</td>
+              <td>80</td>
+              <td>&amp; Post ≤ Pre + WQ Targets</td>
+            </tr>
+            <tr>
+              <td class="highlight">Impaired Water + OFW</td>
+              <td>95</td>
+              <td>95</td>
+              <td>&amp; Post ≤ Pre + WQ Targets</td>
+            </tr>
+            <tr>
+              <td class="highlight">Redevelopment</td>
+              <td>80</td>
+              <td>45</td>
+              <td>none</td>
+            </tr>
+            <tr>
+              <td class="highlight">Redevelopment + OFW</td>
+              <td>90</td>
+              <td>60</td>
+              <td>none</td>
+            </tr>
+            <tr>
+              <td class="highlight">Redevelopment + Impaired Water</td>
+              <td>80</td>
+              <td>45</td>
+              <td>and WQ Targets</td>
+            </tr>
+            <tr>
+              <td class="highlight">Specified Removal Efficiency</td>
+              <td colspan="2" style="font-style:italic;">User-defined %</td>
+              <td>—</td>
+            </tr>
+            <tr>
+              <td class="highlight">Net Improvement</td>
+              <td colspan="2" style="font-style:italic;">Post &lt; Pre</td>
+              <td>—</td>
+            </tr>
+            <tr>
+              <td class="highlight">BMP Analysis</td>
+              <td colspan="2" style="font-style:italic;">Analytical only</td>
+              <td>—</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="callout note">
+        <span class="callout-label">Regulatory Note</span>
+        <p><strong>WQ Targets</strong> are the water quality standards applicable in the receiving water body (net improvements above pre-development baseline). OFW = Outstanding Florida Waters. These scenarios address BMAP (Basin Management Action Plan), TMDL (Total Maximum Daily Load), and other local program requirements.</p>
+      </div>
+
+      <div class="callout">
+        <span class="callout-label">Additional Standards</span>
+        <p>The "Net Improvement," "Specified Removal Efficiency," and "BMP Analysis" options provide flexibility to address BMAP, TMDL, and other local program needs that fall outside the standard ERP performance tiers. These options allow the engineer to define custom removal targets or perform comparative analyses without regulatory percentage thresholds.</p>
+      </div>
+    </section>
+
+    <hr class="section-rule">
+
+    <!-- ── SECTION 9: METEOROLOGICAL ZONES ── -->
+    <section id="met-zones">
+      <span class="section-number">Section 9</span>
+      <h2>Florida Meteorological Zones and Rainfall Data</h2>
+
+      <p>Florida is divided into five designated meteorological zones (Zones 1 through 5) based on regional rainfall patterns. The zone map is accessible directly from within the BMPFast software via the library button adjacent to the meteorological zone selection field.</p>
+
+      <div class="img-placeholder tall">
+        <div class="img-icon">🗺️</div>
+        <div class="img-label">Figure Reference — Fig. 4</div>
+        <div class="img-caption">Florida Designated Meteorological Regions (Zones) Map — showing Zones 1–5 color-coded across the state with rainfall monitoring station locations. Available via library button within BMPFast. See Figure References.</div>
+      </div>
+
+      <h3>Zone Descriptions</h3>
+
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr>
+              <th>Zone</th>
+              <th>Region</th>
+              <th>Cluster Color</th>
+              <th>Representative Cities / Areas</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td class="highlight">Zone 1</td>
+              <td>Northwest / Panhandle</td>
+              <td>Red / Pink</td>
+              <td>Pensacola, Panama City, Tallahassee, Crestview, Niceville</td>
+            </tr>
+            <tr>
+              <td class="highlight">Zone 2</td>
+              <td>Northeast / Upper Atlantic</td>
+              <td>Blue</td>
+              <td>Jacksonville, Gainesville, Daytona Beach, Marineland</td>
+            </tr>
+            <tr>
+              <td class="highlight">Zone 3</td>
+              <td>Southwest / Gulf Coast</td>
+              <td>Light Blue</td>
+              <td>Fort Myers, Naples, Homestead, Key West, Tamiami Trail</td>
+            </tr>
+            <tr>
+              <td class="highlight">Zone 4</td>
+              <td>Central / West Central</td>
+              <td>Light Blue / Teal</td>
+              <td>Tampa, St. Petersburg, Orlando, Kissimmee, Lakeland, Brooksville</td>
+            </tr>
+            <tr>
+              <td class="highlight">Zone 5</td>
+              <td>Southeast / South Atlantic</td>
+              <td>Pink / Magenta</td>
+              <td>Boca Raton, West Palm Beach, Miami, Clewiston</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <p>The library view also includes tabs for filtering the zone map by geographic region (Entire State, Northwest, Northeast, Central, South) and direct access to the Zones detail view. The "Recent Data" button within the library retrieves the most current annual rainfall volume data for reference when entering the Mean Annual Rainfall field.</p>
+    </section>
+
+    <hr class="section-rule">
+
+    <!-- ── SECTION 10: RECENT RAINFALL DATA ── -->
+    <section id="recent-data">
+      <span class="section-number">Section 10</span>
+      <h2>Recent Rainfall Data in BMPFast: 2024 Annual Rainfall</h2>
+
+      <p>BMPFast 2025 includes an updated annual rainfall isopleth map based on NOAA 2022 data, published in 2024. This map is accessible via the "Recent Data" button in the meteorological zone library view. Users should consult this map when entering the Mean Annual Rainfall to ensure their project uses current, site-appropriate values.</p>
+
+      <div class="img-placeholder tall">
+        <div class="img-icon">🌧️</div>
+        <div class="img-label">Figure Reference — Fig. 5</div>
+        <div class="img-caption">Average Annual Rainfall Isopleth Map for Florida (NOAA 2022 / Published 2024) — showing rainfall contours ranging from approximately 40 inches in some northern areas to 66 inches in portions of south Florida. See Figure References.</div>
+      </div>
+
+      <p>The isopleth map displays contour lines of equal annual rainfall depth across the state. The legend ranges from 40 to 66 inches, with the color gradient moving from warm tones (lower rainfall in north Florida) to cool blue-green tones (higher rainfall in south and southwest Florida). Users should identify the contour interval that encompasses their project site and enter the corresponding depth in the Mean Annual Rainfall field.</p>
+    </section>
+
+    <hr class="section-rule">
+
+    <!-- ── SECTION 11: RAINFALL COMPARISON ── -->
+    <section id="rainfall-comparison">
+      <span class="section-number">Section 11</span>
+      <h2>Comparison: 2000 and 2024 Annual Rainfall Data</h2>
+
+      <p>A key update in BMPFast 2025 is the incorporation of revised rainfall depth data. The 2024 publication reflects updated NOAA 2022 annual rainfall values, which differ from the 2000-era iso-line data previously used in practice.</p>
+
+      <div class="img-placeholder tall">
+        <div class="img-icon">📊</div>
+        <div class="img-label">Figure Reference — Fig. 6</div>
+        <div class="img-caption">Comparison map overlaying 2000 annual rainfall iso-lines with boxed 2024 NOAA annual rainfall depth values for selected Florida locations. Demonstrates variation between legacy and updated values. See Figure References.</div>
+      </div>
+
+      <h3>Key Observations from the Comparison</h3>
+
+      <p>The comparison reveals that the relationship between old and new rainfall data is not uniform across the state. Selected reference values from the 2024 data (NOAA 2022) at representative locations include:</p>
+
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr>
+              <th>Region / Location</th>
+              <th>2024 Annual Rainfall (inches)</th>
+              <th>Observation</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>Northwest Florida</td>
+              <td>57</td>
+              <td>Generally higher than 2000 iso-lines</td>
+            </tr>
+            <tr>
+              <td>Northeast Florida</td>
+              <td>50</td>
+              <td>Approximately equal to 2000 values</td>
+            </tr>
+            <tr>
+              <td>Central Florida (north)</td>
+              <td>50</td>
+              <td>Some decrease from 2000 values</td>
+            </tr>
+            <tr>
+              <td>West Central Florida</td>
+              <td>55</td>
+              <td>Slightly higher in some areas</td>
+            </tr>
+            <tr>
+              <td>South Florida</td>
+              <td>61</td>
+              <td>Generally higher than 2000 values</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="callout accent">
+        <span class="callout-label">Important Design Consideration</span>
+        <p>Some annual rainfalls under the updated data are greater, some are smaller, and some are approximately equal to the 2000 values. Engineers must consult the current 2024 map for accurate design inputs. The software includes an open entry field specifically to accommodate updated or locally-derived rainfall values, recognizing that continued revisions to this map are expected.</p>
+      </div>
+    </section>
+
+    <hr class="section-rule">
+
+    <!-- ── SECTION 12: CATCHMENT ENTRY ── -->
+    <section id="catchment-entry">
+      <span class="section-number">Section 12</span>
+      <h2>Entering Catchment Data</h2>
+
+      <p>After completing the General Site Information worksheet, the user navigates to the Watershed Characteristics Worksheet by clicking the "1. Enter Catchment" button. This worksheet captures the physical and water quality characteristics of each drainage catchment contributing to the stormwater management system.</p>
+
+      <div class="img-placeholder tall">
+        <div class="img-icon">🏞️</div>
+        <div class="img-label">Figure Reference — Fig. 7</div>
+        <div class="img-caption">Watershed Characteristics Worksheet — showing catchment name entry, land use selection (pre and post-development), catchment area fields, curve number entries, DCIA percentage, EMC values, Annual ROC, runoff volumes, and pollutant loading calculations. See Figure References.</div>
+      </div>
+
+      <h3>Catchment Identification</h3>
+      <p>The worksheet displays the current catchment number and allows the user to assign a descriptive name (e.g., "Venice LID Award Road"). Multiple catchments can be added using the "Add Catchment" button, and each is tracked as a separate tab within the worksheet.</p>
+
+      <h3>Land Use Classification</h3>
+      <p>Pre-development and post-development land use categories are selected from drop-down menus. These selections determine the Event Mean Concentrations (EMC) for Total Nitrogen and Total Phosphorus used in the loading calculations. The user may also select "User Defined Values" to enter site-specific EMC data.</p>
+
+      <h3>Catchment Data Fields</h3>
+
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr>
+              <th>Field</th>
+              <th>Example Value</th>
+              <th>Description</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td class="highlight">Total Pre-Development Catchment Area</td>
+              <td>2.00 ac</td>
+              <td>The area of the catchment under existing (pre-development) conditions.</td>
+            </tr>
+            <tr>
+              <td class="highlight">Total Post-Development Catchment Area</td>
+              <td>2.00 ac</td>
+              <td>The area of the catchment under proposed (post-development) conditions.</td>
+            </tr>
+            <tr>
+              <td class="highlight">Pre-Development Non-DCIA Curve Number</td>
+              <td>78.00</td>
+              <td>SCS runoff curve number for the non-directly-connected impervious area portion of the pre-development catchment.</td>
+            </tr>
+            <tr>
+              <td class="highlight">Pre-Development DCIA Percentage</td>
+              <td>0.00%</td>
+              <td>Percentage of pre-development catchment area that is directly connected impervious area (DCIA).</td>
+            </tr>
+            <tr>
+              <td class="highlight">Post-Development Non-DCIA Curve Number</td>
+              <td>78.00</td>
+              <td>SCS runoff curve number for the non-DCIA portion of the post-development catchment.</td>
+            </tr>
+            <tr>
+              <td class="highlight">Post-Development DCIA Percentage</td>
+              <td>65.00%</td>
+              <td>Percentage of post-development catchment area that is directly connected impervious area.</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <h3>Calculated Output Values</h3>
+
+      <p>After entering catchment characteristics, the software computes and displays pre- and post-development values for the following parameters:</p>
+
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr>
+              <th>Parameter</th>
+              <th>Pre-Development</th>
+              <th>Post-Development</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td class="highlight">EMC(N) — Nitrogen Event Mean Concentration (mg/L)</td>
+              <td>3.030</td>
+              <td>1.160</td>
+            </tr>
+            <tr>
+              <td class="highlight">EMC(P) — Phosphorus Event Mean Concentration (mg/L)</td>
+              <td>0.593</td>
+              <td>0.157</td>
+            </tr>
+            <tr>
+              <td class="highlight">Annual Runoff Coefficient (ROC)</td>
+              <td>0.116</td>
+              <td>0.575</td>
+            </tr>
+            <tr>
+              <td class="highlight">Annual Runoff Volume (ac-ft/yr)</td>
+              <td>1.009</td>
+              <td>4.985</td>
+            </tr>
+            <tr>
+              <td class="highlight">Nitrogen Loading (kg/yr)</td>
+              <td>3.769</td>
+              <td>7.130</td>
+            </tr>
+            <tr>
+              <td class="highlight">Phosphorus Loading (kg/yr)</td>
+              <td>0.738</td>
+              <td>0.965</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="callout note">
+        <span class="callout-label">Groundwater Note</span>
+        <p>When Groundwater Discharge Analysis is set to "Yes" in the Site Characteristics worksheet, the catchment worksheet includes an additional calculation step for groundwater pollutant loadings. These groundwater loadings are summed with the surface water loadings before reporting. After completing the groundwater analysis within the catchment, the user must click the <strong>Calculate</strong> button, followed by the <strong>Back</strong> button to return to the main worksheet.</p>
+      </div>
+    </section>
+
+    <hr class="section-rule">
+
+    <!-- ── SECTION 13: PROJECT WORKFLOW ── -->
+    <section id="workflow">
+      <span class="section-number">Section 13</span>
+      <h2>Project Workflow: From Site Info to Reports</h2>
+
+      <p>The complete BMPFast project workflow follows a sequential path through the six main navigation steps. The sequence must be followed in order, as later steps depend on data entered in earlier ones.</p>
+
+      <div class="workflow">
+        <div class="workflow-step">
+          <div class="workflow-step-body">
+            <div class="workflow-step-title">General Site Information</div>
+            <p>Enter project name, select meteorological zone, input mean annual rainfall, select performance standard, and specify whether to conduct a groundwater discharge analysis. Set baseline nitrogen and phosphorus removal efficiency targets.</p>
+          </div>
+        </div>
+        <div class="workflow-step">
+          <div class="workflow-step-body">
+            <div class="workflow-step-title">Enter Catchment Data</div>
+            <p>For each catchment, enter land use classifications (pre and post), catchment areas, non-DCIA curve numbers, and DCIA percentages. Review calculated EMC values, runoff volumes, and pollutant loadings. Add additional catchments as needed.</p>
+          </div>
+        </div>
+        <div class="workflow-step">
+          <div class="workflow-step-body">
+            <div class="workflow-step-title">Enter Treatment Data</div>
+            <p>Select and configure BMP treatment systems (retention ponds, filters, swales, LID practices, etc.). Define the design parameters for each BMP.</p>
+          </div>
+        </div>
+        <div class="workflow-step">
+          <div class="workflow-step-body">
+            <div class="workflow-step-title">Configure Catchments</div>
+            <p>Assign catchments to treatment systems and define the routing relationships between catchments and BMPs (series, parallel, or combined configurations).</p>
+          </div>
+        </div>
+        <div class="workflow-step">
+          <div class="workflow-step-body">
+            <div class="workflow-step-title">Summary Treatment Report</div>
+            <p>Review the calculated treatment performance summary. Verify that the configured system meets the required performance standard for TP and TN removal.</p>
+          </div>
+        </div>
+        <div class="workflow-step">
+          <div class="workflow-step-body">
+            <div class="workflow-step-title">Complete Report &amp; Cost Comparisons</div>
+            <p>Generate a complete project report for ERP submission. Optionally run cost comparisons between alternative BMP configurations. Save the project file for future reference and reuse.</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="callout accent">
+        <span class="callout-label">Training Version Limitation</span>
+        <p>In the training version of BMPFast, the Summary Report (Step 4), Save Project, and Open Project functions are disabled. Users completing training exercises will follow Steps 1 through 3 (and Step 6 for Cost Comparisons) to develop competency. Training is highly recommended before use in production ERP work. Basic competency in BMPFast helps reduce RAIs (Requests for Additional Information) and facilitates timely permit approvals.</p>
+      </div>
+    </section>
+
+    <hr class="section-rule">
+
+    <!-- LEARNING OBJECTIVES REVIEW -->
+    <section id="objectives-review">
+      <span class="section-number">Module Summary</span>
+      <h2>Learning Objectives Review</h2>
+
+      <p>Upon completion of this module, participants should be able to accomplish the following:</p>
+
+      <div class="objectives-box">
+        <h3>Module 5 Competencies</h3>
+        <ol>
+          <li><strong>Navigation of Software:</strong> Locate and use all worksheets, navigation buttons, data cells, drop-down menus, and library support tools within BMPFast.</li>
+          <li><strong>Rainfall Data Input:</strong> Select the appropriate meteorological zone, look up current annual rainfall from the 2024 isopleth map, and enter the value in the Mean Annual Rainfall field.</li>
+          <li><strong>Performance Standards:</strong> Identify and select the correct performance standard (All Sites, OFW, Impaired Water, Redevelopment, Net Improvement, etc.) based on project conditions and receiving water classification.</li>
+          <li><strong>Catchment Characteristics:</strong> Enter pre- and post-development land use, catchment areas, SCS curve numbers, and DCIA percentages; interpret calculated EMC values, annual runoff coefficients, and pollutant loading outputs.</li>
+          <li><strong>Data Fields and Library:</strong> Use the library/support buttons to access zone maps, rainfall tables, and reference data without leaving the worksheet; understand the distinction between unlimited data cells and limited drop-down menus.</li>
+        </ol>
+      </div>
+    </section>
+
+  </div><!-- end .content-wrap -->
+
+  <!-- ══════════════ FIGURE REFERENCES ══════════════ -->
+  <div id="figure-references">
+    <div style="max-width:860px;padding:0 72px 0;">
+
+      <span class="section-number">Appendix</span>
+      <h2>Figure References</h2>
+      <p style="margin-bottom:28px;color:var(--ink-light);font-size:15px;">The following figures are referenced within the module body. These images should be sourced from the BMPFast software interface or the associated presentation materials. Full-width placement within the body text is recommended for instructional clarity.</p>
+
+      <div class="figure-ref-item">
+        <div class="figure-ref-thumb">Fig. 1<br>Welcome Screen</div>
+        <div class="figure-ref-body">
+          <div class="figure-ref-id">Figure 1</div>
+          <div class="figure-ref-title">BMPFast 2025 Welcome / Login Screen</div>
+          <p class="figure-ref-desc">Software welcome screen showing attribution (Wanielista, Eaglin, Harper, Wang), regulatory currency statement, user responsibility disclaimer, email and validation code entry fields, "Continue with Validation" and "Continue without Validation" buttons, and the BMPFAST Stormwater Toolbox graphic.</p>
+        </div>
+      </div>
+
+      <div class="figure-ref-item">
+        <div class="figure-ref-thumb">Fig. 2<br>Nav Structure</div>
+        <div class="figure-ref-body">
+          <div class="figure-ref-id">Figure 2</div>
+          <div class="figure-ref-title">Navigation and Structure of the Software</div>
+          <p class="figure-ref-desc">Annotated screenshot of the General Site Information worksheet with callout labels identifying: Worksheets (for data entry and result retrieval), Data Cells (unlimited entries), Drop-Down Menu (choices limited), and Navigation Buttons (numbered 1–6 on the right panel).</p>
+        </div>
+      </div>
+
+      <div class="figure-ref-item">
+        <div class="figure-ref-thumb">Fig. 3<br>Site Worksheet</div>
+        <div class="figure-ref-body">
+          <div class="figure-ref-id">Figure 3</div>
+          <div class="figure-ref-title">The First Worksheet — Site Characteristics (with "Start Entering Data" callout)</div>
+          <p class="figure-ref-desc">General Site Information worksheet showing Project Name field (blank), Florida Zone 1 selected, 52 inches mean annual rainfall, "All sites non-exempted" performance standard, and the six-button navigation panel on the right. Arrow callout labeled "Start entering data" pointing to the Project Name field.</p>
+        </div>
+      </div>
+
+      <div class="figure-ref-item">
+        <div class="figure-ref-thumb">Fig. 3b<br>General Site (Filled)</div>
+        <div class="figure-ref-body">
+          <div class="figure-ref-id">Figure 3b</div>
+          <div class="figure-ref-title">General Site Info Worksheet — BMPFast (Example Problem 7, Depression Storage)</div>
+          <p class="figure-ref-desc">Worksheet with "Ex Problem 7 Depression Storage" project name, Florida Zone 4, 52 inches, "Net Improvement" performance standard selected, "Yes" for groundwater discharge analysis, with callouts labeling Library/Support Information (magnifying glass icon) and Drop Down Menu controls.</p>
+        </div>
+      </div>
+
+      <div class="figure-ref-item">
+        <div class="figure-ref-thumb">Fig. 4<br>Zone Map</div>
+        <div class="figure-ref-body">
+          <div class="figure-ref-id">Figure 4</div>
+          <div class="figure-ref-title">Florida Designated Meteorological Regions (Zones) Map — BMPFast Library</div>
+          <p class="figure-ref-desc">Full-state zone map showing Zones 1–5 color-coded (Cluster 1 red/pink = northwest; Cluster 2 blue = northeast; Cluster 3 light blue = southwest/keys; Cluster 4 teal = central/west central; Cluster 5 pink = southeast). North arrow and 50/100-mile scale bar included. Navigation tabs: Entire State, Northwest, Northeast, Central, South, Zones, Recent Data, Back.</p>
+        </div>
+      </div>
+
+      <div class="figure-ref-item">
+        <div class="figure-ref-thumb">Fig. 5<br>2024 Rainfall</div>
+        <div class="figure-ref-body">
+          <div class="figure-ref-id">Figure 5</div>
+          <div class="figure-ref-title">Average Annual Rainfall Isopleth Map for Florida (NOAA 2022 / Published 2024)</div>
+          <p class="figure-ref-desc">Color-contoured map of Florida showing annual rainfall depths from 40 inches (northern Florida, warm tones) to 66 inches (portions of south Florida, blue-green tones). Labeled "Figure 2: Average Annual Rainfall Isopleth Map for Florida." Legend bar shows color scale from 40–66 inches.</p>
+        </div>
+      </div>
+
+      <div class="figure-ref-item">
+        <div class="figure-ref-thumb">Fig. 6<br>2000 vs 2024</div>
+        <div class="figure-ref-body">
+          <div class="figure-ref-id">Figure 6</div>
+          <div class="figure-ref-title">Comparison: 2000 Iso-Lines vs. 2024 Annual Rainfall Depths (NOAA 2022)</div>
+          <p class="figure-ref-desc">Overlay comparison map showing 2000 dashed iso-lines with boxed 2024 NOAA annual rainfall values at representative locations: 57" (northwest), 50" (northeast), 50" (north central), 55" (west central), 61" (south Florida). Text callout notes that values vary — some higher, some lower, some equal — and that the software must include an open entry field for updated or local data.</p>
+        </div>
+      </div>
+
+      <div class="figure-ref-item">
+        <div class="figure-ref-thumb">Fig. 7<br>Catchment WS</div>
+        <div class="figure-ref-body">
+          <div class="figure-ref-id">Figure 7</div>
+          <div class="figure-ref-title">Watershed Characteristics Worksheet — Catchment Data Entry</div>
+          <p class="figure-ref-desc">Example showing Catchment 1 "Venice LID Award Road." Pre-development land use: Agricultural–Pasture (TN=3.03, TP=0.593). Post: User Defined Values. Areas: 2.00 ac (pre and post). Non-DCIA CN: 78.00 (pre and post). DCIA%: 0% (pre), 65% (post). Calculated outputs: EMC(N) 3.030/1.160 mg/L; EMC(P) 0.593/0.157 mg/L; Annual ROC 0.116/0.575; Runoff 1.009/4.985 ac-ft/yr; N Loading 3.769/7.130 kg/yr; P Loading 0.738/0.965 kg/yr. Callout boxes: "Groundwater loadings will be added to the surface loadings," "THEN enter CALCULATE button," "THEN enter BACK button."</p>
+        </div>
+      </div>
+
+      <div class="figure-ref-item">
+        <div class="figure-ref-thumb">Fig. 8<br>Performance Dropdown</div>
+        <div class="figure-ref-body">
+          <div class="figure-ref-id">Figure 8</div>
+          <div class="figure-ref-title">Performance Standard Drop-Down Menu — Full Options</div>
+          <p class="figure-ref-desc">General Site Information worksheet with the Performance Standard drop-down expanded showing all available options: All sites non-exempted (highlighted), OFW, Impaired Water, Impaired Water + OFW, Redevelopment, Redevelopment + OFW, Redevelopment + Impaired, Specified Removal Efficiency, Net Improvement, BMP Analysis. "Yes for GW analysis" callout visible. "Enter Catchment" navigation button highlighted with arrow.</p>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+</main>
+
+<script>
+  // Highlight active sidebar link on scroll
+  const sections = document.querySelectorAll('section[id], div[id="figure-references"]');
+  const links = document.querySelectorAll('nav#sidebar ul li a');
+
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) {
+        links.forEach(l => l.classList.remove('active'));
+        const active = document.querySelector(`nav#sidebar ul li a[href="#${entry.target.id}"]`);
+        if (active) active.classList.add('active');
+      }
+    });
+  }, { rootMargin: '-20% 0px -70% 0px' });
+
+  sections.forEach(s => observer.observe(s));
+</script>
+</body>
+</html>

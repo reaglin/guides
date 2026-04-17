@@ -1,0 +1,1344 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Module 3 — Understanding Regulations, Rules and Practice | BMPFast</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400&family=Source+Serif+4:ital,opsz,wght@0,8..60,300;0,8..60,400;0,8..60,600;1,8..60,400&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --forest:       #2D5016;
+    --forest-mid:   #3D6B20;
+    --forest-light: #527A30;
+    --forest-pale:  #C8D9B0;
+    --forest-tint:  #EEF4E6;
+    --warm-white:   #F9F6EF;
+    --cream:        #F0EAD6;
+    --cream-dark:   #E0D5BC;
+    --ink:          #1A1A14;
+    --ink-mid:      #3A3A2E;
+    --ink-light:    #6B6B55;
+    --rule:         #B8C9A0;
+    --accent:       #7A9A3A;
+    --accent-warm:  #8B6914;
+    --highlight:    #F5F0E0;
+    --danger:       #8B2415;
+    --serif:        'Source Serif 4', Georgia, serif;
+    --display:      'Playfair Display', Georgia, serif;
+    --mono:         'JetBrains Mono', 'Courier New', monospace;
+  }
+
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  html { font-size: 16px; scroll-behavior: smooth; }
+
+  body {
+    background: var(--warm-white);
+    color: var(--ink);
+    font-family: var(--serif);
+    line-height: 1.75;
+  }
+
+  /* ── TOP NAVIGATION BAR ── */
+  .topbar {
+    background: var(--forest);
+    color: #fff;
+    padding: 0.55rem 2.5rem;
+    display: flex;
+    align-items: center;
+    gap: 1.5rem;
+    font-family: var(--mono);
+    font-size: 0.72rem;
+    letter-spacing: 0.06em;
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    border-bottom: 3px solid var(--accent);
+  }
+  .topbar-label { opacity: 0.55; text-transform: uppercase; }
+  .topbar-title { font-weight: 600; }
+  .topbar-sep { opacity: 0.3; }
+  .topbar-meta { opacity: 0.65; margin-left: auto; }
+
+  /* ── HERO ── */
+  .hero {
+    background: var(--forest);
+    color: #fff;
+    padding: 5rem 2.5rem 4rem;
+    position: relative;
+    overflow: hidden;
+  }
+  .hero::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: repeating-linear-gradient(
+      -45deg,
+      transparent,
+      transparent 28px,
+      rgba(255,255,255,0.025) 28px,
+      rgba(255,255,255,0.025) 29px
+    );
+    pointer-events: none;
+  }
+  .hero-inner { max-width: 860px; margin: 0 auto; position: relative; }
+  .hero-kicker {
+    font-family: var(--mono);
+    font-size: 0.72rem;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--forest-pale);
+    margin-bottom: 1.25rem;
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+  }
+  .hero-kicker::before {
+    content: '';
+    display: block;
+    width: 2rem;
+    height: 1px;
+    background: var(--forest-pale);
+  }
+  .hero h1 {
+    font-family: var(--display);
+    font-size: clamp(2rem, 4vw, 3rem);
+    font-weight: 700;
+    line-height: 1.2;
+    margin-bottom: 0.5rem;
+  }
+  .hero h1 em {
+    font-style: italic;
+    font-weight: 400;
+    color: var(--forest-pale);
+  }
+  .hero-subtitle {
+    font-size: 1.1rem;
+    color: var(--forest-pale);
+    margin-bottom: 2.5rem;
+    max-width: 640px;
+    font-style: italic;
+  }
+  .hero-meta-row {
+    display: flex;
+    gap: 2.5rem;
+    flex-wrap: wrap;
+  }
+  .hero-meta-item {
+    font-family: var(--mono);
+    font-size: 0.72rem;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--forest-pale);
+  }
+  .hero-meta-item strong {
+    display: block;
+    color: #fff;
+    font-size: 0.85rem;
+    text-transform: none;
+    letter-spacing: 0;
+    margin-top: 0.2rem;
+  }
+
+  /* ── PAGE LAYOUT ── */
+  .page { max-width: 860px; margin: 0 auto; padding: 0 2.5rem 6rem; }
+
+  /* ── SECTION DIVIDERS ── */
+  .section { margin-top: 4rem; }
+  .section + .section { margin-top: 5rem; }
+
+  .section-label {
+    font-family: var(--mono);
+    font-size: 0.68rem;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--forest-light);
+    margin-bottom: 0.6rem;
+    display: flex;
+    align-items: center;
+    gap: 0.6rem;
+  }
+  .section-label::after {
+    content: '';
+    flex: 1;
+    height: 1px;
+    background: var(--rule);
+  }
+
+  h2 {
+    font-family: var(--display);
+    font-size: clamp(1.4rem, 3vw, 1.95rem);
+    font-weight: 700;
+    color: var(--forest);
+    line-height: 1.25;
+    margin-bottom: 1.25rem;
+  }
+  h3 {
+    font-family: var(--display);
+    font-size: 1.2rem;
+    font-weight: 600;
+    color: var(--forest);
+    margin: 2rem 0 0.75rem;
+    padding-bottom: 0.35rem;
+    border-bottom: 1px solid var(--rule);
+  }
+  h4 {
+    font-family: var(--serif);
+    font-size: 0.95rem;
+    font-weight: 600;
+    color: var(--ink-mid);
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    margin: 1.5rem 0 0.5rem;
+  }
+
+  p { margin-bottom: 1rem; font-size: 0.975rem; }
+  p:last-child { margin-bottom: 0; }
+
+  /* ── OBJECTIVES BOX ── */
+  .objectives {
+    background: var(--forest);
+    color: #fff;
+    border-radius: 2px;
+    padding: 2rem 2.5rem;
+    margin: 2rem 0;
+  }
+  .objectives-title {
+    font-family: var(--mono);
+    font-size: 0.68rem;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--forest-pale);
+    margin-bottom: 1rem;
+  }
+  .objectives ol {
+    padding-left: 1.4rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+  }
+  .objectives li { font-size: 0.975rem; line-height: 1.6; }
+
+  /* ── CALLOUT BOXES ── */
+  .callout {
+    border-left: 3px solid var(--forest-light);
+    background: var(--forest-tint);
+    padding: 1.1rem 1.4rem;
+    margin: 1.5rem 0;
+    font-size: 0.95rem;
+  }
+  .callout.warning {
+    border-left-color: var(--accent-warm);
+    background: #FAF4E0;
+  }
+  .callout.critical {
+    border-left-color: var(--danger);
+    background: #FBF0EE;
+  }
+  .callout-label {
+    font-family: var(--mono);
+    font-size: 0.63rem;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    color: var(--forest-light);
+    margin-bottom: 0.4rem;
+    font-weight: 600;
+  }
+  .callout.warning .callout-label { color: var(--accent-warm); }
+  .callout.critical .callout-label { color: var(--danger); }
+
+  /* ── SOURCE CITATION ── */
+  .source-ref {
+    font-family: var(--mono);
+    font-size: 0.7rem;
+    color: var(--ink-light);
+    background: var(--cream);
+    display: inline-block;
+    padding: 0.2rem 0.6rem;
+    border-radius: 2px;
+    margin: 0.25rem 0 1rem;
+  }
+
+  /* ── NUMBERED ITEM CARDS ── */
+  .item-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+    gap: 1rem;
+    margin: 1.5rem 0;
+  }
+  .item-card {
+    border: 1px solid var(--rule);
+    background: #fff;
+    padding: 1.1rem 1.25rem;
+  }
+  .item-card-num {
+    font-family: var(--mono);
+    font-size: 0.68rem;
+    font-weight: 600;
+    color: var(--forest-light);
+    letter-spacing: 0.1em;
+    margin-bottom: 0.35rem;
+  }
+  .item-card h4 {
+    margin: 0 0 0.4rem;
+    font-size: 0.88rem;
+    color: var(--forest);
+    text-transform: none;
+    letter-spacing: 0;
+    font-weight: 600;
+    font-family: var(--serif);
+  }
+  .item-card p {
+    font-size: 0.875rem;
+    color: var(--ink-mid);
+    margin: 0;
+    line-height: 1.55;
+  }
+
+  /* ── NUMBERED LIST (full-width) ── */
+  .item-list { list-style: none; padding: 0; margin: 1.5rem 0; }
+  .item-list li {
+    display: grid;
+    grid-template-columns: 2.5rem 1fr;
+    gap: 0.75rem;
+    padding: 0.85rem 0;
+    border-bottom: 1px solid var(--rule);
+    font-size: 0.95rem;
+    align-items: baseline;
+  }
+  .item-list li:first-child { border-top: 1px solid var(--rule); }
+  .item-num {
+    font-family: var(--mono);
+    font-size: 0.72rem;
+    font-weight: 600;
+    color: var(--forest-light);
+    letter-spacing: 0.06em;
+    padding-top: 0.1rem;
+  }
+
+  /* ── TWO-COL LAYOUT ── */
+  .two-col {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1.5rem;
+    margin: 1.5rem 0;
+  }
+  @media (max-width: 600px) { .two-col { grid-template-columns: 1fr; } }
+
+  /* ── IMPROVEMENT SOURCE CHIPS ── */
+  .tag-row { display: flex; flex-wrap: wrap; gap: 0.5rem; margin: 1rem 0; }
+  .tag {
+    font-family: var(--mono);
+    font-size: 0.68rem;
+    letter-spacing: 0.06em;
+    padding: 0.25rem 0.7rem;
+    background: var(--forest-tint);
+    color: var(--forest);
+    border: 1px solid var(--forest-pale);
+    border-radius: 1px;
+  }
+
+  /* ── DATA TABLES ── */
+  .table-wrap { overflow-x: auto; margin: 1.5rem 0; }
+  table {
+    border-collapse: collapse;
+    width: 100%;
+    font-size: 0.875rem;
+    font-family: var(--mono);
+  }
+  thead th {
+    background: var(--forest);
+    color: #fff;
+    text-align: left;
+    padding: 0.6rem 0.85rem;
+    font-size: 0.72rem;
+    letter-spacing: 0.06em;
+    white-space: nowrap;
+    font-weight: 500;
+  }
+  tbody tr:nth-child(even) { background: var(--forest-tint); }
+  tbody tr:hover { background: var(--cream); }
+  td {
+    padding: 0.5rem 0.85rem;
+    border-bottom: 1px solid var(--rule);
+    color: var(--ink-mid);
+    white-space: nowrap;
+  }
+  td:first-child { font-family: var(--serif); white-space: normal; color: var(--ink); }
+  .tfoot-note {
+    font-family: var(--serif);
+    font-size: 0.8rem;
+    color: var(--ink-light);
+    font-style: italic;
+    margin-top: 0.4rem;
+  }
+
+  /* ── PERFORMANCE STANDARDS TABLE ── */
+  .ps-table thead th:nth-child(2),
+  .ps-table thead th:nth-child(3) { text-align: center; }
+  .ps-table td:nth-child(2),
+  .ps-table td:nth-child(3) { text-align: center; font-weight: 600; }
+
+  /* ── FIGURE PLACEHOLDER ── */
+  .fig-placeholder {
+    width: 100%;
+    background: var(--cream);
+    border: 1px dashed var(--cream-dark);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 2.5rem 1.5rem;
+    margin: 1.5rem 0;
+    text-align: center;
+  }
+  .fig-placeholder-icon {
+    font-size: 2rem;
+    margin-bottom: 0.6rem;
+    opacity: 0.4;
+  }
+  .fig-placeholder-label {
+    font-family: var(--mono);
+    font-size: 0.72rem;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--ink-light);
+    margin-bottom: 0.3rem;
+  }
+  .fig-placeholder-caption {
+    font-family: var(--serif);
+    font-size: 0.85rem;
+    color: var(--ink-light);
+    font-style: italic;
+    max-width: 480px;
+  }
+  .fig-caption {
+    font-family: var(--serif);
+    font-size: 0.82rem;
+    font-style: italic;
+    color: var(--ink-light);
+    margin-top: -1rem;
+    margin-bottom: 1.5rem;
+    text-align: center;
+  }
+
+  /* ── STAT ROW ── */
+  .stat-row {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 1px;
+    background: var(--rule);
+    border: 1px solid var(--rule);
+    margin: 1.5rem 0;
+  }
+  .stat-cell {
+    background: #fff;
+    padding: 1.25rem 1rem;
+    text-align: center;
+  }
+  .stat-value {
+    font-family: var(--display);
+    font-size: 1.8rem;
+    color: var(--forest);
+    font-weight: 700;
+    line-height: 1;
+    margin-bottom: 0.4rem;
+  }
+  .stat-desc {
+    font-family: var(--mono);
+    font-size: 0.68rem;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--ink-light);
+  }
+
+  /* ── EXAMPLE BOX ── */
+  .example-box {
+    border: 2px solid var(--forest);
+    padding: 1.5rem 1.75rem;
+    margin: 1.5rem 0;
+    position: relative;
+  }
+  .example-box-label {
+    position: absolute;
+    top: -0.6rem;
+    left: 1rem;
+    background: var(--warm-white);
+    padding: 0 0.5rem;
+    font-family: var(--mono);
+    font-size: 0.65rem;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    color: var(--forest);
+    font-weight: 600;
+  }
+  .example-results {
+    background: var(--forest-tint);
+    padding: 1rem 1.25rem;
+    margin-top: 1rem;
+    font-family: var(--mono);
+    font-size: 0.8rem;
+    line-height: 2;
+    color: var(--ink-mid);
+  }
+  .example-results .pass {
+    color: #2D7014;
+    font-weight: 600;
+  }
+
+  /* ── KEY TERMS ── */
+  abbr { text-decoration: none; border-bottom: 1px dotted var(--forest-light); cursor: help; }
+
+  /* ── INLINE CODE ── */
+  code {
+    font-family: var(--mono);
+    font-size: 0.85em;
+    background: var(--cream);
+    padding: 0.1em 0.35em;
+    border-radius: 2px;
+    color: var(--forest);
+  }
+
+  /* ── PULL QUOTE ── */
+  .pull-quote {
+    border-left: 4px solid var(--forest-light);
+    padding: 0.75rem 1.5rem;
+    margin: 2rem 0;
+    font-family: var(--display);
+    font-size: 1.15rem;
+    font-style: italic;
+    color: var(--forest);
+    line-height: 1.5;
+  }
+
+  /* ── COMPARISON ROW ── */
+  .compare-row {
+    display: grid;
+    grid-template-columns: 1fr auto 1fr;
+    gap: 1rem;
+    align-items: center;
+    margin: 1rem 0;
+  }
+  .compare-before {
+    background: var(--cream);
+    padding: 0.9rem 1rem;
+    font-size: 0.9rem;
+    text-align: center;
+    font-family: var(--mono);
+  }
+  .compare-after {
+    background: var(--forest-tint);
+    padding: 0.9rem 1rem;
+    font-size: 0.9rem;
+    text-align: center;
+    font-family: var(--mono);
+    border: 1px solid var(--forest-pale);
+  }
+  .compare-arrow {
+    font-size: 1.25rem;
+    color: var(--forest-light);
+    text-align: center;
+  }
+
+  /* ── FOOTER ── */
+  .footer {
+    background: var(--forest);
+    color: var(--forest-pale);
+    padding: 2.5rem;
+    font-family: var(--mono);
+    font-size: 0.72rem;
+    letter-spacing: 0.06em;
+    margin-top: 6rem;
+  }
+  .footer-inner {
+    max-width: 860px;
+    margin: 0 auto;
+    display: flex;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 1rem;
+  }
+  .footer-title { color: #fff; font-weight: 600; margin-bottom: 0.35rem; }
+
+  /* ── APPENDIX: FIGURE REFERENCES ── */
+  .appendix { margin-top: 4rem; padding-top: 2rem; border-top: 2px solid var(--rule); }
+  .appendix h2 { font-size: 1.3rem; }
+  .fig-ref-list { list-style: none; padding: 0; margin: 1.5rem 0; }
+  .fig-ref-list li {
+    display: grid;
+    grid-template-columns: 5rem 1fr;
+    gap: 1rem;
+    padding: 0.75rem 0;
+    border-bottom: 1px solid var(--rule);
+    font-size: 0.88rem;
+    align-items: baseline;
+  }
+  .fig-ref-id {
+    font-family: var(--mono);
+    font-size: 0.7rem;
+    color: var(--forest-light);
+    font-weight: 600;
+    letter-spacing: 0.08em;
+  }
+</style>
+</head>
+<body>
+
+<!-- TOP BAR -->
+<nav class="topbar">
+  <span class="topbar-label">BMPFast Training Series</span>
+  <span class="topbar-sep">|</span>
+  <span class="topbar-title">Module 3</span>
+  <span class="topbar-sep">|</span>
+  <span>Understanding Regulations, Rules &amp; Practice</span>
+  <span class="topbar-meta">January 2026</span>
+</nav>
+
+<!-- HERO -->
+<header class="hero">
+  <div class="hero-inner">
+    <div class="hero-kicker">Module 03 &mdash; Regulatory Compliance</div>
+    <h1>Understanding Regulations,<br><em>Rules and Practice</em></h1>
+    <p class="hero-subtitle">Getting Your Permit in a Timely Manner — FAST</p>
+    <div class="hero-meta-row">
+      <div class="hero-meta-item">
+        Author
+        <strong>Marty Wanielista</strong>
+      </div>
+      <div class="hero-meta-item">
+        Date
+        <strong>January 2026</strong>
+      </div>
+      <div class="hero-meta-item">
+        Platform
+        <strong>BMPFast</strong>
+      </div>
+      <div class="hero-meta-item">
+        Effective Rule
+        <strong>June 28, 2024</strong>
+      </div>
+    </div>
+  </div>
+</header>
+
+<!-- MAIN CONTENT -->
+<main class="page">
+
+  <!-- OVERVIEW -->
+  <section class="section">
+    <div class="section-label">Overview</div>
+    <p>Navigating the evolving landscape of stormwater management regulations does not have to slow a project down. This module walks through the latest rule changes, proven analytical tools, and practical strategies that help permit applicants and project managers achieve fast, compliant regulatory approval in the state of Florida.</p>
+    <p>Florida's New Stormwater Rule, effective June 28, 2024, with full implementation required by December 28, 2025, introduced sweeping updates to how Best Management Practices (BMPs) are analyzed. Practitioners who understand these changes — and who have the right tools — are positioned for streamlined permit approvals. Those relying on outdated methods risk delays, reviewer pushback, and resubmission cycles.</p>
+  </section>
+
+  <!-- LEARNING OBJECTIVES -->
+  <section class="section">
+    <div class="section-label">Learning Objectives</div>
+    <div class="objectives">
+      <div class="objectives-title">After completing this module, you will be able to:</div>
+      <ol>
+        <li>Explain how new rules, regulations, and practice affect stormwater management water quality permit applications — and why these requirements change over the years.</li>
+        <li>Identify the tools and resources available to assist in obtaining a permit in a timely manner while remaining consistent with new regulations and practice — understanding what is in the stormwater professional's toolbox.</li>
+      </ol>
+    </div>
+
+    <div class="callout">
+      <div class="callout-label">The BMPFast Stormwater Toolbox Contains</div>
+      Treatment Standards &amp; Location &nbsp;·&nbsp; Catchment Characteristics &nbsp;·&nbsp; Treatment Water Quality and Volume &nbsp;·&nbsp; Reference Publications
+    </div>
+  </section>
+
+  <!-- WHERE IMPROVEMENTS COME FROM -->
+  <section class="section">
+    <div class="section-label">Context</div>
+    <h2>Where Are These Improvements Coming From?</h2>
+    <p>The improvements reshaping stormwater permitting in Florida emerge from multiple converging sources. Years of dedicated research and field testing have produced breakthroughs in how BMPs are understood and analyzed. These advances are grounded in real-world Florida data and validated through extensive monitoring programs across the state's unique climate and soil conditions.</p>
+
+    <div class="tag-row">
+      <span class="tag">Research &amp; Testing</span>
+      <span class="tag">New Stormwater Rule (June 28, 2024)</span>
+      <span class="tag">Environmental Stewardship Groups</span>
+      <span class="tag">Municipal Representatives</span>
+      <span class="tag">Reviewers &amp; Consultants</span>
+      <span class="tag">Applicant's Handbooks (A.H.)</span>
+      <span class="tag">Software Security (FS 288.860)</span>
+    </div>
+
+    <h3>Research and Testing</h3>
+    <p>Breakthrough discoveries from university and agency research programs have fundamentally reshaped how BMP effectiveness is calculated. New data on <abbr title="Event Mean Concentrations">EMCs</abbr>, vault performance, detention options, permeable pavements, and harvesting retention provide the scientific foundation for the updated regulations. Examples of newly incorporated technologies include underground vaults, expanded detention options, new permeable pavement types, stormwater harvesting systems, and enhanced retention analysis methods.</p>
+    <p>Critically, software used to apply these improvements must be approved by at least one regulatory agency before it can be used in permit applications.</p>
+
+    <h3>The New Stormwater Rule (June 28, 2024)</h3>
+    <p>The new stormwater rule specifies how projects must be analyzed. It sets the analytical framework and introduces updated performance standards, revised <abbr title="Event Mean Concentrations">EMC</abbr> values, new annual rainfall data, and expanded BMP options. Full implementation was required by December 28, 2025.</p>
+
+    <h3>Stakeholder Collaboration</h3>
+    <p>Environmental stewardship groups, municipal representatives, permit reviewers, consultants, and the Applicant's Handbooks all contribute to the evolving regulatory landscape. This collaborative approach ensures that rules reflect both environmental protection goals and practical implementation realities.</p>
+  </section>
+
+  <!-- SECURITY OF SOFTWARE -->
+  <section class="section">
+    <div class="section-label">Regulatory Requirement</div>
+    <h2>Security of Software</h2>
+    <div class="source-ref">FS 288.860 — Foreign Control of Intellectual Property</div>
+
+    <p>Florida Statute 288.860 addresses the issue of foreign control of intellectual property. The 2021 Florida Legislature enacted this statute, with implementing guidance issued in December 2022. New requirements related to artificial intelligence (AI) and machine learning (ML) programming add another layer of compliance that stormwater analysis software must meet in order to be approved for use in regulatory permitting.</p>
+
+    <div class="callout">
+      <div class="callout-label">Practical Implication</div>
+      Any software used to support a Florida stormwater permit application must comply with FS 288.860 restrictions on foreign control of the underlying intellectual property. Practitioners should verify that their analysis tools meet current security requirements before submitting applications.
+    </div>
+  </section>
+
+  <!-- NEED FOR MORE TOOLS -->
+  <section class="section">
+    <div class="section-label">Rationale</div>
+    <h2>Need for More Tools in the Toolbox — Why?</h2>
+    <p>The stormwater management profession is at a critical inflection point. With the 2024 rule introducing sweeping changes to BMP effectiveness analysis, practitioners need modern tools that can keep pace with regulatory evolution. Relying on outdated methods or software that has not been updated to reflect current standards is a recipe for permit delays, inconsistent reviews, and missed opportunities for better environmental outcomes.</p>
+
+    <ul class="item-list">
+      <li>
+        <span class="item-num">01</span>
+        <div><strong>Incorporate Recent Improvements.</strong> New rules, regulations, and practices demand tools that take less time to complete an analysis of BMP effectiveness. Traditional manual calculations and outdated spreadsheets cannot accommodate the volume and complexity of changes introduced in the 2024 rule. Modern tools must integrate these updates seamlessly so that applicants can produce compliant analyses quickly and accurately.</div>
+      </li>
+      <li>
+        <span class="item-num">02</span>
+        <div><strong>Consistency in ERP Assessment.</strong> There is a pressing need for consistency in the assessment of Environmental Resource Permits (ERPs). When different applicants use different methods or outdated data, reviewers spend excessive time reconciling discrepancies. Results should also support other regulatory programs including TMDL, BMAP, flood control, and consumptive or water use permits — creating a unified analytical framework.</div>
+      </li>
+      <li>
+        <span class="item-num">03</span>
+        <div><strong>Florida-Specific Data Required.</strong> Analysis must use data from Florida, not data developed for a different climate or enforcement program. In Florida, BMP effectiveness is evaluated on an annual basis — a critical distinction from other states. Using out-of-state models or generic national datasets can lead to inaccurate effectiveness calculations that reviewers will flag, causing significant delays.</div>
+      </li>
+      <li>
+        <span class="item-num">04</span>
+        <div><strong>Professional Discovery and Better Design.</strong> Professional discovery and a deeper understanding of hydrologic events leads to better design outcomes. When practitioners have tools that allow them to explore different scenarios — varying curve numbers, recovery rates, rainfall zones, and BMP configurations — they can optimize designs that not only meet regulatory requirements but also deliver superior environmental performance.</div>
+      </li>
+    </ul>
+  </section>
+
+  <!-- IMPROVEMENTS 1-9 -->
+  <section class="section">
+    <div class="section-label">Key Updates — Part I</div>
+    <h2>Improvements 1–9: BMP Analysis Updates</h2>
+    <div class="source-ref">Source: Applicant's Handbooks and Other Sources</div>
+    <p>The following nine critical improvements reflect changes driven by the new stormwater rule, updated research findings, and practical needs identified by practitioners and reviewers across Florida's water management districts. Together they form the foundation of a comprehensive, up-to-date permitting toolkit.</p>
+    <p><em>There is an expressed need to complete all of these analyses in a timely manner.</em></p>
+
+    <div class="item-grid">
+      <div class="item-card">
+        <div class="item-card-num">01</div>
+        <h4>EMCs &amp; Aggregate EMCs</h4>
+        <p>Updated Event Mean Concentrations and aggregate EMCs formed from separate contributing areas, reflecting the latest Florida-specific water quality data.</p>
+      </div>
+      <div class="item-card">
+        <div class="item-card-num">02</div>
+        <h4>Wet Detention Updates</h4>
+        <p>Wet detention with no littoral zone requirements, updated MAPs (Maximum Allowable Pollutant loads), and maximum ART (Average Residence Time) calculations.</p>
+      </div>
+      <div class="item-card">
+        <div class="item-card-num">03</div>
+        <h4>Annual Rainfall Data</h4>
+        <p>Revised annual rainfall depths based on 2024 NOAA data, replacing the outdated 2000-era isopluvial maps with site-specific evaluations.</p>
+      </div>
+      <div class="item-card">
+        <div class="item-card-num">04</div>
+        <h4>Performance Standards</h4>
+        <p>New specified performance standards from the 2024 rule, including percentage removal targets and post ≤ pre loading requirements.</p>
+      </div>
+      <div class="item-card">
+        <div class="item-card-num">05</div>
+        <h4>Fast Retention Volume Recovery</h4>
+        <p>Improved calculations for fast recovery retention systems, including exfiltration pipes and vaults in limestone areas with recovery times under 3 hours.</p>
+      </div>
+      <div class="item-card">
+        <div class="item-card-num">06</div>
+        <h4>Runoff Reduction Methodology</h4>
+        <p>Updated methodology for reducing Directly Connected Impervious Area (DCIA) and its impact on overall runoff volume calculations.</p>
+      </div>
+      <div class="item-card">
+        <div class="item-card-num">07</div>
+        <h4>Media Service Life</h4>
+        <p>Guidance on whether to include or exclude media service life when evaluating the performance of pre-treatment BMPs in a treatment train.</p>
+      </div>
+      <div class="item-card">
+        <div class="item-card-num">08</div>
+        <h4>Software Security &amp; IP Protection</h4>
+        <p>Compliance with Florida state law (FS 288.860) on intellectual property related to foreign use and software security requirements.</p>
+      </div>
+      <div class="item-card">
+        <div class="item-card-num">09</div>
+        <h4>Terminology Changes</h4>
+        <p>Updated terminology throughout — for example, the shift from "C factor" to "ROC" (Runoff Coefficient) — ensuring consistency with current regulatory language.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- IMPROVEMENTS 10-19 -->
+  <section class="section">
+    <div class="section-label">Key Updates — Part II</div>
+    <h2>Improvements 10–19: Additional Updates</h2>
+    <div class="source-ref">Source: Applicant's Handbooks and Other Sources</div>
+    <p>The following ten items round out the comprehensive set of updates that modern BMP analysis tools must address. These range from usability enhancements that reduce errors to entirely new calculation capabilities for stormwater harvesting, permeable pavements, and multi-program regulatory compliance.</p>
+    <p><em>There is an expressed need to complete all of these to be consistent with current regulations and practice.</em></p>
+
+    <ul class="item-list">
+      <li><span class="item-num">10</span><div><strong>Clarity &amp; Error Prevention.</strong> Improved clarity in understanding calculations — for example, displaying fractions vs. percentages — along with built-in error catches that flag inconsistencies before submission, reducing reviewer questions and resubmission cycles.</div></li>
+      <li><span class="item-num">11</span><div><strong>BMP Names &amp; Effectiveness from A.H. Vol 1.</strong> Full inclusion of all BMP names and their associated effectiveness values as found in Applicant's Handbook Volume 1, ensuring software outputs match the regulatory reference documents exactly.</div></li>
+      <li><span class="item-num">12</span><div><strong>Stormwater Harvesting Calculations.</strong> New REV (Rate-Efficiency-Volume) curve calculations for stormwater harvesting, enabling applicants to model harvesting scenarios with zone-specific meteorological data and variable runoff coefficients.</div></li>
+      <li><span class="item-num">13</span><div><strong>Additional Permeable Pavements.</strong> Expanded options for permeable pavement systems beyond the traditional types, reflecting new products and installation methods validated through Florida research programs.</div></li>
+      <li><span class="item-num">14</span><div><strong>Retention After Wet Detention.</strong> The ability to model retention systems placed downstream of wet detention ponds — a treatment train configuration that can significantly boost overall pollutant removal effectiveness.</div></li>
+      <li><span class="item-num">15</span><div><strong>Systems in Series (Equation 9.5, A.H. Vol 1).</strong> Effectiveness calculations for BMP systems arranged in series using Equation 9.5, properly accounting for cumulative treatment through multiple BMP stages.</div></li>
+      <li><span class="item-num">16</span><div><strong>Pre- and Post-Volume Calculations.</strong> Pre- and post-development volume calculations supporting resiliency and flood control efforts.</div></li>
+      <li><span class="item-num">17</span><div><strong>Cost Data Improvements.</strong> Updated cost and O&amp;M data for more accurate project budgeting and life-cycle cost analysis.</div></li>
+      <li><span class="item-num">18</span><div><strong>Multi-Program Data.</strong> Data outputs for TMDL, BMAP, resiliency, and Water Use Permits (CUPs), enabling a single analysis to support multiple regulatory programs simultaneously.</div></li>
+      <li><span class="item-num">19</span><div><strong>Upstream Retention Effects on Wet Detention.</strong> Wet detention performance as modified by upstream retention systems — properly accounting for the treatment train effect on downstream pond performance.</div></li>
+    </ul>
+  </section>
+
+  <!-- PERFORMANCE STANDARDS -->
+  <section class="section">
+    <div class="section-label">New Rule Detail</div>
+    <h2>Specified Performance Standards from the New Rule</h2>
+    <div class="source-ref">Source: A.H. Vol 1, Sec. 8.3, June 28, 2024</div>
+
+    <p>One of the most significant changes in the June 28, 2024 stormwater rule is the introduction of specified performance standards. These standards establish clear benchmarks for pollutant removal that every BMP system must meet, representing years of research into actual water quality impacts. They provide a consistent, science-based framework for evaluating stormwater treatment effectiveness across all Florida water management districts.</p>
+
+    <div class="callout critical">
+      <div class="callout-label">Critical Note</div>
+      Most existing software does not include the new performance standards, which sometimes results in delays in obtaining a permit. The solution is to "hard-wire" the standards into compliant software. Hard-wired numbers are generally not questioned during review; User Defined values require justification and typically add weeks to the process.
+    </div>
+
+    <p>When performance standards are "hard-wired" into analysis software, both applicants and reviewers can have confidence that the calculations meet current regulatory requirements without the need for lengthy justification. Additional standards can be added to address local needs and sensitivity analysis. The framework attempts to maintain past Worksheet formats for continuity.</p>
+
+    <h3>Performance Standard of Surface Discharge Analysis</h3>
+    <p>The table below lists the required pollutant removal percentages by project scenario for Total Phosphorus (TP) and Total Nitrogen (TN), along with any additional criteria that must be met. Water Quality (WQ) Targets referenced below represent water quality standards in the receiving water (net improvements).</p>
+
+    <div class="table-wrap">
+      <table class="ps-table">
+        <thead>
+          <tr>
+            <th>Project Scenario</th>
+            <th>TP Removal (%)</th>
+            <th>TN Removal (%)</th>
+            <th>Additional Criteria</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr><td>All Sites</td><td>80</td><td>55</td><td>or Post ≤ Pre</td></tr>
+          <tr><td>OFW (Outstanding Florida Waters)</td><td>90</td><td>80</td><td>or Post ≤ Pre</td></tr>
+          <tr><td>Impaired Water</td><td>80</td><td>80</td><td>&amp; Post ≤ Pre + WQ Targets</td></tr>
+          <tr><td>Impaired + OFW</td><td>95</td><td>95</td><td>&amp; Post ≤ Pre + WQ Targets</td></tr>
+          <tr><td>Redevelopment</td><td>80</td><td>45</td><td>none</td></tr>
+          <tr><td>Redevelopment + OFW</td><td>90</td><td>60</td><td>none</td></tr>
+          <tr><td>Redevelopment + IMP</td><td>80</td><td>45</td><td>and WQ Targets</td></tr>
+        </tbody>
+      </table>
+      <p class="tfoot-note">WQ Targets are water quality standards in receiving water (net improvements). Source: A.H. Vol 1, Sec. 8.3, June 28, 2024.</p>
+    </div>
+
+    <h3>Additional Analysis Standards</h3>
+    <p>In addition to the regulatory performance standards above, the following standards may be applied to address local needs, discovery, and sensitivity analysis:</p>
+    <div class="tag-row">
+      <span class="tag">Post ≤ Pre</span>
+      <span class="tag">Specified % Removals</span>
+      <span class="tag">BMP Analysis</span>
+    </div>
+
+    <h3>Software Implementation</h3>
+    <p>The BMPFast software platform implements these standards by allowing the user to specify the project meteorological zone and mean annual rainfall, then automatically applying the correct performance standards for the project scenario. The system uses hard-wired regulatory values supplemented by user-input parameters for nitrogen and phosphorus removal efficiency where applicable.</p>
+
+    <div class="fig-placeholder">
+      <div class="fig-placeholder-icon">📊</div>
+      <div class="fig-placeholder-label">Figure — BMPFast Software Interface</div>
+      <div class="fig-placeholder-caption">BMPFast performance standard selection interface showing project scenario selection, meteorological zone, mean annual rainfall input, and resulting TP/TN removal requirements. See Figure REF-01.</div>
+    </div>
+  </section>
+
+  <!-- ANNUAL RAINFALL -->
+  <section class="section">
+    <div class="section-label">New Rule Detail</div>
+    <h2>Annual Rainfall Data — Updated by the New Rule</h2>
+    <div class="source-ref">Source: A.H. Vol 1, June 28, 2024, Appendix M Figure 2</div>
+
+    <p>The new stormwater rule brings a critical update to the annual rainfall data used in BMP effectiveness calculations. For decades, practitioners relied on rainfall isopluvial maps from the year 2000. The 2024 rule introduces updated annual rainfall depths derived from current NOAA data, reflecting more than two decades of additional precipitation records. These changes directly affect runoff volume calculations, BMP sizing, and ultimately the pollutant removal effectiveness that determines whether a project meets performance standards.</p>
+
+    <div class="callout">
+      <div class="callout-label">Key Takeaway</div>
+      The updated annual rainfall data shows the need for site-specific evaluations. Modern analysis software should automatically select the appropriate rainfall depth based on the project's geographic location within Florida. A project in Orlando may face very different rainfall conditions than one in the Florida Keys or the Panhandle.
+    </div>
+
+    <div class="fig-placeholder">
+      <div class="fig-placeholder-icon">🗺️</div>
+      <div class="fig-placeholder-label">Figure — 2022 NOAA Average Annual Rainfall Depths (inches)</div>
+      <div class="fig-placeholder-caption">Florida isopluvial map showing 2022 NOAA average annual rainfall depths in inches, from Appendix M Figure 2, A.H. Vol 1 (Rule 2024). Range: 41.60 to 65.70 inches. Keys to the Northwest Pan Handle included. See Figure REF-02.</div>
+    </div>
+
+    <h3>Comparison: 2000 vs. 2024 Annual Rainfall Data</h3>
+    <p>A direct comparison of the legacy 2000 isopluvial annual rainfall data with the updated 2024 NOAA values reveals meaningful changes across the state. Understanding these differences is critical for practitioners who have been using the older data for years and need to recalibrate their expectations.</p>
+
+    <div class="fig-placeholder">
+      <div class="fig-placeholder-icon">🗺️</div>
+      <div class="fig-placeholder-label">Figure — Comparison: 2000 and 2024 Annual Rainfall (inches)</div>
+      <div class="fig-placeholder-caption">Overlay map comparing legacy 2000 iso-annual rainfall contours with updated 2024 NOAA annual rainfall depths (shown in labeled boxes). Selected 2024 values: NW Florida 57 in., North Central 50 in., Central 50 in., Southwest 55 in., Southeast 61 in. See Figure REF-03.</div>
+    </div>
+
+    <div class="stat-row">
+      <div class="stat-cell">
+        <div class="stat-value">↑</div>
+        <div class="stat-desc">Most areas show <em>greater</em> rainfall in 2024 data</div>
+      </div>
+      <div class="stat-cell">
+        <div class="stat-value">↓</div>
+        <div class="stat-desc">Some areas show <em>smaller</em> values than 2000</div>
+      </div>
+      <div class="stat-cell">
+        <div class="stat-value">=</div>
+        <div class="stat-desc">Some areas remain approximately <em>equal</em></div>
+      </div>
+    </div>
+
+    <p>This variability reinforces that BMP analyses performed under the old rainfall assumptions may not meet current performance standards. Applicants must update their calculations to reflect the 2024 data before submitting permit applications.</p>
+
+    <div class="callout warning">
+      <div class="callout-label">Critical Implication</div>
+      Using outdated rainfall data means your analysis starts with the wrong foundation, potentially leading to undersized systems or, conversely, over-designed facilities that waste project budgets. Software tools that automatically incorporate the correct rainfall depth based on project location eliminate this common source of error.
+    </div>
+  </section>
+
+  <!-- EMCs -->
+  <section class="section">
+    <div class="section-label">Catchment Data</div>
+    <h2>Event Mean Concentrations (EMCs)</h2>
+    <div class="source-ref">Source: A.H. Vol 1, Table 9.2, June 28, 2024</div>
+
+    <p><abbr title="Event Mean Concentrations">EMCs</abbr> are the foundational water quality data that drive pollutant loading calculations in every stormwater permit application. The 2024 rule updated the EMC values in Applicant's Handbook Volume 1, Table 9.2, reflecting more current monitoring data from Florida catchments. These values represent the average concentration of specific pollutants in stormwater runoff from different land use types and are used to calculate both pre-development and post-development pollutant loads.</p>
+
+    <p>If an EMC is not available in the standard "Pull-Down" list from the Applicant's Handbook, User Defined values can be entered on a site-specific basis. However, there is a significant practical problem: User Defined EMCs usually require additional time to justify to reviewers, often leading to back-and-forth correspondence and delays. In contrast, "hard-wired" numbers built into approved software and referenced directly to the A.H. are generally not questioned during review.</p>
+
+    <div class="callout">
+      <div class="callout-label">Pro Tip</div>
+      Whenever possible, use the standard EMC values from A.H. Vol 1, Table 9.2 that are hard-wired into compliant software. User Defined EMCs, while available, typically add weeks to the review process as reviewers request justification documentation.
+    </div>
+
+    <h3>Table 9.2 — Standardized Statewide Stormwater Nutrient EMC Values</h3>
+    <div class="table-wrap">
+      <table>
+        <thead>
+          <tr>
+            <th>Land Use Category</th>
+            <th>Total N (mg/l)</th>
+            <th>Total P (mg/l)</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr><td>Low Density Residential</td><td>1.65</td><td>0.270</td></tr>
+          <tr><td>Single Family</td><td>1.77</td><td>0.327</td></tr>
+          <tr><td>Multi-Family</td><td>1.84</td><td>0.520</td></tr>
+          <tr><td>Low Intensity Commercial</td><td>0.93</td><td>0.190</td></tr>
+          <tr><td>High Intensity Commercial</td><td>2.40</td><td>0.345</td></tr>
+          <tr><td>Light Industrial</td><td>1.20</td><td>0.260</td></tr>
+          <tr><td>Highway</td><td>1.25</td><td>0.173</td></tr>
+          <tr><td>Dry Prairie</td><td>2.025</td><td>0.184</td></tr>
+          <tr><td>Marl Prairie</td><td>0.684</td><td>0.012</td></tr>
+          <tr><td>Mesic Flatwoods</td><td>1.087</td><td>0.043</td></tr>
+          <tr><td>Ruderal/Upland Pine</td><td>1.694</td><td>0.162</td></tr>
+          <tr><td>Scrubby Flatwoods</td><td>1.155</td><td>0.027</td></tr>
+          <tr><td>Upland Hardwood</td><td>1.042</td><td>0.346</td></tr>
+          <tr><td>Upland Mixed Forest</td><td>0.606</td><td>1.166</td></tr>
+          <tr><td>Wet Flatwoods</td><td>1.213</td><td>0.021</td></tr>
+          <tr><td>Wet Prairie</td><td>1.095</td><td>0.015</td></tr>
+          <tr><td>Xeric Scrub</td><td>1.596</td><td>0.156</td></tr>
+          <tr><td>Rangeland/Parkland</td><td>1.150</td><td>0.055</td></tr>
+          <tr><td>General Agricultural</td><td>2.29</td><td>0.381</td></tr>
+          <tr><td>Pasture</td><td>3.03</td><td>0.593</td></tr>
+          <tr><td>Citrus</td><td>2.11</td><td>0.180</td></tr>
+          <tr><td>Row Crops</td><td>2.50</td><td>0.577</td></tr>
+        </tbody>
+      </table>
+      <p class="tfoot-note">Source: A.H. Vol 1, Table 9.2, June 28, 2024. Values represent standardized statewide stormwater nutrient EMCs for Florida land use categories.</p>
+    </div>
+  </section>
+
+  <!-- WET DETENTION -->
+  <section class="section">
+    <div class="section-label">BMP Analysis</div>
+    <h2>Wet Detention Pond Options</h2>
+    <div class="source-ref">Source: A.H. Vol 1, Appendix O and A.H. Vol 2</div>
+
+    <p>Wet detention ponds remain one of the most widely used BMPs in Florida stormwater management. The 2024 rule and its associated Applicant's Handbook updates introduce important refinements to how wet detention performance is calculated, including new options for ponds without littoral zones, updated Average Residence Time (ART) limits, and revised MAP (Maximum Allowable Pollutant) loading calculations. These changes give applicants more flexibility in pond design while ensuring consistent water quality outcomes.</p>
+
+    <div class="two-col">
+      <div class="callout">
+        <div class="callout-label">Maximum ART</div>
+        As specified in A.H. Vol 1, Appendix O, the maximum Average Residence Time for credit purposes is <strong>200 days</strong>. Annual residence times cannot exceed this upper limit in some applications.
+      </div>
+      <div class="callout">
+        <div class="callout-label">Littoral Zone Requirement</div>
+        A pond must include a littoral zone for full credit. If no littoral zone is present, the removal efficiency credit is reduced by <strong>10%</strong>. When Floating Wetland Mats (MAPs) are used, the applicable improvement credit percentage applies. Note the <strong>5% coverage</strong> requirement (12 tables in AH 1, Appendix O).
+      </div>
+    </div>
+
+    <h3>Key Parameters</h3>
+    <ul class="item-list">
+      <li><span class="item-num">→</span><div><strong>Permanent Pool Volume (acre-feet):</strong> Input required to calculate Average Residence Time.</div></li>
+      <li><span class="item-num">→</span><div><strong>Floating Wetland or Mats Improvement Credit (%):</strong> Additional credit for floating treatment wetlands or vegetative mats placed within the pond.</div></li>
+      <li><span class="item-num">→</span><div><strong>Input Pond TP (µg/l):</strong> If site-specific data is available, pond total phosphorus concentration can be entered for more refined calculations.</div></li>
+    </ul>
+
+    <div class="fig-placeholder">
+      <div class="fig-placeholder-icon">📈</div>
+      <div class="fig-placeholder-label">Figure — Wet Detention Performance Curves</div>
+      <div class="fig-placeholder-caption">Three performance plots: (1) Phosphorus removal efficiency (%) vs. Average Residence Time (days) — asymptotic curve beginning at approximately 63% and rising toward 90%; (2) Total Nitrogen removal efficiency (%) vs. Average Residence Time — two curves showing ~40% efficiency asymptote; (3) Nitrogen with upstream retention — efficiency curve beginning near 31%. Source: A.H. Vol 1, Appendix O. See Figure REF-04.</div>
+    </div>
+  </section>
+
+  <!-- FAST RECOVERY RETENTION -->
+  <section class="section">
+    <div class="section-label">BMP Analysis</div>
+    <h2>Fast Recovery Retention Systems</h2>
+    <h3>Exfiltration Pipes and Vaults in Limestone Areas</h3>
+    <div class="source-ref">Source: A.H. Vol 1, Appendix O (retention) and SFWMD A.H. Vol 2</div>
+
+    <p>Fast recovery retention systems — including exfiltration pipes and underground vaults installed in limestone geology — represent a significant advancement in stormwater treatment technology. These systems achieve dramatically higher annual pollutant removal effectiveness compared to conventional retention systems with slower 72-hour recovery times. The faster a retention system can drain and restore its treatment capacity, the more rainfall events it can capture throughout the year, resulting in higher annual effectiveness.</p>
+
+    <p>In fast recovery retention systems operating in suitable limestone areas, the treatment volume can be recovered in less than 3 hours, compared to the standard 72-hour recovery assumption. This rapid turnaround means the system is ready to capture and treat the next rainfall event much sooner.</p>
+
+    <div class="two-col">
+      <div class="callout">
+        <div class="callout-label">Standard Recovery (&lt;72 Hours)</div>
+        Apply the removal efficiency tables from the new rule (2024), A.H. Vol 1, Appendix O. There are 80 tables available for various combinations of CN, DCIA, zone, and design depth. Note: Challenging interpolation exists for CN and DCIA values other than increments of 5.
+      </div>
+      <div class="callout">
+        <div class="callout-label">Fast Recovery (&lt;3 Hours)</div>
+        For fast recovery systems, adjust the standard table values using the fast recovery graph. The increase in annual effectiveness is <strong>up to 10%</strong> above the standard recovery rate values. Assumes initial abstraction of 0.1 inch.
+      </div>
+    </div>
+
+    <div class="fig-placeholder">
+      <div class="fig-placeholder-icon">📈</div>
+      <div class="fig-placeholder-label">Figure — Fast Recovery Retention Performance Graph</div>
+      <div class="fig-placeholder-caption">Graph showing yearly rainfall volume (% of total) vs. Design Treatment Depth (inches) for Region 2. Two curves shown: Treatment &lt;3 hr recovery (upper curve) and Treatment &lt;72 hr recovery (lower curve), with the area between representing the fast recovery effectiveness gain. The vertical line at 1 inch shows the design depth reference. Source: Wanielista 1978, Harper 2007. See Figure REF-05.</div>
+    </div>
+
+    <h3>Zone 2 Retention Efficiency Table — 1-inch Design Depth</h3>
+    <p>The table below is an excerpt from the 80 removal efficiency tables in A.H. Vol 1, Appendix O. Values represent annual retention effectiveness (%) for Zone 2 by Non-DCIA Curve Number (CN) and Percent DCIA at a 1-inch design treatment depth.</p>
+
+    <div class="table-wrap">
+      <table>
+        <thead>
+          <tr>
+            <th>Non-DCIA CN</th>
+            <th>DCIA 70%</th>
+            <th>DCIA 75%</th>
+            <th>DCIA 80%</th>
+            <th>DCIA 85%</th>
+            <th>DCIA 90%</th>
+            <th>DCIA 95%</th>
+            <th>DCIA 100%</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr><td>30</td><td>80.0</td><td>77.9</td><td>75.9</td><td>74.0</td><td>72.2</td><td>70.3</td><td>68.6</td></tr>
+          <tr><td>35</td><td>79.9</td><td>77.9</td><td>75.9</td><td>74.0</td><td>72.1</td><td>70.3</td><td>68.6</td></tr>
+          <tr><td>40</td><td>79.8</td><td>77.8</td><td>75.8</td><td>73.9</td><td>72.1</td><td>70.3</td><td>68.6</td></tr>
+          <tr><td>45</td><td>79.6</td><td>77.7</td><td>75.8</td><td>73.9</td><td>72.1</td><td>70.3</td><td>68.6</td></tr>
+          <tr><td>50</td><td>79.5</td><td>77.5</td><td>75.6</td><td>73.8</td><td>72.0</td><td>70.3</td><td>68.6</td></tr>
+          <tr><td>55</td><td>79.2</td><td>77.3</td><td>75.5</td><td>73.7</td><td>72.0</td><td>70.2</td><td>68.6</td></tr>
+          <tr><td>60</td><td>78.9</td><td>77.1</td><td>75.3</td><td>73.6</td><td>71.9</td><td>70.2</td><td>68.6</td></tr>
+          <tr><td>65</td><td>78.5</td><td>76.8</td><td>75.1</td><td>73.4</td><td>71.8</td><td>70.2</td><td>68.6</td></tr>
+          <tr><td>70</td><td>77.9</td><td>76.4</td><td>74.8</td><td>73.2</td><td>71.6</td><td>70.1</td><td>68.6</td></tr>
+          <tr><td>75</td><td>77.2</td><td>75.8</td><td>74.3</td><td>72.9</td><td>71.5</td><td>70.0</td><td>68.6</td></tr>
+          <tr><td>80</td><td>76.3</td><td>75.0</td><td>73.8</td><td>72.5</td><td>71.2</td><td>69.9</td><td>68.6</td></tr>
+          <tr><td>85</td><td>74.9</td><td>74.0</td><td>72.9</td><td>71.9</td><td>70.8</td><td>69.7</td><td>68.6</td></tr>
+          <tr><td>90</td><td>73.2</td><td>72.5</td><td>71.8</td><td>71.0</td><td>70.3</td><td>69.4</td><td>68.6</td></tr>
+          <tr><td>95</td><td>70.9</td><td>70.6</td><td>70.2</td><td>69.9</td><td>69.5</td><td>69.0</td><td>68.6</td></tr>
+          <tr><td>98</td><td>69.4</td><td>69.3</td><td>69.2</td><td>69.0</td><td>68.9</td><td>68.8</td><td>68.6</td></tr>
+        </tbody>
+      </table>
+      <p class="tfoot-note">Zone 2 by Percent DCIA, 1-inch design depth. Values are annual retention efficiency (%). Assumes initial abstraction of 0.1 inch. Source: A.H. Vol 1, Appendix O (retention).</p>
+    </div>
+  </section>
+
+  <!-- COST CONSIDERATIONS -->
+  <section class="section">
+    <div class="section-label">Economic Analysis</div>
+    <h2>Cost Considerations from the Applicant's Handbooks</h2>
+    <div class="source-ref">Source: A.H. Vol 1, Section 12 — O&amp;M</div>
+
+    <p>Beyond technical performance, cost is a critical factor in every stormwater management decision. The Applicant's Handbook Volume 1, Section 12, provides comprehensive guidance on estimating both capital costs and ongoing operations and maintenance (O&amp;M) expenses for various BMP types. Modern analysis software incorporates these cost data to help applicants compare alternatives on long-term economic viability — a factor that increasingly influences both design decisions and permit reviewer evaluations.</p>
+
+    <p>One particularly innovative feature is the option to account for income generated from stormwater harvesting. When harvested stormwater is used for irrigation or other beneficial purposes, it can offset water utility costs, fundamentally changing the cost-benefit equation for certain BMP configurations.</p>
+
+    <div class="callout">
+      <div class="callout-label">Data Attribution</div>
+      Cost calculation methodologies are based on FSA (Cunningham) publications. Credit for specific calculations to Mike Hardin. Parameters include: Interest Rate, Project Duration, Cost of Water ($/1000 gal), and income from harvesting where applicable.
+    </div>
+
+    <h3>Example Cost Output — Road and Commercial Center (Catchment #1)</h3>
+
+    <div class="table-wrap">
+      <table>
+        <thead>
+          <tr>
+            <th>BMP Type</th>
+            <th>Treatment Land Volume (ac-ft)</th>
+            <th>Land Cost ($)</th>
+            <th>Expected Life (yr)</th>
+            <th>Fixed BMP Cost ($)</th>
+            <th>BMP Cost ($/ac-ft)</th>
+            <th>Initial BMP Cost ($)</th>
+            <th>Annual Maint. ($/yr)</th>
+            <th>Annual Recovery ($/yr)</th>
+            <th>Total Annual Cost ($/yr)</th>
+            <th>Future Replace Cost ($)</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr><td>Retention</td><td>0.50</td><td>10,000</td><td>30</td><td>5,000</td><td>6,000</td><td>18,000</td><td>500</td><td>0</td><td>500</td><td>35,000</td></tr>
+          <tr><td>Exfiltration</td><td>0.07</td><td>0</td><td>30</td><td>2,000</td><td>265,000</td><td>20,311</td><td>800</td><td>0</td><td>800</td><td>0</td></tr>
+          <tr><td>Tree Well</td><td>0.07</td><td>0</td><td>30</td><td>2,000</td><td>95,000</td><td>8,543</td><td>800</td><td>0</td><td>800</td><td>0</td></tr>
+          <tr><td>Multiple BMP</td><td>0.64</td><td>10,000</td><td>0</td><td>9,000</td><td>0</td><td>46,854</td><td>2,100</td><td>0</td><td>2,100</td><td>0</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="table-wrap">
+      <table>
+        <thead>
+          <tr>
+            <th>BMP Type</th>
+            <th>Present Value to Replace ($)</th>
+            <th>PV Value/Life Cycle Cost ($)</th>
+            <th>Nitrogen Mass Reduction (lb/yr)</th>
+            <th>Phosphorus Mass Reduction (lb/yr)</th>
+            <th>PV Cost per Pound N Removed ($/lb)</th>
+            <th>PV Cost per Pound P Removed ($/lb)</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr><td>Retention</td><td>10,791</td><td>26,646</td><td>34.61</td><td>5.76</td><td>25.67</td><td>154.26</td></tr>
+          <tr><td>Exfiltration</td><td>0</td><td>34,145</td><td>8.49</td><td>1.41</td><td>134.01</td><td>805.01</td></tr>
+          <tr><td>Tree Well</td><td>0</td><td>22,376</td><td>8.47</td><td>1.41</td><td>88.09</td><td>529.20</td></tr>
+          <tr><td>Multiple BMP</td><td>10,791</td><td>83,167</td><td>37.54</td><td>6.25</td><td>73.85</td><td>443.91</td></tr>
+        </tbody>
+      </table>
+      <p class="tfoot-note">Example parameters: Interest Rate 4.000%, Project Duration 30 years, Cost of Water $0.000/1000 gal. An income-from-harvesting option is available when stormwater is used for supplemental irrigation.</p>
+    </div>
+  </section>
+
+  <!-- STORMWATER HARVESTING -->
+  <section class="section">
+    <div class="section-label">BMP Analysis</div>
+    <h2>Stormwater Harvesting Performance</h2>
+    <h3>REV Curves for Stormwater Harvesting</h3>
+    <div class="source-ref">Source: A.H. Vol 1, Appendix O, Table 1</div>
+
+    <p>Stormwater harvesting is an increasingly important BMP strategy that simultaneously addresses water quality treatment, water supply, and flood control objectives. The performance of harvesting systems is characterized using REV curves — a powerful analytical tool that relates three key variables.</p>
+
+    <div class="stat-row">
+      <div class="stat-cell">
+        <div class="stat-value">R</div>
+        <div class="stat-desc">Rate — average daily use rate (Y-axis, in/day over EIA)</div>
+      </div>
+      <div class="stat-cell">
+        <div class="stat-value">E</div>
+        <div class="stat-desc">Efficiency — annual removal (retention) effectiveness (%)</div>
+      </div>
+      <div class="stat-cell">
+        <div class="stat-value">V</div>
+        <div class="stat-desc">Volume — storage volume available for harvesting</div>
+      </div>
+    </div>
+
+    <p>One REV curve exists for each meteorological zone in Florida, calculated as an average of the rainfall patterns within that zone. A critical improvement in modern analysis is the treatment of runoff volume. Older software fixed the runoff coefficient at 0.8, which resulted in conservative (understated) estimates of pollutant removal effectiveness. Updated tools allow the runoff coefficient to vary based on actual site conditions, producing more accurate and often more favorable harvesting performance calculations.</p>
+
+    <div class="callout warning">
+      <div class="callout-label">Important Improvement</div>
+      When ROC = 0.80 (old fixed value), harvested efficiency may be approximately 61%. When ROC = 0.325 (site-specific, lower impervious fraction), harvested efficiency may reach 90% — a significant difference that can determine whether a project meets its performance standard.
+    </div>
+
+    <div class="compare-row">
+      <div class="compare-before">
+        <div style="font-size:0.65rem;letter-spacing:0.1em;text-transform:uppercase;color:var(--ink-light);margin-bottom:0.4rem;">Legacy Software</div>
+        ROC fixed at 0.80<br>~61% harvest efficiency
+      </div>
+      <div class="compare-arrow">→</div>
+      <div class="compare-after">
+        <div style="font-size:0.65rem;letter-spacing:0.1em;text-transform:uppercase;color:var(--forest);margin-bottom:0.4rem;">Updated Software</div>
+        ROC = site-specific (e.g. 0.325)<br>~90% harvest efficiency
+      </div>
+    </div>
+
+    <div class="fig-placeholder">
+      <div class="fig-placeholder-icon">📈</div>
+      <div class="fig-placeholder-label">Figure — REV Curves for Stormwater Harvesting: Zones 1, 3, and 5</div>
+      <div class="fig-placeholder-caption">Three REV curve plots showing Use Rate (inches/day over EIA) on the Y-axis vs. Runoff Volume of Water (inches over EIA) on the X-axis. Each plot contains efficiency contour lines from 20% to 90% removal. Zones 1, 3, and 5 shown. Source: A.H. Vol 1, Appendix O, Table 1. See Figure REF-06.</div>
+    </div>
+
+    <div class="fig-placeholder">
+      <div class="fig-placeholder-icon">📈</div>
+      <div class="fig-placeholder-label">Figure — Zone 2 REV Curve: 61% vs. 90% Efficiency Comparison</div>
+      <div class="fig-placeholder-caption">Two Zone 2 REV curve plots side-by-side showing the effect of ROC on harvesting efficiency. Left plot: ROC = 0.80, point marker shows 61% harvested efficiency. Right plot: ROC = 0.325, point marker shows 90% harvested efficiency. Source: A.H. Vol 1, Appendix O, Table 1, Stormwater Harvesting. See Figure REF-07.</div>
+    </div>
+  </section>
+
+  <!-- OTHER PERMITS: CUP AND HARVESTING -->
+  <section class="section">
+    <div class="section-label">Permit Integration</div>
+    <h2>Other Permits: Consumptive Use Permits (CUP) and Harvesting</h2>
+    <div class="source-ref">Source: Applicant's Handbook for Water Use Permit Applications — SFWMD June 13, 2022; SWFWMD (WUP) May 2014; SJRWMD Aug 2014</div>
+
+    <p>Stormwater harvesting systems that supply irrigation or other beneficial uses may also require Consumptive Use Permits (CUPs) — also referred to as Water Use Permits (WUPs) in some districts. Modern BMP analysis software can calculate the key parameters needed for both the stormwater quality permit and the CUP application from a single analysis, reducing duplication of effort and ensuring consistency between applications.</p>
+
+    <p>The analysis relates the total area contributing to the harvesting system, the total green area available for irrigation, and the weighted rational runoff coefficient, to produce estimates of average yearly demand for harvested water, average supply of harvested water, and the average supplemental (non-harvested) water needed per year.</p>
+
+    <div class="callout">
+      <div class="callout-label">Example Calculation Parameters</div>
+      <div class="example-results">
+        Meteorological Zone: 2<br>
+        Total Area Contributing to Harvesting System: 16.95 acres<br>
+        Total Green Area Available for Irrigation: 9.3 acres<br>
+        Weighted Rational Runoff Coefficient: 0.325 (site-specific) vs. 0.80 (legacy fixed)<br>
+        <br>
+        Average yearly demand for harvested water: 13.13 MGY<br>
+        Average supply of harvested water: 7.673 MGY<br>
+        Average supplemental water needed per year: 5.458 MGY
+      </div>
+    </div>
+
+    <p>The harvesting supply calculation draws from A.H. Vol 1, Appendix N (zone 2 data) and Appendix O, Table 1 (harvesting). The lookup table of mean annual runoff per unit DCIA (Percent DCIA vs. Non-DCIA CN) provides the runoff volume foundation for these calculations.</p>
+  </section>
+
+  <!-- FLOOD IMPACTS AND EXAMPLE -->
+  <section class="section">
+    <div class="section-label">Worked Example</div>
+    <h2>Flood Impacts and Example Application</h2>
+    <div class="source-ref">File: AG to SF with GSI and Vault for Harvesting</div>
+    <div class="source-ref">Source: A.H. Vol 1, Part III</div>
+
+    <p>Per A.H. Vol 1, Part III: <em>"There is at least a neutral factor in the public interest balance with respect to the potential for causing or alleviating flooding problems if the applicant meets the water quality criteria."</em></p>
+
+    <div class="example-box">
+      <span class="example-box-label">Example Scenario</span>
+      <p>A <strong>16.95-acre general agriculture</strong> site is being converted to single family residential. The <strong>performance standard</strong> is 55%/80% (TN/TP) or post ≤ pre loading. Annual rainfall is <strong>61 inches</strong>. Net improvement for <em>E. coli</em> will be met. The planned treatment system includes ½ inch retention on site (GSI — Green Stormwater Infrastructure) followed by a detention vault for <strong>stormwater harvesting</strong> on 9.3 acres of irrigation land at an average rate of 1 inch/week. A <strong>water use permit</strong> and a <strong>volume discharge limitation</strong> (post ≤ pre volume) are also required.</p>
+
+      <div class="example-results">
+        Volume of Runoff Pre-Condition:&nbsp;&nbsp;&nbsp;&nbsp;4.5 inches/yr<br>
+        Volume of Runoff Post-Condition:&nbsp;&nbsp; 18.53 inches/yr<br>
+        Post-Condition Runoff with BMPs (inches/year over 16.95 acres): <strong>3.23</strong><br>
+        <br>
+        <strong>Target Removals</strong><br>
+        Is system total nitrogen target removal met?&nbsp;&nbsp;&nbsp; <span class="pass">Yes</span> (Required: 55% — Provided: 82.57%)<br>
+        Is system total phosphorus target removal met?&nbsp; <span class="pass">Yes</span> (Required: 80% — Provided: 82.57%)<br>
+        <br>
+        Harvested Water Supply:&nbsp; 5.176 MGY<br>
+        Water Use:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 13.132 MGY<br>
+        <br>
+        <strong>Pre vs. Post Removals</strong><br>
+        Is % less than pre-development loading for TN met?&nbsp; <span class="pass">Yes</span> (Required: 68.55% — Provided: 82.57%)<br>
+        Is % less than pre-development loading for TP met?&nbsp; <span class="pass">Yes</span> (Required: 71.68% — Provided: 82.57%)
+      </div>
+    </div>
+
+    <p>This example demonstrates how a comprehensive treatment train — combining on-site GSI retention with stormwater harvesting through a detention vault — can achieve substantial pollutant removal that satisfies all applicable performance standards for a land use conversion project.</p>
+  </section>
+
+  <!-- BMPFAST SOFTWARE -->
+  <section class="section">
+    <div class="section-label">Software Platform</div>
+    <h2>BMPFast — Current Thinking and Implementation</h2>
+
+    <p>BMPFast is a C# (C++) software application for estimating the annual removal effectiveness of stormwater Best Management Practices. The software has been granted an extender for all saved data using the <code>.BMPT</code> file format.</p>
+
+    <div class="pull-quote">
+      The acronym reflects the perception that BMPs must be analyzed in a reasonable time (fast) and that analysis must meet current practice and regulations.
+    </div>
+
+    <p>The full acronym has two complementary interpretations:</p>
+
+    <ul class="item-list">
+      <li><span class="item-num">→</span><div><strong>Best Management Practices For annual Assessment of Stormwater Treatment</strong></div></li>
+      <li><span class="item-num">→</span><div><strong>Best Management Practices with Florida based annual Assessment of Stormwater Treatment</strong></div></li>
+    </ul>
+
+    <p>Secure software that is continually updated to respond to regulatory and practice needs is essential — not only for current practitioners but also for the next generation of stormwater professionals who will inherit an increasingly complex regulatory landscape.</p>
+
+    <div class="callout">
+      <div class="callout-label">Software Approval Requirement</div>
+      All software used in Florida stormwater permit applications must be approved by at least one regulatory agency and must comply with FS 288.860 requirements regarding foreign control of intellectual property.
+    </div>
+  </section>
+
+  <!-- LEARNING OBJECTIVES SUMMARY -->
+  <section class="section">
+    <div class="section-label">Module Summary</div>
+    <h2>Learning Objectives — Summary</h2>
+    <div class="objectives">
+      <div class="objectives-title">Key Takeaways from This Module</div>
+      <ol>
+        <li><strong>New rules, regulations, and practice do affect stormwater management water quality permit applications.</strong> The June 28, 2024 stormwater rule introduced significant changes to performance standards, annual rainfall data, EMC values, BMP analysis methods, and terminology. Staying current with these changes is essential for timely permit approvals.</li>
+        <li><strong>Examples of specific changes and their impact on permit applications were presented.</strong> These included updated performance standards by project scenario, revised annual rainfall data from NOAA 2024, standardized EMC values in Table 9.2, wet detention ART limits, fast recovery retention effectiveness adjustments, REV curve improvements for harvesting, and cost/CUP integration.</li>
+        <li><strong>Software called BMPFast can be used to assist in calculations in a timely manner while being consistent with new rules, regulations, and practice.</strong> By hard-wiring current regulatory standards and Florida-specific data into approved software, practitioners can produce compliant, reviewer-ready analyses efficiently.</li>
+      </ol>
+    </div>
+  </section>
+
+  <!-- APPENDIX: FIGURE REFERENCES -->
+  <section class="appendix">
+    <div class="section-label">Appendix</div>
+    <h2>Referenced Figures</h2>
+    <p>The following figures are referenced in this module. These graphics should be obtained from the sources indicated and inserted at the locations marked throughout the document.</p>
+
+    <ul class="fig-ref-list">
+      <li>
+        <span class="fig-ref-id">REF-01</span>
+        <div><strong>BMPFast Software — Performance Standard Selection Interface.</strong> Screen capture showing the project scenario dropdown, meteorological zone, mean annual rainfall input, performance standard table, and additional criteria options. Source: BMPFast software interface.</div>
+      </li>
+      <li>
+        <span class="fig-ref-id">REF-02</span>
+        <div><strong>2022 NOAA Average Annual Rainfall Depths — Florida (inches).</strong> Isopluvial map of Florida showing updated annual rainfall depths from 2024 NOAA data, as published in Appendix M, Figure 2, A.H. Vol 1 (Rule 2024). Range: 41.60 to 65.70 inches. Keys to the Northwest Pan Handle.</div>
+      </li>
+      <li>
+        <span class="fig-ref-id">REF-03</span>
+        <div><strong>Comparison Map — 2000 vs. 2024 Annual Rainfall Data (inches).</strong> Overlay map showing 2000 iso-annual rain contours and 2024 NOAA annual rainfall depth values (boxed). Selected comparison values: NW 57→50 in., Central 50→50 in., Southwest 50→55 in., Southeast 54→61 in. Source: A.H. Vol 1, Rule 2024.</div>
+      </li>
+      <li>
+        <span class="fig-ref-id">REF-04</span>
+        <div><strong>Wet Detention Performance Curves — Phosphorus and Nitrogen.</strong> Three plots of treatment efficiency (%) vs. Average Residence Time (days): TP curve (asymptote near 90%, starting at ~63%), TN curve (asymptote near 43%, starting at ~40%), and TN with upstream retention (asymptote near 40%, starting at ~31%). Source: A.H. Vol 1, Appendix O and A.H. Vol 2.</div>
+      </li>
+      <li>
+        <span class="fig-ref-id">REF-05</span>
+        <div><strong>Fast Recovery Retention Performance Graph — Region 2.</strong> Graph of yearly rainfall volume (% of total) vs. Design Treatment Depth (inches) showing curves for &lt;3 hr and &lt;72 hr recovery. Source: Wanielista 1978, Harper 2007. Assumes initial abstraction of 0.1 inch.</div>
+      </li>
+      <li>
+        <span class="fig-ref-id">REF-06</span>
+        <div><strong>REV Curves for Stormwater Harvesting — Zones 1, 3, and 5.</strong> Three plots of Use Rate (in/day over EIA) vs. Runoff Volume of Water (in over EIA) with efficiency contour lines (20%–90%). Source: A.H. Vol 1, Appendix O, Table 1.</div>
+      </li>
+      <li>
+        <span class="fig-ref-id">REF-07</span>
+        <div><strong>Zone 2 REV Curve Comparison — ROC 0.80 vs. ROC 0.325.</strong> Two Zone 2 REV plots showing harvesting efficiency difference between legacy fixed ROC (61% efficiency) and site-specific ROC (90% efficiency). Source: A.H. Vol 1, Appendix O, Table 1, Stormwater Harvesting.</div>
+      </li>
+    </ul>
+  </section>
+
+</main>
+
+<!-- FOOTER -->
+<footer class="footer">
+  <div class="footer-inner">
+    <div>
+      <div class="footer-title">BMPFast Training Series</div>
+      Module 3 — Understanding Regulations, Rules and Practice
+    </div>
+    <div>
+      <div class="footer-title">Primary Source</div>
+      A.H. Vol 1, June 28, 2024 Rule
+    </div>
+    <div>
+      <div class="footer-title">Prepared</div>
+      January 2026 &nbsp;·&nbsp; Marty Wanielista
+    </div>
+  </div>
+</footer>
+
+</body>
+</html>

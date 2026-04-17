@@ -1,0 +1,1228 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>COP 4708 – Module 7: Database Normalization</title>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700;800&family=Source+Sans+3:ital,wght@0,300;0,400;0,600;0,700;1,400&family=Source+Code+Pro:wght@400;600&display=swap" rel="stylesheet"/>
+  <style>
+    *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+    :root{
+      --navy:#0b1929;--deep-teal:#0e4d6e;--teal:#1672a0;--sky:#2196c4;
+      --ice:#d6eaf8;--pale:#eaf4fb;
+      /* Module 7 accent — deep forest green */
+      --grn:#1a5c30;--grn-mid:#237a40;--grn-bright:#2d9a52;
+      --grn-light:#eaf6ee;--grn-border:#8dd4a8;
+      /* Supporting */
+      --ind:#2d3a8c;--ind-light:#eef0fb;--ind-border:#b0bcee;
+      --gold:#8a5c00;--gold-light:#fdf5e0;--gold-border:#e8c87a;
+      --burg:#7b1d3a;--burg-light:#f9eaee;--burg-border:#e0a0b0;
+      --purple:#5040a0;--purple-light:#eeeaff;
+      --red:#aa3030;--red-light:#fdecea;
+      --amber:#c8720c;--amber-light:#fdf0e2;--amber-border:#f5c48a;
+      --slate:#445566;--slate-light:#f0f4f8;--slate-border:#99aabb;
+      --white:#fff;--off-white:#f5f8fc;--border:#c4d8ea;
+      --text:#18293c;--muted:#557a92;--radius:10px;
+      --shadow:0 4px 20px rgba(11,25,41,.09);
+      --shadow-lg:0 8px 32px rgba(11,25,41,.14);
+    }
+    html{scroll-behavior:smooth}
+    body{font-family:'Source Sans 3',sans-serif;color:var(--text);background:var(--off-white);line-height:1.72}
+    /* HEADER */
+    header{background:linear-gradient(145deg,#080e06 0%,#0f2a14 40%,#0b1929 100%);color:#fff;position:relative;overflow:hidden}
+    header::before{content:'';position:absolute;inset:0;
+      background:radial-gradient(ellipse at 70% 25%,rgba(45,154,82,.38) 0%,transparent 55%),
+                 radial-gradient(ellipse at 12% 80%,rgba(14,77,110,.28) 0%,transparent 50%);pointer-events:none}
+    header::after{content:'';position:absolute;right:16px;top:12px;width:370px;height:240px;
+      background:url("data:image/svg+xml,%3Csvg viewBox='0 0 370 240' xmlns='http://www.w3.org/2000/svg'%3E%3Ctext x='10' y='38' font-family='monospace' font-size='15' fill='%232d9a52' fill-opacity='.22' font-weight='700'%3EUnnormalized → 1NF → 2NF → 3NF%3C/text%3E%3Ctext x='10' y='64' font-family='monospace' font-size='13' fill='%232d9a52' fill-opacity='.15'%3EOrderID  CustomerName  ProductName%3C/text%3E%3Ctext x='10' y='82' font-family='monospace' font-size='13' fill='%232d9a52' fill-opacity='.12'%3E1001     Smith, J      Widget A%3C/text%3E%3Ctext x='10' y='100' font-family='monospace' font-size='13' fill='%232d9a52' fill-opacity='.10'%3E1001     Smith, J      Widget B%3C/text%3E%3Ctext x='10' y='130' font-family='monospace' font-size='14' fill='%231672a0' fill-opacity='.18' font-weight='700'%3EFunctional Dependency:%3C/text%3E%3Ctext x='10' y='150' font-family='monospace' font-size='13' fill='%231672a0' fill-opacity='.15'%3EStudentID → LastName, GPA%3C/text%3E%3Ctext x='10' y='185' font-family='monospace' font-size='14' fill='%23557a92' fill-opacity='.16' font-weight='700'%3EBCNF · 4NF · 5NF%3C/text%3E%3C/svg%3E");
+      background-size:contain;background-repeat:no-repeat;pointer-events:none}
+    .header-inner{position:relative;z-index:1;max-width:980px;margin:0 auto;padding:52px 32px 44px}
+    .course-badge{display:inline-flex;align-items:center;gap:8px;background:rgba(26,92,48,.35);border:1px solid rgba(45,154,82,.40);color:#90d8a8;font-size:.77rem;font-weight:700;letter-spacing:.12em;text-transform:uppercase;padding:5px 14px;border-radius:20px;margin-bottom:16px}
+    .course-badge::before{content:'◈'}
+    header h1{font-family:'Playfair Display',serif;font-size:2.4rem;line-height:1.18;color:#fff;margin-bottom:10px;max-width:640px}
+    header h1 em{font-style:normal;color:#90d8a8}
+    header h2{font-size:1.05rem;font-weight:300;color:#90b8d0;margin-bottom:26px;max-width:580px}
+    .header-chips{display:flex;flex-wrap:wrap;gap:10px}
+    .chip{background:rgba(255,255,255,.10);border:1px solid rgba(255,255,255,.18);color:#cce5f5;font-size:.8rem;font-weight:600;padding:5px 14px;border-radius:20px}
+    /* OUTCOMES */
+    .outcomes-wrap{background:var(--grn-light);border-left:6px solid var(--grn);max-width:980px;margin:0 auto;border-radius:0 var(--radius) var(--radius) 0;padding:22px 28px}
+    .outcomes-wrap h3{font-family:'Playfair Display',serif;font-size:1rem;color:#0f3018;margin-bottom:14px;display:flex;align-items:center;gap:8px}
+    .outcomes-wrap h3::before{content:'🎯'}
+    .outcomes-wrap ol{padding-left:20px;color:#0f3018;font-size:.93rem}
+    .outcomes-wrap li{margin-bottom:7px}
+    .clo-note{margin-top:14px;font-size:.82rem;color:#0f3018;font-style:italic;font-weight:600}
+    /* LAYOUT */
+    main{max-width:980px;margin:40px auto 64px;padding:0 20px}
+    .progress-nav{background:#fff;border:1px solid var(--border);border-radius:var(--radius);padding:18px 22px;margin-bottom:10px;box-shadow:var(--shadow)}
+    .progress-nav h3{font-size:.77rem;font-weight:700;text-transform:uppercase;letter-spacing:.1em;color:var(--muted);margin-bottom:12px}
+    .nav-links{display:flex;flex-wrap:wrap;gap:8px}
+    .nav-links a{background:var(--pale);border:1px solid var(--border);color:var(--deep-teal);font-size:.8rem;font-weight:600;padding:5px 13px;border-radius:20px;text-decoration:none;transition:all .15s}
+    .nav-links a:hover{background:var(--grn);color:#fff;border-color:var(--grn)}
+    .expand-controls{display:flex;gap:10px;justify-content:flex-end;margin-bottom:16px}
+    .ctrl-btn{background:#fff;border:1px solid var(--border);color:var(--deep-teal);font-size:.8rem;font-weight:700;padding:6px 16px;border-radius:20px;cursor:pointer;transition:all .15s}
+    .ctrl-btn:hover{background:var(--teal);color:#fff;border-color:var(--teal)}
+    /* SECTION LABELS */
+    .section-label{display:flex;align-items:center;gap:12px;margin:44px 0 8px;flex-wrap:wrap}
+    .section-label .num{background:linear-gradient(135deg,var(--grn),var(--grn-bright));color:#fff;font-family:'Playfair Display',serif;font-size:.95rem;font-weight:700;min-width:36px;height:36px;border-radius:8px;display:flex;align-items:center;justify-content:center;flex-shrink:0;box-shadow:0 3px 10px rgba(26,92,48,.38)}
+    .section-label h2{font-family:'Playfair Display',serif;font-size:1.45rem;color:var(--navy)}
+    .outcome-tag{background:var(--grn-light);border:1px solid var(--grn-border);color:var(--grn);font-size:.72rem;font-weight:700;text-transform:uppercase;letter-spacing:.07em;padding:3px 10px;border-radius:12px}
+    /* CARDS */
+    .card{background:#fff;border:1px solid var(--border);border-radius:var(--radius);margin-bottom:14px;box-shadow:var(--shadow);overflow:hidden;transition:box-shadow .2s}
+    .card:hover{box-shadow:var(--shadow-lg)}
+    .card-header{display:flex;align-items:center;justify-content:space-between;padding:17px 22px;cursor:pointer;user-select:none;background:#fff;transition:background .15s;gap:12px}
+    .card-header:hover,.card-header.open{background:var(--pale)}
+    .card-header.open{border-bottom:2px solid var(--grn-bright)}
+    .ch-left{display:flex;align-items:center;gap:12px}
+    .card-icon{font-size:1.35rem;line-height:1}
+    .card-header h3{font-family:'Playfair Display',serif;font-size:1.08rem;color:var(--navy)}
+    .card-header h3 span{display:block;font-family:'Source Sans 3',sans-serif;font-size:.75rem;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.08em;margin-bottom:2px}
+    .toggle-btn{width:28px;height:28px;border-radius:50%;background:var(--ice);border:none;cursor:pointer;display:flex;align-items:center;justify-content:center;flex-shrink:0;transition:background .18s,transform .25s;font-size:.8rem;color:var(--teal);font-weight:700}
+    .toggle-btn.open{background:var(--grn);color:#fff;transform:rotate(180deg)}
+    .card-body{display:none;padding:26px 28px 30px;border-top:1px solid var(--border);animation:fadeSlide .22s ease}
+    .card-body.open{display:block}
+    @keyframes fadeSlide{from{opacity:0;transform:translateY(-8px)}to{opacity:1;transform:translateY(0)}}
+    /* TYPOGRAPHY */
+    .card-body h4{font-family:'Playfair Display',serif;font-size:1.02rem;color:var(--deep-teal);margin:24px 0 10px;padding-bottom:6px;border-bottom:1px dashed var(--border)}
+    .card-body h4:first-child{margin-top:0}
+    .card-body p{margin-bottom:14px;font-size:.96rem}
+    .card-body p:last-child{margin-bottom:0}
+    .card-body ul,.card-body ol{padding-left:22px;margin-bottom:14px;font-size:.95rem}
+    .card-body li{margin-bottom:7px}
+    strong{font-weight:700;color:var(--navy)}
+    em{font-style:italic;color:var(--deep-teal)}
+    code{font-family:'Source Code Pro',monospace;font-size:.85em;background:var(--pale);border:1px solid var(--border);color:var(--deep-teal);padding:1px 6px;border-radius:4px}
+    /* DEF BOX */
+    .def-box{background:linear-gradient(135deg,var(--navy) 0%,#060e08 100%);color:#fff;border-radius:var(--radius);padding:22px 26px;margin:6px 0 18px;position:relative;overflow:hidden}
+    .def-box::before{content:'"';position:absolute;top:-12px;left:16px;font-family:'Playfair Display',serif;font-size:9rem;color:rgba(255,255,255,.04);line-height:1;pointer-events:none}
+    .def-box .def-label{font-size:.7rem;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:#90d8a8;margin-bottom:8px}
+    .def-box p{font-size:1rem;color:#d4eeda;font-style:italic;position:relative;z-index:1;margin-bottom:0}
+    .def-box strong{color:#b0f0c8}.def-box em{color:#a8d8f0;font-style:normal;font-weight:600}
+    /* CALLOUTS */
+    .callout{border-radius:var(--radius);padding:15px 18px;margin:16px 0;font-size:.93rem;display:flex;gap:12px;align-items:flex-start}
+    .callout-icon{font-size:1.25rem;flex-shrink:0;margin-top:1px}
+    .callout-body{flex:1}
+    .callout-body strong{display:block;margin-bottom:4px}
+    .callout-grn{background:var(--grn-light);border-left:4px solid var(--grn)}
+    .callout-tip{background:var(--grn-light);border-left:4px solid var(--grn)}
+    .callout-info{background:var(--ice);border-left:4px solid var(--sky)}
+    .callout-warning{background:#fff3e0;border-left:4px solid #e07820}
+    .callout-danger{background:var(--red-light);border-left:4px solid var(--red)}
+    .callout-key{background:var(--purple-light);border-left:4px solid var(--purple)}
+    .callout-gold{background:var(--gold-light);border-left:4px solid var(--gold)}
+    /* TABLES */
+    .styled-table{width:100%;border-collapse:collapse;font-size:.91rem;margin:14px 0;border-radius:var(--radius);overflow:hidden;box-shadow:0 2px 12px rgba(11,25,41,.08)}
+    .styled-table thead tr{background:var(--deep-teal);color:#fff}
+    .styled-table thead th{padding:12px 16px;text-align:left;font-weight:700;font-size:.83rem;letter-spacing:.04em;text-transform:uppercase}
+    .styled-table tbody tr{border-bottom:1px solid var(--border);transition:background .12s}
+    .styled-table tbody tr:hover{background:var(--pale)}
+    .styled-table tbody tr:last-child{border-bottom:none}
+    .styled-table tbody td{padding:11px 16px;vertical-align:top}
+    .styled-table td.grn{font-weight:700;color:var(--grn)}
+    .styled-table td.hl{font-weight:700;color:var(--deep-teal)}
+    .styled-table td.red{color:var(--red);font-weight:700}
+    .styled-table td code{font-size:.83em}
+    /* DATA TABLES — simulated DB tables */
+    .db-table-wrap{margin:14px 0}
+    .db-table-label{font-size:.72rem;font-weight:700;letter-spacing:.1em;text-transform:uppercase;margin-bottom:5px;display:flex;align-items:center;gap:8px}
+    .db-table-label .tl-badge{padding:2px 10px;border-radius:10px;font-size:.7rem}
+    .dbt{width:100%;border-collapse:collapse;font-size:.85rem;border-radius:8px;overflow:hidden;box-shadow:0 2px 10px rgba(11,25,41,.10);margin-bottom:6px}
+    .dbt thead tr{color:#fff}
+    .dbt thead th{padding:9px 14px;text-align:left;font-family:'Source Code Pro',monospace;font-size:.79rem;font-weight:600}
+    .dbt tbody tr{border-bottom:1px solid}
+    .dbt tbody tr:last-child{border-bottom:none}
+    .dbt tbody td{padding:7px 14px;font-family:'Source Code Pro',monospace;font-size:.82rem}
+    /* UNF — red tint */
+    .dbt.unf thead tr{background:#5a1010}
+    .dbt.unf thead th{color:#fcc}
+    .dbt.unf tbody tr{background:#1a0808;border-color:#3a1818}
+    .dbt.unf tbody td{color:#f0c8c8}
+    .dbt.unf td.issue{color:#ff9090;font-weight:700}
+    /* 1NF — amber tint */
+    .dbt.nf1 thead tr{background:#5a3a00}
+    .dbt.nf1 thead th{color:#fde}
+    .dbt.nf1 tbody tr{background:#1a1000;border-color:#3a2800}
+    .dbt.nf1 tbody td{color:#f0d8a0}
+    .dbt.nf1 td.pk{color:#ffd070;font-weight:700}
+    /* 2NF — blue tint */
+    .dbt.nf2 thead tr{background:#0e3a5e}
+    .dbt.nf2 thead th{color:#bde}
+    .dbt.nf2 tbody tr{background:#080e18;border-color:#1a2a3a}
+    .dbt.nf2 tbody td{color:#a8cce8}
+    .dbt.nf2 td.pk{color:#78b8f8;font-weight:700}
+    /* 3NF — green tint */
+    .dbt.nf3 thead tr{background:#0e3a1e}
+    .dbt.nf3 thead th{color:#bef}
+    .dbt.nf3 tbody tr{background:#081408;border-color:#1a2e1a}
+    .dbt.nf3 tbody td{color:#a0d8b0}
+    .dbt.nf3 td.pk{color:#70e090;font-weight:700}
+    .dbt.nf3 td.fk{color:#a8d0f8;font-weight:600}
+    /* ARROW TRANSFORM */
+    .transform-arrow{display:flex;align-items:center;justify-content:center;gap:10px;margin:10px 0;font-size:.85rem;color:var(--muted)}
+    .transform-arrow .arr{font-size:1.6rem;color:var(--grn-bright)}
+    .transform-arrow .label{font-weight:700;color:var(--grn);font-size:.82rem;text-transform:uppercase;letter-spacing:.07em}
+    /* NF LEVEL CARDS */
+    .nf-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(175px,1fr));gap:12px;margin:16px 0}
+    .nf-card{border-radius:var(--radius);padding:16px 15px;border:2px solid;text-align:center;transition:transform .15s}
+    .nf-card:hover{transform:translateY(-3px)}
+    .nf-card .nf-name{font-family:'Playfair Display',serif;font-size:1.15rem;font-weight:700;margin-bottom:6px;display:block}
+    .nf-card p{font-size:.82rem;margin:0}
+    .nf-unf{background:#fff0f0;border-color:#f0b8b8}.nf-unf .nf-name{color:var(--red)}
+    .nf-1{background:var(--amber-light);border-color:var(--amber-border)}.nf-1 .nf-name{color:var(--amber)}
+    .nf-2{background:var(--ind-light);border-color:var(--ind-border)}.nf-2 .nf-name{color:var(--ind)}
+    .nf-3{background:var(--grn-light);border-color:var(--grn-border)}.nf-3 .nf-name{color:var(--grn)}
+    .nf-bc{background:var(--purple-light);border-color:#c0b0e8}.nf-bc .nf-name{color:var(--purple)}
+    .nf-4{background:var(--gold-light);border-color:var(--gold-border)}.nf-4 .nf-name{color:var(--gold)}
+    /* FD NOTATION */
+    .fd-box{background:#0b1929;border:1px solid #2a4060;border-radius:var(--radius);padding:16px 20px;margin:14px 0;font-family:'Source Code Pro',monospace;font-size:.92rem;line-height:2}
+    .fd-box .fd{display:block;color:#c8e6ff}
+    .fd-box .fd .det{color:#f5d080;font-weight:700}
+    .fd-box .fd .dep{color:#90d8a8}
+    .fd-box .fd .arr{color:#5568cc;margin:0 8px}
+    .fd-box .fd .note{color:#4a7a96;font-style:italic;font-size:.82rem;margin-left:12px}
+    /* ANOMALY CARDS */
+    .anomaly-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:12px;margin:14px 0}
+    .anomaly-card{border-radius:var(--radius);padding:15px 17px;border:1px solid}
+    .ac-title{font-weight:700;font-size:.87rem;text-transform:uppercase;letter-spacing:.06em;margin-bottom:7px}
+    .an-insert{background:var(--amber-light);border-color:var(--amber-border)}.an-insert .ac-title{color:var(--amber)}
+    .an-update{background:var(--ind-light);border-color:var(--ind-border)}.an-update .ac-title{color:var(--ind)}
+    .an-delete{background:var(--red-light);border-color:#f0b8b8}.an-delete .ac-title{color:var(--red)}
+    .anomaly-card p{font-size:.84rem;color:var(--text);margin:0}
+    /* PROS/CONS */
+    .pros-cons{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin:14px 0}
+    .pc-box{border-radius:var(--radius);padding:18px 20px;border:1px solid}
+    .pc-pros{background:var(--grn-light);border-color:var(--grn-border)}
+    .pc-cons{background:var(--red-light);border-color:#f0b8b8}
+    .pc-title{font-weight:700;font-size:.9rem;text-transform:uppercase;letter-spacing:.06em;margin-bottom:12px}
+    .pc-pros .pc-title{color:var(--grn)}
+    .pc-cons .pc-title{color:var(--red)}
+    .pc-list{list-style:none;padding:0;margin:0}
+    .pc-list li{padding:6px 0;font-size:.9rem;border-bottom:1px dashed;display:flex;gap:9px;align-items:flex-start}
+    .pc-pros .pc-list li{border-color:var(--grn-border)}
+    .pc-cons .pc-list li{border-color:#f0b8b8}
+    .pc-list li:last-child{border-bottom:none}
+    .pc-list li::before{flex-shrink:0;font-size:.95rem}
+    .pc-pros .pc-list li::before{content:'✅'}
+    .pc-cons .pc-list li::before{content:'⚠️'}
+    /* DECISION MATRIX */
+    .decision-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:12px;margin:14px 0}
+    .dc-card{border-radius:var(--radius);padding:15px 17px;border:2px solid}
+    .dc-title{font-weight:700;font-size:.87rem;margin-bottom:6px}
+    .dc-card p{font-size:.83rem;color:var(--text);margin:0 0 6px}
+    .dc-level{font-family:'Source Code Pro',monospace;font-size:.79rem;font-weight:700;padding:2px 8px;border-radius:8px;display:inline-block;margin-top:4px}
+    .dc-oltp{background:var(--grn-light);border-color:var(--grn-border)}.dc-oltp .dc-title{color:var(--grn)}.dc-oltp .dc-level{background:var(--grn);color:#fff}
+    .dc-olap{background:var(--gold-light);border-color:var(--gold-border)}.dc-olap .dc-title{color:var(--gold)}.dc-olap .dc-level{background:var(--gold);color:#fff}
+    .dc-embed{background:var(--amber-light);border-color:var(--amber-border)}.dc-embed .dc-title{color:var(--amber)}.dc-embed .dc-level{background:var(--amber);color:#fff}
+    .dc-legacy{background:var(--ind-light);border-color:var(--ind-border)}.dc-legacy .dc-title{color:var(--ind)}.dc-legacy .dc-level{background:var(--ind);color:#fff}
+    /* STEP LIST */
+    .step-list{list-style:none;padding:0;margin:14px 0;counter-reset:steps}
+    .step-list li{counter-increment:steps;display:flex;gap:13px;align-items:flex-start;padding:13px 16px;border-radius:var(--radius);margin-bottom:8px;background:#fff;border:1px solid var(--border);font-size:.93rem;transition:background .15s}
+    .step-list li:hover{background:var(--pale)}
+    .step-list li::before{content:counter(steps);min-width:27px;height:27px;border-radius:50%;background:linear-gradient(135deg,var(--grn),var(--grn-bright));color:#fff;font-weight:700;font-size:.79rem;display:flex;align-items:center;justify-content:center;flex-shrink:0;box-shadow:0 2px 6px rgba(26,92,48,.35)}
+    .sc strong{display:block;font-size:.9rem;margin-bottom:2px}
+    .sc span{font-size:.86rem;color:var(--muted)}
+    /* STRIP & CHECKLIST */
+    .strip{background:linear-gradient(90deg,var(--grn) 0%,var(--grn-bright) 100%);color:#fff;border-radius:var(--radius);padding:18px 24px;margin:16px 0;font-size:.95rem}
+    .strip strong{color:#c8f0d8}
+    .checklist{list-style:none;padding:0;margin:0}
+    .checklist li{padding:7px 0;font-size:.93rem;border-bottom:1px dashed var(--border);display:flex;align-items:baseline;gap:10px}
+    .checklist li:last-child{border-bottom:none}
+    .checklist li::before{content:'☐';font-size:1rem;flex-shrink:0}
+    @media(max-width:660px){header h1{font-size:1.85rem}.pros-cons{grid-template-columns:1fr}}
+    footer{background:var(--navy);color:#6a90aa;text-align:center;padding:28px 20px;font-size:.82rem}
+    footer span{color:#a0c4dc;font-weight:700}
+  </style>
+</head>
+<body>
+<header>
+  <div class="header-inner">
+    <div class="course-badge">COP 4708 · Introduction to Databases</div>
+    <h1>Module 7: <em>Database<br/>Normalization</em></h1>
+    <h2>Eliminating redundancy, preventing anomalies, and designing schemas that scale — from UNF through 3NF, BCNF, and beyond</h2>
+    <div class="header-chips">
+      <span class="chip">📗 Module 7</span>
+      <span class="chip">🎓 CLO 2 Support</span>
+      <span class="chip">⏱ Estimated 85–105 min</span>
+      <span class="chip">4 Learning Outcomes</span>
+    </div>
+  </div>
+</header>
+<div class="outcomes-wrap">
+  <h3>Module Learning Outcomes</h3>
+  <ol>
+    <li>Identify and explain the <em>normal forms</em> (1NF through BCNF) with worked examples showing before and after</li>
+    <li>Apply the <em>process of normalization</em> to transform an unnormalized relation into 3NF step by step</li>
+    <li>Evaluate the <em>advantages and disadvantages</em> of normalization and explain update anomalies it prevents</li>
+    <li>Select the <em>correct level of normalization</em> for a given application context</li>
+  </ol>
+  <p class="clo-note">📌 Supports CLO 2: Design, normalize, and implement relational database systems.</p>
+</div>
+<main>
+  <div class="progress-nav">
+    <h3>Jump to Section</h3>
+    <div class="nav-links">
+      <a href="#sec1">1. What is Normalization?</a>
+      <a href="#sec2">2. Functional Dependencies</a>
+      <a href="#sec3">3. First Normal Form (1NF)</a>
+      <a href="#sec4">4. Second Normal Form (2NF)</a>
+      <a href="#sec5">5. Third Normal Form (3NF)</a>
+      <a href="#sec6">6. BCNF &amp; Higher Forms</a>
+      <a href="#sec7">7. The Normalization Process</a>
+      <a href="#sec8">8. Advantages &amp; Disadvantages</a>
+      <a href="#sec9">9. Choosing the Right Level</a>
+      <a href="#sec10">10. Summary &amp; Checklist</a>
+    </div>
+  </div>
+  <div class="expand-controls">
+    <button class="ctrl-btn" onclick="setAll(true)">Expand All</button>
+    <button class="ctrl-btn" onclick="setAll(false)">Collapse All</button>
+  </div>
+
+  <!-- ═══ SECTION 1 — WHAT IS NORMALIZATION ═══ -->
+  <div class="section-label" id="sec1">
+    <div class="num">1</div>
+    <h2>What Is Normalization — and Why Does It Matter?</h2>
+    <span class="outcome-tag">Foundation</span>
+  </div>
+  <div class="card">
+    <div class="card-header open" onclick="toggle(this)">
+      <div class="ch-left"><span class="card-icon">🏗️</span>
+        <h3><span>Foundation · Core Concepts</span>Redundancy, Anomalies, and the Goal of Normalization</h3>
+      </div>
+      <button class="toggle-btn open">▲</button>
+    </div>
+    <div class="card-body open">
+      <div class="def-box">
+        <div class="def-label">Definition — Normalization</div>
+        <p><strong>Normalization</strong> is the systematic process of organizing a relational database schema to <em>reduce data redundancy</em> and <em>eliminate update anomalies</em>. It does this by decomposing tables into smaller, well-structured tables and defining relationships between them — following a series of progressively stricter rules called <strong>normal forms</strong>.</p>
+      </div>
+
+      <h4>The Problem: What Happens Without Normalization?</h4>
+      <p>Consider a single table that stores order, customer, and product information all together. This <strong>unnormalized</strong> design causes three classes of problems called <em>update anomalies</em>:</p>
+      <div class="anomaly-grid">
+        <div class="anomaly-card an-insert">
+          <div class="ac-title">⚠️ Insertion Anomaly</div>
+          <p>You cannot add data about one entity without also providing data about another. Example: you can't add a new customer to the system until they place their first order, because CustomerName lives inside the Order table.</p>
+        </div>
+        <div class="anomaly-card an-update">
+          <div class="ac-title">⚠️ Update Anomaly</div>
+          <p>Changing one fact requires updating it in multiple rows. Example: if a customer's address changes, every order row for that customer must be updated — miss one and the database becomes inconsistent.</p>
+        </div>
+        <div class="anomaly-card an-delete">
+          <div class="ac-title">⚠️ Deletion Anomaly</div>
+          <p>Deleting one fact accidentally destroys another. Example: if a customer's only order is deleted, all record of that customer — their contact info, history — is permanently lost.</p>
+        </div>
+      </div>
+
+      <h4>The Normal Forms — An Overview</h4>
+      <div class="nf-grid">
+        <div class="nf-card nf-unf"><span class="nf-name">UNF</span><p>Unnormalized Form. Repeating groups, multi-valued cells, no defined key.</p></div>
+        <div class="nf-card nf-1"><span class="nf-name">1NF</span><p>Atomic values only. No repeating groups. Primary key defined.</p></div>
+        <div class="nf-card nf-2"><span class="nf-name">2NF</span><p>1NF + no partial dependencies. Every non-key attribute depends on the whole PK.</p></div>
+        <div class="nf-card nf-3"><span class="nf-name">3NF</span><p>2NF + no transitive dependencies. Non-key attributes depend only on the PK.</p></div>
+        <div class="nf-card nf-bc"><span class="nf-name">BCNF</span><p>Stricter 3NF. Every determinant must be a candidate key.</p></div>
+        <div class="nf-card nf-4"><span class="nf-name">4NF / 5NF</span><p>Eliminate multi-valued and join dependencies. Rarely needed in practice.</p></div>
+      </div>
+      <div class="callout callout-grn">
+        <span class="callout-icon">🎯</span>
+        <div class="callout-body">
+          <strong>The Industry Target</strong>
+          For the vast majority of production databases, the goal is <strong>Third Normal Form (3NF)</strong>. Most textbooks and industry practitioners consider a schema "normalized" when it reaches 3NF. BCNF is sometimes applied when 3NF leaves edge cases unresolved. 4NF and beyond are rare in practice.
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══ SECTION 2 — FUNCTIONAL DEPENDENCIES ═══ -->
+  <div class="section-label" id="sec2">
+    <div class="num">2</div>
+    <h2>Functional Dependencies — The Foundation</h2>
+    <span class="outcome-tag">Foundation</span>
+  </div>
+  <div class="card">
+    <div class="card-header open" onclick="toggle(this)">
+      <div class="ch-left"><span class="card-icon">🔗</span>
+        <h3><span>Foundation · Theory</span>What Functional Dependencies Are and How to Identify Them</h3>
+      </div>
+      <button class="toggle-btn open">▲</button>
+    </div>
+    <div class="card-body open">
+      <div class="def-box">
+        <div class="def-label">Definition — Functional Dependency</div>
+        <p>Attribute <strong>B</strong> is <em>functionally dependent</em> on attribute <strong>A</strong> (written <strong>A → B</strong>) if, for every valid relation instance, knowing the value of A uniquely determines the value of B. A is called the <em>determinant</em>; B is the <em>dependent</em>. This is a business rule enforced by the data, not a mathematical coincidence.</p>
+      </div>
+
+      <h4>Reading Functional Dependency Notation</h4>
+      <div class="fd-box">
+        <span class="fd"><span class="det">StudentID</span> <span class="arr">→</span> <span class="dep">LastName, FirstName, GPA, DeclaredMajor</span> <span class="note">// StudentID alone determines all student attributes</span></span>
+        <span class="fd"><span class="det">CourseID</span> <span class="arr">→</span> <span class="dep">CourseName, Credits, DeptID</span> <span class="note">// CourseID determines course details</span></span>
+        <span class="fd"><span class="det">{StudentID, CourseID}</span> <span class="arr">→</span> <span class="dep">Grade, EnrollDate</span> <span class="note">// composite key: need BOTH to determine grade</span></span>
+        <span class="fd"><span class="det">DeptID</span> <span class="arr">→</span> <span class="dep">DeptName, Building</span> <span class="note">// DeptID determines department info (transitive via CourseID)</span></span>
+      </div>
+
+      <h4>Three Types of Functional Dependencies</h4>
+      <table class="styled-table">
+        <thead><tr><th>Type</th><th>Notation</th><th>Description</th><th>Violates</th></tr></thead>
+        <tbody>
+          <tr>
+            <td class="grn"><strong>Full FD</strong></td>
+            <td><code>{A,B} → C</code></td>
+            <td>C depends on the entire composite key — removing either part breaks the dependency</td>
+            <td>Nothing — this is correct</td>
+          </tr>
+          <tr>
+            <td class="red"><strong>Partial FD</strong></td>
+            <td><code>{A,B} → C</code><br/>but also <code>A → C</code></td>
+            <td>C depends on only <em>part</em> of the composite key. A alone is enough to determine C.</td>
+            <td><strong>2NF</strong></td>
+          </tr>
+          <tr>
+            <td class="red"><strong>Transitive FD</strong></td>
+            <td><code>A → B → C</code></td>
+            <td>C depends on a non-key attribute B, which itself depends on the key A. C is determined indirectly.</td>
+            <td><strong>3NF</strong></td>
+          </tr>
+        </tbody>
+      </table>
+
+      <h4>Identifying FDs — Practical Questions to Ask</h4>
+      <p>For each attribute in a table, ask: <em>"If I know the value of X, do I always know the value of Y — without ambiguity?"</em></p>
+      <ul>
+        <li>If <strong>yes</strong> → <code>X → Y</code> is a functional dependency</li>
+        <li>If <strong>sometimes</strong> (many-to-many) → <code>X → Y</code> is NOT a valid FD; Y may need its own table or a junction table</li>
+        <li>If the rule comes from the <strong>business domain</strong>, not just the current data — you have a real FD</li>
+      </ul>
+      <div class="callout callout-warning">
+        <span class="callout-icon">⚠️</span>
+        <div class="callout-body">
+          <strong>FDs Are Business Rules, Not Observations</strong>
+          You cannot prove a functional dependency just by looking at the current data — coincidences can look like rules. Always derive FDs from the business requirements. Example: even if every current customer happens to live in the same city, <code>CustomerID → City</code> is only a real FD if the business rule says one customer always has one city.
+        </div>
+      </div>
+
+      <h4>Candidate Keys, Primary Keys, and Superkeys</h4>
+      <table class="styled-table">
+        <thead><tr><th>Term</th><th>Definition</th><th>Example</th></tr></thead>
+        <tbody>
+          <tr><td class="hl">Superkey</td><td>Any set of attributes that uniquely identifies a row. May include extra attributes.</td><td>{StudentID, Email, LastName}</td></tr>
+          <tr><td class="hl">Candidate Key</td><td>A <em>minimal</em> superkey — no attribute can be removed and still guarantee uniqueness.</td><td>StudentID &nbsp;·&nbsp; Email (both are candidate keys)</td></tr>
+          <tr><td class="grn">Primary Key</td><td>The candidate key chosen by the designer to be the official row identifier.</td><td>StudentID (chosen over Email)</td></tr>
+          <tr><td class="hl">Foreign Key</td><td>An attribute that references the PK of another table, enforcing referential integrity.</td><td>Enrollment.StudentID → Student.StudentID</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- ═══ SECTION 3 — 1NF ═══ -->
+  <div class="section-label" id="sec3">
+    <div class="num">3</div>
+    <h2>First Normal Form (1NF)</h2>
+    <span class="outcome-tag">Outcome 1</span>
+  </div>
+  <div class="card">
+    <div class="card-header open" onclick="toggle(this)">
+      <div class="ch-left"><span class="card-icon">1️⃣</span>
+        <h3><span>Outcome 1 · 1NF</span>Atomic Values, No Repeating Groups, Define a Primary Key</h3>
+      </div>
+      <button class="toggle-btn open">▲</button>
+    </div>
+    <div class="card-body open">
+      <h4>1NF Requirements</h4>
+      <ul>
+        <li>Every column contains only <strong>atomic (indivisible) values</strong> — no lists, sets, or comma-separated data in a single cell</li>
+        <li><strong>No repeating groups</strong> — no columns like <code>Product1, Product2, Product3</code></li>
+        <li>Every row is <strong>uniquely identifiable</strong> — a primary key exists</li>
+        <li>All values in a column are of the <strong>same data type</strong></li>
+      </ul>
+
+      <h4>Example: Order Table — Unnormalized (UNF)</h4>
+      <p>This table violates 1NF in two ways: the <code>Products</code> column holds multiple values (non-atomic), and there are repeating column groups (<code>Product1</code>, <code>Product2</code>).</p>
+
+      <div class="db-table-wrap">
+        <div class="db-table-label" style="color:var(--red)">
+          ❌ UNF — Violations highlighted
+          <span class="tl-badge" style="background:var(--red-light);color:var(--red);border:1px solid #f0b8b8">Unnormalized</span>
+        </div>
+        <table class="dbt unf">
+          <thead><tr><th>OrderID</th><th>CustomerName</th><th>CustomerCity</th><th>Products (multi-value)</th><th>Quantities</th></tr></thead>
+          <tbody>
+            <tr><td>1001</td><td>Maria Adams</td><td>Miami</td><td class="issue">Widget A, Widget B</td><td class="issue">2, 1</td></tr>
+            <tr><td>1002</td><td>James Brown</td><td>Orlando</td><td class="issue">Widget A, Widget C, Widget D</td><td class="issue">1, 3, 1</td></tr>
+            <tr><td>1003</td><td>Li Chen</td><td>Tampa</td><td class="issue">Widget B</td><td>1</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <p>Problems: you cannot easily query "which orders contain Widget A?" You cannot sort by product name. You cannot link Products to a Product table without parsing strings. There is also no valid primary key because products and quantities aren't separate rows.</p>
+
+      <div class="transform-arrow">
+        <div class="arr">↓</div>
+        <div class="label">Transform to 1NF — one fact per cell, one product per row</div>
+      </div>
+
+      <h4>After 1NF — Atomic Values, One Row Per Order Line</h4>
+      <div class="db-table-wrap">
+        <div class="db-table-label" style="color:var(--amber)">
+          ✅ 1NF — Atomic, no repeating groups, composite PK defined
+          <span class="tl-badge" style="background:var(--amber-light);color:var(--amber);border:1px solid var(--amber-border)">1NF</span>
+        </div>
+        <table class="dbt nf1">
+          <thead><tr><th>OrderID 🔑</th><th>ProductID 🔑</th><th>CustomerName</th><th>CustomerCity</th><th>ProductName</th><th>Quantity</th><th>UnitPrice</th></tr></thead>
+          <tbody>
+            <tr><td class="pk">1001</td><td class="pk">P01</td><td>Maria Adams</td><td>Miami</td><td>Widget A</td><td>2</td><td>9.99</td></tr>
+            <tr><td class="pk">1001</td><td class="pk">P02</td><td>Maria Adams</td><td>Miami</td><td>Widget B</td><td>1</td><td>14.99</td></tr>
+            <tr><td class="pk">1002</td><td class="pk">P01</td><td>James Brown</td><td>Orlando</td><td>Widget A</td><td>1</td><td>9.99</td></tr>
+            <tr><td class="pk">1002</td><td class="pk">P03</td><td>James Brown</td><td>Orlando</td><td>Widget C</td><td>3</td><td>4.49</td></tr>
+            <tr><td class="pk">1002</td><td class="pk">P04</td><td>James Brown</td><td>Orlando</td><td>Widget D</td><td>1</td><td>22.00</td></tr>
+            <tr><td class="pk">1003</td><td class="pk">P02</td><td>Li Chen</td><td>Tampa</td><td>Widget B</td><td>1</td><td>14.99</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="callout callout-warning">
+        <span class="callout-icon">⚠️</span>
+        <div class="callout-body">
+          <strong>1NF Fixes Atomicity — But Redundancy Remains</strong>
+          Notice that CustomerName, CustomerCity, ProductName, and UnitPrice are now repeated across multiple rows. Maria Adams appears twice with "Miami" both times — if her city changes, multiple rows must be updated. These redundancies will be eliminated by 2NF and 3NF. 1NF is just the first step.
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══ SECTION 4 — 2NF ═══ -->
+  <div class="section-label" id="sec4">
+    <div class="num">4</div>
+    <h2>Second Normal Form (2NF)</h2>
+    <span class="outcome-tag">Outcome 1</span>
+  </div>
+  <div class="card">
+    <div class="card-header open" onclick="toggle(this)">
+      <div class="ch-left"><span class="card-icon">2️⃣</span>
+        <h3><span>Outcome 1 · 2NF</span>Eliminate Partial Dependencies — Every Non-Key Attribute Needs the Whole Key</h3>
+      </div>
+      <button class="toggle-btn open">▲</button>
+    </div>
+    <div class="card-body open">
+      <h4>2NF Requirements</h4>
+      <ul>
+        <li>The table must already be in <strong>1NF</strong></li>
+        <li>Every non-key attribute must depend on the <strong>entire primary key</strong>, not just part of it</li>
+        <li>A table with a <strong>single-column PK can never violate 2NF</strong> — partial dependencies only exist with composite keys</li>
+      </ul>
+
+      <h4>Identifying Partial Dependencies in Our 1NF Table</h4>
+      <p>Our 1NF table has a composite PK of <strong>{OrderID, ProductID}</strong>. Let's check each non-key column:</p>
+      <div class="fd-box">
+        <span class="fd"><span class="det">{OrderID, ProductID}</span> <span class="arr">→</span> <span class="dep">Quantity</span> <span class="note">// ✅ Full dependency — need BOTH to know quantity ordered</span></span>
+        <span class="fd"><span class="det">OrderID</span> <span class="arr">→</span> <span class="dep">CustomerName, CustomerCity</span> <span class="note">// ❌ Partial — OrderID alone tells us the customer</span></span>
+        <span class="fd"><span class="det">ProductID</span> <span class="arr">→</span> <span class="dep">ProductName, UnitPrice</span> <span class="note">// ❌ Partial — ProductID alone tells us the product details</span></span>
+      </div>
+
+      <p><strong>Fix:</strong> Decompose the table by moving each partially dependent group to its own table with the part of the key it depends on as that table's PK.</p>
+
+      <div class="transform-arrow">
+        <div class="arr">↓</div>
+        <div class="label">Decompose into 3 tables — remove partial dependencies</div>
+      </div>
+
+      <h4>After 2NF — Three Separate Tables</h4>
+
+      <div class="db-table-wrap">
+        <div class="db-table-label" style="color:var(--ind)">
+          ✅ Order Table — attributes that depend on OrderID only
+          <span class="tl-badge" style="background:var(--ind-light);color:var(--ind);border:1px solid var(--ind-border)">2NF</span>
+        </div>
+        <table class="dbt nf2">
+          <thead><tr><th>OrderID 🔑</th><th>CustomerName</th><th>CustomerCity</th></tr></thead>
+          <tbody>
+            <tr><td class="pk">1001</td><td>Maria Adams</td><td>Miami</td></tr>
+            <tr><td class="pk">1002</td><td>James Brown</td><td>Orlando</td></tr>
+            <tr><td class="pk">1003</td><td>Li Chen</td><td>Tampa</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="db-table-wrap">
+        <div class="db-table-label" style="color:var(--ind)">
+          ✅ Product Table — attributes that depend on ProductID only
+          <span class="tl-badge" style="background:var(--ind-light);color:var(--ind);border:1px solid var(--ind-border)">2NF</span>
+        </div>
+        <table class="dbt nf2">
+          <thead><tr><th>ProductID 🔑</th><th>ProductName</th><th>UnitPrice</th></tr></thead>
+          <tbody>
+            <tr><td class="pk">P01</td><td>Widget A</td><td>9.99</td></tr>
+            <tr><td class="pk">P02</td><td>Widget B</td><td>14.99</td></tr>
+            <tr><td class="pk">P03</td><td>Widget C</td><td>4.49</td></tr>
+            <tr><td class="pk">P04</td><td>Widget D</td><td>22.00</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="db-table-wrap">
+        <div class="db-table-label" style="color:var(--ind)">
+          ✅ OrderLine Table — only Quantity needs both OrderID + ProductID
+          <span class="tl-badge" style="background:var(--ind-light);color:var(--ind);border:1px solid var(--ind-border)">2NF</span>
+        </div>
+        <table class="dbt nf2">
+          <thead><tr><th>OrderID 🔑</th><th>ProductID 🔑</th><th>Quantity</th></tr></thead>
+          <tbody>
+            <tr><td class="pk">1001</td><td class="pk">P01</td><td>2</td></tr>
+            <tr><td class="pk">1001</td><td class="pk">P02</td><td>1</td></tr>
+            <tr><td class="pk">1002</td><td class="pk">P01</td><td>1</td></tr>
+            <tr><td class="pk">1002</td><td class="pk">P03</td><td>3</td></tr>
+            <tr><td class="pk">1002</td><td class="pk">P04</td><td>1</td></tr>
+            <tr><td class="pk">1003</td><td class="pk">P02</td><td>1</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="callout callout-grn">
+        <span class="callout-icon">✅</span>
+        <div class="callout-body">
+          <strong>What 2NF Fixed</strong>
+          Widget A's price (9.99) now appears exactly once in the Product table. If the price changes, update one row. Previously it appeared in every order line containing Widget A. Similarly, Maria Adams's city now appears once — update it in one place. However, the Order table still has CustomerCity potentially dependent on something other than OrderID — that's a transitive dependency, handled by 3NF.
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══ SECTION 5 — 3NF ═══ -->
+  <div class="section-label" id="sec5">
+    <div class="num">5</div>
+    <h2>Third Normal Form (3NF)</h2>
+    <span class="outcome-tag">Outcome 1</span>
+  </div>
+  <div class="card">
+    <div class="card-header open" onclick="toggle(this)">
+      <div class="ch-left"><span class="card-icon">3️⃣</span>
+        <h3><span>Outcome 1 · 3NF</span>Eliminate Transitive Dependencies — Non-Key Attributes Depend Only on the Key</h3>
+      </div>
+      <button class="toggle-btn open">▲</button>
+    </div>
+    <div class="card-body open">
+      <h4>3NF Requirements</h4>
+      <ul>
+        <li>The table must already be in <strong>2NF</strong></li>
+        <li>No non-key attribute may depend on <strong>another non-key attribute</strong></li>
+        <li>Every non-key attribute must depend <em>directly</em> on the primary key — not transitively through another non-key attribute</li>
+        <li>The classic test: <em>"Every non-key attribute must depend on the key, the whole key, and nothing but the key."</em></li>
+      </ul>
+
+      <h4>Identifying the Transitive Dependency</h4>
+      <p>Look at our 2NF Order table: <strong>{OrderID, CustomerName, CustomerCity}</strong>.</p>
+      <div class="fd-box">
+        <span class="fd"><span class="det">OrderID</span> <span class="arr">→</span> <span class="dep">CustomerName</span> <span class="note">// ✅ Direct dependency on PK</span></span>
+        <span class="fd"><span class="det">OrderID</span> <span class="arr">→</span> <span class="dep">CustomerCity</span> <span class="note">// ⚠️ But HOW? Only because...</span></span>
+        <span class="fd"><span class="det">CustomerName</span> <span class="arr">→</span> <span class="dep">CustomerCity</span> <span class="note">// ❌ Transitive! City depends on a non-key (CustomerName), not the PK</span></span>
+      </div>
+
+      <p>The full chain: <strong>OrderID → CustomerName → CustomerCity</strong>. CustomerCity is determined by CustomerName (a non-key), making it a <em>transitive dependency</em>. If the same customer places multiple orders, CustomerCity is repeated in every order row.</p>
+      <p>Furthermore, CustomerName itself is a poor key — it is not guaranteed to be unique. This signals that Customer data belongs in its own table with a proper surrogate key (CustomerID).</p>
+
+      <div class="transform-arrow">
+        <div class="arr">↓</div>
+        <div class="label">Extract Customer into its own table — eliminate transitive dependency</div>
+      </div>
+
+      <h4>After 3NF — Final Normalized Schema</h4>
+
+      <div class="db-table-wrap">
+        <div class="db-table-label" style="color:var(--grn)">
+          ✅ Customer Table — CustomerCity now lives with CustomerID
+          <span class="tl-badge" style="background:var(--grn-light);color:var(--grn);border:1px solid var(--grn-border)">3NF</span>
+        </div>
+        <table class="dbt nf3">
+          <thead><tr><th>CustomerID 🔑</th><th>CustomerName</th><th>CustomerCity</th></tr></thead>
+          <tbody>
+            <tr><td class="pk">C01</td><td>Maria Adams</td><td>Miami</td></tr>
+            <tr><td class="pk">C02</td><td>James Brown</td><td>Orlando</td></tr>
+            <tr><td class="pk">C03</td><td>Li Chen</td><td>Tampa</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="db-table-wrap">
+        <div class="db-table-label" style="color:var(--grn)">
+          ✅ Order Table — CustomerID (FK) replaces CustomerName + CustomerCity
+          <span class="tl-badge" style="background:var(--grn-light);color:var(--grn);border:1px solid var(--grn-border)">3NF</span>
+        </div>
+        <table class="dbt nf3">
+          <thead><tr><th>OrderID 🔑</th><th>CustomerID 🔗</th><th>OrderDate</th></tr></thead>
+          <tbody>
+            <tr><td class="pk">1001</td><td class="fk">C01</td><td>2024-03-10</td></tr>
+            <tr><td class="pk">1002</td><td class="fk">C02</td><td>2024-03-11</td></tr>
+            <tr><td class="pk">1003</td><td class="fk">C03</td><td>2024-03-12</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="db-table-wrap">
+        <div class="db-table-label" style="color:var(--grn)">
+          ✅ OrderLine Table — unchanged from 2NF, already in 3NF
+          <span class="tl-badge" style="background:var(--grn-light);color:var(--grn);border:1px solid var(--grn-border)">3NF</span>
+        </div>
+        <table class="dbt nf3">
+          <thead><tr><th>OrderID 🔑🔗</th><th>ProductID 🔑🔗</th><th>Quantity</th></tr></thead>
+          <tbody>
+            <tr><td class="pk">1001</td><td class="pk">P01</td><td>2</td></tr>
+            <tr><td class="pk">1001</td><td class="pk">P02</td><td>1</td></tr>
+            <tr><td class="pk">1002</td><td class="pk">P01</td><td>1</td></tr>
+            <tr><td class="pk">1002</td><td class="pk">P03</td><td>3</td></tr>
+            <tr><td class="pk">1002</td><td class="pk">P04</td><td>1</td></tr>
+            <tr><td class="pk">1003</td><td class="pk">P02</td><td>1</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="db-table-wrap">
+        <div class="db-table-label" style="color:var(--grn)">
+          ✅ Product Table — unchanged from 2NF, already in 3NF
+          <span class="tl-badge" style="background:var(--grn-light);color:var(--grn);border:1px solid var(--grn-border)">3NF</span>
+        </div>
+        <table class="dbt nf3">
+          <thead><tr><th>ProductID 🔑</th><th>ProductName</th><th>UnitPrice</th></tr></thead>
+          <tbody>
+            <tr><td class="pk">P01</td><td>Widget A</td><td>9.99</td></tr>
+            <tr><td class="pk">P02</td><td>Widget B</td><td>14.99</td></tr>
+            <tr><td class="pk">P03</td><td>Widget C</td><td>4.49</td></tr>
+            <tr><td class="pk">P04</td><td>Widget D</td><td>22.00</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="callout callout-grn">
+        <span class="callout-icon">✅</span>
+        <div class="callout-body">
+          <strong>What 3NF Achieved</strong>
+          Maria Adams's city ("Miami") now exists in exactly one place — the Customer table. Changing her city means updating one row. The Order table now only stores the CustomerID foreign key, eliminating all customer data repetition. All three anomaly types (insertion, update, deletion) have been eliminated. The schema is in 3NF.
+        </div>
+      </div>
+
+      <h4>The 3NF Test — Three Questions</h4>
+      <table class="styled-table">
+        <thead><tr><th>Question</th><th>If YES → problem</th><th>Fix</th></tr></thead>
+        <tbody>
+          <tr><td>Does any non-key attribute depend on only <em>part</em> of the PK?</td><td>❌ Partial dependency → violates 2NF</td><td>Move attribute to a table keyed on that part</td></tr>
+          <tr><td>Does any non-key attribute depend on <em>another non-key</em> attribute?</td><td>❌ Transitive dependency → violates 3NF</td><td>Move the non-key determinant and its dependents to a new table</td></tr>
+          <tr><td>Does every non-key attribute depend <em>directly</em> on the whole PK and nothing else?</td><td>If YES to this one → ✅ table is in 3NF</td><td>No action needed</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- ═══ SECTION 6 — BCNF & HIGHER ═══ -->
+  <div class="section-label" id="sec6">
+    <div class="num">6</div>
+    <h2>BCNF and Higher Normal Forms</h2>
+    <span class="outcome-tag">Outcome 1</span>
+  </div>
+  <div class="card">
+    <div class="card-header open" onclick="toggle(this)">
+      <div class="ch-left"><span class="card-icon">🔬</span>
+        <h3><span>Outcome 1 · BCNF / 4NF / 5NF</span>Boyce-Codd Normal Form and Beyond — When 3NF Isn't Enough</h3>
+      </div>
+      <button class="toggle-btn open">▲</button>
+    </div>
+    <div class="card-body open">
+      <div class="def-box">
+        <div class="def-label">Definition — Boyce-Codd Normal Form (BCNF)</div>
+        <p>A table is in <strong>BCNF</strong> if, for <em>every</em> non-trivial functional dependency <strong>X → Y</strong>, X is a <em>superkey</em>. In other words: the only things that can determine other attributes must be candidate keys. BCNF is a stricter version of 3NF that closes a specific edge case where 3NF can still allow anomalies.</p>
+      </div>
+
+      <h4>When 3NF Is Not Enough — The BCNF Edge Case</h4>
+      <p>3NF allows a non-key attribute to be a determinant if it determines part of a candidate key. BCNF eliminates this loophole. Consider a course-advisor scenario:</p>
+
+      <div class="db-table-wrap">
+        <div class="db-table-label" style="color:var(--amber)">
+          ⚠️ CourseAdvisor — in 3NF but NOT BCNF
+          <span class="tl-badge" style="background:var(--amber-light);color:var(--amber);border:1px solid var(--amber-border)">3NF only</span>
+        </div>
+        <table class="dbt nf1">
+          <thead><tr><th>StudentID 🔑</th><th>CourseID 🔑</th><th>AdvisorID</th></tr></thead>
+          <tbody>
+            <tr><td class="pk">S01</td><td class="pk">COP4708</td><td>A100</td></tr>
+            <tr><td class="pk">S01</td><td class="pk">COP4834</td><td>A200</td></tr>
+            <tr><td class="pk">S02</td><td class="pk">COP4708</td><td>A100</td></tr>
+            <tr><td class="pk">S03</td><td class="pk">COP4834</td><td>A200</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="fd-box">
+        <span class="fd"><span class="det">{StudentID, CourseID}</span> <span class="arr">→</span> <span class="dep">AdvisorID</span> <span class="note">// PK → non-key ✅</span></span>
+        <span class="fd"><span class="det">AdvisorID</span> <span class="arr">→</span> <span class="dep">CourseID</span> <span class="note">// ❌ Non-key (AdvisorID) determines part of the PK — BCNF violation!</span></span>
+      </div>
+
+      <p>AdvisorID → CourseID is a real business rule (each advisor teaches only one course), but AdvisorID is not a superkey of this table. This creates update anomalies: if Advisor A100 switches to a different course, every row containing A100 must be updated.</p>
+
+      <div class="transform-arrow">
+        <div class="arr">↓</div>
+        <div class="label">Decompose to remove the non-superkey determinant</div>
+      </div>
+
+      <div class="db-table-wrap">
+        <div class="db-table-label" style="color:var(--purple)">
+          ✅ Advisor Table — AdvisorID now a PK
+          <span class="tl-badge" style="background:var(--purple-light);color:var(--purple);border:1px solid #c0b0e8">BCNF</span>
+        </div>
+        <table class="dbt" style="--hd:#3a1a60;--bd:#180a30;--bc:#2a1240;--tc:#d0b8f0;--pc:#c090ff">
+          <thead><tr style="background:#3a1a60"><th style="color:#e0c8ff">AdvisorID 🔑</th><th style="color:#e0c8ff">CourseID</th></tr></thead>
+          <tbody>
+            <tr style="background:#120820;border-bottom:1px solid #2a1240"><td style="color:#d0b8f0;font-weight:700">A100</td><td style="color:#d0b8f0">COP4708</td></tr>
+            <tr style="background:#120820;border-bottom:1px solid #2a1240"><td style="color:#d0b8f0;font-weight:700">A200</td><td style="color:#d0b8f0">COP4834</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="db-table-wrap">
+        <div class="db-table-label" style="color:var(--purple)">
+          ✅ StudentAdvisor Table — now every determinant is a superkey
+          <span class="tl-badge" style="background:var(--purple-light);color:var(--purple);border:1px solid #c0b0e8">BCNF</span>
+        </div>
+        <table class="dbt" style="">
+          <thead><tr style="background:#3a1a60"><th style="color:#e0c8ff">StudentID 🔑</th><th style="color:#e0c8ff">AdvisorID 🔑🔗</th></tr></thead>
+          <tbody>
+            <tr style="background:#120820;border-bottom:1px solid #2a1240"><td style="color:#d0b8f0;font-weight:700">S01</td><td style="color:#a8c8f8">A100</td></tr>
+            <tr style="background:#120820;border-bottom:1px solid #2a1240"><td style="color:#d0b8f0;font-weight:700">S01</td><td style="color:#a8c8f8">A200</td></tr>
+            <tr style="background:#120820;border-bottom:1px solid #2a1240"><td style="color:#d0b8f0;font-weight:700">S02</td><td style="color:#a8c8f8">A100</td></tr>
+            <tr style="background:#120820;border-bottom:1px solid #2a1240"><td style="color:#d0b8f0;font-weight:700">S03</td><td style="color:#a8c8f8">A200</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <h4>4NF and 5NF — A Brief Overview</h4>
+      <table class="styled-table">
+        <thead><tr><th>Normal Form</th><th>Eliminates</th><th>When Relevant</th></tr></thead>
+        <tbody>
+          <tr>
+            <td class="grn"><strong>4NF</strong></td>
+            <td><strong>Multi-valued dependencies (MVDs)</strong>. An MVD X →→ Y exists when X determines a <em>set</em> of Y values, independent of other attributes. Example: an employee who can have multiple skills AND multiple project assignments — stored in one table, they generate spurious combinations.</td>
+            <td>Tables with two or more independent multi-valued facts about the same entity</td>
+          </tr>
+          <tr>
+            <td class="grn"><strong>5NF</strong></td>
+            <td><strong>Join dependencies</strong>. A table that cannot be decomposed further without losing information is in 5NF (also called Project-Join Normal Form, PJNF). Extremely rare in practice.</td>
+            <td>Complex many-to-many-to-many relationships; academic/theoretical contexts</td>
+          </tr>
+        </tbody>
+      </table>
+      <div class="callout callout-info">
+        <span class="callout-icon">ℹ️</span>
+        <div class="callout-body">
+          <strong>3NF vs. BCNF in Practice</strong>
+          3NF always produces a <em>lossless-join, dependency-preserving</em> decomposition — you can always reconstruct the original data and all FDs remain enforceable. BCNF may not preserve all FDs, sometimes requiring triggers or application logic to enforce a rule. This is why many practitioners choose 3NF as the practical target and only push to BCNF when a specific anomaly requires it.
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══ SECTION 7 — THE NORMALIZATION PROCESS ═══ -->
+  <div class="section-label" id="sec7">
+    <div class="num">7</div>
+    <h2>The Normalization Process — Step by Step</h2>
+    <span class="outcome-tag">Outcome 2</span>
+  </div>
+  <div class="card">
+    <div class="card-header open" onclick="toggle(this)">
+      <div class="ch-left"><span class="card-icon">⚙️</span>
+        <h3><span>Outcome 2 · Process</span>A Repeatable Method for Normalizing Any Relation</h3>
+      </div>
+      <button class="toggle-btn open">▲</button>
+    </div>
+    <div class="card-body open">
+      <ol class="step-list">
+        <li>
+          <div class="sc">
+            <strong>Collect all attributes — build the Universal Relation</strong>
+            <span>List every attribute needed from the domain. Ignore table structure for now. Write one big "flat" table containing everything. This is the starting point — the Universal Relation or UNF.</span>
+          </div>
+        </li>
+        <li>
+          <div class="sc">
+            <strong>Identify all functional dependencies from the business rules</strong>
+            <span>Interview stakeholders. Read specs. Ask: "What uniquely determines what?" Write every FD in the form X → Y. Do NOT derive FDs from the current data alone — look for the underlying business rule.</span>
+          </div>
+        </li>
+        <li>
+          <div class="sc">
+            <strong>Identify candidate keys</strong>
+            <span>A candidate key is a minimal set of attributes whose FDs allow you to determine every other attribute in the relation. There may be multiple candidate keys — pick one as the primary key.</span>
+          </div>
+        </li>
+        <li>
+          <div class="sc">
+            <strong>Check and achieve 1NF — eliminate non-atomic values and repeating groups</strong>
+            <span>Ensure every cell holds a single, indivisible value. Break multi-valued cells into separate rows. Eliminate column groups like Product1, Product2, Product3. Define a primary key for each table.</span>
+          </div>
+        </li>
+        <li>
+          <div class="sc">
+            <strong>Check and achieve 2NF — eliminate partial dependencies</strong>
+            <span>For each table with a composite PK, test every non-key attribute: does it depend on the whole key, or just part of it? Move partially dependent attributes — along with the part of the key they depend on — into a new table.</span>
+          </div>
+        </li>
+        <li>
+          <div class="sc">
+            <strong>Check and achieve 3NF — eliminate transitive dependencies</strong>
+            <span>For each remaining table, test every non-key attribute: does it depend on another non-key attribute? If A → B → C exists (where B is non-key), extract {B, C} into a new table with B as PK. Replace B and C in the original table with a foreign key to B.</span>
+          </div>
+        </li>
+        <li>
+          <div class="sc">
+            <strong>Check for BCNF (if needed) — every determinant must be a superkey</strong>
+            <span>For every FD X → Y in each table, confirm X is a superkey. If any non-superkey determines something, decompose again. Be aware this may sacrifice dependency preservation.</span>
+          </div>
+        </li>
+        <li>
+          <div class="sc">
+            <strong>Verify lossless decomposition</strong>
+            <span>Confirm you can reconstruct the original data by joining the decomposed tables. A decomposition is lossless if the joining attribute (usually the FK) is a key in at least one of the joined tables.</span>
+          </div>
+        </li>
+        <li>
+          <div class="sc">
+            <strong>Add integrity constraints and foreign keys</strong>
+            <span>Define PRIMARY KEY, FOREIGN KEY, NOT NULL, UNIQUE, CHECK, and DEFAULT constraints on every table. Specify ON DELETE / ON UPDATE referential actions appropriate for each relationship.</span>
+          </div>
+        </li>
+        <li>
+          <div class="sc">
+            <strong>Review, validate, and denormalize deliberately if needed</strong>
+            <span>Walk through real query patterns with stakeholders. If a specific query joins 6 tables and runs millions of times per hour, consider a targeted, documented denormalization — not as a design flaw, but as a conscious performance optimization.</span>
+          </div>
+        </li>
+      </ol>
+
+      <h4>Normalization Progress Summary — The Running Example</h4>
+      <table class="styled-table">
+        <thead><tr><th>Stage</th><th>Tables</th><th>What Changed</th><th>Anomalies Remaining</th></tr></thead>
+        <tbody>
+          <tr><td class="red">UNF</td><td>1 flat table</td><td>Starting point — multi-valued cells, no key</td><td>All three anomaly types</td></tr>
+          <tr><td style="color:var(--amber);font-weight:700">1NF</td><td>1 table (expanded)</td><td>Atomic values, one row per order line, composite PK defined</td><td>Partial + transitive dependencies remain</td></tr>
+          <tr><td style="color:var(--ind);font-weight:700">2NF</td><td>3 tables</td><td>Partial deps removed → Order, Product, OrderLine split out</td><td>Transitive dependency in Order table remains</td></tr>
+          <tr><td class="grn">3NF</td><td>4 tables</td><td>Transitive dep removed → Customer extracted, CustomerID FK added</td><td>None for standard OLTP use</td></tr>
+          <tr><td style="color:var(--purple);font-weight:700">BCNF</td><td>4–5 tables</td><td>Non-superkey determinants removed (when applicable)</td><td>None — may sacrifice some FD preservation</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- ═══ SECTION 8 — ADVANTAGES & DISADVANTAGES ═══ -->
+  <div class="section-label" id="sec8">
+    <div class="num">8</div>
+    <h2>Advantages and Disadvantages of Normalization</h2>
+    <span class="outcome-tag">Outcome 3</span>
+  </div>
+  <div class="card">
+    <div class="card-header open" onclick="toggle(this)">
+      <div class="ch-left"><span class="card-icon">⚖️</span>
+        <h3><span>Outcome 3 · Trade-offs</span>What Normalization Gains — and What It Costs</h3>
+      </div>
+      <button class="toggle-btn open">▲</button>
+    </div>
+    <div class="card-body open">
+      <div class="pros-cons">
+        <div class="pc-box pc-pros">
+          <div class="pc-title">✅ Advantages</div>
+          <ul class="pc-list">
+            <li><strong>Eliminates update anomalies.</strong> Each fact exists in exactly one place — change it once, and the entire database reflects the update immediately.</li>
+            <li><strong>Reduces data redundancy.</strong> Smaller storage footprint. Customer data stored once for thousands of orders, not repeated per row.</li>
+            <li><strong>Improves data integrity.</strong> Constraints and foreign keys are easier to define and enforce when tables have clear, single responsibilities.</li>
+            <li><strong>Easier maintenance and evolution.</strong> Adding a new attribute to Customer affects one table, not every table where customer data was duplicated.</li>
+            <li><strong>Supports flexible querying.</strong> Well-structured tables are easier to join in unanticipated ways. New query patterns don't require schema changes.</li>
+            <li><strong>Enforces business rules structurally.</strong> FDs, PKs, FKs, and CHECK constraints embed the business rules directly into the schema — not just application code.</li>
+            <li><strong>Simplifies INSERT and DELETE operations.</strong> Adding a new customer doesn't require an order. Deleting an order doesn't lose customer history.</li>
+          </ul>
+        </div>
+        <div class="pc-box pc-cons">
+          <div class="pc-title">⚠️ Disadvantages / Trade-offs</div>
+          <ul class="pc-list">
+            <li><strong>Query complexity increases.</strong> Retrieving a complete order now requires joining 4+ tables. Developers must understand the schema to write correct queries.</li>
+            <li><strong>Read performance can degrade.</strong> JOINs are more expensive than reading a single flat table — especially on large datasets without proper indexing.</li>
+            <li><strong>More tables to manage.</strong> A fully normalized schema can have dozens of tables. Schema documentation and ER diagrams become critical.</li>
+            <li><strong>Reporting queries become verbose.</strong> Analytical queries that aggregate many attributes across many tables require complex SQL.</li>
+            <li><strong>Over-normalization risk.</strong> Decomposing beyond what the data actually needs (e.g., forcing 5NF where 3NF was fine) adds complexity without proportional benefit.</li>
+            <li><strong>Not ideal for read-heavy analytics.</strong> OLAP / data warehouse workloads often perform better with intentional denormalization (star schema, wide tables).</li>
+          </ul>
+        </div>
+      </div>
+
+      <h4>The Anomaly Scorecard — What Each Normal Form Eliminates</h4>
+      <table class="styled-table">
+        <thead><tr><th>Anomaly Type</th><th>Caused By</th><th>Eliminated By</th><th>Example Fix</th></tr></thead>
+        <tbody>
+          <tr>
+            <td class="red">Insertion Anomaly</td>
+            <td>Data about entity A stored only inside entity B's table</td>
+            <td>1NF + 2NF + 3NF decomposition</td>
+            <td>Customer table exists independently of Order — add customers without orders</td>
+          </tr>
+          <tr>
+            <td class="red">Update Anomaly</td>
+            <td>Same fact repeated in multiple rows (redundancy)</td>
+            <td>2NF (partial deps) + 3NF (transitive deps)</td>
+            <td>CustomerCity lives once in Customer — update one row, not hundreds of orders</td>
+          </tr>
+          <tr>
+            <td class="red">Deletion Anomaly</td>
+            <td>Only record of entity A is embedded in entity B's row</td>
+            <td>3NF decomposition + separate entity tables</td>
+            <td>Delete all orders for a customer — customer record still exists independently</td>
+          </tr>
+          <tr>
+            <td style="color:var(--amber);font-weight:700">BCNF Anomaly</td>
+            <td>Non-superkey determinant in a 3NF table</td>
+            <td>BCNF decomposition</td>
+            <td>AdvisorID → CourseID causes update issues when an advisor switches courses</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- ═══ SECTION 9 — SELECTING THE CORRECT LEVEL ═══ -->
+  <div class="section-label" id="sec9">
+    <div class="num">9</div>
+    <h2>Selecting the Correct Level of Normalization</h2>
+    <span class="outcome-tag">Outcome 4</span>
+  </div>
+  <div class="card">
+    <div class="card-header open" onclick="toggle(this)">
+      <div class="ch-left"><span class="card-icon">🎯</span>
+        <h3><span>Outcome 4 · Decision Framework</span>Matching Normalization Level to Application Context</h3>
+      </div>
+      <button class="toggle-btn open">▲</button>
+    </div>
+    <div class="card-body open">
+      <div class="callout callout-grn">
+        <span class="callout-icon">📌</span>
+        <div class="callout-body">
+          <strong>The Core Principle</strong>
+          Normalization is a design tool, not a law. The correct level is the one that best serves your application's actual workload — balancing data integrity, query performance, development complexity, and future maintenance. <em>Always normalize first, then denormalize deliberately if profiling proves it's necessary.</em>
+        </div>
+      </div>
+
+      <h4>Decision Framework by Application Type</h4>
+      <div class="decision-grid">
+        <div class="dc-card dc-oltp">
+          <div class="dc-title">Transactional Systems (OLTP)</div>
+          <p>E-commerce, banking, hospital systems, student registration. High INSERT/UPDATE/DELETE volume. Data integrity is critical. Many concurrent users writing data.</p>
+          <span class="dc-level">Target: 3NF</span>
+        </div>
+        <div class="dc-card dc-olap">
+          <div class="dc-title">Analytics / Data Warehouses (OLAP)</div>
+          <p>Business intelligence, reporting dashboards, historical analysis. Read-heavy workloads. Query speed is paramount. Data is loaded in batches, rarely updated.</p>
+          <span class="dc-level">Target: 1NF–2NF (Star/Snowflake Schema)</span>
+        </div>
+        <div class="dc-card dc-embed">
+          <div class="dc-title">Embedded / Mobile / Edge</div>
+          <p>IoT sensors, mobile apps with local SQLite. Storage is constrained. Network is unreliable. Queries are simple and predefined. Schema changes are hard to deploy.</p>
+          <span class="dc-level">Target: 2NF–3NF (simplified)</span>
+        </div>
+        <div class="dc-card dc-legacy">
+          <div class="dc-title">Legacy Migration / Integration</div>
+          <p>Integrating with existing flat-file or poorly structured legacy data. Full normalization may be impractical without a complete rewrite of dependent systems.</p>
+          <span class="dc-level">Target: 1NF–2NF pragmatically</span>
+        </div>
+      </div>
+
+      <h4>Normalization vs. Denormalization — A Deliberate Choice</h4>
+      <table class="styled-table">
+        <thead><tr><th>Scenario</th><th>Recommendation</th><th>Rationale</th></tr></thead>
+        <tbody>
+          <tr>
+            <td class="hl">New transactional application</td>
+            <td>Normalize to <strong>3NF first</strong></td>
+            <td>Always start normalized. You can denormalize specific tables later with profiling data to justify it.</td>
+          </tr>
+          <tr>
+            <td class="hl">A query joins 8 tables and runs 50,000 times/hour</td>
+            <td>Consider <strong>targeted denormalization</strong> or a <strong>materialized view</strong></td>
+            <td>Profile first. The join cost may be outweighed by indexing, caching, or a summary table rather than schema changes.</td>
+          </tr>
+          <tr>
+            <td class="hl">Data warehouse / BI reporting</td>
+            <td>Use <strong>Star Schema</strong> (intentional 2NF-style)</td>
+            <td>Fact tables surrounded by dimension tables. Fewer joins = faster analytical queries. Data integrity maintained via ETL, not runtime constraints.</td>
+          </tr>
+          <tr>
+            <td class="hl">Audit / history tables</td>
+            <td>Store <strong>denormalized snapshots</strong></td>
+            <td>Audit records should capture point-in-time data (customer name at time of order), not FK references that change over time.</td>
+          </tr>
+          <tr>
+            <td class="hl">Highly volatile schema requirements</td>
+            <td>Normalize aggressively — consider <strong>EAV pattern</strong> with caution</td>
+            <td>Well-normalized schemas are easier to extend. EAV (Entity-Attribute-Value) trades structure for flexibility but makes queries very complex.</td>
+          </tr>
+        </tbody>
+      </table>
+
+      <h4>When to Stop Normalizing — Practical Signals</h4>
+      <ul>
+        <li><strong>Every table has a clear single purpose</strong> — you can describe it in one sentence without using "and"</li>
+        <li><strong>No fact is stored in more than one place</strong> — changing any real-world fact requires updating exactly one row in one table</li>
+        <li><strong>All update anomalies are eliminated</strong> — insert, update, and delete operations on any table don't affect data in other tables unexpectedly</li>
+        <li><strong>All FDs are represented by keys or FK constraints</strong> — business rules are structurally enforced, not just trusted to application code</li>
+        <li><strong>Query patterns are manageable</strong> — if stakeholders find the join complexity genuinely unworkable, consider summary tables or views rather than denormalizing the base tables</li>
+      </ul>
+
+      <div class="callout callout-warning">
+        <span class="callout-icon">⚠️</span>
+        <div class="callout-body">
+          <strong>Premature Denormalization Is a Design Flaw</strong>
+          Denormalizing without profiling data is guessing. Modern query optimizers, indexed views, and caching layers can handle normalized schemas at very high scale. The most common mistake is denormalizing early "for performance" and then spending years managing the resulting data integrity problems that normalization was designed to prevent.
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══ SECTION 10 — SUMMARY & CHECKLIST ═══ -->
+  <div class="section-label" id="sec10">
+    <div class="num" style="font-size:1rem">✓</div>
+    <h2>Summary, Quick Reference &amp; Self-Assessment</h2>
+  </div>
+  <div class="card">
+    <div class="card-header open" onclick="toggle(this)">
+      <div class="ch-left"><span class="card-icon">📋</span>
+        <h3><span>Review</span>Normal Forms Reference, Complete Worked Example Summary, Glossary &amp; Checklist</h3>
+      </div>
+      <button class="toggle-btn open">▲</button>
+    </div>
+    <div class="card-body open">
+      <div class="strip">
+        <strong>Module 7 Complete!</strong> You can now identify functional dependencies, apply all normal forms through BCNF, explain why normalization prevents anomalies, and choose the right level of normalization for any application context.
+      </div>
+
+      <h4>Normal Forms Quick Reference</h4>
+      <table class="styled-table">
+        <thead><tr><th>Normal Form</th><th>Requirement</th><th>Eliminates</th><th>Key Test</th></tr></thead>
+        <tbody>
+          <tr>
+            <td class="red">UNF</td>
+            <td>No requirements met — raw, unnormalized data</td>
+            <td>Nothing</td>
+            <td>Multi-valued cells, repeating groups present</td>
+          </tr>
+          <tr>
+            <td style="color:var(--amber);font-weight:700">1NF</td>
+            <td>Atomic values only. No repeating groups. PK defined.</td>
+            <td>Non-atomic cells, repeating column groups</td>
+            <td>Can every cell hold only one value? Is a PK defined?</td>
+          </tr>
+          <tr>
+            <td style="color:var(--ind);font-weight:700">2NF</td>
+            <td>1NF + no partial functional dependencies on composite PK</td>
+            <td>Partial FDs → reduces some update and insert anomalies</td>
+            <td>Does every non-key attribute need the WHOLE key?</td>
+          </tr>
+          <tr>
+            <td class="grn">3NF</td>
+            <td>2NF + no transitive dependencies through non-key attributes</td>
+            <td>Transitive FDs → eliminates most remaining anomalies</td>
+            <td>Does any non-key attribute determine another non-key?</td>
+          </tr>
+          <tr>
+            <td style="color:var(--purple);font-weight:700">BCNF</td>
+            <td>3NF + every determinant in every FD must be a superkey</td>
+            <td>Edge-case anomalies remaining after 3NF</td>
+            <td>Is every left-hand side of an FD a candidate key?</td>
+          </tr>
+          <tr>
+            <td style="color:var(--gold);font-weight:700">4NF</td>
+            <td>BCNF + no non-trivial multi-valued dependencies</td>
+            <td>Spurious row combinations from independent MVDs</td>
+            <td>Are there independent multi-valued facts in one table?</td>
+          </tr>
+        </tbody>
+      </table>
+
+      <h4>Complete Worked Example — UNF to 3NF at a Glance</h4>
+      <table class="styled-table">
+        <thead><tr><th>Step</th><th>From</th><th>Action Taken</th><th>Result</th></tr></thead>
+        <tbody>
+          <tr><td class="red">UNF → 1NF</td><td>Products column held "Widget A, Widget B"</td><td>One row per product per order. Composite PK = {OrderID, ProductID}.</td><td>6 atomic rows. No repeating groups.</td></tr>
+          <tr><td style="color:var(--amber);font-weight:700">1NF → 2NF</td><td>CustomerName depended on OrderID only; ProductName depended on ProductID only</td><td>Extracted Order table (keyed on OrderID) and Product table (keyed on ProductID). Left only Quantity in OrderLine.</td><td>3 tables — Order, Product, OrderLine.</td></tr>
+          <tr><td class="grn">2NF → 3NF</td><td>CustomerCity depended on CustomerName (non-key) → transitive FD</td><td>Extracted Customer table. Added CustomerID surrogate PK. Order table now stores CustomerID FK.</td><td>4 tables — Customer, Order, Product, OrderLine. All anomalies eliminated.</td></tr>
+        </tbody>
+      </table>
+
+      <h4>Functional Dependency Notation Reference</h4>
+      <div class="fd-box">
+        <span class="fd"><span class="det">A</span> <span class="arr">→</span> <span class="dep">B</span> <span class="note">// A functionally determines B (knowing A always tells you B)</span></span>
+        <span class="fd"><span class="det">{A, B}</span> <span class="arr">→</span> <span class="dep">C</span> <span class="note">// composite determinant — need both A and B together</span></span>
+        <span class="fd"><span class="det">A</span> <span class="arr">→</span> <span class="dep">B</span> <span class="arr">→</span> <span class="dep">C</span> <span class="note">// transitive dependency — A→C only indirectly via B (violates 3NF)</span></span>
+        <span class="fd"><span class="det">A</span> <span class="arr">→→</span> <span class="dep">B</span> <span class="note">// multi-valued dependency (MVD) — violates 4NF</span></span>
+      </div>
+
+      <h4>Key Terms Glossary</h4>
+      <table class="styled-table">
+        <thead><tr><th>Term</th><th>Definition</th></tr></thead>
+        <tbody>
+          <tr><td class="hl">Normalization</td><td>The systematic process of organizing a database schema to reduce redundancy and eliminate update anomalies</td></tr>
+          <tr><td class="hl">Functional Dependency (FD)</td><td>A constraint where knowing the value of attribute X uniquely determines the value of attribute Y (X → Y)</td></tr>
+          <tr><td class="hl">Determinant</td><td>The left-hand side of a functional dependency — the attribute(s) that do the determining</td></tr>
+          <tr><td class="hl">Candidate Key</td><td>A minimal set of attributes that uniquely identifies every row; a table may have multiple candidate keys</td></tr>
+          <tr><td class="hl">Partial Dependency</td><td>A non-key attribute depends on only part of a composite primary key — violates 2NF</td></tr>
+          <tr><td class="hl">Transitive Dependency</td><td>A non-key attribute depends on another non-key attribute (A→B→C where B is non-key) — violates 3NF</td></tr>
+          <tr><td class="hl">Insertion Anomaly</td><td>Inability to add data about one entity without also adding data about another unrelated entity</td></tr>
+          <tr><td class="hl">Update Anomaly</td><td>Changing one real-world fact requires updating the same data in multiple rows, risking inconsistency</td></tr>
+          <tr><td class="hl">Deletion Anomaly</td><td>Deleting one entity's record accidentally destroys all information about another entity stored in the same row</td></tr>
+          <tr><td class="hl">1NF</td><td>All values are atomic (indivisible); no repeating groups; primary key defined</td></tr>
+          <tr><td class="hl">2NF</td><td>1NF + every non-key attribute depends on the entire primary key (no partial FDs)</td></tr>
+          <tr><td class="hl">3NF</td><td>2NF + no transitive dependencies — non-key attributes depend only on the PK</td></tr>
+          <tr><td class="hl">BCNF</td><td>Every determinant in every FD must be a superkey; stricter version of 3NF</td></tr>
+          <tr><td class="hl">Decomposition</td><td>The process of splitting one table into two or more smaller, better-structured tables</td></tr>
+          <tr><td class="hl">Lossless decomposition</td><td>A decomposition where the original table can be exactly reconstructed by joining the resulting tables</td></tr>
+          <tr><td class="hl">Denormalization</td><td>The intentional introduction of redundancy to improve read performance — a deliberate, documented trade-off</td></tr>
+          <tr><td class="hl">OLTP</td><td>Online Transaction Processing — transactional systems with high INSERT/UPDATE/DELETE volume; best served by 3NF</td></tr>
+          <tr><td class="hl">OLAP</td><td>Online Analytical Processing — read-heavy analytical systems that often benefit from denormalized star schemas</td></tr>
+          <tr><td class="hl">Star Schema</td><td>A data warehouse design with one central Fact table surrounded by denormalized Dimension tables; optimized for analytics</td></tr>
+        </tbody>
+      </table>
+
+      <h4>Self-Assessment Checklist</h4>
+      <div class="callout callout-tip">
+        <span class="callout-icon">✅</span>
+        <div class="callout-body">
+          <ul class="checklist">
+            <li>I can explain what normalization is and identify the three types of update anomalies it prevents</li>
+            <li>I can read and write functional dependency notation (X → Y) and identify FDs from a business description</li>
+            <li>I can distinguish between full, partial, and transitive functional dependencies</li>
+            <li>I can identify candidate keys and explain the difference between a candidate key, primary key, and superkey</li>
+            <li>I can determine whether a table is in 1NF and explain what violations look like (non-atomic values, repeating groups)</li>
+            <li>I can determine whether a table is in 2NF and identify partial dependencies in tables with composite primary keys</li>
+            <li>I can determine whether a table is in 3NF and identify transitive dependencies</li>
+            <li>I can apply the normalization process to transform a UNF relation into 3NF, producing the correct set of tables with appropriate keys</li>
+            <li>I can explain what BCNF is, how it differs from 3NF, and give an example of a table in 3NF but not BCNF</li>
+            <li>I can list at least four advantages and four disadvantages of normalization</li>
+            <li>I can explain why OLTP systems should be in 3NF while OLAP / data warehouse systems often use denormalized star schemas</li>
+            <li>I can articulate when denormalization is appropriate and why "profile first, denormalize after" is the correct approach</li>
+            <li>I can verify that a decomposition is lossless and explain what "lossless" means in this context</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</main>
+<footer>
+  <span>COP 4708 – Introduction to Databases</span> &nbsp;|&nbsp; Module 7: Database Normalization
+  <br/><span style="font-weight:300;color:#4a6a80;font-size:.78rem;margin-top:6px;display:block;">Supports CLO 2: Design, normalize, and implement relational database systems.</span>
+</footer>
+<script>
+  function toggle(header) {
+    const body = header.nextElementSibling;
+    const btn  = header.querySelector('.toggle-btn');
+    const open = body.classList.contains('open');
+    body.classList.toggle('open', !open);
+    header.classList.toggle('open', !open);
+    btn.classList.toggle('open', !open);
+  }
+  function setAll(open) {
+    document.querySelectorAll('.card-body').forEach(b => b.classList.toggle('open', open));
+    document.querySelectorAll('.card-header').forEach(h => h.classList.toggle('open', open));
+    document.querySelectorAll('.toggle-btn').forEach(b => b.classList.toggle('open', open));
+  }
+</script>
+</body>
+</html>

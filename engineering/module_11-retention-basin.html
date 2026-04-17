@@ -1,0 +1,1373 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Module 11 — Analysis of a Retention Basin | BMPFast Learning System</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400&family=Source+Serif+4:ital,opsz,wght@0,8..60,300;0,8..60,400;0,8..60,600;1,8..60,300;1,8..60,400&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet" />
+  <style>
+    :root {
+      --forest:      #2C4A2E;
+      --forest-mid:  #3A6B3D;
+      --forest-light:#4E8C52;
+      --forest-pale: #D6E8D7;
+      --forest-mist: #EEF5EE;
+      --warm-white:  #FAF8F4;
+      --cream:       #F4F0E8;
+      --ink:         #1A2B1B;
+      --ink-mid:     #2E4430;
+      --rule:        #C8D9C9;
+      --accent:      #7BA05B;
+      --accent-warm: #A0622A;
+      --mono-bg:     #F0EDE6;
+    }
+
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      font-family: 'Source Serif 4', Georgia, serif;
+      font-size: 17px;
+      line-height: 1.75;
+      color: var(--ink);
+      background: var(--warm-white);
+      display: flex;
+    }
+
+    /* ── Sidebar nav ─────────────────────────────── */
+    .sidebar {
+      position: sticky;
+      top: 0;
+      height: 100vh;
+      width: 260px;
+      min-width: 260px;
+      background: var(--forest);
+      color: var(--forest-pale);
+      display: flex;
+      flex-direction: column;
+      overflow-y: auto;
+      padding: 2rem 0 3rem;
+      z-index: 100;
+    }
+
+    .sidebar-brand {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.65rem;
+      font-weight: 600;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      color: var(--accent);
+      padding: 0 1.5rem 1.25rem;
+      border-bottom: 1px solid rgba(255,255,255,0.1);
+    }
+
+    .sidebar-brand span {
+      display: block;
+      font-size: 0.75rem;
+      color: var(--forest-pale);
+      font-family: 'Source Serif 4', serif;
+      font-style: italic;
+      font-weight: 300;
+      letter-spacing: 0;
+      margin-top: 0.2rem;
+    }
+
+    .nav-section-label {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.6rem;
+      letter-spacing: 0.16em;
+      text-transform: uppercase;
+      color: rgba(214,232,215,0.45);
+      padding: 1.5rem 1.5rem 0.4rem;
+    }
+
+    .sidebar nav a {
+      display: block;
+      font-family: 'Source Serif 4', serif;
+      font-size: 0.82rem;
+      line-height: 1.35;
+      color: rgba(214,232,215,0.82);
+      text-decoration: none;
+      padding: 0.45rem 1.5rem;
+      border-left: 2px solid transparent;
+      transition: color 0.2s, border-color 0.2s, background 0.2s;
+    }
+
+    .sidebar nav a:hover,
+    .sidebar nav a.active {
+      color: #fff;
+      border-left-color: var(--accent);
+      background: rgba(255,255,255,0.06);
+    }
+
+    /* ── Main content ────────────────────────────── */
+    .main {
+      flex: 1;
+      min-width: 0;
+      padding: 0 0 6rem;
+    }
+
+    /* ── Hero ────────────────────────────────────── */
+    .hero {
+      background: var(--forest);
+      color: var(--warm-white);
+      padding: 4.5rem 5rem 3.5rem;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .hero::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: repeating-linear-gradient(
+        -45deg,
+        transparent,
+        transparent 28px,
+        rgba(255,255,255,0.018) 28px,
+        rgba(255,255,255,0.018) 29px
+      );
+    }
+
+    .hero-eyebrow {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.7rem;
+      font-weight: 500;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      color: var(--accent);
+      margin-bottom: 1rem;
+      position: relative;
+    }
+
+    .hero h1 {
+      font-family: 'Playfair Display', Georgia, serif;
+      font-size: 2.9rem;
+      font-weight: 700;
+      line-height: 1.12;
+      color: #fff;
+      position: relative;
+      max-width: 680px;
+    }
+
+    .hero-sub {
+      font-family: 'Source Serif 4', serif;
+      font-size: 1.1rem;
+      font-weight: 300;
+      font-style: italic;
+      color: rgba(255,255,255,0.65);
+      margin-top: 1rem;
+      position: relative;
+    }
+
+    .hero-meta {
+      display: flex;
+      gap: 2.5rem;
+      margin-top: 2.5rem;
+      padding-top: 2rem;
+      border-top: 1px solid rgba(255,255,255,0.15);
+      position: relative;
+    }
+
+    .hero-meta-item {
+      display: flex;
+      flex-direction: column;
+      gap: 0.2rem;
+    }
+
+    .hero-meta-label {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.6rem;
+      letter-spacing: 0.16em;
+      text-transform: uppercase;
+      color: rgba(255,255,255,0.4);
+    }
+
+    .hero-meta-value {
+      font-size: 0.9rem;
+      color: rgba(255,255,255,0.85);
+    }
+
+    /* ── Section layout ──────────────────────────── */
+    .content-wrap {
+      max-width: 860px;
+      margin: 0 auto;
+      padding: 0 4rem;
+    }
+
+    .section {
+      padding-top: 3.5rem;
+      padding-bottom: 1rem;
+    }
+
+    .section + .section {
+      border-top: 1px solid var(--rule);
+      margin-top: 2rem;
+    }
+
+    .section-number {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.65rem;
+      font-weight: 600;
+      letter-spacing: 0.16em;
+      text-transform: uppercase;
+      color: var(--accent);
+      margin-bottom: 0.5rem;
+    }
+
+    .section h2 {
+      font-family: 'Playfair Display', Georgia, serif;
+      font-size: 1.85rem;
+      font-weight: 700;
+      color: var(--forest);
+      line-height: 1.2;
+      margin-bottom: 1.25rem;
+    }
+
+    .section h3 {
+      font-family: 'Playfair Display', Georgia, serif;
+      font-size: 1.25rem;
+      font-weight: 600;
+      color: var(--forest-mid);
+      margin-top: 2rem;
+      margin-bottom: 0.75rem;
+    }
+
+    .section p {
+      margin-bottom: 1.1rem;
+      color: var(--ink-mid);
+    }
+
+    /* ── Learning objectives ─────────────────────── */
+    .objectives-list {
+      list-style: none;
+      margin: 1.25rem 0;
+    }
+
+    .objectives-list li {
+      display: flex;
+      gap: 1rem;
+      align-items: flex-start;
+      padding: 0.8rem 1.25rem;
+      border-left: 3px solid var(--forest-light);
+      background: var(--forest-mist);
+      margin-bottom: 0.6rem;
+      border-radius: 0 4px 4px 0;
+    }
+
+    .obj-num {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.7rem;
+      font-weight: 600;
+      color: var(--forest-light);
+      min-width: 1.5rem;
+      padding-top: 0.15rem;
+    }
+
+    .obj-text {
+      font-size: 0.95rem;
+      color: var(--ink);
+      line-height: 1.5;
+    }
+
+    /* ── Callout / definition box ────────────────── */
+    .callout {
+      background: var(--cream);
+      border: 1px solid var(--rule);
+      border-left: 4px solid var(--forest-mid);
+      border-radius: 0 6px 6px 0;
+      padding: 1.25rem 1.5rem;
+      margin: 1.5rem 0;
+    }
+
+    .callout-label {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.62rem;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      color: var(--forest-mid);
+      margin-bottom: 0.5rem;
+    }
+
+    .callout p {
+      margin-bottom: 0;
+      font-style: italic;
+    }
+
+    .callout-source {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.7rem;
+      color: rgba(46,68,48,0.6);
+      margin-top: 0.6rem;
+      font-style: normal;
+    }
+
+    /* ── Key point / highlight box ───────────────── */
+    .highlight-box {
+      background: var(--forest-pale);
+      border: 1px solid var(--forest-light);
+      border-radius: 6px;
+      padding: 1.1rem 1.4rem;
+      margin: 1.25rem 0;
+    }
+
+    .highlight-box p {
+      margin-bottom: 0;
+      color: var(--forest);
+      font-weight: 600;
+    }
+
+    /* ── Data table ──────────────────────────────── */
+    .data-table-wrap {
+      overflow-x: auto;
+      margin: 1.75rem 0;
+    }
+
+    .data-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 0.82rem;
+    }
+
+    .data-table caption {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.65rem;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--accent-warm);
+      text-align: left;
+      margin-bottom: 0.5rem;
+      padding-bottom: 0.5rem;
+      caption-side: top;
+    }
+
+    .data-table th {
+      background: var(--forest);
+      color: var(--forest-pale);
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.7rem;
+      font-weight: 500;
+      letter-spacing: 0.05em;
+      text-align: center;
+      padding: 0.55rem 0.65rem;
+      border: 1px solid var(--forest-mid);
+    }
+
+    .data-table th.row-header {
+      text-align: left;
+      background: var(--forest-mid);
+    }
+
+    .data-table td {
+      text-align: center;
+      padding: 0.4rem 0.6rem;
+      border: 1px solid var(--rule);
+      font-family: 'JetBrains Mono', monospace;
+      color: var(--ink-mid);
+    }
+
+    .data-table td.row-label {
+      text-align: left;
+      font-weight: 600;
+      background: var(--forest-mist);
+      color: var(--forest);
+    }
+
+    .data-table tr:nth-child(even) td {
+      background: var(--cream);
+    }
+
+    .data-table tr:nth-child(even) td.row-label {
+      background: var(--forest-mist);
+    }
+
+    /* ── Formula / code block ────────────────────── */
+    .formula-block {
+      background: var(--mono-bg);
+      border: 1px solid #d8d2c6;
+      border-radius: 6px;
+      padding: 1.25rem 1.5rem;
+      margin: 1.5rem 0;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.88rem;
+      color: var(--ink);
+      line-height: 1.8;
+    }
+
+    .formula-block .formula-label {
+      font-size: 0.62rem;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      color: var(--accent-warm);
+      display: block;
+      margin-bottom: 0.6rem;
+    }
+
+    /* ── Results table (output data) ─────────────── */
+    .results-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 1rem;
+      margin: 1.5rem 0;
+    }
+
+    .result-card {
+      background: var(--forest-mist);
+      border: 1px solid var(--rule);
+      border-radius: 6px;
+      padding: 1rem 1.25rem;
+    }
+
+    .result-card .rc-label {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.65rem;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--forest-mid);
+      margin-bottom: 0.3rem;
+    }
+
+    .result-card .rc-value {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 1.2rem;
+      font-weight: 600;
+      color: var(--forest);
+    }
+
+    .result-card .rc-unit {
+      font-size: 0.7rem;
+      color: var(--accent-warm);
+      margin-left: 0.2rem;
+    }
+
+    /* ── BMPFast UI screenshots placeholder ──────── */
+    .figure-placeholder {
+      width: 100%;
+      background: linear-gradient(135deg, var(--forest-mist) 0%, var(--cream) 100%);
+      border: 1.5px dashed var(--forest-light);
+      border-radius: 8px;
+      padding: 2.5rem 2rem;
+      margin: 1.75rem 0;
+      text-align: center;
+    }
+
+    .figure-placeholder .fp-icon {
+      font-size: 2rem;
+      margin-bottom: 0.75rem;
+      opacity: 0.4;
+    }
+
+    .figure-placeholder .fp-title {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.7rem;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      color: var(--forest-mid);
+      margin-bottom: 0.35rem;
+    }
+
+    .figure-placeholder .fp-desc {
+      font-size: 0.88rem;
+      font-style: italic;
+      color: rgba(46,68,48,0.6);
+      max-width: 480px;
+      margin: 0 auto;
+      line-height: 1.5;
+    }
+
+    .figure-caption {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.68rem;
+      color: rgba(46,68,48,0.55);
+      letter-spacing: 0.05em;
+      text-align: center;
+      margin-top: -1rem;
+      margin-bottom: 1.5rem;
+    }
+
+    /* ── Inline note ─────────────────────────────── */
+    .note {
+      background: #FFF8ED;
+      border: 1px solid #E8C97A;
+      border-left: 4px solid #C9A040;
+      border-radius: 0 6px 6px 0;
+      padding: 0.9rem 1.25rem;
+      margin: 1.25rem 0;
+      font-size: 0.9rem;
+    }
+
+    .note-label {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.6rem;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      color: #8B6A18;
+      margin-bottom: 0.35rem;
+    }
+
+    .note p { color: #4A3A12; margin-bottom: 0; }
+
+    /* ── Workflow steps ──────────────────────────── */
+    .workflow {
+      list-style: none;
+      margin: 1.5rem 0;
+      counter-reset: wf;
+    }
+
+    .workflow li {
+      display: flex;
+      gap: 1.1rem;
+      align-items: flex-start;
+      padding: 0.75rem 0;
+      border-bottom: 1px solid var(--rule);
+    }
+
+    .workflow li::before {
+      counter-increment: wf;
+      content: counter(wf);
+      min-width: 28px;
+      height: 28px;
+      background: var(--forest);
+      color: #fff;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.72rem;
+      font-weight: 600;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border-radius: 50%;
+      flex-shrink: 0;
+      margin-top: 0.1rem;
+    }
+
+    .workflow li span {
+      font-size: 0.95rem;
+      color: var(--ink-mid);
+      line-height: 1.5;
+    }
+
+    /* ── Summary cards ───────────────────────────── */
+    .summary-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 1rem;
+      margin: 1.5rem 0;
+    }
+
+    .summary-card {
+      background: var(--forest);
+      border-radius: 8px;
+      padding: 1.25rem 1.4rem;
+    }
+
+    .summary-card .sc-num {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.62rem;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      color: var(--accent);
+      margin-bottom: 0.4rem;
+    }
+
+    .summary-card .sc-text {
+      font-size: 0.92rem;
+      color: rgba(214,232,215,0.9);
+      line-height: 1.45;
+    }
+
+    /* ── References ──────────────────────────────── */
+    .references {
+      background: var(--cream);
+      border-top: 2px solid var(--forest);
+      padding: 2.5rem 4rem;
+      margin-top: 4rem;
+    }
+
+    .references h2 {
+      font-family: 'Playfair Display', serif;
+      font-size: 1.4rem;
+      color: var(--forest);
+      margin-bottom: 1.25rem;
+    }
+
+    .ref-list {
+      list-style: none;
+    }
+
+    .ref-list li {
+      font-size: 0.88rem;
+      color: var(--ink-mid);
+      padding: 0.5rem 0;
+      border-bottom: 1px solid var(--rule);
+      padding-left: 1rem;
+      position: relative;
+    }
+
+    .ref-list li::before {
+      content: '›';
+      position: absolute;
+      left: 0;
+      color: var(--accent);
+      font-family: 'JetBrains Mono', monospace;
+    }
+
+    /* ── Graphic references section ──────────────── */
+    .graphic-refs {
+      background: var(--forest-mist);
+      border: 1px solid var(--rule);
+      border-radius: 8px;
+      padding: 1.75rem 2rem;
+      margin: 2rem 0;
+    }
+
+    .graphic-refs h3 {
+      font-family: 'Playfair Display', serif;
+      font-size: 1.1rem;
+      color: var(--forest);
+      margin-bottom: 1rem;
+      margin-top: 0;
+    }
+
+    .graphic-ref-item {
+      display: flex;
+      gap: 1rem;
+      align-items: flex-start;
+      padding: 0.6rem 0;
+      border-bottom: 1px dashed var(--rule);
+      font-size: 0.88rem;
+      color: var(--ink-mid);
+    }
+
+    .graphic-ref-item:last-child { border-bottom: none; }
+
+    .gri-tag {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.65rem;
+      background: var(--forest);
+      color: #fff;
+      padding: 0.15rem 0.5rem;
+      border-radius: 3px;
+      white-space: nowrap;
+      flex-shrink: 0;
+    }
+
+    /* ── Footer ──────────────────────────────────── */
+    .footer {
+      background: var(--forest);
+      color: rgba(214,232,215,0.55);
+      padding: 1.75rem 4rem;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.68rem;
+      letter-spacing: 0.06em;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    @media (max-width: 1024px) {
+      .sidebar { display: none; }
+      .content-wrap { padding: 0 2rem; }
+      .hero { padding: 3rem 2rem 2.5rem; }
+      .results-grid, .summary-grid { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- ── Sidebar ──────────────────────────────────── -->
+<aside class="sidebar">
+  <div class="sidebar-brand">
+    BMPFast
+    <span>Learning System</span>
+  </div>
+
+  <p class="nav-section-label">Module 11</p>
+  <nav>
+    <a href="#objectives">Learning Objectives</a>
+    <a href="#definition">What Is a Retention BMP?</a>
+    <a href="#effectiveness">Retention Effectiveness</a>
+    <a href="#efficiency">Efficiency &amp; Treatment Depth</a>
+    <a href="#discovery-plot">Plot of Effectiveness</a>
+    <a href="#size">Sizing: Treatment Depth</a>
+    <a href="#navigation">BMPFast Navigation</a>
+    <a href="#bmp-worksheet">BMP Treatment Options</a>
+    <a href="#example">Example Problem</a>
+    <a href="#discovery-example">Discovery — Plot Option</a>
+    <a href="#groundwater">Groundwater Protection</a>
+    <a href="#gw-discharge">Groundwater Discharge Data</a>
+    <a href="#filter">Filter Area &amp; Service Life</a>
+    <a href="#summary">Module Summary</a>
+    <a href="#graphic-references">Graphic References</a>
+    <a href="#references">References</a>
+  </nav>
+</aside>
+
+<!-- ── Main ─────────────────────────────────────── -->
+<main class="main">
+
+  <!-- Hero -->
+  <header class="hero">
+    <div class="hero-eyebrow">BMPFast Learning System · Module 11</div>
+    <h1>Analysis of a Retention Basin</h1>
+    <p class="hero-sub">Using BMPFast to evaluate annual mass removal, treatment depth, and groundwater protection for retention BMP systems</p>
+    <div class="hero-meta">
+      <div class="hero-meta-item">
+        <span class="hero-meta-label">Author</span>
+        <span class="hero-meta-value">Marty Wanielista</span>
+      </div>
+      <div class="hero-meta-item">
+        <span class="hero-meta-label">Date</span>
+        <span class="hero-meta-value">December 28, 2025</span>
+      </div>
+      <div class="hero-meta-item">
+        <span class="hero-meta-label">System</span>
+        <span class="hero-meta-value">BMPFast Stormwater Toolbox</span>
+      </div>
+    </div>
+  </header>
+
+  <div class="content-wrap">
+
+    <!-- ── 1. Learning Objectives ─────────────────── -->
+    <section class="section" id="objectives">
+      <div class="section-number">Section 1</div>
+      <h2>Learning Objectives</h2>
+      <p>Upon completing this module, participants will be able to:</p>
+      <ol class="objectives-list">
+        <li><span class="obj-num">01</span><span class="obj-text">Define a retention BMP and understand how it differs from detention-based treatment approaches.</span></li>
+        <li><span class="obj-num">02</span><span class="obj-text">Navigate BMPFast to enter catchment data and conduct annual mass removal analysis using retention as the selected BMP, and interpret the resulting output.</span></li>
+        <li><span class="obj-num">03</span><span class="obj-text">Demonstrate use of the worksheets related to retention basin analysis, including the retention efficiency and filter service life worksheets.</span></li>
+        <li><span class="obj-num">04</span><span class="obj-text">Use the Plot and Tools options within BMPFast to explore and discover mass removal options for a retention basin design.</span></li>
+        <li><span class="obj-num">05</span><span class="obj-text">Work through a complete example problem involving a 12-acre residential subdivision requiring OFW-level nutrient removal via a retention basin.</span></li>
+      </ol>
+    </section>
+
+    <!-- ── 2. Definition ──────────────────────────── -->
+    <section class="section" id="definition">
+      <div class="section-number">Section 2</div>
+      <h2>What Is a Retention BMP?</h2>
+
+      <div class="callout">
+        <div class="callout-label">Regulatory Definition</div>
+        <p>"Retention" means a system designed to prevent the discharge of a given volume of stormwater runoff into surface waters in the state by on-site storage. Examples are systems such as excavated or natural depression storage areas, permeable pavement, rain gardens, exfiltration, swales, and others.</p>
+        <p class="callout-source">Sources: Applicant's Handbook, Volume 1, Section 2 — Definitions and Terms, June 28, 2024; and Harper and Baker, <em>Evaluation of Current Stormwater Design Criteria within the State of Florida</em>, 2007.</p>
+      </div>
+
+      <p>Retention systems differ fundamentally from detention systems in that their goal is to prevent stormwater from entering surface waters entirely — through infiltration, evapotranspiration, or re-use — rather than simply attenuating the timing or rate of discharge. This on-site storage and volume reduction mechanism makes retention a critical tool for achieving nutrient load reductions, particularly where Outstanding Florida Waters (OFW) or impaired water body standards apply.</p>
+
+      <p>Common retention BMP types include:</p>
+      <p>Excavated or natural depression storage areas (dry retention basins), permeable pavement systems, rain gardens, exfiltration trenches and vaults, and grass swales. Each operates through the same core mechanism: capturing a defined volume of runoff and allowing it to infiltrate, evaporate, or otherwise be retained on-site rather than discharged.</p>
+
+      <div class="figure-placeholder">
+        <div class="fp-icon">📷</div>
+        <div class="fp-title">Figure 2-A — Retention BMP Examples</div>
+        <div class="fp-desc">Three photographs illustrating common retention BMPs: a permeable paver parking area with standing water, a bioretention rain garden with ornamental plantings, and a roadside vegetated swale.</div>
+      </div>
+      <p class="figure-caption">FIG 2-A · Representative Retention BMP Types (see Graphic References)</p>
+
+    </section>
+
+    <!-- ── 3. Effectiveness ───────────────────────── -->
+    <section class="section" id="effectiveness">
+      <div class="section-number">Section 3</div>
+      <h2>Retention Effectiveness — A Function of Runoff Volume Capture</h2>
+
+      <p>The effectiveness of a retention BMP is primarily a function of the fraction of annual runoff volume it captures. This capture fraction depends on the treatment depth (TD) relative to the rainfall and runoff characteristics at the site, and critically, on the rate at which the stored volume recovers between storm events.</p>
+
+      <h3>Recovery Rate and Annual Effectiveness</h3>
+      <p>In fast-recovery retention systems — such as exfiltration into limestone formations or systems with pump-assisted recovery — annual effectiveness is meaningfully higher than in systems relying on slower soil infiltration (Hydrologic Soil Groups A and B). Two recovery scenarios bracket the design space:</p>
+      <p>Systems with recovery times less than 3 hours achieve higher annual volume capture for a given treatment depth, while systems with recovery times up to 72 hours capture less annual volume because storage fills before recovering between events. For systems with recovery of 72 hours or less, apply the removal efficiency tables provided in the new rule (Applicant's Handbook Volume 1, Appendix O — 80 tables total).</p>
+      <p>For fast-recovery systems (less than 3 hours), the annual effectiveness from the standard Appendix O tables can be increased by up to 10%, using the adjustment graph relating yearly rainfall volume capture percentage to design treatment depth.</p>
+
+      <div class="figure-placeholder">
+        <div class="fp-icon">📈</div>
+        <div class="fp-title">Figure 3-A — Retention Recovery Curve</div>
+        <div class="fp-desc">Graph showing yearly rainfall volume (% of total) captured on the y-axis versus Design Treatment Depth in inches on the x-axis. Two curves shown: Treatment &lt;3 hr recovery and Treatment &lt;72 hr recovery, plotted for Region 2 data. Assumes initial abstraction of 0.1 inch.</div>
+      </div>
+      <p class="figure-caption">FIG 3-A · Annual Volume Capture vs. Design Treatment Depth — Region 2 (Wanielista 1978; Harper 2007)</p>
+
+      <div class="note">
+        <div class="note-label">Interpolation Note</div>
+        <p>The AH Vol. 1 Appendix O tables provide values for Curve Number (CN) and Directly Connected Impervious Area (DCIA) in increments of 5. Interpolation for intermediate values presents a practical challenge and should be documented carefully in the design analysis.</p>
+      </div>
+
+      <h3>Zone 2 Removal Efficiency Table — 1-Inch Treatment Depth</h3>
+      <p>The following table illustrates Zone 2 removal efficiency values (percent annual runoff volume captured) for a 1-inch treatment depth, organized by Non-DCIA Curve Number and Percent DCIA. This is one example from the 80 tables in AH Vol. 1, Appendix O.</p>
+
+      <div class="data-table-wrap">
+        <table class="data-table">
+          <caption>Zone 2 — Annual Removal Efficiency (%) at 1-Inch Treatment Depth — by Non-DCIA CN and % DCIA</caption>
+          <thead>
+            <tr>
+              <th class="row-header">Non-DCIA CN</th>
+              <th>DCIA 70%</th>
+              <th>DCIA 75%</th>
+              <th>DCIA 80%</th>
+              <th>DCIA 85%</th>
+              <th>DCIA 90%</th>
+              <th>DCIA 95%</th>
+              <th>DCIA 100%</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr><td class="row-label">30</td><td>80.0</td><td>77.9</td><td>75.9</td><td>74.0</td><td>72.2</td><td>70.3</td><td>68.6</td></tr>
+            <tr><td class="row-label">35</td><td>79.9</td><td>77.9</td><td>75.9</td><td>74.0</td><td>72.1</td><td>70.3</td><td>68.6</td></tr>
+            <tr><td class="row-label">40</td><td>79.8</td><td>77.8</td><td>75.8</td><td>73.9</td><td>72.1</td><td>70.3</td><td>68.6</td></tr>
+            <tr><td class="row-label">45</td><td>79.6</td><td>77.7</td><td>75.8</td><td>73.9</td><td>72.1</td><td>70.3</td><td>68.6</td></tr>
+            <tr><td class="row-label">50</td><td>79.5</td><td>77.5</td><td>75.6</td><td>73.8</td><td>72.0</td><td>70.3</td><td>68.6</td></tr>
+            <tr><td class="row-label">55</td><td>79.2</td><td>77.3</td><td>75.5</td><td>73.7</td><td>72.0</td><td>70.2</td><td>68.6</td></tr>
+            <tr><td class="row-label">60</td><td>78.9</td><td>77.1</td><td>75.3</td><td>73.6</td><td>71.9</td><td>70.2</td><td>68.6</td></tr>
+            <tr><td class="row-label">65</td><td>78.5</td><td>76.8</td><td>75.1</td><td>73.4</td><td>71.8</td><td>70.2</td><td>68.6</td></tr>
+            <tr><td class="row-label">70</td><td>77.9</td><td>76.4</td><td>74.8</td><td>73.2</td><td>71.6</td><td>70.1</td><td>68.6</td></tr>
+            <tr><td class="row-label">75</td><td>77.2</td><td>75.8</td><td>74.3</td><td>72.9</td><td>71.5</td><td>70.0</td><td>68.6</td></tr>
+            <tr><td class="row-label">80</td><td>76.3</td><td>75.0</td><td>73.8</td><td>72.5</td><td>71.2</td><td>69.9</td><td>68.6</td></tr>
+            <tr><td class="row-label">85</td><td>74.9</td><td>74.0</td><td>72.9</td><td>71.9</td><td>70.8</td><td>69.7</td><td>68.6</td></tr>
+            <tr><td class="row-label">90</td><td>73.2</td><td>72.5</td><td>71.8</td><td>71.0</td><td>70.3</td><td>69.4</td><td>68.6</td></tr>
+            <tr><td class="row-label">95</td><td>70.9</td><td>70.6</td><td>70.2</td><td>69.9</td><td>69.5</td><td>69.0</td><td>68.6</td></tr>
+            <tr><td class="row-label">98</td><td>69.4</td><td>69.3</td><td>69.2</td><td>69.0</td><td>68.9</td><td>68.8</td><td>68.6</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <p class="figure-caption">TABLE 3-A · Source: AH Vol. 1, Appendix O — Assumes initial abstraction of 0.1 inch</p>
+
+    </section>
+
+    <!-- ── 4. Efficiency & TD ──────────────────────── -->
+    <section class="section" id="efficiency">
+      <div class="section-number">Section 4</div>
+      <h2>Efficiency Related to Site, Rainfall, and Treatment Depth</h2>
+
+      <p>Retention efficiency is determined through long-term simulation of a catchment area at a given rainfall site for a specific design treatment depth (TD). The treatment depth is defined as:</p>
+
+      <div class="formula-block">
+        <span class="formula-label">Treatment Depth Definition</span>
+        TD (inches) = Treated Volume (ac-ft) × 12 in/ft ÷ Catchment Area (ac)
+      </div>
+
+      <p>BMPFast develops efficiency values from 280 simulations per treatment depth per rainfall site. Harper's published tables provide retention efficiency for TDs of 0.25, 0.50, 0.75 inches, etc. — values not contained in the Applicant's Handbook directly. BMPFast allows the user to enter any TD value and interpolates accordingly.</p>
+
+      <h3>BMPFast Retention Efficiency Worksheet</h3>
+      <p>The Retention Efficiency worksheet in BMPFast allows direct lookup and interpolation of efficiency for any combination of rainfall zone, treatment depth, NDCIA Curve Number, and DCIA percentage. The efficiency output represents the fraction of annual runoff volume captured.</p>
+
+      <div class="figure-placeholder">
+        <div class="fp-icon">🖥️</div>
+        <div class="fp-title">Figure 4-A — BMPFast Retention Efficiency Worksheet</div>
+        <div class="fp-desc">Screenshot of the BMPFast Retention Efficiency worksheet showing: Rainfall Zone (Florida Zone 2), Retention Depth input of 0.33 inches, NDCIA CN of 64.0, DCIA% of 27.0, and computed Efficiency of 64.5%. Below, a full table of Capture % by Volume Percent DCIA vs. NDCIA CN rows is shown, with a 3D surface plot of efficiency values.</div>
+      </div>
+      <p class="figure-caption">FIG 4-A · BMPFast Retention Efficiency Worksheet — Zone 2, TD = 0.33 in, CN 64.0, DCIA 27% → Efficiency 64.5%</p>
+
+      <div class="highlight-box">
+        <p>Example Result: For Florida Zone 2, a treatment depth of 0.33 inches, NDCIA CN = 64.0, and DCIA = 27%, BMPFast returns a retention efficiency of 64.5%. This value is not directly available in the Applicant's Handbook tables but is computed by interpolation from the 280-simulation database.</p>
+      </div>
+
+      <p>The 3D surface visualization within BMPFast plots efficiency as a function of both DCIA percentage and Curve Number, providing a visual tool for understanding how catchment characteristics influence retention performance across the full range of possible inputs.</p>
+
+    </section>
+
+    <!-- ── 5. Discovery Plot ───────────────────────── -->
+    <section class="section" id="discovery-plot">
+      <div class="section-number">Section 5</div>
+      <h2>Plot of Effectiveness for Discovery</h2>
+
+      <p>The BMPFast Plot function generates a Retention Storage Curve — a graphical display of Treatment Efficiency (%) on the y-axis versus Retention Depth in inches on the x-axis, for the specific catchment conditions entered. This curve is a powerful "discovery" tool that allows the engineer to visualize how efficiency changes as available storage depth increases or decreases.</p>
+
+      <div class="figure-placeholder">
+        <div class="fp-icon">📈</div>
+        <div class="fp-title">Figure 5-A — Retention Treatment Efficiency Plot</div>
+        <div class="fp-desc">Plot of Retention Storage Curve: Treatment Efficiency (%) on y-axis (0–100%), Retention Depth (inches) on x-axis (0–4 inches). Curve rises steeply from 0 to approximately 0.8 inches then flattens. A red dot marker appears at 65% efficiency corresponding to the current design TD. Menu options shown: Print, Copy, Back, Nitrogen, Phosphorus.</div>
+      </div>
+      <p class="figure-caption">FIG 5-A · BMPFast Plot of Retention Storage Curve — Discovery Tool</p>
+
+      <p>The discovery application of this plot is straightforward: if a target removal efficiency of 90% is required, the engineer can read directly from the curve what treatment depth would be required to achieve that efficiency. This enables the critical design question:</p>
+
+      <div class="callout">
+        <div class="callout-label">Design Discovery Question</div>
+        <p>If we need 90% removal — do we have sufficient area and storage volume to accommodate a higher treatment depth? If so, what is the treatment depth required?</p>
+      </div>
+
+      <p>The "Get Depth" function within BMPFast allows the engineer to input a target efficiency and solve for the required retention depth directly, complementing the graphical approach. The Provided Retention Depth in inches over catchment area is reported as output (e.g., 0.9436 inches for a 90% target in the example scenario).</p>
+
+    </section>
+
+    <!-- ── 6. Size / TD ───────────────────────────── -->
+    <section class="section" id="size">
+      <div class="section-number">Section 6</div>
+      <h2>Sizing the Retention BMP — Treatment Depth and Treatment Volume</h2>
+
+      <p>The fundamental sizing relationship for a retention BMP connects the Treatment Depth (TD), Treatment Volume (TV), and the catchment area served. These three quantities are related by:</p>
+
+      <div class="formula-block">
+        <span class="formula-label">Core Sizing Relationship</span>
+        TD = TV / Area
+        TV = Area × TD
+        TD (in) = TV (ac-ft) × 12 in/ft ÷ Area (ac)
+      </div>
+
+      <h3>Example Calculation</h3>
+      <p>For a catchment with an area of 12 acres, DCIA of 27%, and a non-DCIA CN of 64, a target annual removal efficiency of 64.5% requires a treatment depth of 0.33 inches. The corresponding calculations are:</p>
+
+      <div class="formula-block">
+        <span class="formula-label">Given: Area = 12 ac, DCIA = 27%, CN (NDCIA) = 64, Target = 64.5% efficiency</span>
+        From retention efficiency table: TD = 0.33 inch
+
+        TV = 12 acres × 0.33 in ÷ 12 in/ft
+           = 0.33 ac-ft
+           = 14,375 cubic feet
+
+        Verification (given volume → depth):
+        TD = TV / Area = 0.33 ac-ft × 12 in/ft ÷ 12 acres = 0.33 inch ✓
+      </div>
+
+      <p>This bidirectional calculation is used throughout BMPFast analysis: either working from a target efficiency to size the required volume, or from an available volume to determine achievable efficiency.</p>
+
+    </section>
+
+    <!-- ── 7. Navigation ──────────────────────────── -->
+    <section class="section" id="navigation">
+      <div class="section-number">Section 7</div>
+      <h2>BMPFast Navigation After Catchment Data Input</h2>
+
+      <p>Once project and catchment characteristics are entered into BMPFast, the user navigates through a structured workflow to complete the analysis. The primary navigation screen following catchment data entry presents the following required inputs and workflow steps:</p>
+
+      <div class="figure-placeholder">
+        <div class="fp-icon">🖥️</div>
+        <div class="fp-title">Figure 7-A — BMPFast Project Navigation Screen</div>
+        <div class="fp-desc">BMPFast interface showing project-level settings: Meteorological Zone = Florida Zone 2, Mean Annual Rainfall = 50 inches, Performance Standard of Surface Discharge Analysis = OFW, Conduct Groundwater Discharge Analysis = (dropdown), Nitrogen Removal Efficiency = 80%, Phosphorus Removal Efficiency = 90%. Three workflow buttons: 1. Enter Catchment, 2. Enter Treatment, 3. Configure Catchments.</div>
+      </div>
+      <p class="figure-caption">FIG 7-A · BMPFast Navigation — Post Catchment Data Entry</p>
+
+      <p>For the example project, the key inputs configured at this stage are: Florida Zone 2 meteorological zone, 50 inches mean annual rainfall, OFW performance standard for surface discharge analysis, nitrogen removal efficiency target of 80%, and phosphorus removal efficiency target of 90%.</p>
+
+      <ol class="workflow">
+        <li><span><strong>Enter Catchment:</strong> Define the catchment area, impervious percentages, soil hydrologic group, and land use curve numbers for both pre- and post-development conditions.</span></li>
+        <li><span><strong>Enter Treatment:</strong> Select the BMP type (Retention Basin) and enter the treatment volume or depth. Access the Retention Efficiency worksheet and Plot function from this screen.</span></li>
+        <li><span><strong>Configure Catchments:</strong> Assign BMPs to catchments and configure any series or combination treatment arrangements.</span></li>
+      </ol>
+
+      <p>When groundwater discharge analysis is also required, selecting "Yes" for the Conduct Groundwater Discharge Analysis option activates a fourth step — Summary Treatment Report — which appears after catchment configuration is complete.</p>
+
+    </section>
+
+    <!-- ── 8. BMP Options Worksheet ───────────────── -->
+    <section class="section" id="bmp-worksheet">
+      <div class="section-number">Section 8</div>
+      <h2>BMP Treatment Options Worksheet</h2>
+
+      <p>The BMP Treatment Options worksheet is accessed after entering catchment data and navigating to the Enter Treatment step. It displays all available treatment BMP types for individual performance analysis, alongside a schematic diagram of the currently selected BMP's typical cross-section.</p>
+
+      <h3>Available Treatment Options</h3>
+      <p>BMPFast supports the following treatment BMP types for individual analysis: Retention Basin, Greenroof, Wet Detention, Rainwater Harvesting, Exfiltration Trench/Vault, Vegetated Buffer, Permeable Pavement, Vegetated Filter Strip, Stormwater Harvesting, Rain Garden, Surface Discharge Filter, Tree Well, Swale, User Defined, and BMPs in Series.</p>
+
+      <p>Selecting "Retention Basin" activates the retention-specific input worksheet and displays the typical cross-section schematic for a dry retention system.</p>
+
+      <div class="figure-placeholder">
+        <div class="fp-icon">🖥️</div>
+        <div class="fp-title">Figure 8-A — BMP Treatment Options Worksheet with Retention Basin Selected</div>
+        <div class="fp-desc">BMPFast Treatment Options worksheet showing the full list of BMP types in a two-column grid, with "Retention Basin" highlighted in green. The right panel displays a detailed cross-section diagram of a "Dry" Retention System, labeled with: Top of Bank (TOB), Freeboard between EOE and TOB, Top of Flood Control Attenuation Volume, Overflow Water Elevation (Weir Crest), Required Treatment Volume (RTV), Safety Grate, Emergency Overflow Elevation (EOE), Weir Crest, Outfall Pipe, RTV Recovery by Soil Infiltration, Seasonal High Ground Water Table (SHGWT), and Confining Unit. Tools and Reset All buttons visible.</div>
+      </div>
+      <p class="figure-caption">FIG 8-A · BMPFast BMP Treatment Options Worksheet — Dry Retention System Cross-Section</p>
+
+      <p>The cross-section diagram illustrates the layered structure of a dry retention system: the treatment volume occupies the zone between the seasonal high groundwater table and the weir crest, with freeboard above the weir crest to the top of bank. Recovery occurs by soil infiltration, and emergency overflow is provided at the EOE elevation.</p>
+
+    </section>
+
+    <!-- ── 9. Example Problem ─────────────────────── -->
+    <section class="section" id="example">
+      <div class="section-number">Section 9</div>
+      <h2>Example Problem — Project Description</h2>
+
+      <p>The following example demonstrates a complete retention basin analysis using BMPFast for a residential development project in Central Florida.</p>
+
+      <h3>Project Characteristics</h3>
+      <div class="callout">
+        <div class="callout-label">Site Description</div>
+        <p>A retention basin is planned as a BMP for a 12.0-acre residential subdivision. The development site is located in Orange County near Orlando, FL on Hydrologic Group Soil A. In the pre-application meeting, the watershed characteristics, performance standards, and average annual rainfall were determined.</p>
+      </div>
+
+      <div class="data-table-wrap">
+        <table class="data-table">
+          <caption>Example Project Input Parameters</caption>
+          <thead>
+            <tr>
+              <th class="row-header">Parameter</th>
+              <th>Pre-Development Condition</th>
+              <th>Post-Development Condition</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td class="row-label">Land Use</td>
+              <td>Citrus</td>
+              <td>Single-family residential</td>
+            </tr>
+            <tr>
+              <td class="row-label">Non-DCIA Curve Number (CN)</td>
+              <td>50</td>
+              <td>64</td>
+            </tr>
+            <tr>
+              <td class="row-label">DCIA (%)</td>
+              <td>0.0%</td>
+              <td>27%</td>
+            </tr>
+            <tr>
+              <td class="row-label">Total Area (acres)</td>
+              <td colspan="2">12.0</td>
+            </tr>
+            <tr>
+              <td class="row-label">Average Annual Rainfall</td>
+              <td colspan="2">50 inches (Florida Zone 2)</td>
+            </tr>
+            <tr>
+              <td class="row-label">Hydrologic Soil Group</td>
+              <td colspan="2">Group A</td>
+            </tr>
+            <tr>
+              <td class="row-label">Performance Standard</td>
+              <td colspan="2">OFW — Outstanding Florida Waters (annual nutrient loads)</td>
+            </tr>
+            <tr>
+              <td class="row-label">Available Storage Volume Range</td>
+              <td colspan="2">0.33 to 2.5 acre-feet</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <h3>Treatment Depth Range</h3>
+      <p>The retention basin area is fixed at 12 acres served area, and the available storage range translates to the following treatment depths:</p>
+
+      <div class="formula-block">
+        <span class="formula-label">Treatment Depth Calculation — Minimum and Maximum</span>
+        Minimum TD = 0.33 ac-ft × 12 in/ft ÷ 12 acres = 0.33 inches
+        Maximum TD = 2.50 ac-ft × 12 in/ft ÷ 12 acres = 2.50 inches
+
+        Result: OFW nutrient removal requirements can be met with a TD of 2.167 ac-ft
+        (within the available range of 0.33 to 2.5 ac-ft)
+      </div>
+
+    </section>
+
+    <!-- ── 10. Discovery Example ──────────────────── -->
+    <section class="section" id="discovery-example">
+      <div class="section-number">Section 10</div>
+      <h2>Discovery Using the Plot Option — Example Results</h2>
+
+      <p>With project data entered into BMPFast and Retention Basin selected as the treatment BMP, the Plot function generates the Retention Storage Curve for the specific catchment conditions of the example project (12 acres, CN 64, DCIA 27%, Zone 2).</p>
+
+      <div class="figure-placeholder">
+        <div class="fp-icon">📈</div>
+        <div class="fp-title">Figure 10-A — Retention Storage Curve — Example Project</div>
+        <div class="fp-desc">Plot of Retention Storage Curve for example project. Treatment Efficiency (%) on y-axis (0–100%), Retention Depth (inches) on x-axis (0–4 inches). Curve rises steeply, with a red dot marker at approximately 78% efficiency at the current design treatment depth (~0.6 inches). Curve approaches 100% asymptotically at depths above 2 inches.</div>
+      </div>
+      <p class="figure-caption">FIG 10-A · BMPFast Discovery Plot — Example Project Retention Curve (78% efficiency at current TD)</p>
+
+      <p>The plot provides immediate engineering insight: given the curve shape, the relationship between incremental increases in treatment depth and corresponding gains in efficiency is clearly visible. In the steep portion of the curve (below approximately 1 inch TD), each additional increment of storage depth yields significant efficiency improvement. In the flat portion of the curve (above approximately 2 inches TD), additional storage provides diminishing returns.</p>
+
+      <div class="highlight-box">
+        <p>The plot enables discovery: by reading the curve, the designer can identify how much additional storage would be needed to meet a higher removal target, or can confirm that a reduced storage volume will still achieve an acceptable efficiency level.</p>
+      </div>
+
+    </section>
+
+    <!-- ── 11. Groundwater Protection ────────────────── -->
+    <section class="section" id="groundwater">
+      <div class="section-number">Section 11</div>
+      <h2>Adding Groundwater Protection — Springs Impact Analysis</h2>
+
+      <p>For sites where the retention basin infiltrates into groundwater that ultimately discharges to springs or other sensitive receiving waters, BMPFast includes a Groundwater Discharge Analysis capability. This analysis estimates both the recharge volume entering the groundwater and the nutrient concentration of that recharge.</p>
+
+      <p>To activate groundwater analysis, the user selects "Yes" for the Conduct Groundwater Discharge Analysis option on the project navigation screen. This adds a fourth step — Summary Treatment Report — to the navigation workflow and activates the groundwater discharge output fields.</p>
+
+      <div class="figure-placeholder">
+        <div class="fp-icon">🖥️</div>
+        <div class="fp-title">Figure 11-A — BMPFast Groundwater Discharge Analysis Configuration</div>
+        <div class="fp-desc">BMPFast navigation screen with "Conduct Groundwater Discharge Analysis" set to "Yes" (highlighted in blue). The four-step workflow now shows: 1. Enter Catchment, 2. Enter Treatment (highlighted), 3. Configure Catchments, 4. Summary Treatment Report. All other project settings remain the same as previous figure (Zone 2, 50 in rainfall, OFW, N 80%, P 90%).</div>
+      </div>
+      <p class="figure-caption">FIG 11-A · BMPFast Groundwater Analysis Activation — Four-Step Workflow</p>
+
+      <p>This analysis is particularly relevant for projects within springshed protection zones, where the nitrogen and phosphorus concentrations in groundwater recharge are subject to regulatory scrutiny. The retention basin, by concentrating infiltration to a defined location, provides a mechanism for adding filter media to reduce nutrient loads to groundwater — the topic addressed in the following section.</p>
+
+    </section>
+
+    <!-- ── 12. GW Discharge Data ──────────────────── -->
+    <section class="section" id="gw-discharge">
+      <div class="section-number">Section 12</div>
+      <h2>Groundwater Discharge — Recharge Volume and Nitrogen Concentration</h2>
+
+      <h3>Baseline Conditions (No Treatment)</h3>
+      <p>Without treatment media in the retention basin, BMPFast computes nitrogen concentrations to the groundwater based on Event Mean Concentrations for the applicable land use:</p>
+
+      <div class="results-grid">
+        <div class="result-card">
+          <div class="rc-label">Post-Development N Concentration (No Treatment)</div>
+          <div class="rc-value">2.07 <span class="rc-unit">mg/L</span></div>
+          <div style="font-size:0.78rem;color:var(--forest-mid);margin-top:0.3rem;">Single-family residential land use</div>
+        </div>
+        <div class="result-card">
+          <div class="rc-label">Pre-Development N Concentration</div>
+          <div class="rc-value">2.11 <span class="rc-unit">mg/L</span></div>
+          <div style="font-size:0.78rem;color:var(--forest-mid);margin-top:0.3rem;">Citrus land use (existing condition)</div>
+        </div>
+      </div>
+
+      <h3>With BAM Filter Media in the Retention Basin</h3>
+      <p>By placing Biologically Active Media (BAM) in the bottom of the retention basin, the nitrogen concentration of groundwater recharge is substantially reduced. BMPFast computes the following groundwater discharge results with BAM treatment:</p>
+
+      <div class="data-table-wrap">
+        <table class="data-table">
+          <caption>Groundwater Discharge Results — With BAM Treatment Media</caption>
+          <thead>
+            <tr>
+              <th class="row-header">Parameter</th>
+              <th>Value</th>
+              <th>Units</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td class="row-label">Average Annual Recharge</td>
+              <td>3.911</td>
+              <td>MG/yr</td>
+            </tr>
+            <tr>
+              <td class="row-label">Provided N Recharge Load</td>
+              <td>7.659 kg/yr (16.89 lb/yr)</td>
+              <td>kg/yr</td>
+            </tr>
+            <tr>
+              <td class="row-label">Provided N Concentration</td>
+              <td>0.517</td>
+              <td>mg/L</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <p>The BAM treatment reduces nitrogen concentration from 2.07 mg/L (untreated) to 0.517 mg/L — a reduction of approximately 75%. The owner's requirement that the BAM media last for at least 10 years introduces the service life analysis discussed in the following section.</p>
+
+    </section>
+
+    <!-- ── 13. Filter Area & Service Life ─────────── -->
+    <section class="section" id="filter">
+      <div class="section-number">Section 13</div>
+      <h2>Filter Area, Volume, and Service Life</h2>
+
+      <p>The Tools function within BMPFast — accessible from the BMP Treatment Options worksheet — provides the filter sizing and service life worksheet. This worksheet is used to determine the required volume of filter media and to compute how long the media will remain effective before reaching its sorption capacity.</p>
+
+      <div class="figure-placeholder">
+        <div class="fp-icon">🖥️</div>
+        <div class="fp-title">Figure 13-A — BMPFast Filter Sizing and Service Life Worksheet</div>
+        <div class="fp-desc">BMPFast filter worksheet showing two panels. Left panel: Select Catchment = Catchment 1, Select BMP = Retention, Effective Impervious Area = 3.90 ac, Treatment Depth = 2.167 in, Rate in GPM/SF = 0.052, treatment rate includes safety factor, note that half of runoff volume is treated on day one. Text output shows: Catchment Name = New Homes, Treatment Depth = 2.17 in, Rate = 0.05 GPM/SF, Effective Impervious Area = 3.90 acres, Minimum Filter Area = 1,531.15 SF. Right panel: Service Life calculation — 4.989085 kg/yr TP load, Removal Rate = 0.20 mg OP/g media, Filter Volume = 5,400 CF, Saturated Weight = 95 lbs/CF, Fraction OP in TP = 1.0. Computed outputs: Total P Into Media Per Year = 4.60 kg/yr, Phosphorus Removed Per Year = 4.60 kg/yr, Filter Capacity = 46.58 kg OP, Service Life = 10.1 years. Bottom label: Service Life = 10.1 years.</div>
+      </div>
+      <p class="figure-caption">FIG 13-A · BMPFast Filter Sizing and Service Life Worksheet — Minimum Filter Volume and 10-Year Service Life</p>
+
+      <h3>Filter Sizing Results</h3>
+
+      <div class="data-table-wrap">
+        <table class="data-table">
+          <caption>Filter Sizing and Service Life Summary — Retention Basin Example Project</caption>
+          <thead>
+            <tr>
+              <th class="row-header">Parameter</th>
+              <th>Value</th>
+              <th>Units / Notes</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td class="row-label">Catchment</td>
+              <td>Catchment 1</td>
+              <td>New Homes</td>
+            </tr>
+            <tr>
+              <td class="row-label">Selected BMP</td>
+              <td>Retention</td>
+              <td>—</td>
+            </tr>
+            <tr>
+              <td class="row-label">Effective Impervious Area</td>
+              <td>3.90</td>
+              <td>acres</td>
+            </tr>
+            <tr>
+              <td class="row-label">Treatment Depth</td>
+              <td>2.167</td>
+              <td>inches</td>
+            </tr>
+            <tr>
+              <td class="row-label">Application Rate</td>
+              <td>0.052</td>
+              <td>GPM/SF (includes safety factor)</td>
+            </tr>
+            <tr>
+              <td class="row-label">Minimum Filter Area</td>
+              <td>1,531.15</td>
+              <td>square feet</td>
+            </tr>
+            <tr>
+              <td class="row-label">Minimum Filter Volume (2 ft deep)</td>
+              <td>3,063</td>
+              <td>CF</td>
+            </tr>
+            <tr>
+              <td class="row-label">Filter Volume Provided (per agreement)</td>
+              <td>5,400</td>
+              <td>CF — required to achieve 72-hr recovery and 95% TP removal</td>
+            </tr>
+            <tr>
+              <td class="row-label">Removal Rate</td>
+              <td>0.20</td>
+              <td>mg OP/g media</td>
+            </tr>
+            <tr>
+              <td class="row-label">Saturated Weight of Media</td>
+              <td>95</td>
+              <td>lbs/CF</td>
+            </tr>
+            <tr>
+              <td class="row-label">Fraction OP in TP</td>
+              <td>1.0</td>
+              <td>—</td>
+            </tr>
+            <tr>
+              <td class="row-label">TP into Media Per Year</td>
+              <td>4.60</td>
+              <td>kg/yr</td>
+            </tr>
+            <tr>
+              <td class="row-label">Filter Capacity</td>
+              <td>46.58</td>
+              <td>kg OP</td>
+            </tr>
+            <tr>
+              <td class="row-label">Service Life</td>
+              <td><strong>10.1</strong></td>
+              <td><strong>years</strong></td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="highlight-box">
+        <p>Key Finding: To achieve both 72-hour recovery and the agreed-upon 95% TP removal performance, 5,400 cubic feet of BAM media is required — exceeding the structural minimum of 3,063 CF. This volume yields a computed service life of 10.1 years, meeting the owner's 10-year requirement.</p>
+      </div>
+
+      <p>Half of the runoff volume is treated in day one under the rate assumptions used (0.05 GPM/SF, inclusive of safety factor). The service life is calculated based on the catchment TP runoff load, the sorption capacity of the selected media, and the filter volume provided.</p>
+
+    </section>
+
+    <!-- ── 14. Summary ────────────────────────────── -->
+    <section class="section" id="summary">
+      <div class="section-number">Section 14</div>
+      <h2>Module Summary — What We Learned</h2>
+
+      <p>This module demonstrated the complete workflow for analyzing a retention basin BMP using BMPFast, from conceptual definition through sizing, performance discovery, and groundwater protection analysis.</p>
+
+      <div class="summary-grid">
+        <div class="summary-card">
+          <div class="sc-num">01 · Definition</div>
+          <div class="sc-text">A retention BMP prevents discharge of a given stormwater volume into surface waters through on-site storage, infiltration, and volume reduction — distinct from detention, which only attenuates discharge rate.</div>
+        </div>
+        <div class="summary-card">
+          <div class="sc-num">02 · BMPFast Navigation</div>
+          <div class="sc-text">The three-step workflow (Enter Catchment → Enter Treatment → Configure Catchments) supports annual mass removal analysis using retention. Groundwater discharge analysis adds a fourth step.</div>
+        </div>
+        <div class="summary-card">
+          <div class="sc-num">03 · Discovery via Plot</div>
+          <div class="sc-text">The Retention Storage Curve plot reveals how treatment efficiency varies with storage depth for site-specific conditions, enabling rapid identification of the storage depth needed to achieve any target removal efficiency.</div>
+        </div>
+        <div class="summary-card">
+          <div class="sc-num">04 · Groundwater Protection</div>
+          <div class="sc-text">BAM filter media placed in the retention basin bottom reduces groundwater recharge nitrogen concentration from 2.07 mg/L to 0.517 mg/L — a 75% reduction — while maintaining 10+ year service life.</div>
+        </div>
+        <div class="summary-card">
+          <div class="sc-num">05 · Service Life Worksheet</div>
+          <div class="sc-text">The Tools → Filter sizing worksheet computes required media volume and service life based on catchment TP load, sorption rate, media density, and filter volume provided. 5,400 CF yields 10.1 years for this example.</div>
+        </div>
+        <div class="summary-card">
+          <div class="sc-num">06 · Related BMPs</div>
+          <div class="sc-text">Several other BMPs in the BMPFast toolbox — including Exfiltration Trench/Vault, Permeable Pavement, Vegetated Filter Strip, Rain Garden, Tree Well, and Swale — use the same underlying retention efficiency curves.</div>
+        </div>
+      </div>
+
+      <div class="note" style="margin-top:2rem;">
+        <div class="note-label">Related BMPs Using Retention Curves</div>
+        <p>The following BMPs in BMPFast also rely on the retention storage curves developed from long-term simulation: Exfiltration Trench/Vault, Permeable Pavement, Vegetated Filter Strip, Stormwater Harvesting, Rain Garden, Tree Well, and Swale. Understanding retention efficiency is therefore foundational to analyzing all volume-reduction-based BMPs in the toolbox.</p>
+      </div>
+
+    </section>
+
+  </div><!-- /content-wrap -->
+
+  <!-- ── Graphic References ──────────────────────── -->
+  <div class="references" id="graphic-references">
+    <div class="graphic-refs">
+      <h3>Referenced Graphics and Figures</h3>
+      <p style="font-size:0.88rem;color:var(--ink-mid);margin-bottom:1.25rem;">The following figures are referenced within the text above. Source materials include BMPFast software screenshots and photographs from presentation materials.</p>
+
+      <div class="graphic-ref-item">
+        <span class="gri-tag">FIG 2-A</span>
+        <span>Photographs of representative retention BMP types: permeable paver parking lot with ponded water, bioretention rain garden with plantings, roadside vegetated swale. Source: BMPFast presentation materials.</span>
+      </div>
+      <div class="graphic-ref-item">
+        <span class="gri-tag">FIG 3-A</span>
+        <span>Retention Recovery Curve — Yearly rainfall volume (% of total) vs. Design Treatment Depth (inches) for Region 2, comparing &lt;3 hour and &lt;72 hour recovery time scenarios. Source: Wanielista 1978 (3-hr curve); Harper 2007 (72-hr curve). Assumes initial abstraction of 0.1 inch.</span>
+      </div>
+      <div class="graphic-ref-item">
+        <span class="gri-tag">FIG 4-A</span>
+        <span>BMPFast Retention Efficiency worksheet screenshot showing Zone 2 inputs (TD = 0.33 in, CN = 64.0, DCIA = 27%), efficiency output of 64.5%, and the full efficiency matrix table with 3D surface visualization.</span>
+      </div>
+      <div class="graphic-ref-item">
+        <span class="gri-tag">FIG 5-A</span>
+        <span>BMPFast Plot of Retention Storage Curve — Treatment Efficiency (%) vs. Retention Depth (in) for site conditions. Includes red marker at current design point (65% efficiency). Shows Nitrogen/Phosphorus menu options.</span>
+      </div>
+      <div class="graphic-ref-item">
+        <span class="gri-tag">FIG 7-A</span>
+        <span>BMPFast project navigation screen showing zone, rainfall, performance standard, and removal efficiency inputs with three-step workflow navigation buttons (Enter Catchment, Enter Treatment, Configure Catchments).</span>
+      </div>
+      <div class="graphic-ref-item">
+        <span class="gri-tag">FIG 8-A</span>
+        <span>BMPFast BMP Treatment Options worksheet with Retention Basin selected (highlighted green) and the Typical Cross Section of a "Dry" Retention System diagram showing all elevation labels and structural components.</span>
+      </div>
+      <div class="graphic-ref-item">
+        <span class="gri-tag">FIG 10-A</span>
+        <span>BMPFast Retention Storage Curve for example project (CN 64, DCIA 27%, Zone 2), showing red marker at 78% efficiency at the project design treatment depth.</span>
+      </div>
+      <div class="graphic-ref-item">
+        <span class="gri-tag">FIG 11-A</span>
+        <span>BMPFast navigation screen with Groundwater Discharge Analysis set to "Yes," showing the activated four-step workflow including Step 4: Summary Treatment Report.</span>
+      </div>
+      <div class="graphic-ref-item">
+        <span class="gri-tag">FIG 13-A</span>
+        <span>BMPFast Filter Sizing and Service Life worksheet showing left panel (catchment and filter area inputs) and right panel (service life calculation inputs and outputs including 10.1-year service life result).</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── References ─────────────────────────────── -->
+  <div class="references" id="references">
+    <h2>References</h2>
+    <ul class="ref-list">
+      <li>Florida Department of Environmental Protection. <em>Applicant's Handbook for ERP Permits, Volume I — Statewide ERP Provisions</em>, Section 2 — Definitions and Terms. June 28, 2024.</li>
+      <li>Florida Department of Environmental Protection. <em>Applicant's Handbook for ERP Permits, Volume I, Appendix O — Retention Efficiency Tables</em> (80 tables). June 28, 2024.</li>
+      <li>Florida Department of Environmental Protection. <em>Applicant's Handbook for ERP Permits, Volume II — Water Management District Supplement</em>.</li>
+      <li>Harper, H.H. and Baker, D.M. <em>Evaluation of Current Stormwater Design Criteria within the State of Florida</em>. Environmental Research and Design, Inc., 2007.</li>
+      <li>Wanielista, M.P. <em>Stormwater Management: Quantity and Quality</em>. Ann Arbor Science Publishers, 1978. (Source of &lt;3 hour recovery curve, Region 2 data.)</li>
+      <li>BMPFast Stormwater Toolbox Software — Environmental Research and Design, Inc. / University of Central Florida. Version as of December 2025.</li>
+      <li>Wanielista, M.P. <em>Analysis of a Retention Basin</em>. BMPFast Learning System presentation, December 28, 2025.</li>
+    </ul>
+  </div>
+
+  <!-- Footer -->
+  <footer class="footer">
+    <span>BMPFast Learning System · Module 11 — Analysis of a Retention Basin</span>
+    <span>Marty Wanielista · December 28, 2025</span>
+  </footer>
+
+</main>
+</body>
+</html>

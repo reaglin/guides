@@ -1,0 +1,570 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Module 19 – Vegetated Stormwater Treatment Areas (STAs)</title>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400&family=Source+Serif+4:ital,wght@0,300;0,400;0,600;1,400&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
+  <style>
+    /* ── Reset & tokens ─────────────────────────────────────── */
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --green-dark:   #1b4332;
+      --green-mid:    #2d6a4f;
+      --green-light:  #52b788;
+      --green-pale:   #d8f3dc;
+      --warm-white:   #faf7f2;
+      --warm-off:     #f0ebe3;
+      --ink:          #1c1c1c;
+      --ink-mid:      #3d3d3d;
+      --rule:         #c8bfaf;
+      --accent:       #a47c48;
+      --font-serif:   'Source Serif 4', Georgia, serif;
+      --font-display: 'Playfair Display', Georgia, serif;
+      --font-mono:    'JetBrains Mono', 'Courier New', monospace;
+    }
+
+    html { font-size: 17px; scroll-behavior: smooth; }
+
+    body {
+      font-family: var(--font-serif);
+      background: var(--warm-white);
+      color: var(--ink);
+      line-height: 1.75;
+      display: flex;
+    }
+
+    /* ── Sidebar nav ────────────────────────────────────────── */
+    #sidebar {
+      position: sticky;
+      top: 0;
+      height: 100vh;
+      width: 240px;
+      min-width: 240px;
+      background: var(--green-dark);
+      color: #cfe8d8;
+      padding: 2rem 1.25rem;
+      overflow-y: auto;
+      display: flex;
+      flex-direction: column;
+      gap: 0.35rem;
+      font-family: var(--font-mono);
+      font-size: 0.72rem;
+    }
+
+    #sidebar .nav-title {
+      font-family: var(--font-display);
+      font-size: 0.85rem;
+      color: #fff;
+      font-weight: 600;
+      margin-bottom: 1rem;
+      line-height: 1.4;
+      border-bottom: 1px solid var(--green-light);
+      padding-bottom: 0.75rem;
+    }
+
+    #sidebar a {
+      color: #a8d5b5;
+      text-decoration: none;
+      padding: 0.3rem 0.5rem;
+      border-radius: 3px;
+      transition: background 0.15s, color 0.15s;
+      line-height: 1.4;
+    }
+
+    #sidebar a:hover { background: var(--green-mid); color: #fff; }
+
+    #sidebar .nav-section {
+      font-size: 0.63rem;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: var(--green-light);
+      margin-top: 1rem;
+      margin-bottom: 0.2rem;
+      padding-left: 0.5rem;
+    }
+
+    /* ── Main content ───────────────────────────────────────── */
+    main {
+      flex: 1;
+      max-width: 900px;
+      padding: 0 3rem 5rem;
+      margin: 0 auto;
+    }
+
+    /* ── Hero ───────────────────────────────────────────────── */
+    .hero {
+      background: var(--green-dark);
+      color: var(--warm-white);
+      margin: 0 -3rem 3.5rem;
+      padding: 3.5rem 3rem 3rem;
+      border-bottom: 4px solid var(--green-light);
+    }
+
+    .hero .module-label {
+      font-family: var(--font-mono);
+      font-size: 0.72rem;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--green-light);
+      margin-bottom: 0.75rem;
+    }
+
+    .hero h1 {
+      font-family: var(--font-display);
+      font-size: 2.4rem;
+      font-weight: 700;
+      line-height: 1.2;
+      margin-bottom: 0.5rem;
+      color: #fff;
+    }
+
+    .hero .byline {
+      font-family: var(--font-mono);
+      font-size: 0.78rem;
+      color: #a8d5b5;
+      margin-top: 1rem;
+    }
+
+    /* ── Typography ─────────────────────────────────────────── */
+    h2 {
+      font-family: var(--font-display);
+      font-size: 1.65rem;
+      font-weight: 600;
+      color: var(--green-dark);
+      margin: 2.75rem 0 1rem;
+      padding-bottom: 0.4rem;
+      border-bottom: 2px solid var(--green-pale);
+    }
+
+    h3 {
+      font-family: var(--font-display);
+      font-size: 1.2rem;
+      font-weight: 600;
+      color: var(--green-mid);
+      margin: 2rem 0 0.65rem;
+    }
+
+    p { margin-bottom: 1.1rem; }
+
+    ul, ol {
+      margin: 0.5rem 0 1.1rem 1.5rem;
+    }
+
+    li { margin-bottom: 0.4rem; }
+
+    ul ul { margin-top: 0.25rem; }
+
+    /* ── Callout boxes ──────────────────────────────────────── */
+    .callout {
+      border-left: 4px solid var(--green-light);
+      background: var(--green-pale);
+      padding: 1rem 1.25rem;
+      margin: 1.5rem 0;
+      border-radius: 0 4px 4px 0;
+    }
+
+    .callout.warning {
+      border-left-color: #c0392b;
+      background: #fdf0ee;
+    }
+
+    .callout.key {
+      border-left-color: var(--accent);
+      background: #faf4ec;
+    }
+
+    .callout strong {
+      font-family: var(--font-mono);
+      font-size: 0.75rem;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      display: block;
+      margin-bottom: 0.35rem;
+      color: var(--green-dark);
+    }
+
+    .callout.warning strong { color: #c0392b; }
+    .callout.key strong { color: var(--accent); }
+
+    /* ── Tables ─────────────────────────────────────────────── */
+    .table-wrap {
+      overflow-x: auto;
+      margin: 1.5rem 0 2rem;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 0.9rem;
+    }
+
+    thead tr {
+      background: var(--green-dark);
+      color: #fff;
+    }
+
+    thead th {
+      font-family: var(--font-mono);
+      font-size: 0.75rem;
+      letter-spacing: 0.05em;
+      text-transform: uppercase;
+      padding: 0.6rem 0.9rem;
+      text-align: left;
+    }
+
+    tbody tr:nth-child(even) { background: var(--warm-off); }
+    tbody tr:nth-child(odd)  { background: var(--warm-white); }
+
+    tbody td {
+      padding: 0.55rem 0.9rem;
+      border-bottom: 1px solid var(--rule);
+      font-family: var(--font-mono);
+      font-size: 0.82rem;
+    }
+
+    tbody td:first-child {
+      font-family: var(--font-serif);
+      font-size: 0.9rem;
+    }
+
+    .highlight-row td {
+      background: #fdf0ee !important;
+      font-weight: 600;
+      color: #c0392b;
+    }
+
+    /* ── Figure placeholder ─────────────────────────────────── */
+    .figure {
+      width: 100%;
+      margin: 1.75rem 0;
+      border: 2px dashed var(--rule);
+      border-radius: 4px;
+      background: var(--warm-off);
+      padding: 2rem 1.5rem;
+      text-align: center;
+    }
+
+    .figure .fig-label {
+      font-family: var(--font-mono);
+      font-size: 0.7rem;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--green-mid);
+      margin-bottom: 0.5rem;
+    }
+
+    .figure .fig-caption {
+      font-family: var(--font-serif);
+      font-size: 0.88rem;
+      color: var(--ink-mid);
+      font-style: italic;
+      max-width: 640px;
+      margin: 0 auto;
+      line-height: 1.55;
+    }
+
+    /* ── Section divider ────────────────────────────────────── */
+    hr.section { border: none; border-top: 1px solid var(--rule); margin: 3rem 0; }
+
+    /* ── Responsive ─────────────────────────────────────────── */
+    @media (max-width: 800px) {
+      body { flex-direction: column; }
+      #sidebar { position: relative; width: 100%; height: auto; }
+      main { padding: 0 1.25rem 3rem; }
+      .hero { margin: 0 -1.25rem 2rem; padding: 2rem 1.25rem; }
+    }
+  </style>
+</head>
+
+<body>
+
+<!-- ═══════════════════════ SIDEBAR ═══════════════════════ -->
+<nav id="sidebar" aria-label="Module navigation">
+  <div class="nav-title">Module 19<br/>Vegetated STAs</div>
+
+  <span class="nav-section">Contents</span>
+  <a href="#overview">1. Overview</a>
+  <a href="#nutrient-uptake">2. Nutrient Uptake Mechanisms</a>
+  <a href="#monitoring-findings">3. Monitoring Findings</a>
+  <a href="#mass-export-data">4. Mass Export Data</a>
+  <a href="#organic-soil-problem">5. The Organic Soil Problem</a>
+  <a href="#recommendations">6. STA Recommendations</a>
+  <a href="#summary">7. Summary</a>
+  <a href="#figures">Figures</a>
+</nav>
+
+<!-- ═══════════════════════ MAIN ══════════════════════════ -->
+<main>
+
+  <!-- Hero -->
+  <header class="hero">
+    <div class="module-label">BMPFast Learning System &bull; Module 19</div>
+    <h1>Vegetated Stormwater Treatment Areas (STAs)</h1>
+    <div class="byline">
+      Harvey H. Harper &bull; Environmental Research &amp; Design, Inc. &bull; January 2026
+    </div>
+  </header>
+
+  <!-- ─── 1. Overview ──────────────────────────────────────── -->
+  <section id="overview">
+    <h2>1. Overview</h2>
+
+    <p>Vegetated Stormwater Treatment Areas (STAs) are constructed stormwater management systems that use aquatic and emergent vegetation to remove pollutants — particularly nutrients — from stormwater runoff before it is discharged to receiving water bodies. STAs are designed to exploit the natural biological and physical processes associated with wetland plant communities to attenuate nitrogen and phosphorus loads.</p>
+
+    <p>While the concept is theoretically sound, field monitoring of constructed STAs in Florida has revealed a number of significant performance limitations that designers and permit applicants must understand before incorporating STAs into a stormwater management plan.</p>
+
+    <div class="figure">
+      <div class="fig-label">Figure 1</div>
+      <div class="fig-caption">Vegetated STA system showing mixed emergent and submerged aquatic vegetation communities in a constructed stormwater treatment cell. Dense vegetation coverage is visible across the shallow water surface.</div>
+    </div>
+
+    <div class="figure">
+      <div class="fig-label">Figure 2</div>
+      <div class="fig-caption">Close-up view of a vegetated STA showing emergent macrophyte growth with visible senescent and live plant material, illustrating the mixed-condition plant community typical of mature STA systems.</div>
+    </div>
+
+  </section>
+
+  <hr class="section" />
+
+  <!-- ─── 2. Nutrient Uptake Mechanisms ────────────────────── -->
+  <section id="nutrient-uptake">
+    <h2>2. Nutrient Uptake Mechanisms</h2>
+
+    <p>Nutrient removal in vegetated STAs occurs through two primary biological processes:</p>
+
+    <ul>
+      <li><strong>Uptake through plant roots</strong> — Rooted aquatic and emergent macrophytes assimilate dissolved nitrogen and phosphorus directly from the water column and underlying sediment porewater through their root systems. This process sequesters nutrients into plant biomass.</li>
+      <li><strong>Biological communities attached to plant stalks</strong> — Periphyton, biofilms, and other microbial communities colonize the submerged surfaces of plant stems and stalks. These communities provide additional surface area for biological nutrient transformation processes, including nitrification, denitrification, and phosphorus assimilation.</li>
+    </ul>
+
+    <h3>Substrate Considerations</h3>
+
+    <p>To accelerate plant establishment, many STA installations have historically added organic muck soils to provide a nutrient-rich substrate that promotes rapid plant growth and more quickly achieves full vegetation coverage. While this practice does improve plant establishment rates, it has produced significant unintended consequences for water quality performance, as detailed in the monitoring findings below.</p>
+
+    <h3>Hydrologic Effects</h3>
+
+    <p>Vegetated STAs typically generate large evapotranspiration (ET) losses. The combination of open water evaporation and transpiration by dense vegetation can substantially reduce the volume of water that exits the STA relative to the volume that enters. While this volume reduction can appear to improve pollutant removal on a concentration basis, it does not necessarily reflect true pollutant mass removal — and can actually mask concentration increases occurring within the system.</p>
+
+  </section>
+
+  <hr class="section" />
+
+  <!-- ─── 3. Monitoring Findings ───────────────────────────── -->
+  <section id="monitoring-findings">
+    <h2>3. Monitoring Findings — STAs With Imported Organic Soils</h2>
+
+    <p>Environmental Research &amp; Design, Inc. (ERD) conducted long-term performance monitoring of five STA systems, each of which had imported organic muck soils at construction to enhance vegetation establishment. The findings were consistent and concerning:</p>
+
+    <ul>
+      <li>All five systems exhibited a net loss of runoff volume between inflow and outflow — consistent with the expected evapotranspiration effect.</li>
+      <li>Despite volumetric reduction, <strong>nutrient concentrations increased between the inflow and outflow</strong> at all sites, indicating that the systems were releasing nutrients into the water rather than removing them.</li>
+    </ul>
+
+    <h3>Mass Removal Performance Summary</h3>
+
+    <p>When evaluated on the basis of pollutant mass (rather than concentration), the five monitored STAs produced the following range of results:</p>
+
+    <ul>
+      <li><strong>1 site</strong> — Net removal of Total Nitrogen (TN), but net export of Total Phosphorus (TP)</li>
+      <li><strong>2 sites</strong> — Net export of both TN and TP</li>
+      <li><strong>2 sites</strong> — Net retention of both TN and TP, with average mass removal rates of approximately:
+        <ul>
+          <li>TN: ~25%</li>
+          <li>TP: ~45%</li>
+        </ul>
+      </li>
+    </ul>
+
+    <div class="callout warning">
+      <strong>Critical Finding</strong>
+      Of five monitored STAs constructed with imported organic muck soils, only two demonstrated any net mass removal of nutrients, and only at modest removal rates (25% TN, 45% TP). The remaining three systems functioned as net nutrient sources.
+    </div>
+
+    <h3>Expanded ERD Monitoring Program</h3>
+
+    <p>ERD subsequently conducted long-term monitoring across four additional STA systems. The results from this expanded dataset reinforced the earlier findings:</p>
+
+    <ul>
+      <li>None of the four sites exhibited statistically significant nutrient removal.</li>
+      <li>Three of the four sites had a net export of TP.</li>
+      <li>Two of the four sites had a net export of TN.</li>
+    </ul>
+
+    <p>Runoff concentrations measured at the outfall of these systems were found to have increased during their transit through the STA for the following parameters:</p>
+
+    <ul>
+      <li>Total Nitrogen (TN)</li>
+      <li>Soluble Reactive Phosphorus (SRP) and Total Phosphorus (TP)</li>
+      <li>Color</li>
+    </ul>
+
+  </section>
+
+  <hr class="section" />
+
+  <!-- ─── 4. Mass Export Data ───────────────────────────────── -->
+  <section id="mass-export-data">
+    <h2>4. Observed Mass Export Data</h2>
+
+    <p>Detailed monitoring at one representative STA — a shallow pond constructed with approximately one foot of imported organic soils — documented substantial mass export of multiple pollutant parameters over an approximately one-year monitoring period. The system, initially planted with emergent vegetation, rapidly transitioned to a dense mixed-vegetation community that attracted waterfowl, adding an additional nutrient loading pathway.</p>
+
+    <div class="figure">
+      <div class="fig-label">Figure 3</div>
+      <div class="fig-caption">Time-lapse comparison showing a shallow STA pond constructed with 1 ft of organic soils at initial installation (left) and the same system approximately one year later (right), demonstrating the transition to dense emergent vegetation with associated waterfowl colonization.</div>
+    </div>
+
+    <p>The mass export data for this site, expressed as percent of inflow mass exported at the outflow, are presented in the table below. Values above 100% indicate net export (i.e., the system was a net source of that pollutant).</p>
+
+    <div class="table-wrap">
+      <table>
+        <thead>
+          <tr>
+            <th>Parameter</th>
+            <th>Mass Export (%)</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr class="highlight-row">
+            <td>NOx (Nitrate + Nitrite)</td>
+            <td>78</td>
+          </tr>
+          <tr class="highlight-row">
+            <td>Particulate N</td>
+            <td>75</td>
+          </tr>
+          <tr>
+            <td>Total N</td>
+            <td>3</td>
+          </tr>
+          <tr>
+            <td>SRP (Soluble Reactive Phosphorus)</td>
+            <td>3</td>
+          </tr>
+          <tr class="highlight-row">
+            <td>Particulate P</td>
+            <td>98</td>
+          </tr>
+          <tr>
+            <td>Total P</td>
+            <td>16</td>
+          </tr>
+          <tr class="highlight-row">
+            <td>TSS (Total Suspended Solids)</td>
+            <td>316</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="callout warning">
+      <strong>Interpretation Note</strong>
+      The mass export values shown represent the percentage of incoming pollutant mass that was exported at the outflow. Values near or above 100% indicate that the system functioned as a net pollutant source for that parameter. The TSS export of 316% is particularly significant, indicating that organic soil disturbance and biological activity generated more than three times the suspended solids load than entered the system.
+    </div>
+
+    <p>The near-zero mass export values for Total N (3%) and SRP (3%) appear favorable in isolation; however, this result is heavily influenced by the large volumetric reduction caused by evapotranspiration. The concentration data for these same parameters showed increases from inflow to outflow, confirming that the apparent low mass export is an artifact of water volume loss rather than genuine biological uptake and retention.</p>
+
+  </section>
+
+  <hr class="section" />
+
+  <!-- ─── 5. Organic Soil Problem ───────────────────────────── -->
+  <section id="organic-soil-problem">
+    <h2>5. The Organic Soil Problem</h2>
+
+    <p>The core mechanism underlying poor STA performance in systems constructed with imported muck soils is straightforward: organic soils act as a continuous internal nutrient source that releases both TN and TP at rates that substantially exceed the capacity of the vegetation to take up those nutrients.</p>
+
+    <p>The decomposition of organic matter in the muck soils drives:</p>
+
+    <ul>
+      <li>Mineralization of organically bound nitrogen, generating ammonium and subsequently nitrate that leaches into the water column.</li>
+      <li>Release of phosphorus previously sorbed to or incorporated in organic matter, increasing soluble reactive phosphorus concentrations in the water column.</li>
+      <li>Generation of organic color compounds and particulate matter as organic soil particles are resuspended or transported through the system.</li>
+    </ul>
+
+    <div class="callout key">
+      <strong>Key Principle</strong>
+      The nutrient release rate from decomposing organic soils consistently exceeds the uptake rate achievable by the planted vegetation, resulting in a net export condition for both nitrogen and phosphorus from the STA system as a whole.
+    </div>
+
+    <p>The addition of organic soils was originally justified on the grounds that it would accelerate vegetation establishment and thus shorten the time before the STA reached design treatment performance. In practice, the nutrient release from the soils not only negated any treatment benefit but actively degraded the quality of the stormwater being treated during transit through the system.</p>
+
+    <p>This finding represents a fundamental design flaw in a significant number of constructed STAs and underscores the need for careful consideration of substrate selection in any new STA design.</p>
+
+  </section>
+
+  <hr class="section" />
+
+  <!-- ─── 6. Recommendations ────────────────────────────────── -->
+  <section id="recommendations">
+    <h2>6. STA Design Recommendations</h2>
+
+    <p>Based on the ERD monitoring data and analysis of multiple STA systems, the following design recommendations are provided for the construction of vegetated stormwater treatment areas:</p>
+
+    <ul>
+      <li><strong>Eliminate the import of organic soils.</strong> Under no circumstances should muck, peat, or other organic soils be imported and placed in the STA basin as a planting substrate. The documented nutrient release from these materials consistently overwhelms plant uptake capacity and produces a net pollutant export condition.</li>
+      <li><strong>Allow vegetation to establish on existing native soils.</strong> Aquatic and emergent macrophytes are capable of colonizing and establishing in native mineral soils. The process is slower and requires a longer establishment period to achieve complete vegetation coverage, but it avoids the internal nutrient loading problem associated with organic substrate additions.</li>
+    </ul>
+
+    <div class="callout">
+      <strong>Design Tradeoffs</strong>
+      Using native soils as the STA substrate will result in a slower vegetation establishment rate and a longer time to reach full canopy coverage. However, this tradeoff is essential to achieving any meaningful nutrient removal performance. A fully vegetated STA constructed without supplemental organic soils will outperform a rapidly established STA that exports nutrients from its organic substrate.
+    </div>
+
+    <p>Additional design considerations that follow from the monitoring record include:</p>
+
+    <ul>
+      <li>Manage inflow hydraulics to minimize resuspension of bottom materials.</li>
+      <li>Design outlet structures to allow drawdown and vegetation management without introducing excessive turbidity.</li>
+      <li>Evaluate the potential for waterfowl colonization, which can introduce external nutrient loads through fecal deposition and can disturb vegetation structure; design accordingly to discourage large waterfowl concentrations within active treatment cells.</li>
+    </ul>
+
+  </section>
+
+  <hr class="section" />
+
+  <!-- ─── 7. Summary ────────────────────────────────────────── -->
+  <section id="summary">
+    <h2>7. Summary</h2>
+
+    <p>Vegetated Stormwater Treatment Areas are a conceptually appealing stormwater BMP that leverages the nutrient uptake capacity of wetland vegetation and associated biofilm communities. However, long-term field monitoring of multiple Florida STA systems has demonstrated that systems constructed with imported organic muck soils consistently fail to achieve meaningful pollutant mass removal, and frequently function as net nutrient sources.</p>
+
+    <p>The primary cause of failure is the internal release of nitrogen and phosphorus from decomposing organic soils, which exceeds the uptake capacity of the plant community. Evapotranspiration-driven volume reductions can mask this problem on a concentration basis, but mass balance analysis reveals the true performance deficit.</p>
+
+    <p>The key design change required to improve STA performance is straightforward: eliminate the import of organic soils and allow vegetation to establish on native mineral substrates. This will extend the establishment period but is necessary to avoid creating a system that actively degrades stormwater quality rather than improving it.</p>
+
+  </section>
+
+  <hr class="section" />
+
+  <!-- ─── Figures Reference List ────────────────────────────── -->
+  <section id="figures">
+    <h2>Figures</h2>
+
+    <div class="figure">
+      <div class="fig-label">Figure 1 — Vegetated STA Overview Photograph</div>
+      <div class="fig-caption">Photograph of a constructed vegetated stormwater treatment area showing mixed emergent and floating aquatic vegetation communities within a shallow water treatment cell. Source: Harvey H. Harper / Environmental Research &amp; Design, Inc.</div>
+    </div>
+
+    <div class="figure">
+      <div class="fig-label">Figure 2 — STA Vegetation Detail</div>
+      <div class="fig-caption">Close-up photograph of emergent macrophyte growth in a vegetated STA, showing the mixture of live and senescent plant material characteristic of established STA systems. Source: Harvey H. Harper / Environmental Research &amp; Design, Inc.</div>
+    </div>
+
+    <div class="figure">
+      <div class="fig-label">Figure 3A — Shallow STA with Organic Soils at Installation</div>
+      <div class="fig-caption">Photograph of a shallow STA pond shortly after construction, with approximately 1 ft of imported organic muck soils placed as planting substrate. Monitoring stakes and early vegetation are visible. Source: Harvey H. Harper / Environmental Research &amp; Design, Inc.</div>
+    </div>
+
+    <div class="figure">
+      <div class="fig-label">Figure 3B — Same STA Site Approximately 1 Year Later</div>
+      <div class="fig-caption">Photograph of the same shallow STA site approximately one year after construction, showing dense emergent vegetation coverage and active waterfowl colonization. The transition demonstrates both rapid vegetation growth associated with organic substrate and the secondary waterfowl nutrient loading problem. Source: Harvey H. Harper / Environmental Research &amp; Design, Inc.</div>
+    </div>
+
+  </section>
+
+</main>
+</body>
+</html>

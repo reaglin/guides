@@ -1,0 +1,1881 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>COP4709 - Database Reports</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            padding: 20px;
+            line-height: 1.6;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            overflow: hidden;
+        }
+
+        .header {
+            background: linear-gradient(135deg, #4a90e2 0%, #357abd 100%);
+            color: white;
+            padding: 40px;
+            text-align: center;
+        }
+
+        .header h1 {
+            font-size: 2.5em;
+            margin-bottom: 10px;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+        }
+
+        .header p {
+            font-size: 1.2em;
+            opacity: 0.9;
+        }
+
+        .content {
+            padding: 40px;
+        }
+
+        .intro-box {
+            background: linear-gradient(135deg, #4a90e2 0%, #357abd 100%);
+            color: white;
+            padding: 30px;
+            border-radius: 10px;
+            margin-bottom: 30px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+        }
+
+        .intro-box h2 {
+            margin-bottom: 15px;
+            font-size: 1.8em;
+        }
+
+        .collapsible {
+            background-color: #2c5aa0;
+            color: white;
+            cursor: pointer;
+            padding: 18px;
+            width: 100%;
+            border: none;
+            text-align: left;
+            outline: none;
+            font-size: 1.2em;
+            font-weight: bold;
+            border-radius: 8px;
+            margin-bottom: 10px;
+            transition: all 0.3s ease;
+            box-shadow: 0 3px 10px rgba(0,0,0,0.2);
+        }
+
+        .collapsible:hover {
+            background-color: #1e4280;
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+        }
+
+        .collapsible.active {
+            background-color: #27ae60;
+        }
+
+        .collapsible:after {
+            content: '\002B';
+            color: white;
+            font-weight: bold;
+            float: right;
+            margin-left: 5px;
+            font-size: 1.3em;
+        }
+
+        .collapsible.active:after {
+            content: "\2212";
+        }
+
+        .collapsible-content {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.3s ease-out;
+            background-color: #f8f9fa;
+            border-radius: 0 0 8px 8px;
+            margin-bottom: 20px;
+        }
+
+        .collapsible-inner {
+            padding: 25px;
+        }
+
+        .info-box {
+            background: #d6eaf8;
+            border-left: 5px solid #2c5aa0;
+            padding: 20px;
+            margin: 20px 0;
+            border-radius: 5px;
+        }
+
+        .warning-box {
+            background: #fef5e7;
+            border-left: 5px solid #f39c12;
+            padding: 20px;
+            margin: 20px 0;
+            border-radius: 5px;
+        }
+
+        .success-box {
+            background: #d5f4e6;
+            border-left: 5px solid #27ae60;
+            padding: 20px;
+            margin: 20px 0;
+            border-radius: 5px;
+        }
+
+        .tip-box {
+            background: #ebf5fb;
+            border-left: 5px solid #3498db;
+            padding: 20px;
+            margin: 20px 0;
+            border-radius: 5px;
+        }
+
+        .danger-box {
+            background: #fadbd8;
+            border-left: 5px solid #e74c3c;
+            padding: 20px;
+            margin: 20px 0;
+            border-radius: 5px;
+        }
+
+        .step-container {
+            background: white;
+            border: 2px solid #2c5aa0;
+            border-radius: 8px;
+            padding: 20px;
+            margin: 15px 0;
+        }
+
+        .step-number {
+            display: inline-block;
+            background: #2c5aa0;
+            color: white;
+            width: 35px;
+            height: 35px;
+            border-radius: 50%;
+            text-align: center;
+            line-height: 35px;
+            font-weight: bold;
+            margin-right: 10px;
+        }
+
+        .step-title {
+            display: inline-block;
+            font-size: 1.3em;
+            color: #2c3e50;
+            font-weight: bold;
+            vertical-align: middle;
+        }
+
+        .step-content {
+            margin-top: 15px;
+            padding-left: 45px;
+        }
+
+        code {
+            background: #2c3e50;
+            color: #f8f8f2;
+            padding: 3px 8px;
+            border-radius: 4px;
+            font-family: 'Courier New', monospace;
+            font-size: 0.9em;
+        }
+
+        .code-block {
+            background: #2c3e50;
+            color: #f8f8f2;
+            padding: 20px;
+            border-radius: 8px;
+            margin: 15px 0;
+            overflow-x: auto;
+            font-family: 'Courier New', monospace;
+            font-size: 0.9em;
+            line-height: 1.5;
+            white-space: pre-wrap;
+        }
+
+        .sql-comment {
+            color: #95a5a6;
+        }
+
+        .sql-keyword {
+            color: #f92672;
+            font-weight: bold;
+        }
+
+        .sql-function {
+            color: #66d9ef;
+        }
+
+        .sql-string {
+            color: #a6e22e;
+        }
+
+        ul, ol {
+            margin-left: 25px;
+            margin-top: 10px;
+        }
+
+        li {
+            margin: 10px 0;
+        }
+
+        h3 {
+            color: #2c3e50;
+            margin: 20px 0 10px 0;
+            font-size: 1.5em;
+        }
+
+        h4 {
+            color: #34495e;
+            margin: 15px 0 10px 0;
+            font-size: 1.2em;
+        }
+
+        .comparison-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 20px 0;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        }
+
+        .comparison-table th {
+            background: #2c5aa0;
+            color: white;
+            padding: 15px;
+            text-align: left;
+            font-weight: bold;
+        }
+
+        .comparison-table td {
+            padding: 12px 15px;
+            border-bottom: 1px solid #ddd;
+        }
+
+        .comparison-table tr:hover {
+            background: #f5f5f5;
+        }
+
+        .tool-card {
+            background: white;
+            border: 2px solid #2c5aa0;
+            border-radius: 10px;
+            padding: 20px;
+            margin: 15px 0;
+        }
+
+        .tool-card h4 {
+            color: #2c5aa0;
+            font-size: 1.4em;
+            margin-bottom: 15px;
+        }
+
+        .report-type-card {
+            background: white;
+            border: 2px solid #3498db;
+            border-radius: 8px;
+            padding: 20px;
+            margin: 15px 0;
+        }
+
+        .report-type-card h4 {
+            color: #3498db;
+            margin-bottom: 10px;
+        }
+
+        .screenshot-box {
+            background: #f8f9fa;
+            border: 2px dashed #2c5aa0;
+            padding: 30px;
+            text-align: center;
+            border-radius: 8px;
+            margin: 15px 0;
+            min-height: 150px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-direction: column;
+        }
+
+        .screenshot-box h4 {
+            color: #2c5aa0;
+            margin-bottom: 10px;
+        }
+
+        .footer {
+            background: linear-gradient(135deg, #4a90e2 0%, #357abd 100%);
+            color: white;
+            padding: 20px;
+            text-align: center;
+        }
+
+        strong {
+            color: #2c3e50;
+        }
+
+        .highlight {
+            background: #fef5e7;
+            padding: 2px 5px;
+            border-radius: 3px;
+        }
+
+        .resource-link {
+            background: #d6eaf8;
+            border: 2px solid #2c5aa0;
+            border-radius: 8px;
+            padding: 15px;
+            margin: 10px 0;
+            display: block;
+            text-decoration: none;
+            color: #2c3e50;
+            transition: all 0.3s ease;
+        }
+
+        .resource-link:hover {
+            background: #2c5aa0;
+            color: white;
+            transform: translateX(5px);
+        }
+
+        .resource-link strong {
+            color: #2c5aa0;
+            font-size: 1.1em;
+        }
+
+        .resource-link:hover strong {
+            color: white;
+        }
+
+        .formula-box {
+            background: #fff3cd;
+            border: 2px solid #ffc107;
+            border-radius: 8px;
+            padding: 15px;
+            margin: 15px 0;
+            font-family: 'Courier New', monospace;
+            white-space: pre-wrap;
+        }
+
+        .best-practice {
+            background: #d5f4e6;
+            border-left: 5px solid #27ae60;
+            padding: 15px;
+            margin: 10px 0;
+            border-radius: 5px;
+        }
+
+        .avoid-practice {
+            background: #fadbd8;
+            border-left: 5px solid #e74c3c;
+            padding: 15px;
+            margin: 10px 0;
+            border-radius: 5px;
+        }
+
+        .feature-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 15px;
+            margin: 20px 0;
+        }
+
+        .feature-item {
+            background: #ebf5fb;
+            border: 2px solid #3498db;
+            border-radius: 8px;
+            padding: 15px;
+            text-align: center;
+        }
+
+        .feature-item h5 {
+            color: #3498db;
+            margin-bottom: 10px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>📊 COP4709 Database Systems</h1>
+            <p>Database Reports & SQL Server Reporting Services</p>
+        </div>
+
+        <div class="content">
+            <div class="intro-box">
+                <h2>📚 Module Overview</h2>
+                <p>Database reporting is essential for transforming raw data into actionable insights. This module covers the fundamentals of database reporting, explores various reporting tools, and provides hands-on guidance for creating professional reports using Microsoft SQL Server Reporting Services (SSRS) Report Builder. You'll learn to create tabular reports, matrix reports, charts, parameterized reports, and more.</p>
+            </div>
+
+            <!-- Section 1: Introduction to Database Reporting -->
+            <button class="collapsible">1. Introduction to Database Reporting</button>
+            <div class="collapsible-content">
+                <div class="collapsible-inner">
+                    <h3>What is Database Reporting?</h3>
+                    
+                    <div class="info-box">
+                        <h4>📖 Definition</h4>
+                        <p><strong>Database reporting</strong> is the process of extracting, transforming, and presenting data from databases in a structured, readable format. Reports turn raw data into meaningful information that supports decision-making.</p>
+                    </div>
+
+                    <h3>Types of Reports</h3>
+
+                    <div class="report-type-card">
+                        <h4>1. Operational Reports</h4>
+                        <p><strong>Purpose:</strong> Day-to-day business operations</p>
+                        <ul>
+                            <li><strong>Examples:</strong> Daily sales report, inventory status, customer orders</li>
+                            <li><strong>Frequency:</strong> Daily, hourly, or real-time</li>
+                            <li><strong>Audience:</strong> Operational staff, managers</li>
+                            <li><strong>Characteristics:</strong> Detail-oriented, current data, specific metrics</li>
+                        </ul>
+                    </div>
+
+                    <div class="report-type-card">
+                        <h4>2. Analytical Reports</h4>
+                        <p><strong>Purpose:</strong> Analyze trends and patterns</p>
+                        <ul>
+                            <li><strong>Examples:</strong> Sales trends by region, customer segmentation, year-over-year comparison</li>
+                            <li><strong>Frequency:</strong> Weekly, monthly, quarterly</li>
+                            <li><strong>Audience:</strong> Managers, analysts, executives</li>
+                            <li><strong>Characteristics:</strong> Historical data, aggregations, visualizations</li>
+                        </ul>
+                    </div>
+
+                    <div class="report-type-card">
+                        <h4>3. Tactical Reports</h4>
+                        <p><strong>Purpose:</strong> Support specific decisions or actions</p>
+                        <ul>
+                            <li><strong>Examples:</strong> Product performance analysis, marketing campaign ROI</li>
+                            <li><strong>Frequency:</strong> As needed</li>
+                            <li><strong>Audience:</strong> Department managers, project teams</li>
+                            <li><strong>Characteristics:</strong> Focused scope, actionable insights</li>
+                        </ul>
+                    </div>
+
+                    <div class="report-type-card">
+                        <h4>4. Strategic Reports</h4>
+                        <p><strong>Purpose:</strong> High-level business intelligence</p>
+                        <ul>
+                            <li><strong>Examples:</strong> Executive dashboard, KPI scorecards, market analysis</li>
+                            <li><strong>Frequency:</strong> Monthly, quarterly, annually</li>
+                            <li><strong>Audience:</strong> Executives, board members</li>
+                            <li><strong>Characteristics:</strong> Summary-level, trends, forecasts</li>
+                        </ul>
+                    </div>
+
+                    <h3>Key Components of Effective Reports</h3>
+
+                    <div class="feature-grid">
+                        <div class="feature-item">
+                            <h5>📋 Clear Structure</h5>
+                            <p>Logical organization with headers, sections, and groupings</p>
+                        </div>
+                        <div class="feature-item">
+                            <h5>📊 Appropriate Visualization</h5>
+                            <p>Charts, tables, or matrices that match the data type</p>
+                        </div>
+                        <div class="feature-item">
+                            <h5>🎯 Relevant Filters</h5>
+                            <p>Parameters that let users focus on specific data</p>
+                        </div>
+                        <div class="feature-item">
+                            <h5>📈 Key Metrics</h5>
+                            <p>Important calculations, totals, and KPIs</p>
+                        </div>
+                        <div class="feature-item">
+                            <h5>🎨 Professional Design</h5>
+                            <p>Consistent formatting, readable fonts, appropriate colors</p>
+                        </div>
+                        <div class="feature-item">
+                            <h5>⏱️ Good Performance</h5>
+                            <p>Efficient queries that run quickly</p>
+                        </div>
+                    </div>
+
+                    <h3>The Reporting Process</h3>
+
+                    <div class="step-container">
+                        <span class="step-number">1</span>
+                        <span class="step-title">Define Requirements</span>
+                        <div class="step-content">
+                            <ul>
+                                <li>Who will use this report?</li>
+                                <li>What questions should it answer?</li>
+                                <li>What data is needed?</li>
+                                <li>How often will it run?</li>
+                                <li>What format is needed (PDF, Excel, web)?</li>
+                            </ul>
+                        </div>
+                    </div>
+
+                    <div class="step-container">
+                        <span class="step-number">2</span>
+                        <span class="step-title">Design the Data Query</span>
+                        <div class="step-content">
+                            <ul>
+                                <li>Identify data sources</li>
+                                <li>Write efficient SQL queries</li>
+                                <li>Test with sample data</li>
+                                <li>Optimize for performance</li>
+                            </ul>
+                        </div>
+                    </div>
+
+                    <div class="step-container">
+                        <span class="step-number">3</span>
+                        <span class="step-title">Create the Report Layout</span>
+                        <div class="step-content">
+                            <ul>
+                                <li>Choose appropriate visualizations</li>
+                                <li>Design headers and footers</li>
+                                <li>Add groupings and sorting</li>
+                                <li>Apply formatting and styling</li>
+                            </ul>
+                        </div>
+                    </div>
+
+                    <div class="step-container">
+                        <span class="step-number">4</span>
+                        <span class="step-title">Add Interactivity</span>
+                        <div class="step-content">
+                            <ul>
+                                <li>Create parameters for filtering</li>
+                                <li>Add drill-down functionality</li>
+                                <li>Include drill-through to detail reports</li>
+                                <li>Enable export options</li>
+                            </ul>
+                        </div>
+                    </div>
+
+                    <div class="step-container">
+                        <span class="step-number">5</span>
+                        <span class="step-title">Test and Deploy</span>
+                        <div class="step-content">
+                            <ul>
+                                <li>Test with various data scenarios</li>
+                                <li>Verify calculations and totals</li>
+                                <li>Check performance with full datasets</li>
+                                <li>Deploy to production server</li>
+                                <li>Train users</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Section 2: Reporting Tools Overview -->
+            <button class="collapsible">2. Reporting Tools and Platforms</button>
+            <div class="collapsible-content">
+                <div class="collapsible-inner">
+                    <h3>Popular Reporting Tools</h3>
+
+                    <div class="tool-card">
+                        <h4>Microsoft SQL Server Reporting Services (SSRS)</h4>
+                        <p><strong>Type:</strong> Enterprise reporting platform (focus of this course)</p>
+                        
+                        <p><strong>✅ Strengths:</strong></p>
+                        <ul>
+                            <li>Integrated with SQL Server</li>
+                            <li>Free with SQL Server license</li>
+                            <li>Powerful Report Builder tool</li>
+                            <li>Paginated reports for printing</li>
+                            <li>Subscription and scheduling capabilities</li>
+                            <li>Multiple export formats (PDF, Excel, Word)</li>
+                            <li>Parameterized and drill-through reports</li>
+                        </ul>
+
+                        <p><strong>⚠️ Considerations:</strong></p>
+                        <ul>
+                            <li>Windows-based (though Linux support added)</li>
+                            <li>Steeper learning curve than some alternatives</li>
+                            <li>Requires SQL Server infrastructure</li>
+                        </ul>
+
+                        <p><strong>Best For:</strong> Organizations using SQL Server, need for complex paginated reports, enterprise reporting requirements</p>
+                    </div>
+
+                    <div class="tool-card">
+                        <h4>Microsoft Power BI</h4>
+                        <p><strong>Type:</strong> Modern business intelligence and visualization platform</p>
+                        
+                        <p><strong>✅ Strengths:</strong></p>
+                        <ul>
+                            <li>User-friendly drag-and-drop interface</li>
+                            <li>Beautiful, interactive visualizations</li>
+                            <li>Cloud-based with collaboration features</li>
+                            <li>Connects to many data sources</li>
+                            <li>Real-time dashboards</li>
+                            <li>Natural language queries (Q&A feature)</li>
+                            <li>Mobile apps</li>
+                        </ul>
+
+                        <p><strong>Best For:</strong> Interactive dashboards, self-service BI, exploratory analysis, real-time monitoring</p>
+                    </div>
+
+                    <div class="tool-card">
+                        <h4>Crystal Reports</h4>
+                        <p><strong>Type:</strong> Traditional reporting tool (SAP)</p>
+                        
+                        <p><strong>✅ Strengths:</strong></p>
+                        <ul>
+                            <li>Long-established (since 1991)</li>
+                            <li>Excellent for complex layouts</li>
+                            <li>Strong formatting capabilities</li>
+                            <li>Multiple data source support</li>
+                        </ul>
+
+                        <p><strong>Best For:</strong> Legacy systems, organizations already using SAP products</p>
+                    </div>
+
+                    <div class="tool-card">
+                        <h4>Tableau</h4>
+                        <p><strong>Type:</strong> Data visualization and BI platform</p>
+                        
+                        <p><strong>✅ Strengths:</strong></p>
+                        <ul>
+                            <li>Exceptional visualization capabilities</li>
+                            <li>Intuitive interface</li>
+                            <li>Strong data exploration features</li>
+                            <li>Large community and resources</li>
+                        </ul>
+
+                        <p><strong>Best For:</strong> Data exploration, interactive dashboards, visual analytics</p>
+                    </div>
+
+                    <div class="tool-card">
+                        <h4>Jaspersoft (JasperReports)</h4>
+                        <p><strong>Type:</strong> Open-source reporting (Java-based)</p>
+                        
+                        <p><strong>✅ Strengths:</strong></p>
+                        <ul>
+                            <li>Open-source option available</li>
+                            <li>Cross-platform (Java)</li>
+                            <li>Good for embedded reporting</li>
+                            <li>Active community</li>
+                        </ul>
+
+                        <p><strong>Best For:</strong> Java environments, cost-conscious projects, embedded reporting needs</p>
+                    </div>
+
+                    <h3>Tool Comparison</h3>
+
+                    <table class="comparison-table">
+                        <thead>
+                            <tr>
+                                <th>Tool</th>
+                                <th>Cost</th>
+                                <th>Learning Curve</th>
+                                <th>Best Use Case</th>
+                                <th>Paginated Reports</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td><strong>SSRS</strong></td>
+                                <td>Included with SQL Server</td>
+                                <td>Moderate</td>
+                                <td>Operational reports, printing</td>
+                                <td>✅ Excellent</td>
+                            </tr>
+                            <tr>
+                                <td><strong>Power BI</strong></td>
+                                <td>Free Desktop / Pro subscription</td>
+                                <td>Low</td>
+                                <td>Interactive dashboards</td>
+                                <td>⚠️ Limited (paginated reports require Premium)</td>
+                            </tr>
+                            <tr>
+                                <td><strong>Crystal Reports</strong></td>
+                                <td>License fee</td>
+                                <td>Moderate-High</td>
+                                <td>Complex formatted reports</td>
+                                <td>✅ Excellent</td>
+                            </tr>
+                            <tr>
+                                <td><strong>Tableau</strong></td>
+                                <td>Subscription-based</td>
+                                <td>Low-Moderate</td>
+                                <td>Visual analysis</td>
+                                <td>❌ Not primary focus</td>
+                            </tr>
+                            <tr>
+                                <td><strong>Jaspersoft</strong></td>
+                                <td>Free community / Paid pro</td>
+                                <td>Moderate-High</td>
+                                <td>Embedded reports</td>
+                                <td>✅ Good</td>
+                            </tr>
+                        </tbody>
+                    </table>
+
+                    <div class="info-box">
+                        <h4>📌 For This Course: SQL Server Reporting Services (SSRS)</h4>
+                        <p>We'll focus on <strong>SSRS Report Builder</strong> because:</p>
+                        <ul>
+                            <li>It's integrated with SQL Server databases you're already learning</li>
+                            <li>Industry-standard for operational reporting</li>
+                            <li>Free to use with SQL Server</li>
+                            <li>Excellent for paginated, printable reports</li>
+                            <li>Teaches core reporting concepts applicable to other tools</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Section 3: Getting Started with SSRS Report Builder -->
+            <button class="collapsible">3. Getting Started with SSRS Report Builder</button>
+            <div class="collapsible-content">
+                <div class="collapsible-inner">
+                    <h3>What is Report Builder?</h3>
+
+                    <div class="info-box">
+                        <p><strong>Report Builder</strong> is a free report authoring tool for creating paginated reports that can be published to SQL Server Reporting Services. It provides a user-friendly interface for designing professional reports without extensive programming knowledge.</p>
+                    </div>
+
+                    <h3>Installing Report Builder</h3>
+
+                    <div class="step-container">
+                        <span class="step-number">1</span>
+                        <span class="step-title">Download Report Builder</span>
+                        <div class="step-content">
+                            <p><strong>Official Download Link:</strong></p>
+                            <a href="https://www.microsoft.com/en-us/download/details.aspx?id=53613" class="resource-link" target="_blank">
+                                <strong>📥 Microsoft Report Builder Download</strong>
+                                <p>https://www.microsoft.com/download - Search for "Report Builder"</p>
+                            </a>
+
+                            <p><strong>System Requirements:</strong></p>
+                            <ul>
+                                <li>Windows 10/11 or Windows Server</li>
+                                <li>.NET Framework 4.7.2 or later</li>
+                                <li>~100 MB disk space</li>
+                            </ul>
+                        </div>
+                    </div>
+
+                    <div class="step-container">
+                        <span class="step-number">2</span>
+                        <span class="step-title">Install Report Builder</span>
+                        <div class="step-content">
+                            <ol>
+                                <li>Run the installer (ReportBuilder.msi)</li>
+                                <li>Accept the license agreement</li>
+                                <li>Choose installation location</li>
+                                <li>Click Install</li>
+                                <li>Launch Report Builder from Start Menu</li>
+                            </ol>
+                        </div>
+                    </div>
+
+                    <h3>Report Builder Interface Overview</h3>
+
+                    <div class="screenshot-box">
+                        <h4>Report Builder Main Interface</h4>
+                        <p style="font-family: monospace; line-height: 2; text-align: left; padding: 20px;">
+┌─────────────────────────────────────────────────────────────┐<br>
+│ File  Home  Insert  View  [Run]                      [Help] │<br>
+├─────────────────────────────────────────────────────────────┤<br>
+│ Report Data │ ┌──── Design Surface ────────────┐           │<br>
+│ ────────────│ │                                 │ Properties│<br>
+│ Built-in    │ │    [Report Header]              │           │<br>
+│  Parameters │ │                                 │ Name:     │<br>
+│  Datasets   │ │    [Report Body]                │ Value:    │<br>
+│  Images     │ │    • Drag items here            │ Color:    │<br>
+│             │ │                                 │           │<br>
+│ Custom      │ │    [Report Footer]              │           │<br>
+│  DataSet1   │ │                                 │           │<br>
+│  DataSet2   │ └─────────────────────────────────┘           │<br>
+│             │                                                │<br>
+│ [+ New...]  │ [Row Groups]  [Column Groups]                 │<br>
+└─────────────────────────────────────────────────────────────┘
+                        </p>
+                        <p><strong>Key Areas:</strong> Report Data (left), Design Surface (center), Properties (right)</p>
+                    </div>
+
+                    <div class="info-box">
+                        <h4>🔍 Interface Components:</h4>
+                        <ul>
+                            <li><strong>Report Data Pane (Left):</strong> Datasets, parameters, images, and fields</li>
+                            <li><strong>Design Surface (Center):</strong> Where you build the report layout</li>
+                            <li><strong>Properties Pane (Right):</strong> Configure selected items</li>
+                            <li><strong>Ribbon (Top):</strong> Tools and commands organized by function</li>
+                            <li><strong>Grouping Pane (Bottom):</strong> Manage row and column groups</li>
+                        </ul>
+                    </div>
+
+                    <h3>Key Concepts</h3>
+
+                    <div class="report-type-card">
+                        <h4>Data Sources</h4>
+                        <p>Connection information to your database</p>
+                        <ul>
+                            <li><strong>Connection String:</strong> Server and database location</li>
+                            <li><strong>Credentials:</strong> How to authenticate</li>
+                            <li><strong>Types:</strong> SQL Server, Oracle, OLE DB, ODBC, etc.</li>
+                        </ul>
+                    </div>
+
+                    <div class="report-type-card">
+                        <h4>Datasets</h4>
+                        <p>Queries that retrieve data from data sources</p>
+                        <ul>
+                            <li><strong>Query:</strong> SQL statement or stored procedure</li>
+                            <li><strong>Fields:</strong> Columns returned by the query</li>
+                            <li><strong>Parameters:</strong> Variables passed to the query</li>
+                        </ul>
+                    </div>
+
+                    <div class="report-type-card">
+                        <h4>Report Items</h4>
+                        <p>Visual elements added to the report</p>
+                        <ul>
+                            <li><strong>Tablix:</strong> Table or matrix for displaying data</li>
+                            <li><strong>Chart:</strong> Bar, line, pie, etc.</li>
+                            <li><strong>Text Box:</strong> Static text or expressions</li>
+                            <li><strong>Image:</strong> Logos or embedded images</li>
+                            <li><strong>Rectangle:</strong> Container for other items</li>
+                        </ul>
+                    </div>
+
+                    <h3>Essential Documentation Links</h3>
+
+                    <a href="https://learn.microsoft.com/en-us/sql/reporting-services/report-builder/report-builder-in-sql-server" class="resource-link" target="_blank">
+                        <strong>📚 Microsoft Report Builder Documentation</strong>
+                        <p>Official documentation and tutorials from Microsoft</p>
+                    </a>
+
+                    <a href="https://learn.microsoft.com/en-us/sql/reporting-services/report-design/report-builder-tutorials" class="resource-link" target="_blank">
+                        <strong>🎓 Report Builder Tutorials</strong>
+                        <p>Step-by-step tutorials for common report types</p>
+                    </a>
+
+                    <a href="https://learn.microsoft.com/en-us/sql/reporting-services/tools/design-reporting-services-paginated-reports-with-report-designer" class="resource-link" target="_blank">
+                        <strong>🎨 Report Design Best Practices</strong>
+                        <p>Guidelines for creating effective reports</p>
+                    </a>
+                </div>
+            </div>
+
+            <!-- Section 4: Creating Your First Report -->
+            <button class="collapsible">4. Creating Your First Report - Step by Step</button>
+            <div class="collapsible-content">
+                <div class="collapsible-inner">
+                    <h3>Tutorial: Simple Sales Report</h3>
+
+                    <div class="success-box">
+                        <h4>🎯 Goal</h4>
+                        <p>Create a basic tabular report showing product sales data with totals and formatting.</p>
+                    </div>
+
+                    <div class="step-container">
+                        <span class="step-number">1</span>
+                        <span class="step-title">Create New Report</span>
+                        <div class="step-content">
+                            <ol>
+                                <li>Launch Report Builder</li>
+                                <li>Click <strong>Blank Report</strong> (or File → New)</li>
+                                <li>You'll see an empty design surface</li>
+                            </ol>
+                        </div>
+                    </div>
+
+                    <div class="step-container">
+                        <span class="step-number">2</span>
+                        <span class="step-title">Create Data Source</span>
+                        <div class="step-content">
+                            <ol>
+                                <li>In the <strong>Report Data</strong> pane, right-click <strong>Data Sources</strong></li>
+                                <li>Click <strong>Add Data Source</strong></li>
+                                <li>Enter a name: <code>SalesDB</code></li>
+                                <li>Select connection type: <strong>Microsoft SQL Server</strong></li>
+                                <li>Click <strong>Build</strong> to configure connection:
+                                    <ul>
+                                        <li>Server name: <code>localhost</code> or your SQL Server instance</li>
+                                        <li>Authentication: Windows or SQL Server</li>
+                                        <li>Database: Select your database</li>
+                                    </ul>
+                                </li>
+                                <li>Click <strong>OK</strong> to test and save</li>
+                            </ol>
+
+                            <div class="tip-box">
+                                <strong>💡 Tip:</strong> Use <strong>Test Connection</strong> to verify before saving.
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="step-container">
+                        <span class="step-number">3</span>
+                        <span class="step-title">Create Dataset</span>
+                        <div class="step-content">
+                            <ol>
+                                <li>Right-click <strong>Datasets</strong> in Report Data pane</li>
+                                <li>Click <strong>Add Dataset</strong></li>
+                                <li>Enter name: <code>SalesData</code></li>
+                                <li>Select data source: <code>SalesDB</code></li>
+                                <li>Query type: <strong>Text</strong></li>
+                                <li>Enter SQL query:</li>
+                            </ol>
+
+                            <div class="code-block">
+<span class="sql-keyword">SELECT</span> 
+    p.ProductName,
+    c.CategoryName,
+    <span class="sql-function">SUM</span>(od.Quantity) <span class="sql-keyword">AS</span> TotalQuantity,
+    <span class="sql-function">SUM</span>(od.Quantity * od.UnitPrice) <span class="sql-keyword">AS</span> TotalSales
+<span class="sql-keyword">FROM</span> OrderDetails od
+<span class="sql-keyword">INNER JOIN</span> Products p <span class="sql-keyword">ON</span> od.ProductID = p.ProductID
+<span class="sql-keyword">INNER JOIN</span> Categories c <span class="sql-keyword">ON</span> p.CategoryID = c.CategoryID
+<span class="sql-keyword">GROUP BY</span> p.ProductName, c.CategoryName
+<span class="sql-keyword">ORDER BY</span> c.CategoryName, TotalSales <span class="sql-keyword">DESC</span>;
+                            </div>
+
+                            <ol start="7">
+                                <li>Click <strong>Refresh Fields</strong> to load field list</li>
+                                <li>Click <strong>OK</strong></li>
+                            </ol>
+
+                            <div class="success-box">
+                                <strong>✅ Result:</strong> You should now see the dataset with fields in the Report Data pane.
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="step-container">
+                        <span class="step-number">4</span>
+                        <span class="step-title">Insert Table</span>
+                        <div class="step-content">
+                            <ol>
+                                <li>On the <strong>Insert</strong> tab, click <strong>Table</strong> → <strong>Insert Table</strong></li>
+                                <li>Click on the design surface to place table</li>
+                                <li>A 3-column table appears with header and data rows</li>
+                            </ol>
+                        </div>
+                    </div>
+
+                    <div class="step-container">
+                        <span class="step-number">5</span>
+                        <span class="step-title">Add Fields to Table</span>
+                        <div class="step-content">
+                            <ol>
+                                <li>From Report Data pane, drag <strong>CategoryName</strong> to first column</li>
+                                <li>Drag <strong>ProductName</strong> to second column</li>
+                                <li>Drag <strong>TotalQuantity</strong> to third column</li>
+                                <li>Right-click on table, select <strong>Insert Column → Right</strong></li>
+                                <li>Drag <strong>TotalSales</strong> to the new fourth column</li>
+                            </ol>
+
+                            <div class="info-box">
+                                <p>The table automatically creates expressions like <code>=Fields!CategoryName.Value</code></p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="step-container">
+                        <span class="step-number">6</span>
+                        <span class="step-title">Format the Report</span>
+                        <div class="step-content">
+                            <p><strong>Format Headers:</strong></p>
+                            <ol>
+                                <li>Click the header row</li>
+                                <li>In Properties: Set <strong>BackgroundColor</strong> to DarkBlue</li>
+                                <li>Set <strong>Color</strong> to White</li>
+                                <li>Set <strong>FontWeight</strong> to Bold</li>
+                            </ol>
+
+                            <p><strong>Format Currency:</strong></p>
+                            <ol>
+                                <li>Click the TotalSales data cell (not header)</li>
+                                <li>In Properties: Set <strong>Format</strong> to <code>C2</code> (currency with 2 decimals)</li>
+                            </ol>
+
+                            <p><strong>Format Numbers:</strong></p>
+                            <ol>
+                                <li>Click TotalQuantity data cell</li>
+                                <li>Set <strong>Format</strong> to <code>N0</code> (number with no decimals)</li>
+                            </ol>
+
+                            <p><strong>Adjust Column Widths:</strong></p>
+                            <ol>
+                                <li>Click and drag column borders to adjust width</li>
+                                <li>Make ProductName column wider</li>
+                                <li>Make numeric columns narrower</li>
+                            </ol>
+                        </div>
+                    </div>
+
+                    <div class="step-container">
+                        <span class="step-number">7</span>
+                        <span class="step-title">Add Totals</span>
+                        <div class="step-content">
+                            <ol>
+                                <li>Right-click on TotalQuantity data cell</li>
+                                <li>Select <strong>Add Total</strong></li>
+                                <li>A footer row is added with <code>=Sum(Fields!TotalQuantity.Value)</code></li>
+                                <li>Repeat for TotalSales column</li>
+                                <li>In the footer, first column, type <strong>"Total:"</strong></li>
+                            </ol>
+                        </div>
+                    </div>
+
+                    <div class="step-container">
+                        <span class="step-number">8</span>
+                        <span class="step-title">Add Report Title</span>
+                        <div class="step-content">
+                            <ol>
+                                <li>On <strong>Insert</strong> tab, click <strong>Text Box</strong></li>
+                                <li>Click above the table to place it</li>
+                                <li>Type: <strong>"Product Sales Report"</strong></li>
+                                <li>Select the text, then in Home tab:
+                                    <ul>
+                                        <li>Set font size to 18pt</li>
+                                        <li>Make it bold</li>
+                                        <li>Center align</li>
+                                    </ul>
+                                </li>
+                            </ol>
+                        </div>
+                    </div>
+
+                    <div class="step-container">
+                        <span class="step-number">9</span>
+                        <span class="step-title">Preview the Report</span>
+                        <div class="step-content">
+                            <ol>
+                                <li>Click the <strong>Run</strong> button on the ribbon (or F5)</li>
+                                <li>The report executes and displays data</li>
+                                <li>Verify that:
+                                    <ul>
+                                        <li>Data appears correctly</li>
+                                        <li>Formatting is applied</li>
+                                        <li>Totals are calculated</li>
+                                    </ul>
+                                </li>
+                                <li>Click <strong>Design</strong> button to return to design view</li>
+                            </ol>
+                        </div>
+                    </div>
+
+                    <div class="step-container">
+                        <span class="step-number">10</span>
+                        <span class="step-title">Save the Report</span>
+                        <div class="step-content">
+                            <ol>
+                                <li>Click <strong>File → Save</strong> (or Ctrl+S)</li>
+                                <li>Choose location (local file or report server)</li>
+                                <li>Enter filename: <code>ProductSalesReport.rdl</code></li>
+                                <li>Click <strong>Save</strong></li>
+                            </ol>
+
+                            <div class="success-box">
+                                <h4>🎉 Congratulations!</h4>
+                                <p>You've created your first SSRS report! The .rdl file can be opened in Report Builder or deployed to a report server.</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <h3>Testing Your Report</h3>
+
+                    <div class="tip-box">
+                        <h4>💡 Testing Checklist:</h4>
+                        <ul>
+                            <li>✓ Does the report run without errors?</li>
+                            <li>✓ Is all data displayed correctly?</li>
+                            <li>✓ Are calculations accurate?</li>
+                            <li>✓ Is formatting applied properly?</li>
+                            <li>✓ Do totals match expected values?</li>
+                            <li>✓ Does the report export correctly to PDF/Excel?</li>
+                            <li>✓ Is performance acceptable?</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Section 5: Report Types and Examples -->
+            <button class="collapsible">5. Common Report Types and Implementations</button>
+            <div class="collapsible-content">
+                <div class="collapsible-inner">
+                    <h3>1. Tabular Reports</h3>
+
+                    <div class="report-type-card">
+                        <h4>Basic Table Report</h4>
+                        <p><strong>Use Case:</strong> Display data in rows and columns with grouping</p>
+
+                        <p><strong>Features:</strong></p>
+                        <ul>
+                            <li>Row grouping by category</li>
+                            <li>Subtotals for each group</li>
+                            <li>Grand totals at the bottom</li>
+                            <li>Alternating row colors for readability</li>
+                        </ul>
+
+                        <p><strong>Example: Employee Roster by Department</strong></p>
+                        <div class="code-block">
+<span class="sql-keyword">SELECT</span> 
+    d.DepartmentName,
+    e.LastName + <span class="sql-string">', '</span> + e.FirstName <span class="sql-keyword">AS</span> EmployeeName,
+    e.JobTitle,
+    e.HireDate,
+    e.Salary
+<span class="sql-keyword">FROM</span> Employees e
+<span class="sql-keyword">INNER JOIN</span> Departments d <span class="sql-keyword">ON</span> e.DepartmentID = d.DepartmentID
+<span class="sql-keyword">ORDER BY</span> d.DepartmentName, e.LastName;
+                        </div>
+
+                        <p><strong>Implementation Tips:</strong></p>
+                        <ul>
+                            <li>Add row group on DepartmentName</li>
+                            <li>Insert group header with department name</li>
+                            <li>Add group footer with department subtotals</li>
+                            <li>Use expression for alternating colors: <code>=IIf(RowNumber(Nothing) Mod 2 = 0, "White", "LightGray")</code></li>
+                        </ul>
+                    </div>
+
+                    <h3>2. Matrix Reports (Crosstab)</h3>
+
+                    <div class="report-type-card">
+                        <h4>Matrix/Pivot Table Report</h4>
+                        <p><strong>Use Case:</strong> Show data in rows and columns with aggregations</p>
+
+                        <p><strong>Features:</strong></p>
+                        <ul>
+                            <li>Dynamic columns based on data</li>
+                            <li>Cross-tabulated values</li>
+                            <li>Row and column subtotals</li>
+                        </ul>
+
+                        <p><strong>Example: Sales by Region and Quarter</strong></p>
+                        <div class="code-block">
+<span class="sql-keyword">SELECT</span> 
+    r.RegionName,
+    <span class="sql-function">DATEPART</span>(QUARTER, o.OrderDate) <span class="sql-keyword">AS</span> Quarter,
+    <span class="sql-function">YEAR</span>(o.OrderDate) <span class="sql-keyword">AS</span> Year,
+    <span class="sql-function">SUM</span>(od.Quantity * od.UnitPrice) <span class="sql-keyword">AS</span> Sales
+<span class="sql-keyword">FROM</span> Orders o
+<span class="sql-keyword">INNER JOIN</span> OrderDetails od <span class="sql-keyword">ON</span> o.OrderID = od.OrderID
+<span class="sql-keyword">INNER JOIN</span> Customers c <span class="sql-keyword">ON</span> o.CustomerID = c.CustomerID
+<span class="sql-keyword">INNER JOIN</span> Regions r <span class="sql-keyword">ON</span> c.RegionID = r.RegionID
+<span class="sql-keyword">WHERE</span> <span class="sql-function">YEAR</span>(o.OrderDate) = <span class="sql-function">YEAR</span>(<span class="sql-function">GETDATE</span>())
+<span class="sql-keyword">GROUP BY</span> r.RegionName, <span class="sql-function">DATEPART</span>(QUARTER, o.OrderDate), <span class="sql-function">YEAR</span>(o.OrderDate);
+                        </div>
+
+                        <p><strong>Creating a Matrix:</strong></p>
+                        <ol>
+                            <li>Insert → Matrix</li>
+                            <li>Drag RegionName to Row Groups</li>
+                            <li>Drag Quarter to Column Groups</li>
+                            <li>Drag Sales to Data (aggregated by Sum)</li>
+                            <li>Right-click row/column groups to add totals</li>
+                        </ol>
+                    </div>
+
+                    <h3>3. Chart Reports</h3>
+
+                    <div class="report-type-card">
+                        <h4>Visualization with Charts</h4>
+                        <p><strong>Chart Types Available:</strong></p>
+                        <ul>
+                            <li><strong>Column/Bar:</strong> Compare values across categories</li>
+                            <li><strong>Line:</strong> Show trends over time</li>
+                            <li><strong>Pie/Doughnut:</strong> Show proportions</li>
+                            <li><strong>Area:</strong> Show cumulative totals</li>
+                            <li><strong>Scatter:</strong> Show correlation between values</li>
+                        </ul>
+
+                        <p><strong>Example: Monthly Sales Trend (Line Chart)</strong></p>
+                        <div class="code-block">
+<span class="sql-keyword">SELECT</span> 
+    <span class="sql-function">DATEPART</span>(YEAR, OrderDate) <span class="sql-keyword">AS</span> Year,
+    <span class="sql-function">DATEPART</span>(MONTH, OrderDate) <span class="sql-keyword">AS</span> Month,
+    <span class="sql-function">DATENAME</span>(MONTH, OrderDate) <span class="sql-keyword">AS</span> MonthName,
+    <span class="sql-function">SUM</span>(od.Quantity * od.UnitPrice) <span class="sql-keyword">AS</span> MonthlySales
+<span class="sql-keyword">FROM</span> Orders o
+<span class="sql-keyword">INNER JOIN</span> OrderDetails od <span class="sql-keyword">ON</span> o.OrderID = od.OrderID
+<span class="sql-keyword">WHERE</span> OrderDate >= <span class="sql-function">DATEADD</span>(MONTH, -12, <span class="sql-function">GETDATE</span>())
+<span class="sql-keyword">GROUP BY</span> <span class="sql-function">DATEPART</span>(YEAR, OrderDate), <span class="sql-function">DATEPART</span>(MONTH, OrderDate), 
+         <span class="sql-function">DATENAME</span>(MONTH, OrderDate)
+<span class="sql-keyword">ORDER BY</span> Year, Month;
+                        </div>
+
+                        <p><strong>Creating a Chart:</strong></p>
+                        <ol>
+                            <li>Insert → Chart → Choose Chart Type (Line)</li>
+                            <li>Click on chart to open Chart Data pane</li>
+                            <li>Drag MonthName to Category Groups</li>
+                            <li>Drag MonthlySales to Values</li>
+                            <li>Format chart:
+                                <ul>
+                                    <li>Add chart title</li>
+                                    <li>Format axis labels</li>
+                                    <li>Add data labels if desired</li>
+                                    <li>Adjust colors and styles</li>
+                                </ul>
+                            </li>
+                        </ol>
+                    </div>
+
+                    <h3>4. Parameterized Reports</h3>
+
+                    <div class="report-type-card">
+                        <h4>Reports with User Input</h4>
+                        <p><strong>Use Case:</strong> Allow users to filter or customize reports</p>
+
+                        <p><strong>Example: Sales Report with Date Range</strong></p>
+                        
+                        <p><strong>Step 1: Create Parameters</strong></p>
+                        <ol>
+                            <li>In Report Data pane, right-click Parameters</li>
+                            <li>Add Parameter: <code>StartDate</code>
+                                <ul>
+                                    <li>Data type: Date/Time</li>
+                                    <li>Default value: <code>=DateAdd("d", -30, Today())</code></li>
+                                </ul>
+                            </li>
+                            <li>Add Parameter: <code>EndDate</code>
+                                <ul>
+                                    <li>Data type: Date/Time</li>
+                                    <li>Default value: <code>=Today()</code></li>
+                                </ul>
+                            </li>
+                        </ol>
+
+                        <p><strong>Step 2: Use Parameters in Query</strong></p>
+                        <div class="code-block">
+<span class="sql-keyword">SELECT</span> 
+    o.OrderDate,
+    c.CustomerName,
+    <span class="sql-function">SUM</span>(od.Quantity * od.UnitPrice) <span class="sql-keyword">AS</span> OrderTotal
+<span class="sql-keyword">FROM</span> Orders o
+<span class="sql-keyword">INNER JOIN</span> Customers c <span class="sql-keyword">ON</span> o.CustomerID = c.CustomerID
+<span class="sql-keyword">INNER JOIN</span> OrderDetails od <span class="sql-keyword">ON</span> o.OrderID = od.OrderID
+<span class="sql-keyword">WHERE</span> o.OrderDate >= @StartDate 
+  <span class="sql-keyword">AND</span> o.OrderDate <= @EndDate
+<span class="sql-keyword">GROUP BY</span> o.OrderDate, c.CustomerName
+<span class="sql-keyword">ORDER BY</span> o.OrderDate;
+                        </div>
+
+                        <p><strong>Advanced: Cascading Parameters</strong></p>
+                        <p>Create dependent parameters (e.g., Category → Product):</p>
+                        <ol>
+                            <li>Create Category parameter with dataset listing categories</li>
+                            <li>Create Product parameter with dataset filtered by selected category</li>
+                            <li>Dataset query uses <code>WHERE CategoryID = @CategoryID</code></li>
+                        </ol>
+                    </div>
+
+                    <h3>5. Drill-Through Reports</h3>
+
+                    <div class="report-type-card">
+                        <h4>Linked Detail Reports</h4>
+                        <p><strong>Use Case:</strong> Summary report that links to detailed report</p>
+
+                        <p><strong>Implementation:</strong></p>
+                        <ol>
+                            <li>Create main summary report (e.g., Sales by Category)</li>
+                            <li>Create detail report (e.g., Products in Category)</li>
+                            <li>In summary report:
+                                <ul>
+                                    <li>Right-click the field to make clickable</li>
+                                    <li>Properties → Action</li>
+                                    <li>Select "Go to report"</li>
+                                    <li>Choose detail report</li>
+                                    <li>Map parameters (e.g., CategoryID)</li>
+                                </ul>
+                            </li>
+                            <li>User clicks value in summary → detail report opens</li>
+                        </ol>
+                    </div>
+
+                    <h3>6. Subreports</h3>
+
+                    <div class="report-type-card">
+                        <h4>Embedded Reports</h4>
+                        <p><strong>Use Case:</strong> Include one report inside another</p>
+
+                        <p><strong>Example: Customer Report with Order History</strong></p>
+                        <ol>
+                            <li>Create main report showing customer details</li>
+                            <li>Create subreport showing orders</li>
+                            <li>In main report:
+                                <ul>
+                                    <li>Insert → Subreport</li>
+                                    <li>Properties → Select subreport</li>
+                                    <li>Set parameters (e.g., CustomerID)</li>
+                                </ul>
+                            </li>
+                        </ol>
+
+                        <div class="warning-box">
+                            <strong>⚠️ Performance Note:</strong> Subreports execute separately for each row, which can be slow. Consider using tables with grouping instead.
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Section 6: Advanced Features -->
+            <button class="collapsible">6. Advanced Report Features</button>
+            <div class="collapsible-content">
+                <div class="collapsible-inner">
+                    <h3>Expressions and Calculated Fields</h3>
+
+                    <div class="info-box">
+                        <h4>📐 Report Builder Expressions</h4>
+                        <p>Expressions use Visual Basic syntax and start with <code>=</code></p>
+                    </div>
+
+                    <div class="report-type-card">
+                        <h4>Common Expression Examples</h4>
+
+                        <p><strong>1. Concatenating Text:</strong></p>
+                        <div class="formula-box">
+=Fields!FirstName.Value & " " & Fields!LastName.Value
+                        </div>
+
+                        <p><strong>2. Conditional Formatting:</strong></p>
+                        <div class="formula-box">
+=IIf(Fields!Sales.Value > 10000, "Green", "Red")
+                        </div>
+
+                        <p><strong>3. Date Formatting:</strong></p>
+                        <div class="formula-box">
+=Format(Fields!OrderDate.Value, "MM/dd/yyyy")
+                        </div>
+
+                        <p><strong>4. Calculations:</strong></p>
+                        <div class="formula-box">
+=Fields!Quantity.Value * Fields!UnitPrice.Value
+                        </div>
+
+                        <p><strong>5. Percentage Calculation:</strong></p>
+                        <div class="formula-box">
+=(Fields!Sales.Value / Sum(Fields!Sales.Value, "DataSet1")) * 100
+                        </div>
+
+                        <p><strong>6. Running Total:</strong></p>
+                        <div class="formula-box">
+=RunningValue(Fields!Sales.Value, Sum, Nothing)
+                        </div>
+
+                        <p><strong>7. Row Number:</strong></p>
+                        <div class="formula-box">
+=RowNumber(Nothing)
+                        </div>
+
+                        <p><strong>8. Alternating Row Colors:</strong></p>
+                        <div class="formula-box">
+=IIf(RowNumber(Nothing) Mod 2 = 0, "White", "AliceBlue")
+                        </div>
+                    </div>
+
+                    <h3>Grouping and Sorting</h3>
+
+                    <div class="report-type-card">
+                        <h4>Adding Row Groups</h4>
+                        <ol>
+                            <li>Right-click a row in your table</li>
+                            <li>Insert Group → Parent Group</li>
+                            <li>Select grouping field (e.g., CategoryName)</li>
+                            <li>Choose to add group header/footer</li>
+                            <li>Add aggregations in group footer:
+                                <ul>
+                                    <li><code>=Sum(Fields!Sales.Value)</code></li>
+                                    <li><code>=Count(Fields!ProductID.Value)</code></li>
+                                    <li><code>=Avg(Fields!Price.Value)</code></li>
+                                </ul>
+                            </li>
+                        </ol>
+                    </div>
+
+                    <div class="report-type-card">
+                        <h4>Interactive Sorting</h4>
+                        <p>Let users click column headers to sort:</p>
+                        <ol>
+                            <li>Select the text box in the column header</li>
+                            <li>Properties → Interactive Sorting</li>
+                            <li>Enable interactive sorting</li>
+                            <li>Select field to sort by</li>
+                        </ol>
+                    </div>
+
+                    <h3>Visibility and Toggle Items</h3>
+
+                    <div class="report-type-card">
+                        <h4>Drill-Down (Expand/Collapse)</h4>
+                        <p>Hide detail rows initially, expand on click:</p>
+                        <ol>
+                            <li>Select the row to hide (detail row)</li>
+                            <li>Properties → Visibility</li>
+                            <li>Set to "Hide"</li>
+                            <li>Check "Display can be toggled by this report item"</li>
+                            <li>Select the text box that will toggle (group header)</li>
+                        </ol>
+
+                        <p><strong>Result:</strong> A +/- icon appears, clicking expands/collapses details</p>
+                    </div>
+
+                    <h3>Page Layout and Breaks</h3>
+
+                    <div class="report-type-card">
+                        <h4>Controlling Pagination</h4>
+
+                        <p><strong>1. Add Page Break After Group:</strong></p>
+                        <ol>
+                            <li>Right-click on row group</li>
+                            <li>Group Properties</li>
+                            <li>Page Breaks tab</li>
+                            <li>Check "Between each instance of a group"</li>
+                        </ol>
+
+                        <p><strong>2. Keep Together:</strong></p>
+                        <ol>
+                            <li>Select table or group</li>
+                            <li>Properties → KeepTogether = True</li>
+                        </ol>
+
+                        <p><strong>3. Repeat Headers on Each Page:</strong></p>
+                        <ol>
+                            <li>Click table row/column group area</li>
+                            <li>Advanced Mode (arrow in grouping pane)</li>
+                            <li>Select static row (header)</li>
+                            <li>Set KeepWithGroup = After</li>
+                            <li>Set RepeatOnNewPage = True</li>
+                        </ol>
+                    </div>
+
+                    <h3>Headers and Footers</h3>
+
+                    <div class="report-type-card">
+                        <h4>Adding Page Headers/Footers</h4>
+
+                        <p><strong>Enable Header/Footer:</strong></p>
+                        <ol>
+                            <li>Insert tab → Header or Footer</li>
+                            <li>The header/footer section appears</li>
+                        </ol>
+
+                        <p><strong>Common Elements:</strong></p>
+                        <ul>
+                            <li><strong>Page Numbers:</strong> <code>=Globals!PageNumber & " of " & Globals!TotalPages</code></li>
+                            <li><strong>Report Name:</strong> <code>=Globals!ReportName</code></li>
+                            <li><strong>Execution Time:</strong> <code>=Globals!ExecutionTime</code></li>
+                            <li><strong>User Name:</strong> <code>=User!UserID</code></li>
+                        </ul>
+                    </div>
+
+                    <h3>Export Formats</h3>
+
+                    <div class="info-box">
+                        <h4>📤 Available Export Formats:</h4>
+                        <ul>
+                            <li><strong>PDF:</strong> Best for printing, maintains exact layout</li>
+                            <li><strong>Excel:</strong> Editable data, good for further analysis</li>
+                            <li><strong>Word:</strong> Editable document format</li>
+                            <li><strong>CSV:</strong> Raw data, no formatting</li>
+                            <li><strong>XML:</strong> Structured data format</li>
+                            <li><strong>MHTML:</strong> Web archive (single file)</li>
+                        </ul>
+                    </div>
+
+                    <div class="tip-box">
+                        <h4>💡 Export Optimization Tips:</h4>
+                        <ul>
+                            <li><strong>Excel:</strong> Avoid merged cells, keep layout simple</li>
+                            <li><strong>PDF:</strong> Set page size appropriately, use page breaks</li>
+                            <li><strong>CSV:</strong> Only exports data, no formatting or charts</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Section 7: Best Practices -->
+            <button class="collapsible">7. Report Design Best Practices</button>
+            <div class="collapsible-content">
+                <div class="collapsible-inner">
+                    <h3>Performance Optimization</h3>
+
+                    <div class="best-practice">
+                        <h4>✅ DO: Optimize Your Queries</h4>
+                        <ul>
+                            <li>Select only needed columns, not SELECT *</li>
+                            <li>Filter data in the query (WHERE clause), not in report</li>
+                            <li>Use indexes on filter and join columns</li>
+                            <li>Use stored procedures for complex logic</li>
+                            <li>Consider creating a view for report data</li>
+                        </ul>
+
+                        <div class="code-block">
+<span class="sql-comment">-- Good: Selective query</span>
+<span class="sql-keyword">SELECT</span> ProductName, Category, Price, Stock
+<span class="sql-keyword">FROM</span> Products
+<span class="sql-keyword">WHERE</span> IsActive = 1 
+  <span class="sql-keyword">AND</span> Price > 0;
+
+<span class="sql-comment">-- Bad: Gets everything</span>
+<span class="sql-keyword">SELECT</span> * <span class="sql-keyword">FROM</span> Products;
+                        </div>
+                    </div>
+
+                    <div class="avoid-practice">
+                        <h4>❌ AVOID: Subreports in Tablixes</h4>
+                        <p>Subreports execute for each row = very slow!</p>
+                        <p><strong>Better:</strong> Use grouping or combine queries with JOINs</p>
+                    </div>
+
+                    <div class="best-practice">
+                        <h4>✅ DO: Use Report Caching</h4>
+                        <ul>
+                            <li>Cache reports that run frequently</li>
+                            <li>Set appropriate cache expiration</li>
+                            <li>Use snapshots for historical reports</li>
+                        </ul>
+                    </div>
+
+                    <div class="best-practice">
+                        <h4>✅ DO: Limit Dataset Size</h4>
+                        <ul>
+                            <li>Use TOP or pagination for large datasets</li>
+                            <li>Provide date range parameters</li>
+                            <li>Consider summary vs detail reports</li>
+                        </ul>
+
+                        <div class="code-block">
+<span class="sql-comment">-- Limit results with TOP</span>
+<span class="sql-keyword">SELECT TOP</span> 1000 
+    OrderDate, CustomerName, OrderTotal
+<span class="sql-keyword">FROM</span> Orders
+<span class="sql-keyword">ORDER BY</span> OrderDate <span class="sql-keyword">DESC</span>;
+                        </div>
+                    </div>
+
+                    <h3>Design Principles</h3>
+
+                    <div class="best-practice">
+                        <h4>✅ DO: Keep It Simple</h4>
+                        <ul>
+                            <li>Focus on key information</li>
+                            <li>Avoid cluttered layouts</li>
+                            <li>Use white space effectively</li>
+                            <li>Limit to 5-7 colors</li>
+                        </ul>
+                    </div>
+
+                    <div class="best-practice">
+                        <h4>✅ DO: Choose Appropriate Visualizations</h4>
+                        <ul>
+                            <li><strong>Tables:</strong> Precise values, detailed data</li>
+                            <li><strong>Bar Charts:</strong> Comparing categories</li>
+                            <li><strong>Line Charts:</strong> Trends over time</li>
+                            <li><strong>Pie Charts:</strong> Proportions (use sparingly, max 5-7 slices)</li>
+                        </ul>
+                    </div>
+
+                    <div class="avoid-practice">
+                        <h4>❌ AVOID: Misleading Visualizations</h4>
+                        <ul>
+                            <li>Truncated Y-axis that exaggerates differences</li>
+                            <li>3D charts that distort perception</li>
+                            <li>Too many pie slices (use bar chart instead)</li>
+                        </ul>
+                    </div>
+
+                    <div class="best-practice">
+                        <h4>✅ DO: Format Numbers Consistently</h4>
+                        <ul>
+                            <li>Use currency symbols: <code>C2</code></li>
+                            <li>Use thousands separators: <code>N0</code></li>
+                            <li>Consistent decimal places</li>
+                            <li>Align numbers right</li>
+                        </ul>
+                    </div>
+
+                    <h3>Usability</h3>
+
+                    <div class="best-practice">
+                        <h4>✅ DO: Provide Clear Context</h4>
+                        <ul>
+                            <li>Descriptive report title</li>
+                            <li>Include run date/time</li>
+                            <li>Show parameter values used</li>
+                            <li>Add legends for charts</li>
+                            <li>Include units of measure</li>
+                        </ul>
+                    </div>
+
+                    <div class="best-practice">
+                        <h4>✅ DO: Make Reports Interactive</h4>
+                        <ul>
+                            <li>Add drill-down for details</li>
+                            <li>Enable sorting by clicking headers</li>
+                            <li>Provide meaningful parameters</li>
+                            <li>Use drill-through to related reports</li>
+                        </ul>
+                    </div>
+
+                    <div class="best-practice">
+                        <h4>✅ DO: Test Thoroughly</h4>
+                        <ul>
+                            <li>Test with various parameter combinations</li>
+                            <li>Test with empty result sets</li>
+                            <li>Test with maximum expected data volume</li>
+                            <li>Verify calculations manually</li>
+                            <li>Test all export formats</li>
+                            <li>Get user feedback</li>
+                        </ul>
+                    </div>
+
+                    <h3>Maintenance</h3>
+
+                    <div class="best-practice">
+                        <h4>✅ DO: Document Your Reports</h4>
+                        <ul>
+                            <li>Add description in report properties</li>
+                            <li>Comment complex expressions</li>
+                            <li>Document data sources and refresh schedules</li>
+                            <li>Maintain change log</li>
+                        </ul>
+                    </div>
+
+                    <div class="best-practice">
+                        <h4>✅ DO: Use Consistent Naming</h4>
+                        <ul>
+                            <li>Clear dataset names: <code>SalesData</code>, <code>EmployeeList</code></li>
+                            <li>Descriptive parameter names: <code>StartDate</code>, not <code>Param1</code></li>
+                            <li>Standard prefixes for groups, totals</li>
+                        </ul>
+                    </div>
+
+                    <h3>Security</h3>
+
+                    <div class="best-practice">
+                        <h4>✅ DO: Implement Proper Security</h4>
+                        <ul>
+                            <li>Use Windows Authentication when possible</li>
+                            <li>Don't hardcode credentials</li>
+                            <li>Implement row-level security for sensitive data</li>
+                            <li>Use parameters to filter by user context</li>
+                            <li>Set appropriate folder permissions on report server</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Section 8: Resources and References -->
+            <button class="collapsible">8. Additional Resources and Learning Materials</button>
+            <div class="collapsible-content">
+                <div class="collapsible-inner">
+                    <h3>Official Microsoft Resources</h3>
+
+                    <a href="https://learn.microsoft.com/en-us/sql/reporting-services/report-builder/report-builder-in-sql-server" class="resource-link" target="_blank">
+                        <strong>📚 Report Builder Documentation</strong>
+                        <p>Complete official documentation for Report Builder</p>
+                    </a>
+
+                    <a href="https://learn.microsoft.com/en-us/sql/reporting-services/report-design/report-builder-tutorials" class="resource-link" target="_blank">
+                        <strong>🎓 Official Tutorials</strong>
+                        <p>Step-by-step tutorials from Microsoft</p>
+                    </a>
+
+                    <a href="https://learn.microsoft.com/en-us/sql/reporting-services/create-deploy-and-manage-mobile-and-paginated-reports" class="resource-link" target="_blank">
+                        <strong>📖 SSRS Complete Guide</strong>
+                        <p>Comprehensive guide to SQL Server Reporting Services</p>
+                    </a>
+
+                    <a href="https://learn.microsoft.com/en-us/sql/reporting-services/report-design/expression-examples-report-builder-and-ssrs" class="resource-link" target="_blank">
+                        <strong>🔢 Expression Examples</strong>
+                        <p>Library of expression examples for calculations and formatting</p>
+                    </a>
+
+                    <a href="https://learn.microsoft.com/en-us/sql/reporting-services/report-design/built-in-collections-in-expressions-report-builder" class="resource-link" target="_blank">
+                        <strong>⚡ Built-in Collections</strong>
+                        <p>Reference for Globals, Parameters, Fields, and other collections</p>
+                    </a>
+
+                    <h3>Video Tutorials</h3>
+
+                    <div class="info-box">
+                        <h4>🎥 Recommended Video Channels:</h4>
+                        <ul>
+                            <li><strong>Microsoft SQL Server:</strong> Official YouTube channel with SSRS tutorials</li>
+                            <li><strong>WiseOwlTutorials:</strong> Excellent free video series on SSRS</li>
+                            <li><strong>Pragmatic Works:</strong> Professional training videos</li>
+                        </ul>
+                        <p>Search YouTube for: "SSRS Report Builder Tutorial" or "SQL Server Reporting Services"</p>
+                    </div>
+
+                    <h3>Sample Databases for Practice</h3>
+
+                    <a href="https://github.com/Microsoft/sql-server-samples" class="resource-link" target="_blank">
+                        <strong>💾 AdventureWorks Sample Database</strong>
+                        <p>Microsoft's sample database - perfect for learning reporting</p>
+                    </a>
+
+                    <div class="tip-box">
+                        <h4>💡 Practice Exercises Using AdventureWorks:</h4>
+                        <ol>
+                            <li><strong>Sales Report:</strong> Create report showing sales by territory</li>
+                            <li><strong>Employee Roster:</strong> List employees by department with photos</li>
+                            <li><strong>Product Catalog:</strong> Matrix report with categories and subcategories</li>
+                            <li><strong>Sales Trend:</strong> Line chart showing monthly sales over time</li>
+                            <li><strong>Customer Orders:</strong> Drill-through from customer list to order details</li>
+                        </ol>
+                    </div>
+
+                    <h3>Troubleshooting Common Issues</h3>
+
+                    <div class="report-type-card">
+                        <h4>Issue: Report is Slow</h4>
+                        <p><strong>Solutions:</strong></p>
+                        <ul>
+                            <li>Optimize SQL query (check execution plan)</li>
+                            <li>Add indexes to database tables</li>
+                            <li>Reduce dataset size with filters</li>
+                            <li>Remove subreports if possible</li>
+                            <li>Enable report caching</li>
+                        </ul>
+                    </div>
+
+                    <div class="report-type-card">
+                        <h4>Issue: #Error in Expression</h4>
+                        <p><strong>Solutions:</strong></p>
+                        <ul>
+                            <li>Check for null values: Use <code>IsNothing()</code></li>
+                            <li>Verify field names match dataset</li>
+                            <li>Check data types (can't divide strings)</li>
+                            <li>Use <code>IIf</code> to handle nulls: <code>=IIf(IsNothing(Fields!Value), 0, Fields!Value)</code></li>
+                        </ul>
+                    </div>
+
+                    <div class="report-type-card">
+                        <h4>Issue: Report Won't Deploy</h4>
+                        <p><strong>Solutions:</strong></p>
+                        <ul>
+                            <li>Verify Report Server URL is correct</li>
+                            <li>Check permissions on report server</li>
+                            <li>Ensure report server is running</li>
+                            <li>Test connection to report server</li>
+                        </ul>
+                    </div>
+
+                    <div class="report-type-card">
+                        <h4>Issue: Parameters Not Working</h4>
+                        <p><strong>Solutions:</strong></p>
+                        <ul>
+                            <li>Verify parameter names match in query</li>
+                            <li>Check parameter data types</li>
+                            <li>Ensure parameters are passed to subreports</li>
+                            <li>Test dataset query separately</li>
+                        </ul>
+                    </div>
+
+                    <h3>Community Resources</h3>
+
+                    <div class="info-box">
+                        <h4>🌐 Helpful Communities:</h4>
+                        <ul>
+                            <li><strong>Stack Overflow:</strong> Tag "ssrs" for Q&A</li>
+                            <li><strong>MSDN Forums:</strong> SQL Server Reporting Services forum</li>
+                            <li><strong>Reddit:</strong> r/SQLServer community</li>
+                            <li><strong>LinkedIn:</strong> SSRS User Groups</li>
+                        </ul>
+                    </div>
+
+                    <h3>Certification and Learning Paths</h3>
+
+                    <div class="success-box">
+                        <h4>📜 Further Learning:</h4>
+                        <ul>
+                            <li><strong>Microsoft Certified: Azure Data Engineer Associate</strong> - Includes reporting skills</li>
+                            <li><strong>Microsoft Certified: Data Analyst Associate</strong> - Focus on Power BI and reporting</li>
+                            <li><strong>Pluralsight:</strong> "SQL Server Reporting Services" course path</li>
+                            <li><strong>LinkedIn Learning:</strong> SSRS courses</li>
+                        </ul>
+                    </div>
+
+                    <h3>Quick Reference Card</h3>
+
+                    <div class="code-block" style="background: #f8f9fa; color: #2c3e50; border: 2px solid #2c5aa0;">
+<strong>SSRS REPORT BUILDER QUICK REFERENCE</strong>
+
+<strong>Common Shortcuts:</strong>
+F5 - Run/Preview Report
+Ctrl+S - Save Report
+Ctrl+Z - Undo
+Ctrl+Y - Redo
+
+<strong>Common Expressions:</strong>
+=Fields!FieldName.Value          (Get field value)
+=Sum(Fields!Sales.Value)         (Sum total)
+=Count(Fields!ID.Value)          (Count rows)
+=Avg(Fields!Price.Value)         (Average)
+=First(Fields!Name.Value)        (First value in group)
+=IIf(condition, true, false)     (Conditional)
+=Globals!PageNumber              (Current page)
+=Globals!ExecutionTime           (Report run time)
+=User!UserID                     (Current user)
+=RowNumber(Nothing)              (Row number)
+
+<strong>Format Strings:</strong>
+C2 - Currency with 2 decimals ($1,234.56)
+N0 - Number with no decimals (1,234)
+P2 - Percentage with 2 decimals (12.34%)
+D - Short date (12/31/2024)
+T - Short time (3:45 PM)
+
+<strong>Common Aggregate Scopes:</strong>
+Nothing - Entire dataset
+"DataSetName" - Specific dataset
+"GroupName" - Specific group
+                    </div>
+                </div>
+            </div>
+
+        </div>
+
+        <div class="footer">
+            <p>&copy; 2024 COP4709 Database Systems | Database Reports Module</p>
+            <p>Transform data into insights with professional reporting!</p>
+        </div>
+    </div>
+
+    <script>
+        // Make collapsible sections work
+        const collapsibles = document.getElementsByClassName("collapsible");
+        
+        for (let i = 0; i < collapsibles.length; i++) {
+            collapsibles[i].addEventListener("click", function() {
+                this.classList.toggle("active");
+                const content = this.nextElementSibling;
+                
+                if (content.style.maxHeight) {
+                    content.style.maxHeight = null;
+                } else {
+                    content.style.maxHeight = content.scrollHeight + "px";
+                }
+            });
+        }
+
+        // Expand first section by default
+        if (collapsibles.length > 0) {
+            collapsibles[0].click();
+        }
+    </script>
+</body>
+</html>

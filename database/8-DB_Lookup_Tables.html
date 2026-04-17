@@ -1,0 +1,1125 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>COP4709 - Lookup Tables in Database Design</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1000px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            overflow: hidden;
+        }
+
+        header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 40px;
+            text-align: center;
+        }
+
+        header h1 {
+            font-size: 2.5em;
+            margin-bottom: 10px;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.2);
+        }
+
+        header p {
+            font-size: 1.2em;
+            opacity: 0.95;
+        }
+
+        .content {
+            padding: 40px;
+        }
+
+        .intro {
+            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+            padding: 25px;
+            border-radius: 10px;
+            margin-bottom: 30px;
+            border-left: 5px solid #667eea;
+        }
+
+        .intro h2 {
+            color: #667eea;
+            margin-bottom: 15px;
+        }
+
+        .section {
+            margin-bottom: 25px;
+        }
+
+        .collapsible {
+            background: #f8f9fa;
+            border: 2px solid #e9ecef;
+            border-radius: 10px;
+            margin-bottom: 15px;
+            overflow: hidden;
+            transition: all 0.3s ease;
+        }
+
+        .collapsible:hover {
+            border-color: #667eea;
+            box-shadow: 0 4px 12px rgba(102, 126, 234, 0.1);
+        }
+
+        .collapsible-header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 20px;
+            cursor: pointer;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-weight: 600;
+            font-size: 1.2em;
+            user-select: none;
+        }
+
+        .collapsible-header:hover {
+            background: linear-gradient(135deg, #7c8ff5 0%, #8a5bb5 100%);
+        }
+
+        .collapsible-header::after {
+            content: '▼';
+            font-size: 0.8em;
+            transition: transform 0.3s ease;
+        }
+
+        .collapsible-content {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.3s ease;
+            padding: 0 20px;
+        }
+
+        .collapsible.active .collapsible-content {
+            max-height: 5000px;
+            padding: 20px;
+        }
+
+        .collapsible.active .collapsible-header::after {
+            transform: rotate(180deg);
+        }
+
+        .highlight-box {
+            background: #fff3cd;
+            border-left: 5px solid #ffc107;
+            padding: 15px;
+            margin: 15px 0;
+            border-radius: 5px;
+        }
+
+        .success-box {
+            background: #d4edda;
+            border-left: 5px solid #28a745;
+            padding: 15px;
+            margin: 15px 0;
+            border-radius: 5px;
+        }
+
+        .info-box {
+            background: #d1ecf1;
+            border-left: 5px solid #17a2b8;
+            padding: 15px;
+            margin: 15px 0;
+            border-radius: 5px;
+        }
+
+        .danger-box {
+            background: #f8d7da;
+            border-left: 5px solid #dc3545;
+            padding: 15px;
+            margin: 15px 0;
+            border-radius: 5px;
+        }
+
+        .code-block {
+            background: #2d2d2d;
+            color: #f8f8f2;
+            padding: 20px;
+            border-radius: 8px;
+            overflow-x: auto;
+            margin: 15px 0;
+            font-family: 'Courier New', monospace;
+            font-size: 0.95em;
+            line-height: 1.5;
+            white-space: pre;
+        }
+
+        .code-block .keyword {
+            color: #ff79c6;
+        }
+
+        .code-block .string {
+            color: #f1fa8c;
+        }
+
+        .code-block .comment {
+            color: #6272a4;
+            font-style: italic;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 15px 0;
+            background: white;
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        th {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 15px;
+            text-align: left;
+            font-weight: 600;
+        }
+
+        td {
+            padding: 12px 15px;
+            border-bottom: 1px solid #e9ecef;
+        }
+
+        tr:hover {
+            background: #f8f9fa;
+        }
+
+        ul, ol {
+            margin: 15px 0 15px 30px;
+        }
+
+        li {
+            margin: 8px 0;
+        }
+
+        h3 {
+            color: #667eea;
+            margin: 20px 0 10px 0;
+            font-size: 1.4em;
+        }
+
+        h4 {
+            color: #764ba2;
+            margin: 15px 0 10px 0;
+            font-size: 1.1em;
+        }
+
+        .comparison-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+            margin: 20px 0;
+        }
+
+        .comparison-card {
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+        }
+
+        .comparison-card.good {
+            background: linear-gradient(135deg, #d4edda 0%, #c3e6cb 100%);
+            border: 2px solid #28a745;
+        }
+
+        .comparison-card.bad {
+            background: linear-gradient(135deg, #f8d7da 0%, #f5c6cb 100%);
+            border: 2px solid #dc3545;
+        }
+
+        .example-diagram {
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            border: 2px solid #e9ecef;
+            margin: 20px 0;
+            text-align: center;
+        }
+
+        footer {
+            background: #2d3436;
+            color: white;
+            text-align: center;
+            padding: 20px;
+            margin-top: 40px;
+        }
+
+        .badge {
+            display: inline-block;
+            padding: 5px 10px;
+            border-radius: 5px;
+            font-size: 0.85em;
+            font-weight: 600;
+            margin: 5px;
+        }
+
+        .badge-primary {
+            background: #667eea;
+            color: white;
+        }
+
+        .badge-success {
+            background: #28a745;
+            color: white;
+        }
+
+        .badge-warning {
+            background: #ffc107;
+            color: #333;
+        }
+
+        .badge-danger {
+            background: #dc3545;
+            color: white;
+        }
+
+        strong {
+            color: #667eea;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>📊 Lookup Tables in Database Design</h1>
+            <p>COP4709 - Database Management</p>
+        </header>
+
+        <div class="content">
+            <div class="intro">
+                <h2>🎯 What Are Lookup Tables?</h2>
+                <p>A <strong>lookup table</strong> (also called a reference table, dimension table, or code table) is a database table used to store a finite set of values that are referenced by other tables in the database. They serve as the "source of truth" for standardized data values and help maintain data integrity, consistency, and normalization.</p>
+                <p style="margin-top: 15px;"><strong>Think of it like this:</strong> Instead of writing "United States" repeatedly in 1,000 customer records, you store it once in a lookup table with an ID (e.g., ID=1), and reference that ID in your customer records. This saves space, ensures consistency, and makes updates easier.</p>
+            </div>
+
+            <!-- Section 1: Structure -->
+            <div class="section">
+                <div class="collapsible">
+                    <div class="collapsible-header">
+                        1. Structure of Lookup Tables
+                    </div>
+                    <div class="collapsible-content">
+                        <h3>Basic Components</h3>
+                        <p>Lookup tables typically have a simple, standardized structure:</p>
+                        
+                        <div class="info-box">
+                            <strong>Typical Lookup Table Structure:</strong>
+                            <ul>
+                                <li><strong>Primary Key (ID):</strong> A unique identifier (usually an integer or code)</li>
+                                <li><strong>Value/Name:</strong> The actual data value being stored</li>
+                                <li><strong>Optional Fields:</strong> Description, sort order, active/inactive flag, parent ID (for hierarchical data)</li>
+                            </ul>
+                        </div>
+
+                        <h4>Example: Country Lookup Table</h4>
+                        <div class="code-block">
+<span class="keyword">CREATE TABLE</span> countries (
+    country_id <span class="keyword">INT PRIMARY KEY</span>,
+    country_code <span class="keyword">CHAR</span>(<span class="string">2</span>) <span class="keyword">UNIQUE NOT NULL</span>, <span class="comment">-- ISO 3166-1 alpha-2</span>
+    country_name <span class="keyword">VARCHAR</span>(<span class="string">100</span>) <span class="keyword">NOT NULL</span>,
+    region <span class="keyword">VARCHAR</span>(<span class="string">50</span>),
+    is_active <span class="keyword">BOOLEAN DEFAULT</span> <span class="string">TRUE</span>,
+    display_order <span class="keyword">INT</span>
+);
+
+<span class="comment">-- Sample data</span>
+<span class="keyword">INSERT INTO</span> countries
+    (country_id, country_code, country_name, region, is_active, display_order)
+<span class="keyword">VALUES</span>
+    (<span class="string">1</span>, <span class="string">'US'</span>, <span class="string">'United States'</span>,  <span class="string">'North America'</span>, <span class="string">TRUE</span>, <span class="string">1</span>),
+    (<span class="string">2</span>, <span class="string">'CA'</span>, <span class="string">'Canada'</span>,         <span class="string">'North America'</span>, <span class="string">TRUE</span>, <span class="string">2</span>),
+    (<span class="string">3</span>, <span class="string">'GB'</span>, <span class="string">'United Kingdom'</span>,  <span class="string">'Europe'</span>,        <span class="string">TRUE</span>, <span class="string">3</span>);
+                        </div>
+
+                        <h3>Key Characteristics</h3>
+                        <table>
+                            <tr>
+                                <th>Characteristic</th>
+                                <th>Description</th>
+                            </tr>
+                            <tr>
+                                <td><strong>Small Size</strong></td>
+                                <td>Usually contains a limited, manageable number of rows (typically 5-500 rows)</td>
+                            </tr>
+                            <tr>
+                                <td><strong>Static or Semi-Static</strong></td>
+                                <td>Data changes infrequently; updates are rare and controlled</td>
+                            </tr>
+                            <tr>
+                                <td><strong>Read-Heavy</strong></td>
+                                <td>Heavily queried but rarely modified</td>
+                            </tr>
+                            <tr>
+                                <td><strong>No Foreign Keys</strong></td>
+                                <td>Typically doesn't reference other tables (though can have self-references for hierarchies)</td>
+                            </tr>
+                            <tr>
+                                <td><strong>Referenced by Many</strong></td>
+                                <td>Multiple tables have foreign keys pointing to it</td>
+                            </tr>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Section 2: When and Why -->
+            <div class="section">
+                <div class="collapsible">
+                    <div class="collapsible-header">
+                        2. When and Why to Use Lookup Tables
+                    </div>
+                    <div class="collapsible-content">
+                        <h3>When to Use Lookup Tables</h3>
+                        
+                        <div class="success-box">
+                            <strong>✅ Use lookup tables when:</strong>
+                            <ul>
+                                <li>You have a <strong>finite, predefined set of values</strong> (e.g., countries, states, status codes)</li>
+                                <li>The same values are <strong>repeated across multiple records</strong></li>
+                                <li>You need to <strong>enforce data integrity</strong> through foreign key constraints</li>
+                                <li>Values need to be <strong>easily updated in one place</strong></li>
+                                <li>You want to <strong>standardize terminology</strong> across your database</li>
+                                <li>You need to support <strong>dropdown lists</strong> or selection menus in applications</li>
+                                <li>You want to <strong>normalize your database</strong> to reduce redundancy</li>
+                            </ul>
+                        </div>
+
+                        <div class="danger-box">
+                            <strong>❌ Don't use lookup tables when:</strong>
+                            <ul>
+                                <li>Values are <strong>user-generated and unlimited</strong> (e.g., customer names, product descriptions)</li>
+                                <li>The list would be <strong>extremely large</strong> (thousands of rows) and constantly growing</li>
+                                <li>Values are <strong>unique to each record</strong> and won't be reused</li>
+                                <li>The overhead of joins <strong>outweighs the benefits</strong> (rare, but possible in some cases)</li>
+                            </ul>
+                        </div>
+
+                        <h3>Why Use Lookup Tables? (Benefits)</h3>
+
+                        <div class="comparison-grid">
+                            <div class="comparison-card good">
+                                <h4>✅ With Lookup Tables</h4>
+                                <ul>
+                                    <li><strong>Data Consistency:</strong> "United States" spelled the same way every time</li>
+                                    <li><strong>Storage Efficiency:</strong> Store integer ID instead of full string</li>
+                                    <li><strong>Easy Updates:</strong> Change value once, affects all records</li>
+                                    <li><strong>Data Integrity:</strong> Foreign key prevents invalid values</li>
+                                    <li><strong>Performance:</strong> Faster joins on integers, better indexing</li>
+                                </ul>
+                            </div>
+                            <div class="comparison-card bad">
+                                <h4>❌ Without Lookup Tables</h4>
+                                <ul>
+                                    <li><strong>Inconsistency:</strong> "USA", "United States", "U.S.A.", "US"</li>
+                                    <li><strong>Wasted Space:</strong> Repetitive string storage</li>
+                                    <li><strong>Update Nightmare:</strong> Must update thousands of records</li>
+                                    <li><strong>No Validation:</strong> Typos and invalid entries possible</li>
+                                    <li><strong>Slower Queries:</strong> String comparisons are expensive</li>
+                                </ul>
+                            </div>
+                        </div>
+
+                        <h3>The Normalization Perspective</h3>
+                        <div class="info-box">
+                            <p><strong>Lookup tables are a key part of database normalization.</strong> They help achieve Third Normal Form (3NF) by:</p>
+                            <ul>
+                                <li>Eliminating repeating groups (1NF)</li>
+                                <li>Removing partial dependencies (2NF)</li>
+                                <li>Eliminating transitive dependencies (3NF)</li>
+                            </ul>
+                            <p style="margin-top: 10px;">By extracting repeated values into lookup tables, you reduce redundancy and ensure that each piece of information is stored exactly once.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Section 3: Real-World Examples -->
+            <div class="section">
+                <div class="collapsible">
+                    <div class="collapsible-header">
+                        3. Real-World Examples
+                    </div>
+                    <div class="collapsible-content">
+                        <h3>Example 1: E-Commerce Order System</h3>
+                        
+                        <div class="code-block">
+<span class="comment">-- Order Status Lookup Table</span>
+<span class="keyword">CREATE TABLE</span> order_statuses (
+    status_id <span class="keyword">INT PRIMARY KEY</span>,
+    status_code <span class="keyword">VARCHAR</span>(<span class="string">20</span>) <span class="keyword">UNIQUE NOT NULL</span>,
+    status_name <span class="keyword">VARCHAR</span>(<span class="string">50</span>) <span class="keyword">NOT NULL</span>,
+    description <span class="keyword">TEXT</span>,
+    display_order <span class="keyword">INT</span>
+);
+
+<span class="keyword">INSERT INTO</span> order_statuses
+    (status_id, status_code,    status_name,          description,                     display_order)
+<span class="keyword">VALUES</span>
+    (<span class="string">1</span>,          <span class="string">'PENDING'</span>,    <span class="string">'Pending Payment'</span>,    <span class="string">'Order placed, awaiting payment'</span>, <span class="string">1</span>),
+    (<span class="string">2</span>,          <span class="string">'PAID'</span>,       <span class="string">'Payment Confirmed'</span>,  <span class="string">'Payment received and verified'</span>,  <span class="string">2</span>),
+    (<span class="string">3</span>,          <span class="string">'PROCESSING'</span>, <span class="string">'Processing'</span>,         <span class="string">'Order being prepared'</span>,           <span class="string">3</span>),
+    (<span class="string">4</span>,          <span class="string">'SHIPPED'</span>,    <span class="string">'Shipped'</span>,             <span class="string">'Order dispatched'</span>,               <span class="string">4</span>),
+    (<span class="string">5</span>,          <span class="string">'DELIVERED'</span>,  <span class="string">'Delivered'</span>,           <span class="string">'Order received by customer'</span>,     <span class="string">5</span>),
+    (<span class="string">6</span>,          <span class="string">'CANCELLED'</span>,  <span class="string">'Cancelled'</span>,           <span class="string">'Order cancelled'</span>,                <span class="string">6</span>);
+
+<span class="comment">-- Orders Table (references lookup)</span>
+<span class="keyword">CREATE TABLE</span> orders (
+    order_id <span class="keyword">INT PRIMARY KEY</span>,
+    customer_id <span class="keyword">INT</span>,
+    order_date <span class="keyword">DATETIME</span>,
+    status_id <span class="keyword">INT</span>,
+    <span class="keyword">FOREIGN KEY</span> (status_id) <span class="keyword">REFERENCES</span> order_statuses(status_id)
+);
+                        </div>
+
+                        <h3>Example 2: Human Resources System</h3>
+                        
+                        <div class="code-block">
+<span class="comment">-- Department Lookup Table</span>
+<span class="keyword">CREATE TABLE</span> departments (
+    dept_id <span class="keyword">INT PRIMARY KEY</span>,
+    dept_code <span class="keyword">VARCHAR</span>(<span class="string">10</span>) <span class="keyword">UNIQUE</span>,
+    dept_name <span class="keyword">VARCHAR</span>(<span class="string">100</span>) <span class="keyword">NOT NULL</span>,
+    location <span class="keyword">VARCHAR</span>(<span class="string">100</span>)
+);
+
+<span class="comment">-- Employment Type Lookup Table</span>
+<span class="keyword">CREATE TABLE</span> employment_types (
+    type_id <span class="keyword">INT PRIMARY KEY</span>,
+    type_name <span class="keyword">VARCHAR</span>(<span class="string">50</span>) <span class="keyword">NOT NULL</span>,
+    is_fulltime <span class="keyword">BOOLEAN</span>,
+    benefits_eligible <span class="keyword">BOOLEAN</span>
+);
+
+<span class="keyword">INSERT INTO</span> employment_types
+    (type_id, type_name,      is_fulltime, benefits_eligible)
+<span class="keyword">VALUES</span>
+    (<span class="string">1</span>, <span class="string">'Full-Time'</span>,   <span class="string">TRUE</span>,        <span class="string">TRUE</span>),
+    (<span class="string">2</span>, <span class="string">'Part-Time'</span>,   <span class="string">FALSE</span>,       <span class="string">FALSE</span>),
+    (<span class="string">3</span>, <span class="string">'Contractor'</span>,  <span class="string">FALSE</span>,       <span class="string">FALSE</span>),
+    (<span class="string">4</span>, <span class="string">'Intern'</span>,      <span class="string">FALSE</span>,       <span class="string">FALSE</span>);
+
+<span class="comment">-- Employees Table</span>
+<span class="keyword">CREATE TABLE</span> employees (
+    employee_id <span class="keyword">INT PRIMARY KEY</span>,
+    first_name <span class="keyword">VARCHAR</span>(<span class="string">50</span>),
+    last_name <span class="keyword">VARCHAR</span>(<span class="string">50</span>),
+    dept_id <span class="keyword">INT</span>,
+    employment_type_id <span class="keyword">INT</span>,
+    <span class="keyword">FOREIGN KEY</span> (dept_id) <span class="keyword">REFERENCES</span> departments(dept_id),
+    <span class="keyword">FOREIGN KEY</span> (employment_type_id) <span class="keyword">REFERENCES</span> employment_types(type_id)
+);
+                        </div>
+
+                        <h3>Example 3: Healthcare System</h3>
+                        
+                        <div class="highlight-box">
+                            <strong>Common Healthcare Lookup Tables:</strong>
+                            <ul>
+                                <li><strong>Insurance Providers:</strong> List of accepted insurance companies</li>
+                                <li><strong>Blood Types:</strong> A+, A-, B+, B-, AB+, AB-, O+, O-</li>
+                                <li><strong>Appointment Types:</strong> Consultation, Follow-up, Emergency, Physical</li>
+                                <li><strong>Medication Frequencies:</strong> Once daily, Twice daily, Three times daily, As needed</li>
+                                <li><strong>Diagnosis Codes (ICD-10):</strong> Standardized medical condition codes</li>
+                            </ul>
+                        </div>
+
+                        <h3>Example 4: Geographic/Location Data</h3>
+                        
+                        <div class="code-block">
+<span class="comment">-- Countries, States/Provinces, Cities Hierarchy</span>
+<span class="keyword">CREATE TABLE</span> countries (
+    country_id <span class="keyword">INT PRIMARY KEY</span>,
+    country_name <span class="keyword">VARCHAR</span>(<span class="string">100</span>),
+    iso_code <span class="keyword">CHAR</span>(<span class="string">2</span>)
+);
+
+<span class="keyword">CREATE TABLE</span> states (
+    state_id <span class="keyword">INT PRIMARY KEY</span>,
+    state_name <span class="keyword">VARCHAR</span>(<span class="string">100</span>),
+    state_abbr <span class="keyword">VARCHAR</span>(<span class="string">5</span>),
+    country_id <span class="keyword">INT</span>,
+    <span class="keyword">FOREIGN KEY</span> (country_id) <span class="keyword">REFERENCES</span> countries(country_id)
+);
+
+<span class="keyword">CREATE TABLE</span> cities (
+    city_id <span class="keyword">INT PRIMARY KEY</span>,
+    city_name <span class="keyword">VARCHAR</span>(<span class="string">100</span>),
+    state_id <span class="keyword">INT</span>,
+    <span class="keyword">FOREIGN KEY</span> (state_id) <span class="keyword">REFERENCES</span> states(state_id)
+);
+
+<span class="comment">-- Customer addresses now reference lookup tables</span>
+<span class="keyword">CREATE TABLE</span> customer_addresses (
+    address_id <span class="keyword">INT PRIMARY KEY</span>,
+    customer_id <span class="keyword">INT</span>,
+    street_address <span class="keyword">VARCHAR</span>(<span class="string">200</span>),
+    city_id <span class="keyword">INT</span>,
+    state_id <span class="keyword">INT</span>,
+    country_id <span class="keyword">INT</span>,
+    postal_code <span class="keyword">VARCHAR</span>(<span class="string">20</span>),
+    <span class="keyword">FOREIGN KEY</span> (city_id) <span class="keyword">REFERENCES</span> cities(city_id),
+    <span class="keyword">FOREIGN KEY</span> (state_id) <span class="keyword">REFERENCES</span> states(state_id),
+    <span class="keyword">FOREIGN KEY</span> (country_id) <span class="keyword">REFERENCES</span> countries(country_id)
+);
+                        </div>
+
+                        <h3>Example 5: University Course System</h3>
+                        
+                        <div class="code-block">
+<span class="comment">-- Semester Lookup</span>
+<span class="keyword">CREATE TABLE</span> semesters (
+    semester_id <span class="keyword">INT PRIMARY KEY</span>,
+    semester_code <span class="keyword">VARCHAR</span>(<span class="string">10</span>), <span class="comment">-- e.g., 'FALL2025'</span>
+    semester_name <span class="keyword">VARCHAR</span>(<span class="string">50</span>), <span class="comment">-- e.g., 'Fall 2025'</span>
+    start_date <span class="keyword">DATE</span>,
+    end_date <span class="keyword">DATE</span>
+);
+
+<span class="comment">-- Grade Scale Lookup</span>
+<span class="keyword">CREATE TABLE</span> grade_scale (
+    grade_id <span class="keyword">INT PRIMARY KEY</span>,
+    letter_grade <span class="keyword">CHAR</span>(<span class="string">2</span>), <span class="comment">-- A, A-, B+, B, etc.</span>
+    grade_points <span class="keyword">DECIMAL</span>(<span class="string">3,2</span>), <span class="comment">-- 4.00, 3.67, 3.33, etc.</span>
+    min_percentage <span class="keyword">DECIMAL</span>(<span class="string">5,2</span>),
+    max_percentage <span class="keyword">DECIMAL</span>(<span class="string">5,2</span>)
+);
+
+<span class="comment">-- Course Status Lookup</span>
+<span class="keyword">CREATE TABLE</span> course_statuses (
+    status_id <span class="keyword">INT PRIMARY KEY</span>,
+    status_name <span class="keyword">VARCHAR</span>(<span class="string">30</span>) <span class="comment">-- Active, Cancelled, Completed, Waitlisted</span>
+);
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Section 4: Best Practices -->
+            <div class="section">
+                <div class="collapsible">
+                    <div class="collapsible-header">
+                        4. Best Practices for Lookup Tables
+                    </div>
+                    <div class="collapsible-content">
+                        <h3>1. Naming Conventions</h3>
+                        <div class="success-box">
+                            <strong>✅ Good Naming Practices:</strong>
+                            <ul>
+                                <li>Use <strong>plural nouns</strong> for table names: <code>countries</code>, <code>statuses</code>, <code>departments</code></li>
+                                <li>Use descriptive names: <code>order_statuses</code> not just <code>statuses</code></li>
+                                <li>Be consistent with suffixes: <code>_types</code>, <code>_categories</code>, <code>_codes</code></li>
+                                <li>Primary key: <code>table_name_id</code> or just <code>id</code></li>
+                            </ul>
+                        </div>
+
+                        <h3>2. Primary Key Strategy</h3>
+                        <table>
+                            <tr>
+                                <th>Strategy</th>
+                                <th>Pros</th>
+                                <th>Cons</th>
+                                <th>Best For</th>
+                            </tr>
+                            <tr>
+                                <td><strong>Surrogate Key (INT)</strong></td>
+                                <td>Fast joins, small storage, flexible</td>
+                                <td>No inherent meaning</td>
+                                <td>Most cases</td>
+                            </tr>
+                            <tr>
+                                <td><strong>Natural Key (Code)</strong></td>
+                                <td>Meaningful, readable</td>
+                                <td>Slower joins, larger storage</td>
+                                <td>Small, stable lookups</td>
+                            </tr>
+                            <tr>
+                                <td><strong>Composite Approach</strong></td>
+                                <td>Best of both worlds</td>
+                                <td>More complex</td>
+                                <td>When you need both speed and meaning</td>
+                            </tr>
+                        </table>
+
+                        <div class="info-box">
+                            <strong>💡 Recommended Approach:</strong> Use an <code>INT</code> surrogate key as the primary key, but also include a <code>code</code> or <code>abbreviation</code> column with a unique constraint for human readability and business logic.
+                        </div>
+
+                        <h3>3. Include Descriptive Fields</h3>
+                        <div class="code-block">
+<span class="comment">-- Basic lookup (minimal)</span>
+<span class="keyword">CREATE TABLE</span> priorities (
+    priority_id <span class="keyword">INT PRIMARY KEY</span>,
+    priority_name <span class="keyword">VARCHAR</span>(<span class="string">20</span>) <span class="comment">-- Low, Medium, High, Critical</span>
+);
+
+<span class="comment">-- Enhanced lookup (recommended)</span>
+<span class="keyword">CREATE TABLE</span> priorities (
+    priority_id <span class="keyword">INT PRIMARY KEY</span>,
+    priority_code <span class="keyword">VARCHAR</span>(<span class="string">10</span>) <span class="keyword">UNIQUE</span>, <span class="comment">-- L, M, H, C</span>
+    priority_name <span class="keyword">VARCHAR</span>(<span class="string">20</span>) <span class="keyword">NOT NULL</span>,
+    description <span class="keyword">TEXT</span>, <span class="comment">-- Full explanation</span>
+    color_hex <span class="keyword">VARCHAR</span>(<span class="string">7</span>), <span class="comment">-- For UI display: #28a745</span>
+    response_time_hours <span class="keyword">INT</span>, <span class="comment">-- Business rule: SLA</span>
+    display_order <span class="keyword">INT</span>, <span class="comment">-- Sort order in dropdowns</span>
+    is_active <span class="keyword">BOOLEAN DEFAULT</span> <span class="string">TRUE</span>, <span class="comment">-- Soft delete</span>
+    created_at <span class="keyword">TIMESTAMP DEFAULT CURRENT_TIMESTAMP</span>,
+    updated_at <span class="keyword">TIMESTAMP DEFAULT CURRENT_TIMESTAMP</span>
+);
+                        </div>
+
+                        <h3>4. Data Integrity with Foreign Keys</h3>
+                        <div class="success-box">
+                            <strong>Always enforce referential integrity:</strong>
+                        </div>
+                        <div class="code-block">
+<span class="comment">-- Bad: No foreign key constraint</span>
+<span class="keyword">CREATE TABLE</span> orders (
+    order_id <span class="keyword">INT PRIMARY KEY</span>,
+    status_id <span class="keyword">INT</span> <span class="comment">-- Can contain invalid values!</span>
+);
+
+<span class="comment">-- Good: Foreign key constraint</span>
+<span class="keyword">CREATE TABLE</span> orders (
+    order_id <span class="keyword">INT PRIMARY KEY</span>,
+    status_id <span class="keyword">INT NOT NULL</span>,
+    <span class="keyword">CONSTRAINT</span> fk_order_status 
+        <span class="keyword">FOREIGN KEY</span> (status_id) 
+        <span class="keyword">REFERENCES</span> order_statuses(status_id)
+        <span class="keyword">ON DELETE RESTRICT</span> <span class="comment">-- Prevent deletion of referenced values</span>
+        <span class="keyword">ON UPDATE CASCADE</span> <span class="comment">-- Update references if ID changes</span>
+);
+                        </div>
+
+                        <h3>5. Handle Changes Over Time</h3>
+                        <div class="highlight-box">
+                            <strong>⚠️ Important: Never hard delete lookup values that are referenced by historical data!</strong>
+                        </div>
+
+                        <div class="comparison-grid">
+                            <div class="comparison-card bad">
+                                <h4>❌ Bad Approach</h4>
+                                <pre style="background: #2d2d2d; padding: 10px; border-radius: 5px; color: #fff;">
+DELETE FROM statuses 
+WHERE status_id = 3;
+-- This breaks foreign keys!
+                                </pre>
+                            </div>
+                            <div class="comparison-card good">
+                                <h4>✅ Good Approach</h4>
+                                <pre style="background: #2d2d2d; padding: 10px; border-radius: 5px; color: #fff;">
+UPDATE statuses 
+SET is_active = FALSE,
+    retired_date = CURRENT_DATE
+WHERE status_id = 3;
+-- Soft delete preserves history
+                                </pre>
+                            </div>
+                        </div>
+
+                        <h3>6. Indexing Strategy</h3>
+                        <div class="code-block">
+<span class="comment">-- Primary key is automatically indexed</span>
+<span class="keyword">CREATE TABLE</span> countries (
+    country_id <span class="keyword">INT PRIMARY KEY</span>, <span class="comment">-- Clustered index</span>
+    country_code <span class="keyword">CHAR</span>(<span class="string">2</span>) <span class="keyword">UNIQUE</span>, <span class="comment">-- Unique index automatically created</span>
+    country_name <span class="keyword">VARCHAR</span>(<span class="string">100</span>)
+);
+
+<span class="comment">-- Add indexes on frequently queried columns</span>
+<span class="keyword">CREATE INDEX</span> idx_country_name
+    <span class="keyword">ON</span> countries (country_name);
+
+<span class="keyword">CREATE INDEX</span> idx_active
+    <span class="keyword">ON</span> countries (is_active)
+    <span class="keyword">WHERE</span> is_active = <span class="string">TRUE</span>;
+                        </div>
+
+                        <h3>7. Documentation and Comments</h3>
+                        <div class="code-block">
+<span class="keyword">CREATE TABLE</span> order_statuses (
+    status_id <span class="keyword">INT PRIMARY KEY</span>,
+    status_code <span class="keyword">VARCHAR</span>(<span class="string">20</span>),
+    status_name <span class="keyword">VARCHAR</span>(<span class="string">50</span>)
+) <span class="keyword">COMMENT</span>=<span class="string">'Lookup table for valid order status values. 
+Referenced by orders table. Values should never be deleted, 
+only marked inactive if deprecated.'</span>;
+
+<span class="comment">-- Or use database documentation tools</span>
+<span class="keyword">COMMENT ON TABLE</span>  order_statuses
+    <span class="keyword">IS</span> <span class="string">'Valid order status values'</span>;
+
+<span class="keyword">COMMENT ON COLUMN</span> order_statuses.display_order
+    <span class="keyword">IS</span> <span class="string">'Sort order for UI dropdowns (ascending)'</span>;
+                        </div>
+
+                        <h3>8. Consider Caching</h3>
+                        <div class="info-box">
+                            <strong>Performance Tip:</strong> Since lookup tables are read-heavy and change infrequently, they are excellent candidates for caching in your application layer. Load them once on application startup and refresh periodically or on-demand.
+                        </div>
+
+                        <h3>9. Validation and Constraints</h3>
+                        <div class="code-block">
+<span class="keyword">CREATE TABLE</span> priorities (
+    priority_id <span class="keyword">INT PRIMARY KEY</span>,
+    priority_code <span class="keyword">VARCHAR</span>(<span class="string">10</span>) <span class="keyword">UNIQUE NOT NULL</span>,
+    priority_name <span class="keyword">VARCHAR</span>(<span class="string">50</span>) <span class="keyword">NOT NULL</span>,
+    display_order <span class="keyword">INT UNIQUE NOT NULL</span>, <span class="comment">-- Ensures no duplicate sort orders</span>
+    is_active <span class="keyword">BOOLEAN DEFAULT</span> <span class="string">TRUE NOT NULL</span>,
+    
+    <span class="comment">-- Check constraints for data validation</span>
+    <span class="keyword">CONSTRAINT</span> chk_order_positive 
+        <span class="keyword">CHECK</span> (display_order > <span class="string">0</span>),
+    <span class="keyword">CONSTRAINT</span> chk_code_uppercase 
+        <span class="keyword">CHECK</span> (priority_code = <span class="keyword">UPPER</span>(priority_code))
+);
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Section 5: Common Pitfalls -->
+            <div class="section">
+                <div class="collapsible">
+                    <div class="collapsible-header">
+                        5. Common Pitfalls to Avoid
+                    </div>
+                    <div class="collapsible-content">
+                        <h3>❌ Pitfall #1: Over-Engineering Small Lists</h3>
+                        <div class="danger-box">
+                            <p><strong>Problem:</strong> Creating lookup tables for truly binary or very small, never-changing values.</p>
+                            <p><strong>Example:</strong> Creating a lookup table for "Gender" with only M/F when an ENUM or CHECK constraint would suffice.</p>
+                        </div>
+                        <div class="code-block">
+<span class="comment">-- Overkill for simple binary choice:</span>
+<span class="keyword">CREATE TABLE</span> genders (
+    gender_id <span class="keyword">INT PRIMARY KEY</span>,
+    gender_name <span class="keyword">VARCHAR</span>(<span class="string">10</span>)
+);
+
+<span class="comment">-- Better approach for simple, fixed values:</span>
+<span class="keyword">CREATE TABLE</span> users (
+    user_id <span class="keyword">INT PRIMARY KEY</span>,
+    gender  <span class="keyword">ENUM</span>(<span class="string">'M'</span>, <span class="string">'F'</span>, <span class="string">'Other'</span>, <span class="string">'Prefer not to say'</span>)
+);
+
+<span class="comment">-- OR using a CHECK constraint:</span>
+gender <span class="keyword">VARCHAR</span>(<span class="string">20</span>) <span class="keyword">CHECK</span> (
+    gender <span class="keyword">IN</span> (<span class="string">'Male'</span>, <span class="string">'Female'</span>, <span class="string">'Other'</span>)
+)
+                        </div>
+
+                        <h3>❌ Pitfall #2: Not Using Foreign Keys</h3>
+                        <div class="danger-box">
+                            <p><strong>Problem:</strong> Referencing lookup tables without foreign key constraints.</p>
+                            <p><strong>Result:</strong> Orphaned records, invalid references, data corruption.</p>
+                        </div>
+
+                        <h3>❌ Pitfall #3: Hard-Coding Lookup IDs in Application Code</h3>
+                        <div class="code-block">
+<span class="comment">-- Bad: Magic numbers in code</span>
+<span class="keyword">if</span> (order.status_id == <span class="string">3</span>) { <span class="comment">// What is 3?</span>
+    processShipment(order);
+}
+
+<span class="comment">-- Better: Query by meaningful code</span>
+<span class="keyword">SELECT</span> status_id
+<span class="keyword">FROM</span>   order_statuses 
+<span class="keyword">WHERE</span>  status_code = <span class="string">'PROCESSING'</span>;
+
+<span class="comment">-- Best: Application constants loaded from database</span>
+<span class="keyword">const</span> STATUS_PROCESSING = db.lookupCache.getStatusId(<span class="string">'PROCESSING'</span>);
+<span class="keyword">if</span> (order.status_id == STATUS_PROCESSING) {
+    processShipment(order);
+}
+                        </div>
+
+                        <h3>❌ Pitfall #4: Not Planning for Growth</h3>
+                        <div class="danger-box">
+                            <p><strong>Problem:</strong> Lookup table outgrows initial design (goes from 10 to 10,000 rows).</p>
+                            <p><strong>Solution:</strong> Consider if the data truly belongs in a lookup table or needs rearchitecting.</p>
+                        </div>
+
+                        <h3>❌ Pitfall #5: Forgetting About Historical Data</h3>
+                        <div class="highlight-box">
+                            <strong>Scenario:</strong> You rename "Expedited Shipping" to "Express Shipping" in the lookup table.
+                            <ul>
+                                <li><strong>Problem:</strong> Old orders now display "Express Shipping" even though that term didn't exist then.</li>
+                                <li><strong>Solution:</strong> Either use versioning (effective dates) or accept that historical records will reflect current terminology.</li>
+                            </ul>
+                        </div>
+
+                        <h3>❌ Pitfall #6: Creating Too Many Single-Purpose Lookup Tables</h3>
+                        <div class="danger-box">
+                            <p><strong>Problem:</strong> Database cluttered with dozens of tiny 2-column lookup tables.</p>
+                            <p><strong>Better:</strong> Consider a generic "reference data" table with category groupings (though this has tradeoffs).</p>
+                        </div>
+
+                        <h3>✅ The Rule of Thumb</h3>
+                        <div class="success-box">
+                            <strong>Create a lookup table when:</strong>
+                            <ol>
+                                <li>You have 3+ distinct values that repeat</li>
+                                <li>Values are relatively stable (not user-generated)</li>
+                                <li>You need referential integrity</li>
+                                <li>The list might grow modestly over time</li>
+                                <li>Multiple tables will reference these values</li>
+                            </ol>
+                            <strong>Skip the lookup table when:</strong>
+                            <ol>
+                                <li>Only 2 fixed values that will never change</li>
+                                <li>Values are unique to each record</li>
+                                <li>The list is unlimited and user-driven</li>
+                            </ol>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Section 6: Advanced Topics -->
+            <div class="section">
+                <div class="collapsible">
+                    <div class="collapsible-header">
+                        6. Advanced Topics
+                    </div>
+                    <div class="collapsible-content">
+                        <h3>Hierarchical Lookup Tables</h3>
+                        <p>Some lookup tables have parent-child relationships:</p>
+                        <div class="code-block">
+<span class="keyword">CREATE TABLE</span> categories (
+    category_id <span class="keyword">INT PRIMARY KEY</span>,
+    category_name <span class="keyword">VARCHAR</span>(<span class="string">100</span>),
+    parent_category_id <span class="keyword">INT</span>,
+    level <span class="keyword">INT</span>,
+    <span class="keyword">FOREIGN KEY</span> (parent_category_id) <span class="keyword">REFERENCES</span> categories(category_id)
+);
+
+<span class="comment">-- Example: Product Categories</span>
+<span class="comment">-- Electronics (NULL parent)
+--   ├── Computers (parent: Electronics)
+--   │    ├── Laptops (parent: Computers)
+--   │    └── Desktops (parent: Computers)
+--   └── Phones (parent: Electronics)</span>
+                        </div>
+
+                        <h3>Versioned Lookup Tables (Temporal Data)</h3>
+                        <p>Track changes over time with effective dating:</p>
+                        <div class="code-block">
+<span class="keyword">CREATE TABLE</span> tax_rates (
+    tax_rate_id <span class="keyword">INT PRIMARY KEY</span>,
+    state_id <span class="keyword">INT</span>,
+    tax_percentage <span class="keyword">DECIMAL</span>(<span class="string">5,3</span>),
+    effective_from <span class="keyword">DATE NOT NULL</span>,
+    effective_to <span class="keyword">DATE</span>, <span class="comment">-- NULL means current</span>
+    <span class="keyword">FOREIGN KEY</span> (state_id) <span class="keyword">REFERENCES</span> states(state_id)
+);
+
+<span class="comment">-- Query for rate at specific date</span>
+<span class="keyword">SELECT</span> tax_percentage 
+<span class="keyword">FROM</span>   tax_rates
+<span class="keyword">WHERE</span>  state_id = <span class="string">10</span>
+  <span class="keyword">AND</span>  <span class="string">'2025-02-11'</span> <span class="keyword">BETWEEN</span> effective_from
+                      <span class="keyword">AND</span> <span class="keyword">COALESCE</span>(effective_to, <span class="string">'9999-12-31'</span>);
+                        </div>
+
+                        <h3>Multi-Language Support</h3>
+                        <div class="code-block">
+<span class="keyword">CREATE TABLE</span> countries (
+    country_id <span class="keyword">INT PRIMARY KEY</span>,
+    country_code <span class="keyword">CHAR</span>(<span class="string">2</span>)
+);
+
+<span class="keyword">CREATE TABLE</span> country_translations (
+    country_id <span class="keyword">INT</span>,
+    language_code <span class="keyword">CHAR</span>(<span class="string">2</span>),
+    country_name <span class="keyword">VARCHAR</span>(<span class="string">100</span>),
+    <span class="keyword">PRIMARY KEY</span> (country_id, language_code),
+    <span class="keyword">FOREIGN KEY</span> (country_id) <span class="keyword">REFERENCES</span> countries(country_id)
+);
+
+<span class="comment">-- Sample data</span>
+<span class="keyword">INSERT INTO</span> country_translations
+    (country_id, language_code, country_name)
+<span class="keyword">VALUES</span>
+    (<span class="string">1</span>, <span class="string">'EN'</span>, <span class="string">'United States'</span>),
+    (<span class="string">1</span>, <span class="string">'ES'</span>, <span class="string">'Estados Unidos'</span>),
+    (<span class="string">1</span>, <span class="string">'FR'</span>, <span class="string">'États-Unis'</span>);
+                        </div>
+
+                        <h3>Generic Lookup Architecture</h3>
+                        <p>For systems with many small lookup tables, some architects use a generic approach:</p>
+                        <div class="code-block">
+<span class="keyword">CREATE TABLE</span> lookup_types (
+    type_id <span class="keyword">INT PRIMARY KEY</span>,
+    type_name <span class="keyword">VARCHAR</span>(<span class="string">50</span>) <span class="comment">-- 'OrderStatus', 'Priority', 'Department'</span>
+);
+
+<span class="keyword">CREATE TABLE</span> lookup_values (
+    value_id <span class="keyword">INT PRIMARY KEY</span>,
+    type_id <span class="keyword">INT</span>,
+    value_code <span class="keyword">VARCHAR</span>(<span class="string">50</span>),
+    value_name <span class="keyword">VARCHAR</span>(<span class="string">100</span>),
+    display_order <span class="keyword">INT</span>,
+    <span class="keyword">FOREIGN KEY</span> (type_id) <span class="keyword">REFERENCES</span> lookup_types(type_id)
+);
+                        </div>
+                        <div class="highlight-box">
+                            <strong>⚠️ Trade-off Warning:</strong> This approach reduces table proliferation but loses type safety, makes foreign keys more complex, and reduces clarity. Use sparingly and only when you have many similar small lookup tables.
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Section 7: Summary -->
+            <div class="section">
+                <div class="collapsible">
+                    <div class="collapsible-header">
+                        7. Summary & Key Takeaways
+                    </div>
+                    <div class="collapsible-content">
+                        <h3>🎯 Core Principles</h3>
+                        <div class="info-box">
+                            <ol>
+                                <li><strong>Lookup tables store finite, predefined sets of values</strong> that are referenced throughout your database</li>
+                                <li><strong>They enforce data integrity</strong> through foreign key constraints</li>
+                                <li><strong>They eliminate redundancy</strong> and ensure consistency</li>
+                                <li><strong>They simplify updates</strong> - change once, affect everywhere</li>
+                                <li><strong>They improve performance</strong> through integer keys and better indexing</li>
+                            </ol>
+                        </div>
+
+                        <h3>✅ Best Practices Checklist</h3>
+                        <table>
+                            <tr>
+                                <th>Practice</th>
+                                <th>Why It Matters</th>
+                            </tr>
+                            <tr>
+                                <td>✓ Use surrogate INT primary keys</td>
+                                <td>Fast joins, small footprint, flexibility</td>
+                            </tr>
+                            <tr>
+                                <td>✓ Include meaningful code columns</td>
+                                <td>Business logic, readability, debugging</td>
+                            </tr>
+                            <tr>
+                                <td>✓ Always use foreign key constraints</td>
+                                <td>Data integrity, prevent orphaned records</td>
+                            </tr>
+                            <tr>
+                                <td>✓ Implement soft deletes (is_active flag)</td>
+                                <td>Preserve historical data integrity</td>
+                            </tr>
+                            <tr>
+                                <td>✓ Add display_order for UI sorting</td>
+                                <td>Consistent dropdown ordering</td>
+                            </tr>
+                            <tr>
+                                <td>✓ Document table purpose and constraints</td>
+                                <td>Maintainability, team understanding</td>
+                            </tr>
+                            <tr>
+                                <td>✓ Consider caching in application layer</td>
+                                <td>Performance - these rarely change</td>
+                            </tr>
+                            <tr>
+                                <td>✓ Use unique constraints on code columns</td>
+                                <td>Prevent duplicates, enable code-based lookups</td>
+                            </tr>
+                        </table>
+
+                        <h3>🚀 When to Use Lookup Tables</h3>
+                        <div class="comparison-grid">
+                            <div class="comparison-card good">
+                                <h4>✅ Good Candidates</h4>
+                                <ul>
+                                    <li>Countries, states, cities</li>
+                                    <li>Order/ticket statuses</li>
+                                    <li>Priorities (Low/Med/High)</li>
+                                    <li>Departments, roles</li>
+                                    <li>Payment methods</li>
+                                    <li>Product categories</li>
+                                    <li>Units of measure</li>
+                                    <li>Time zones</li>
+                                </ul>
+                            </div>
+                            <div class="comparison-card bad">
+                                <h4>❌ Poor Candidates</h4>
+                                <ul>
+                                    <li>Customer names</li>
+                                    <li>Product descriptions</li>
+                                    <li>Email addresses</li>
+                                    <li>Passwords/hashes</li>
+                                    <li>Unique identifiers</li>
+                                    <li>Unbounded user content</li>
+                                    <li>True binary flags (use BOOLEAN)</li>
+                                </ul>
+                            </div>
+                        </div>
+
+                        <h3>💡 Final Thoughts</h3>
+                        <div class="success-box">
+                            <p><strong>Lookup tables are foundational to good database design.</strong> They embody the principles of normalization, data integrity, and maintainability. While they add complexity through additional tables and joins, the benefits far outweigh the costs in most scenarios.</p>
+                            <p style="margin-top: 10px;">Master lookup tables, and you've mastered a critical aspect of professional database design. They're the unsung heroes that keep your data clean, consistent, and reliable.</p>
+                        </div>
+
+                        <h3>📚 Further Reading</h3>
+                        <ul>
+                            <li>Database Normalization (1NF through 5NF)</li>
+                            <li>Foreign Key Constraints and Referential Integrity</li>
+                            <li>Indexing Strategies for Lookup Tables</li>
+                            <li>Design Patterns: Reference Data Management</li>
+                            <li>Temporal Database Design (Handling Historical Data)</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+
+        <footer>
+            <p>COP4709 - Database Management Systems</p>
+            <p>&copy; 2025 Course Materials | Last Updated: February 2025</p>
+        </footer>
+    </div>
+
+    <script>
+        // Collapsible functionality
+        document.addEventListener('DOMContentLoaded', function() {
+            const collapsibles = document.querySelectorAll('.collapsible-header');
+            
+            collapsibles.forEach(header => {
+                header.addEventListener('click', function() {
+                    const collapsible = this.parentElement;
+                    collapsible.classList.toggle('active');
+                });
+            });
+
+            // Open first section by default
+            document.querySelector('.collapsible').classList.add('active');
+        });
+    </script>
+</body>
+</html>

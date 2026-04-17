@@ -1,0 +1,2214 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>COP4709 - Cursors and Iterating Through Data</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            padding: 20px;
+            line-height: 1.6;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            overflow: hidden;
+        }
+
+        .header {
+            background: linear-gradient(135deg, #ff6b6b 0%, #ee5a6f 100%);
+            color: white;
+            padding: 40px;
+            text-align: center;
+        }
+
+        .header h1 {
+            font-size: 2.5em;
+            margin-bottom: 10px;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+        }
+
+        .header p {
+            font-size: 1.2em;
+            opacity: 0.9;
+        }
+
+        .content {
+            padding: 40px;
+        }
+
+        .intro-box {
+            background: linear-gradient(135deg, #ff6b6b 0%, #ee5a6f 100%);
+            color: white;
+            padding: 30px;
+            border-radius: 10px;
+            margin-bottom: 30px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+        }
+
+        .intro-box h2 {
+            margin-bottom: 15px;
+            font-size: 1.8em;
+        }
+
+        .collapsible {
+            background-color: #e74c3c;
+            color: white;
+            cursor: pointer;
+            padding: 18px;
+            width: 100%;
+            border: none;
+            text-align: left;
+            outline: none;
+            font-size: 1.2em;
+            font-weight: bold;
+            border-radius: 8px;
+            margin-bottom: 10px;
+            transition: all 0.3s ease;
+            box-shadow: 0 3px 10px rgba(0,0,0,0.2);
+        }
+
+        .collapsible:hover {
+            background-color: #c0392b;
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+        }
+
+        .collapsible.active {
+            background-color: #27ae60;
+        }
+
+        .collapsible:after {
+            content: '\002B';
+            color: white;
+            font-weight: bold;
+            float: right;
+            margin-left: 5px;
+            font-size: 1.3em;
+        }
+
+        .collapsible.active:after {
+            content: "\2212";
+        }
+
+        .collapsible-content {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.3s ease-out;
+            background-color: #f8f9fa;
+            border-radius: 0 0 8px 8px;
+            margin-bottom: 20px;
+        }
+
+        .collapsible-inner {
+            padding: 25px;
+        }
+
+        .info-box {
+            background: #e8f6f3;
+            border-left: 5px solid #16a085;
+            padding: 20px;
+            margin: 20px 0;
+            border-radius: 5px;
+        }
+
+        .warning-box {
+            background: #fef5e7;
+            border-left: 5px solid #f39c12;
+            padding: 20px;
+            margin: 20px 0;
+            border-radius: 5px;
+        }
+
+        .success-box {
+            background: #d5f4e6;
+            border-left: 5px solid #27ae60;
+            padding: 20px;
+            margin: 20px 0;
+            border-radius: 5px;
+        }
+
+        .tip-box {
+            background: #ebf5fb;
+            border-left: 5px solid #3498db;
+            padding: 20px;
+            margin: 20px 0;
+            border-radius: 5px;
+        }
+
+        .danger-box {
+            background: #fadbd8;
+            border-left: 5px solid #e74c3c;
+            padding: 20px;
+            margin: 20px 0;
+            border-radius: 5px;
+        }
+
+        .step-container {
+            background: white;
+            border: 2px solid #e74c3c;
+            border-radius: 8px;
+            padding: 20px;
+            margin: 15px 0;
+        }
+
+        .step-number {
+            display: inline-block;
+            background: #e74c3c;
+            color: white;
+            width: 35px;
+            height: 35px;
+            border-radius: 50%;
+            text-align: center;
+            line-height: 35px;
+            font-weight: bold;
+            margin-right: 10px;
+        }
+
+        .step-title {
+            display: inline-block;
+            font-size: 1.3em;
+            color: #2c3e50;
+            font-weight: bold;
+            vertical-align: middle;
+        }
+
+        .step-content {
+            margin-top: 15px;
+            padding-left: 45px;
+        }
+
+        code {
+            background: #2c3e50;
+            color: #f8f8f2;
+            padding: 3px 8px;
+            border-radius: 4px;
+            font-family: 'Courier New', monospace;
+            font-size: 0.9em;
+        }
+
+        .code-block {
+            background: #2c3e50;
+            color: #f8f8f2;
+            padding: 20px;
+            border-radius: 8px;
+            margin: 15px 0;
+            overflow-x: auto;
+            font-family: 'Courier New', monospace;
+            font-size: 0.9em;
+            line-height: 1.5;
+            white-space: pre-wrap;
+        }
+
+        .sql-comment {
+            color: #95a5a6;
+        }
+
+        .sql-keyword {
+            color: #f92672;
+            font-weight: bold;
+        }
+
+        .sql-function {
+            color: #66d9ef;
+        }
+
+        .sql-string {
+            color: #a6e22e;
+        }
+
+        ul, ol {
+            margin-left: 25px;
+            margin-top: 10px;
+        }
+
+        li {
+            margin: 10px 0;
+        }
+
+        h3 {
+            color: #2c3e50;
+            margin: 20px 0 10px 0;
+            font-size: 1.5em;
+        }
+
+        h4 {
+            color: #34495e;
+            margin: 15px 0 10px 0;
+            font-size: 1.2em;
+        }
+
+        .comparison-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 20px 0;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        }
+
+        .comparison-table th {
+            background: #e74c3c;
+            color: white;
+            padding: 15px;
+            text-align: left;
+            font-weight: bold;
+        }
+
+        .comparison-table td {
+            padding: 12px 15px;
+            border-bottom: 1px solid #ddd;
+        }
+
+        .comparison-table tr:hover {
+            background: #f5f5f5;
+        }
+
+        .perf-card {
+            background: white;
+            border: 2px solid #e74c3c;
+            border-radius: 10px;
+            padding: 25px;
+            margin: 15px 0;
+        }
+
+        .perf-card h4 {
+            color: #e74c3c;
+            font-size: 1.4em;
+            margin-bottom: 15px;
+        }
+
+        .footer {
+            background: linear-gradient(135deg, #ff6b6b 0%, #ee5a6f 100%);
+            color: white;
+            padding: 20px;
+            text-align: center;
+        }
+
+        strong {
+            color: #2c3e50;
+        }
+
+        .highlight {
+            background: #fef5e7;
+            padding: 2px 5px;
+            border-radius: 3px;
+        }
+
+        .vs-grid {
+            display: grid;
+            grid-template-columns: 1fr auto 1fr;
+            gap: 10px;
+            align-items: center;
+            margin: 20px 0;
+        }
+
+        .vs-box {
+            background: #f8f9fa;
+            border: 2px solid #dee2e6;
+            border-radius: 8px;
+            padding: 20px;
+            text-align: center;
+        }
+
+        .vs-divider {
+            font-size: 2em;
+            font-weight: bold;
+            color: #e74c3c;
+        }
+
+        .good-practice {
+            background: #d5f4e6;
+            border-left: 5px solid #27ae60;
+            padding: 15px;
+            margin: 10px 0;
+            border-radius: 5px;
+        }
+
+        .bad-practice {
+            background: #fadbd8;
+            border-left: 5px solid #e74c3c;
+            padding: 15px;
+            margin: 10px 0;
+            border-radius: 5px;
+        }
+
+        .cursor-type-card {
+            background: white;
+            border: 2px solid #3498db;
+            border-radius: 8px;
+            padding: 20px;
+            margin: 15px 0;
+        }
+
+        .cursor-type-card h4 {
+            color: #3498db;
+            margin-bottom: 10px;
+        }
+
+        @media (max-width: 768px) {
+            .vs-grid {
+                grid-template-columns: 1fr;
+            }
+            .vs-divider {
+                transform: rotate(90deg);
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🗄️ COP4709 Database Systems</h1>
+            <p>Cursors and Iterating Through Data</p>
+        </div>
+
+        <div class="content">
+            <div class="intro-box">
+                <h2>📚 Module Overview</h2>
+                <p>Cursors allow you to process database result sets row-by-row, but they come with significant performance tradeoffs. This module teaches you when cursors are necessary, when they should be avoided, and how to use them effectively in T-SQL and other database systems. You'll learn the fundamentals of cursor programming, explore alternatives, and understand the performance implications of your choices.</p>
+            </div>
+
+            <!-- Section 1: Understanding Cursors -->
+            <button class="collapsible">1. What Are Cursors?</button>
+            <div class="collapsible-content">
+                <div class="collapsible-inner">
+                    <h3>The Fundamental Concept</h3>
+                    
+                    <div class="info-box">
+                        <h4>📖 Definition</h4>
+                        <p>A <strong>cursor</strong> is a database object that enables traversal over the rows of a result set, one row at a time. Think of it as a pointer that moves through query results, allowing you to perform operations on each row individually.</p>
+                    </div>
+
+                    <h3>How SQL Typically Works (Set-Based)</h3>
+                    <div class="step-container">
+                        <div class="step-content" style="padding-left: 0;">
+                            <p><strong>Standard SQL operations work on entire sets of data at once:</strong></p>
+                            <div class="code-block">
+<span class="sql-comment">-- Update all employees at once (set-based operation)</span>
+<span class="sql-keyword">UPDATE</span> Employees
+<span class="sql-keyword">SET</span> Salary = Salary * 1.10
+<span class="sql-keyword">WHERE</span> Department = <span class="sql-string">'Sales'</span>;
+
+<span class="sql-comment">-- Deletes all matching rows in one operation</span>
+<span class="sql-keyword">DELETE FROM</span> Orders
+<span class="sql-keyword">WHERE</span> OrderDate < <span class="sql-function">DATEADD</span>(YEAR, -2, <span class="sql-function">GETDATE</span>());
+                            </div>
+                            <p>These operations are fast, efficient, and optimized by the database engine.</p>
+                        </div>
+                    </div>
+
+                    <h3>How Cursors Work (Row-by-Row)</h3>
+                    <div class="step-container">
+                        <div class="step-content" style="padding-left: 0;">
+                            <p><strong>Cursors process one row at a time:</strong></p>
+                            <div class="code-block">
+<span class="sql-comment">-- Declare cursor for a SELECT statement</span>
+<span class="sql-keyword">DECLARE</span> employee_cursor <span class="sql-keyword">CURSOR FOR</span>
+    <span class="sql-keyword">SELECT</span> EmployeeID, Salary
+    <span class="sql-keyword">FROM</span> Employees
+    <span class="sql-keyword">WHERE</span> Department = <span class="sql-string">'Sales'</span>;
+
+<span class="sql-comment">-- Open the cursor</span>
+<span class="sql-keyword">OPEN</span> employee_cursor;
+
+<span class="sql-comment">-- Fetch first row</span>
+<span class="sql-keyword">FETCH NEXT FROM</span> employee_cursor <span class="sql-keyword">INTO</span> @EmpID, @EmpSalary;
+
+<span class="sql-comment">-- Loop through all rows</span>
+<span class="sql-keyword">WHILE</span> @@FETCH_STATUS = 0
+<span class="sql-keyword">BEGIN</span>
+    <span class="sql-comment">-- Do something with each row</span>
+    <span class="sql-keyword">UPDATE</span> Employees
+    <span class="sql-keyword">SET</span> Salary = @EmpSalary * 1.10
+    <span class="sql-keyword">WHERE</span> EmployeeID = @EmpID;
+    
+    <span class="sql-comment">-- Fetch next row</span>
+    <span class="sql-keyword">FETCH NEXT FROM</span> employee_cursor <span class="sql-keyword">INTO</span> @EmpID, @EmpSalary;
+<span class="sql-keyword">END</span>;
+
+<span class="sql-comment">-- Clean up</span>
+<span class="sql-keyword">CLOSE</span> employee_cursor;
+<span class="sql-keyword">DEALLOCATE</span> employee_cursor;
+                            </div>
+                            <p>This processes rows individually, which is slower but gives you more control.</p>
+                        </div>
+                    </div>
+
+                    <h3>The Set-Based vs Row-Based Paradigm</h3>
+
+                    <div class="vs-grid">
+                        <div class="vs-box" style="border-color: #27ae60;">
+                            <h4 style="color: #27ae60;">✓ Set-Based Operations</h4>
+                            <ul style="text-align: left;">
+                                <li>Process all rows at once</li>
+                                <li>Optimized by query engine</li>
+                                <li>Fast and efficient</li>
+                                <li>Declarative (what, not how)</li>
+                                <li>Uses indexes effectively</li>
+                            </ul>
+                        </div>
+                        
+                        <div class="vs-divider">VS</div>
+                        
+                        <div class="vs-box" style="border-color: #e74c3c;">
+                            <h4 style="color: #e74c3c;">⚠ Cursors (Row-Based)</h4>
+                            <ul style="text-align: left;">
+                                <li>Process one row at a time</li>
+                                <li>Limited optimization</li>
+                                <li>Generally slower</li>
+                                <li>Procedural (how to do it)</li>
+                                <li>More overhead per row</li>
+                            </ul>
+                        </div>
+                    </div>
+
+                    <h3>Why Do Cursors Exist?</h3>
+
+                    <div class="success-box">
+                        <h4>✅ Valid Use Cases for Cursors:</h4>
+                        <ul>
+                            <li><strong>Complex row-by-row logic:</strong> When each row requires different treatment based on complex business rules</li>
+                            <li><strong>External API calls:</strong> When you need to call an external system for each record</li>
+                            <li><strong>Administrative tasks:</strong> One-time maintenance operations (rebuilding indexes, updating statistics)</li>
+                            <li><strong>Reporting:</strong> When building complex reports that need row-level calculations</li>
+                            <li><strong>Data migration:</strong> Complex transformations during ETL processes</li>
+                            <li><strong>Sending emails/notifications:</strong> Individual messages for each customer</li>
+                        </ul>
+                    </div>
+
+                    <div class="danger-box">
+                        <h4>🚫 When NOT to Use Cursors:</h4>
+                        <ul>
+                            <li>Simple updates that can be done with a single UPDATE statement</li>
+                            <li>Calculations that can be done with aggregate functions (SUM, AVG, COUNT)</li>
+                            <li>Data transformation that can be done with JOINs</li>
+                            <li>Any operation that can be accomplished with set-based SQL</li>
+                            <li>High-volume transactional processing (OLTP)</li>
+                        </ul>
+                    </div>
+
+                    <h3>The Golden Rule</h3>
+
+                    <div class="warning-box">
+                        <h4>⚡ Performance Principle:</h4>
+                        <p style="font-size: 1.2em; font-weight: bold;">"Cursors should be your last resort, not your first choice."</p>
+                        <p>Always try to solve the problem with set-based SQL first. Only use cursors when set-based operations are truly impossible or impractical.</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Section 2: Cursor Syntax and Lifecycle -->
+            <button class="collapsible">2. Cursor Syntax and Lifecycle in T-SQL</button>
+            <div class="collapsible-content">
+                <div class="collapsible-inner">
+                    <h3>The Five Steps of Cursor Usage</h3>
+
+                    <div class="step-container">
+                        <span class="step-number">1</span>
+                        <span class="step-title">DECLARE - Define the Cursor</span>
+                        <div class="step-content">
+                            <p>Create the cursor and associate it with a SELECT statement:</p>
+                            <div class="code-block">
+<span class="sql-keyword">DECLARE</span> cursor_name <span class="sql-keyword">CURSOR</span> [options]
+<span class="sql-keyword">FOR</span> 
+    select_statement;
+                            </div>
+
+                            <p><strong>Example:</strong></p>
+                            <div class="code-block">
+<span class="sql-keyword">DECLARE</span> @EmployeeID <span class="sql-keyword">INT</span>;
+<span class="sql-keyword">DECLARE</span> @EmployeeName <span class="sql-keyword">NVARCHAR</span>(100);
+
+<span class="sql-keyword">DECLARE</span> employee_cursor <span class="sql-keyword">CURSOR FOR</span>
+    <span class="sql-keyword">SELECT</span> EmployeeID, FirstName + <span class="sql-string">' '</span> + LastName
+    <span class="sql-keyword">FROM</span> Employees
+    <span class="sql-keyword">WHERE</span> Department = <span class="sql-string">'IT'</span>
+    <span class="sql-keyword">ORDER BY</span> LastName;
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="step-container">
+                        <span class="step-number">2</span>
+                        <span class="step-title">OPEN - Populate the Cursor</span>
+                        <div class="step-content">
+                            <p>Execute the SELECT statement and populate the result set:</p>
+                            <div class="code-block">
+<span class="sql-keyword">OPEN</span> cursor_name;
+                            </div>
+
+                            <p><strong>Example:</strong></p>
+                            <div class="code-block">
+<span class="sql-keyword">OPEN</span> employee_cursor;
+                            </div>
+
+                            <div class="info-box">
+                                <p><strong>What happens:</strong> The query executes, and the result set is loaded into memory (or managed according to cursor type).</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="step-container">
+                        <span class="step-number">3</span>
+                        <span class="step-title">FETCH - Retrieve Rows</span>
+                        <div class="step-content">
+                            <p>Retrieve data from the cursor into variables:</p>
+                            <div class="code-block">
+<span class="sql-keyword">FETCH</span> [direction] <span class="sql-keyword">FROM</span> cursor_name 
+<span class="sql-keyword">INTO</span> @variable1, @variable2, ...;
+                            </div>
+
+                            <p><strong>Fetch directions (for scrollable cursors):</strong></p>
+                            <ul>
+                                <li><code>NEXT</code> - Next row (default)</li>
+                                <li><code>PRIOR</code> - Previous row</li>
+                                <li><code>FIRST</code> - First row</li>
+                                <li><code>LAST</code> - Last row</li>
+                                <li><code>ABSOLUTE n</code> - Nth row</li>
+                                <li><code>RELATIVE n</code> - N rows from current position</li>
+                            </ul>
+
+                            <p><strong>Example:</strong></p>
+                            <div class="code-block">
+<span class="sql-comment">-- Fetch first row</span>
+<span class="sql-keyword">FETCH NEXT FROM</span> employee_cursor 
+<span class="sql-keyword">INTO</span> @EmployeeID, @EmployeeName;
+
+<span class="sql-comment">-- Check if fetch was successful</span>
+<span class="sql-keyword">IF</span> @@FETCH_STATUS = 0
+<span class="sql-keyword">BEGIN</span>
+    <span class="sql-keyword">PRINT</span> <span class="sql-string">'Employee: '</span> + @EmployeeName;
+<span class="sql-keyword">END</span>;
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="step-container">
+                        <span class="step-number">4</span>
+                        <span class="step-title">CLOSE - Release the Result Set</span>
+                        <div class="step-content">
+                            <p>Close the cursor and release the current result set:</p>
+                            <div class="code-block">
+<span class="sql-keyword">CLOSE</span> cursor_name;
+                            </div>
+
+                            <p><strong>Example:</strong></p>
+                            <div class="code-block">
+<span class="sql-keyword">CLOSE</span> employee_cursor;
+                            </div>
+
+                            <div class="info-box">
+                                <p><strong>What happens:</strong> The result set is released, but the cursor definition still exists. You can OPEN it again if needed.</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="step-container">
+                        <span class="step-number">5</span>
+                        <span class="step-title">DEALLOCATE - Remove the Cursor</span>
+                        <div class="step-content">
+                            <p>Remove the cursor definition and free all resources:</p>
+                            <div class="code-block">
+<span class="sql-keyword">DEALLOCATE</span> cursor_name;
+                            </div>
+
+                            <p><strong>Example:</strong></p>
+                            <div class="code-block">
+<span class="sql-keyword">DEALLOCATE</span> employee_cursor;
+                            </div>
+
+                            <div class="warning-box">
+                                <p><strong>⚠️ Important:</strong> Always DEALLOCATE cursors to free memory. Cursors that aren't deallocated can cause memory leaks!</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <h3>@@FETCH_STATUS</h3>
+
+                    <div class="info-box">
+                        <h4>Understanding Fetch Status Codes</h4>
+                        <p>The <code>@@FETCH_STATUS</code> function returns the status of the last FETCH statement:</p>
+                        <table class="comparison-table">
+                            <thead>
+                                <tr>
+                                    <th>Return Value</th>
+                                    <th>Meaning</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td><strong>0</strong></td>
+                                    <td>FETCH was successful</td>
+                                </tr>
+                                <tr>
+                                    <td><strong>-1</strong></td>
+                                    <td>FETCH failed or row is beyond the result set</td>
+                                </tr>
+                                <tr>
+                                    <td><strong>-2</strong></td>
+                                    <td>Row fetched is missing (only for keyset cursors)</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <h3>Complete Basic Example</h3>
+
+                    <div class="code-block">
+<span class="sql-comment">-- Complete cursor example: Print all employee names</span>
+
+<span class="sql-comment">-- Step 1: Declare variables</span>
+<span class="sql-keyword">DECLARE</span> @EmployeeID <span class="sql-keyword">INT</span>;
+<span class="sql-keyword">DECLARE</span> @EmployeeName <span class="sql-keyword">NVARCHAR</span>(100);
+
+<span class="sql-comment">-- Step 2: Declare cursor</span>
+<span class="sql-keyword">DECLARE</span> employee_cursor <span class="sql-keyword">CURSOR FOR</span>
+    <span class="sql-keyword">SELECT</span> EmployeeID, FirstName + <span class="sql-string">' '</span> + LastName
+    <span class="sql-keyword">FROM</span> Employees
+    <span class="sql-keyword">ORDER BY</span> LastName;
+
+<span class="sql-comment">-- Step 3: Open cursor</span>
+<span class="sql-keyword">OPEN</span> employee_cursor;
+
+<span class="sql-comment">-- Step 4: Fetch first row</span>
+<span class="sql-keyword">FETCH NEXT FROM</span> employee_cursor 
+<span class="sql-keyword">INTO</span> @EmployeeID, @EmployeeName;
+
+<span class="sql-comment">-- Step 5: Loop through all rows</span>
+<span class="sql-keyword">WHILE</span> @@FETCH_STATUS = 0
+<span class="sql-keyword">BEGIN</span>
+    <span class="sql-comment">-- Process current row</span>
+    <span class="sql-keyword">PRINT</span> <span class="sql-function">CAST</span>(@EmployeeID <span class="sql-keyword">AS</span> <span class="sql-keyword">VARCHAR</span>) + <span class="sql-string">': '</span> + @EmployeeName;
+    
+    <span class="sql-comment">-- Fetch next row</span>
+    <span class="sql-keyword">FETCH NEXT FROM</span> employee_cursor 
+    <span class="sql-keyword">INTO</span> @EmployeeID, @EmployeeName;
+<span class="sql-keyword">END</span>;
+
+<span class="sql-comment">-- Step 6: Close cursor</span>
+<span class="sql-keyword">CLOSE</span> employee_cursor;
+
+<span class="sql-comment">-- Step 7: Deallocate cursor</span>
+<span class="sql-keyword">DEALLOCATE</span> employee_cursor;
+                            </div>
+                </div>
+            </div>
+
+            <!-- Section 3: Cursor Types and Options -->
+            <button class="collapsible">3. Cursor Types and Options</button>
+            <div class="collapsible-content">
+                <div class="collapsible-inner">
+                    <h3>Cursor Declaration Syntax</h3>
+
+                    <div class="code-block">
+<span class="sql-keyword">DECLARE</span> cursor_name <span class="sql-keyword">CURSOR</span>
+    [LOCAL | GLOBAL]
+    [FORWARD_ONLY | SCROLL]
+    [STATIC | KEYSET | DYNAMIC | FAST_FORWARD]
+    [READ_ONLY | SCROLL_LOCKS | OPTIMISTIC]
+    [TYPE_WARNING]
+<span class="sql-keyword">FOR</span> select_statement;
+                            </div>
+
+                    <h3>Scope Options</h3>
+
+                    <div class="cursor-type-card">
+                        <h4>LOCAL vs GLOBAL</h4>
+                        
+                        <p><strong>LOCAL (default):</strong></p>
+                        <ul>
+                            <li>Cursor is local to the batch, stored procedure, or trigger</li>
+                            <li>Automatically deallocated when the scope ends</li>
+                            <li>Recommended for most scenarios</li>
+                        </ul>
+
+                        <p><strong>GLOBAL:</strong></p>
+                        <ul>
+                            <li>Cursor is available to any stored procedure or batch in the connection</li>
+                            <li>Must be explicitly deallocated</li>
+                            <li>Use when cursor needs to be shared across procedures</li>
+                        </ul>
+
+                        <div class="code-block">
+<span class="sql-comment">-- Local cursor (recommended)</span>
+<span class="sql-keyword">DECLARE</span> emp_cursor <span class="sql-keyword">CURSOR LOCAL FOR</span>
+    <span class="sql-keyword">SELECT</span> EmployeeID <span class="sql-keyword">FROM</span> Employees;
+
+<span class="sql-comment">-- Global cursor</span>
+<span class="sql-keyword">DECLARE</span> emp_cursor <span class="sql-keyword">CURSOR GLOBAL FOR</span>
+    <span class="sql-keyword">SELECT</span> EmployeeID <span class="sql-keyword">FROM</span> Employees;
+                        </div>
+                    </div>
+
+                    <h3>Scrollability Options</h3>
+
+                    <div class="cursor-type-card">
+                        <h4>FORWARD_ONLY vs SCROLL</h4>
+                        
+                        <p><strong>FORWARD_ONLY (default):</strong></p>
+                        <ul>
+                            <li>Can only move forward through the result set (FETCH NEXT)</li>
+                            <li>Faster and uses less memory</li>
+                            <li>Best for sequential processing</li>
+                        </ul>
+
+                        <div class="code-block">
+<span class="sql-keyword">DECLARE</span> emp_cursor <span class="sql-keyword">CURSOR FORWARD_ONLY FOR</span>
+    <span class="sql-keyword">SELECT</span> EmployeeID <span class="sql-keyword">FROM</span> Employees;
+
+<span class="sql-keyword">OPEN</span> emp_cursor;
+<span class="sql-keyword">FETCH NEXT FROM</span> emp_cursor <span class="sql-keyword">INTO</span> @ID;  <span class="sql-comment">-- ✓ Works</span>
+<span class="sql-keyword">FETCH PRIOR FROM</span> emp_cursor <span class="sql-keyword">INTO</span> @ID; <span class="sql-comment">-- ✗ Error!</span>
+                        </div>
+
+                        <p><strong>SCROLL:</strong></p>
+                        <ul>
+                            <li>Allows forward and backward movement</li>
+                            <li>Supports NEXT, PRIOR, FIRST, LAST, ABSOLUTE, RELATIVE</li>
+                            <li>Uses more memory</li>
+                            <li>Use when you need random access to rows</li>
+                        </ul>
+
+                        <div class="code-block">
+<span class="sql-keyword">DECLARE</span> emp_cursor <span class="sql-keyword">CURSOR SCROLL FOR</span>
+    <span class="sql-keyword">SELECT</span> EmployeeID <span class="sql-keyword">FROM</span> Employees;
+
+<span class="sql-keyword">OPEN</span> emp_cursor;
+<span class="sql-keyword">FETCH NEXT FROM</span> emp_cursor <span class="sql-keyword">INTO</span> @ID;     <span class="sql-comment">-- ✓ Move forward</span>
+<span class="sql-keyword">FETCH PRIOR FROM</span> emp_cursor <span class="sql-keyword">INTO</span> @ID;    <span class="sql-comment">-- ✓ Move backward</span>
+<span class="sql-keyword">FETCH FIRST FROM</span> emp_cursor <span class="sql-keyword">INTO</span> @ID;    <span class="sql-comment">-- ✓ Jump to first</span>
+<span class="sql-keyword">FETCH LAST FROM</span> emp_cursor <span class="sql-keyword">INTO</span> @ID;     <span class="sql-comment">-- ✓ Jump to last</span>
+<span class="sql-keyword">FETCH ABSOLUTE</span> 5 <span class="sql-keyword">FROM</span> emp_cursor <span class="sql-keyword">INTO</span> @ID; <span class="sql-comment">-- ✓ Jump to row 5</span>
+                        </div>
+                    </div>
+
+                    <h3>Cursor Types</h3>
+
+                    <div class="cursor-type-card">
+                        <h4>1. STATIC Cursor</h4>
+                        <p><strong>Creates a snapshot of the data at the time the cursor opens</strong></p>
+                        
+                        <ul>
+                            <li>Data is copied to tempdb</li>
+                            <li>Changes to underlying tables are NOT reflected in the cursor</li>
+                            <li>Always scrollable</li>
+                            <li>Higher memory usage</li>
+                            <li>Good for reporting where data consistency is critical</li>
+                        </ul>
+
+                        <div class="code-block">
+<span class="sql-keyword">DECLARE</span> emp_cursor <span class="sql-keyword">CURSOR STATIC FOR</span>
+    <span class="sql-keyword">SELECT</span> EmployeeID, Salary 
+    <span class="sql-keyword">FROM</span> Employees;
+
+<span class="sql-keyword">OPEN</span> emp_cursor;
+
+<span class="sql-comment">-- Someone updates salary in another session</span>
+<span class="sql-comment">-- Cursor still sees OLD salary values</span>
+
+<span class="sql-keyword">FETCH NEXT FROM</span> emp_cursor <span class="sql-keyword">INTO</span> @ID, @Salary;
+                        </div>
+                    </div>
+
+                    <div class="cursor-type-card">
+                        <h4>2. KEYSET Cursor</h4>
+                        <p><strong>Keys are fixed, but values can change</strong></p>
+                        
+                        <ul>
+                            <li>Set of keys is fixed when cursor opens</li>
+                            <li>Values are fetched when you retrieve each row</li>
+                            <li>Sees updates to existing rows</li>
+                            <li>Does NOT see new rows inserted after open</li>
+                            <li>Deleted rows show as @@FETCH_STATUS = -2</li>
+                            <li>Always scrollable</li>
+                        </ul>
+
+                        <div class="code-block">
+<span class="sql-keyword">DECLARE</span> emp_cursor <span class="sql-keyword">CURSOR KEYSET FOR</span>
+    <span class="sql-keyword">SELECT</span> EmployeeID, Salary 
+    <span class="sql-keyword">FROM</span> Employees;
+
+<span class="sql-keyword">OPEN</span> emp_cursor;
+
+<span class="sql-comment">-- Someone updates salary: Cursor WILL see the new value</span>
+<span class="sql-comment">-- Someone inserts new employee: Cursor will NOT see it</span>
+<span class="sql-comment">-- Someone deletes employee: @@FETCH_STATUS = -2</span>
+                        </div>
+                    </div>
+
+                    <div class="cursor-type-card">
+                        <h4>3. DYNAMIC Cursor</h4>
+                        <p><strong>Reflects all changes to the data</strong></p>
+                        
+                        <ul>
+                            <li>Always reflects current state of data</li>
+                            <li>Sees inserts, updates, and deletes</li>
+                            <li>Most overhead and slowest</li>
+                            <li>Row order can change</li>
+                            <li>Always scrollable</li>
+                        </ul>
+
+                        <div class="code-block">
+<span class="sql-keyword">DECLARE</span> emp_cursor <span class="sql-keyword">CURSOR DYNAMIC FOR</span>
+    <span class="sql-keyword">SELECT</span> EmployeeID, Salary 
+    <span class="sql-keyword">FROM</span> Employees
+    <span class="sql-keyword">ORDER BY</span> Salary;
+
+<span class="sql-keyword">OPEN</span> emp_cursor;
+
+<span class="sql-comment">-- All changes are visible in real-time</span>
+<span class="sql-comment">-- New rows appear, updates are seen, deletes remove rows</span>
+                        </div>
+                    </div>
+
+                    <div class="cursor-type-card">
+                        <h4>4. FAST_FORWARD (Recommended for Performance)</h4>
+                        <p><strong>Optimized forward-only, read-only cursor</strong></p>
+                        
+                        <ul>
+                            <li>Fastest cursor type</li>
+                            <li>Forward-only, read-only</li>
+                            <li>Performance optimizations enabled</li>
+                            <li>Recommended for most cursor scenarios</li>
+                        </ul>
+
+                        <div class="code-block">
+<span class="sql-keyword">DECLARE</span> emp_cursor <span class="sql-keyword">CURSOR FAST_FORWARD FOR</span>
+    <span class="sql-keyword">SELECT</span> EmployeeID, Salary 
+    <span class="sql-keyword">FROM</span> Employees;
+
+<span class="sql-comment">-- This is equivalent to:</span>
+<span class="sql-comment">-- FORWARD_ONLY READ_ONLY with performance optimizations</span>
+                        </div>
+
+                        <div class="success-box">
+                            <p><strong>✅ Best Practice:</strong> Use FAST_FORWARD unless you specifically need scrollability or to see data changes.</p>
+                        </div>
+                    </div>
+
+                    <h3>Concurrency Options</h3>
+
+                    <div class="cursor-type-card">
+                        <h4>READ_ONLY, SCROLL_LOCKS, and OPTIMISTIC</h4>
+                        
+                        <p><strong>READ_ONLY (recommended):</strong></p>
+                        <ul>
+                            <li>Cannot update data through the cursor</li>
+                            <li>Fastest option</li>
+                            <li>No locking overhead</li>
+                        </ul>
+
+                        <p><strong>SCROLL_LOCKS:</strong></p>
+                        <ul>
+                            <li>Locks each row as it's fetched</li>
+                            <li>Guarantees updates succeed</li>
+                            <li>Can cause blocking</li>
+                        </ul>
+
+                        <p><strong>OPTIMISTIC:</strong></p>
+                        <ul>
+                            <li>No locks on fetch</li>
+                            <li>Updates may fail if row changed</li>
+                            <li>Uses timestamps or values to detect changes</li>
+                        </ul>
+                    </div>
+
+                    <h3>Cursor Type Comparison</h3>
+
+                    <table class="comparison-table">
+                        <thead>
+                            <tr>
+                                <th>Type</th>
+                                <th>Scrollable</th>
+                                <th>Sees Updates</th>
+                                <th>Sees Inserts</th>
+                                <th>Performance</th>
+                                <th>Use When</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td><strong>FAST_FORWARD</strong></td>
+                                <td>No</td>
+                                <td>N/A</td>
+                                <td>N/A</td>
+                                <td>⭐⭐⭐⭐⭐</td>
+                                <td>Sequential processing (most common)</td>
+                            </tr>
+                            <tr>
+                                <td><strong>FORWARD_ONLY</strong></td>
+                                <td>No</td>
+                                <td>Maybe</td>
+                                <td>Maybe</td>
+                                <td>⭐⭐⭐⭐</td>
+                                <td>Sequential, may need to see changes</td>
+                            </tr>
+                            <tr>
+                                <td><strong>STATIC</strong></td>
+                                <td>Yes</td>
+                                <td>No</td>
+                                <td>No</td>
+                                <td>⭐⭐</td>
+                                <td>Data consistency critical, reporting</td>
+                            </tr>
+                            <tr>
+                                <td><strong>KEYSET</strong></td>
+                                <td>Yes</td>
+                                <td>Yes</td>
+                                <td>No</td>
+                                <td>⭐⭐⭐</td>
+                                <td>Need scrolling, want to see updates</td>
+                            </tr>
+                            <tr>
+                                <td><strong>DYNAMIC</strong></td>
+                                <td>Yes</td>
+                                <td>Yes</td>
+                                <td>Yes</td>
+                                <td>⭐</td>
+                                <td>Must see all changes (rarely needed)</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- Section 4: Cursors in Stored Procedures -->
+            <button class="collapsible">4. Using Cursors in Stored Procedures</button>
+            <div class="collapsible-content">
+                <div class="collapsible-inner">
+                    <h3>Complete Stored Procedure Example</h3>
+
+                    <div class="code-block">
+<span class="sql-comment">/*
+    Stored Procedure: Calculate employee bonuses based on performance
+    Uses cursor to process each employee individually
+*/</span>
+
+<span class="sql-keyword">CREATE PROCEDURE</span> CalculateEmployeeBonuses
+    @DepartmentID <span class="sql-keyword">INT</span>,
+    @BonusMultiplier <span class="sql-keyword">DECIMAL</span>(5,2) = 1.0
+<span class="sql-keyword">AS BEGIN</span>
+    <span class="sql-keyword">SET NOCOUNT ON</span>;
+    
+    <span class="sql-comment">-- Declare variables for cursor data</span>
+    <span class="sql-keyword">DECLARE</span> @EmployeeID <span class="sql-keyword">INT</span>;
+    <span class="sql-keyword">DECLARE</span> @EmployeeName <span class="sql-keyword">NVARCHAR</span>(100);
+    <span class="sql-keyword">DECLARE</span> @Salary <span class="sql-keyword">DECIMAL</span>(10,2);
+    <span class="sql-keyword">DECLARE</span> @PerformanceRating <span class="sql-keyword">DECIMAL</span>(3,2);
+    <span class="sql-keyword">DECLARE</span> @CalculatedBonus <span class="sql-keyword">DECIMAL</span>(10,2);
+    <span class="sql-keyword">DECLARE</span> @ProcessedCount <span class="sql-keyword">INT</span> = 0;
+    <span class="sql-keyword">DECLARE</span> @TotalBonuses <span class="sql-keyword">DECIMAL</span>(15,2) = 0;
+    
+    <span class="sql-comment">-- Declare the cursor</span>
+    <span class="sql-keyword">DECLARE</span> employee_cursor <span class="sql-keyword">CURSOR LOCAL FAST_FORWARD FOR</span>
+        <span class="sql-keyword">SELECT</span> 
+            e.EmployeeID,
+            e.FirstName + <span class="sql-string">' '</span> + e.LastName,
+            e.Salary,
+            <span class="sql-function">ISNULL</span>(pr.Rating, 1.0)
+        <span class="sql-keyword">FROM</span> Employees e
+        <span class="sql-keyword">LEFT JOIN</span> PerformanceReviews pr 
+            <span class="sql-keyword">ON</span> e.EmployeeID = pr.EmployeeID
+            <span class="sql-keyword">AND</span> pr.ReviewYear = <span class="sql-function">YEAR</span>(<span class="sql-function">GETDATE</span>())
+        <span class="sql-keyword">WHERE</span> e.DepartmentID = @DepartmentID
+            <span class="sql-keyword">AND</span> e.IsActive = 1
+        <span class="sql-keyword">ORDER BY</span> e.LastName;
+    
+    <span class="sql-comment">-- Error handling</span>
+    <span class="sql-keyword">BEGIN TRY</span>
+        
+        <span class="sql-comment">-- Open cursor</span>
+        <span class="sql-keyword">OPEN</span> employee_cursor;
+        
+        <span class="sql-comment">-- Fetch first row</span>
+        <span class="sql-keyword">FETCH NEXT FROM</span> employee_cursor 
+        <span class="sql-keyword">INTO</span> @EmployeeID, @EmployeeName, @Salary, @PerformanceRating;
+        
+        <span class="sql-comment">-- Process each employee</span>
+        <span class="sql-keyword">WHILE</span> @@FETCH_STATUS = 0
+        <span class="sql-keyword">BEGIN</span>
+            <span class="sql-comment">-- Complex bonus calculation logic</span>
+            <span class="sql-comment">-- Base: 10% of salary</span>
+            <span class="sql-comment">-- Modified by performance rating and bonus multiplier</span>
+            <span class="sql-keyword">SET</span> @CalculatedBonus = (@Salary * 0.10) 
+                                  * @PerformanceRating 
+                                  * @BonusMultiplier;
+            
+            <span class="sql-comment">-- Apply business rules</span>
+            <span class="sql-keyword">IF</span> @PerformanceRating >= 1.5
+            <span class="sql-keyword">BEGIN</span>
+                <span class="sql-comment">-- Top performers get additional 20%</span>
+                <span class="sql-keyword">SET</span> @CalculatedBonus = @CalculatedBonus * 1.2;
+            <span class="sql-keyword">END</span>
+            
+            <span class="sql-comment">-- Cap bonuses at 25% of salary</span>
+            <span class="sql-keyword">IF</span> @CalculatedBonus > (@Salary * 0.25)
+            <span class="sql-keyword">BEGIN</span>
+                <span class="sql-keyword">SET</span> @CalculatedBonus = @Salary * 0.25;
+            <span class="sql-keyword">END</span>
+            
+            <span class="sql-comment">-- Update employee bonus</span>
+            <span class="sql-keyword">UPDATE</span> Employees
+            <span class="sql-keyword">SET</span> BonusAmount = @CalculatedBonus,
+                LastBonusCalculation = <span class="sql-function">GETDATE</span>()
+            <span class="sql-keyword">WHERE</span> EmployeeID = @EmployeeID;
+            
+            <span class="sql-comment">-- Log the bonus calculation</span>
+            <span class="sql-keyword">INSERT INTO</span> BonusLog (EmployeeID, BonusAmount, CalculationDate)
+            <span class="sql-keyword">VALUES</span> (@EmployeeID, @CalculatedBonus, <span class="sql-function">GETDATE</span>());
+            
+            <span class="sql-comment">-- Track totals</span>
+            <span class="sql-keyword">SET</span> @ProcessedCount = @ProcessedCount + 1;
+            <span class="sql-keyword">SET</span> @TotalBonuses = @TotalBonuses + @CalculatedBonus;
+            
+            <span class="sql-comment">-- Optional: Print progress</span>
+            <span class="sql-keyword">PRINT</span> <span class="sql-string">'Processed: '</span> + @EmployeeName + 
+                  <span class="sql-string">' - Bonus: $'</span> + <span class="sql-function">CAST</span>(@CalculatedBonus <span class="sql-keyword">AS VARCHAR</span>);
+            
+            <span class="sql-comment">-- Fetch next row</span>
+            <span class="sql-keyword">FETCH NEXT FROM</span> employee_cursor 
+            <span class="sql-keyword">INTO</span> @EmployeeID, @EmployeeName, @Salary, @PerformanceRating;
+        <span class="sql-keyword">END</span>;
+        
+        <span class="sql-comment">-- Clean up cursor</span>
+        <span class="sql-keyword">CLOSE</span> employee_cursor;
+        <span class="sql-keyword">DEALLOCATE</span> employee_cursor;
+        
+        <span class="sql-comment">-- Return summary</span>
+        <span class="sql-keyword">SELECT</span> 
+            @ProcessedCount <span class="sql-keyword">AS</span> EmployeesProcessed,
+            @TotalBonuses <span class="sql-keyword">AS</span> TotalBonusAmount;
+            
+    <span class="sql-keyword">END TRY</span>
+    <span class="sql-keyword">BEGIN CATCH</span>
+        <span class="sql-comment">-- Ensure cursor is cleaned up even on error</span>
+        <span class="sql-keyword">IF</span> <span class="sql-function">CURSOR_STATUS</span>(<span class="sql-string">'local'</span>, <span class="sql-string">'employee_cursor'</span>) >= 0
+        <span class="sql-keyword">BEGIN</span>
+            <span class="sql-keyword">CLOSE</span> employee_cursor;
+            <span class="sql-keyword">DEALLOCATE</span> employee_cursor;
+        <span class="sql-keyword">END</span>;
+        
+        <span class="sql-comment">-- Re-throw error</span>
+        <span class="sql-keyword">THROW</span>;
+    <span class="sql-keyword">END CATCH</span>;
+<span class="sql-keyword">END</span>;
+<span class="sql-keyword">GO</span>
+
+<span class="sql-comment">-- Execute the stored procedure</span>
+<span class="sql-keyword">EXEC</span> CalculateEmployeeBonuses 
+    @DepartmentID = 5, 
+    @BonusMultiplier = 1.15;
+                            </div>
+
+                    <h3>Cursor with Transaction Control</h3>
+
+                    <div class="code-block">
+<span class="sql-keyword">CREATE PROCEDURE</span> ProcessOrderBatch
+    @BatchSize <span class="sql-keyword">INT</span> = 100
+<span class="sql-keyword">AS BEGIN</span>
+    <span class="sql-keyword">SET NOCOUNT ON</span>;
+    
+    <span class="sql-keyword">DECLARE</span> @OrderID <span class="sql-keyword">INT</span>;
+    <span class="sql-keyword">DECLARE</span> @ProcessedCount <span class="sql-keyword">INT</span> = 0;
+    
+    <span class="sql-comment">-- Cursor for unprocessed orders</span>
+    <span class="sql-keyword">DECLARE</span> order_cursor <span class="sql-keyword">CURSOR LOCAL FAST_FORWARD FOR</span>
+        <span class="sql-keyword">SELECT TOP</span> (@BatchSize) OrderID
+        <span class="sql-keyword">FROM</span> Orders
+        <span class="sql-keyword">WHERE</span> ProcessingStatus = <span class="sql-string">'Pending'</span>
+        <span class="sql-keyword">ORDER BY</span> OrderDate;
+    
+    <span class="sql-keyword">OPEN</span> order_cursor;
+    <span class="sql-keyword">FETCH NEXT FROM</span> order_cursor <span class="sql-keyword">INTO</span> @OrderID;
+    
+    <span class="sql-keyword">WHILE</span> @@FETCH_STATUS = 0
+    <span class="sql-keyword">BEGIN</span>
+        <span class="sql-comment">-- Process each order in its own transaction</span>
+        <span class="sql-keyword">BEGIN TRANSACTION</span>;
+        
+        <span class="sql-keyword">BEGIN TRY</span>
+            <span class="sql-comment">-- Complex processing logic here</span>
+            <span class="sql-keyword">EXEC</span> ProcessSingleOrder @OrderID;
+            
+            <span class="sql-comment">-- Mark as processed</span>
+            <span class="sql-keyword">UPDATE</span> Orders
+            <span class="sql-keyword">SET</span> ProcessingStatus = <span class="sql-string">'Completed'</span>,
+                ProcessedDate = <span class="sql-function">GETDATE</span>()
+            <span class="sql-keyword">WHERE</span> OrderID = @OrderID;
+            
+            <span class="sql-comment">-- Commit this order</span>
+            <span class="sql-keyword">COMMIT TRANSACTION</span>;
+            
+            <span class="sql-keyword">SET</span> @ProcessedCount = @ProcessedCount + 1;
+            
+        <span class="sql-keyword">END TRY</span>
+        <span class="sql-keyword">BEGIN CATCH</span>
+            <span class="sql-comment">-- Rollback just this order, continue with others</span>
+            <span class="sql-keyword">ROLLBACK TRANSACTION</span>;
+            
+            <span class="sql-comment">-- Log the error</span>
+            <span class="sql-keyword">INSERT INTO</span> OrderProcessingErrors 
+                (OrderID, ErrorMessage, ErrorDate)
+            <span class="sql-keyword">VALUES</span> 
+                (@OrderID, <span class="sql-function">ERROR_MESSAGE</span>(), <span class="sql-function">GETDATE</span>());
+        <span class="sql-keyword">END CATCH</span>;
+        
+        <span class="sql-keyword">FETCH NEXT FROM</span> order_cursor <span class="sql-keyword">INTO</span> @OrderID;
+    <span class="sql-keyword">END</span>;
+    
+    <span class="sql-keyword">CLOSE</span> order_cursor;
+    <span class="sql-keyword">DEALLOCATE</span> order_cursor;
+    
+    <span class="sql-keyword">SELECT</span> @ProcessedCount <span class="sql-keyword">AS</span> OrdersProcessed;
+<span class="sql-keyword">END</span>;
+                            </div>
+
+                    <h3>Nested Cursors Example</h3>
+
+                    <div class="warning-box">
+                        <p><strong>⚠️ Warning:</strong> Nested cursors can be extremely slow. Always look for set-based alternatives first!</p>
+                    </div>
+
+                    <div class="code-block">
+<span class="sql-comment">/*
+    Example: Generate invoice details for each customer
+    Outer cursor: Customers
+    Inner cursor: Customer's orders
+*/</span>
+
+<span class="sql-keyword">CREATE PROCEDURE</span> GenerateCustomerInvoices
+<span class="sql-keyword">AS BEGIN</span>
+    <span class="sql-keyword">DECLARE</span> @CustomerID <span class="sql-keyword">INT</span>;
+    <span class="sql-keyword">DECLARE</span> @CustomerName <span class="sql-keyword">NVARCHAR</span>(100);
+    <span class="sql-keyword">DECLARE</span> @OrderID <span class="sql-keyword">INT</span>;
+    <span class="sql-keyword">DECLARE</span> @OrderTotal <span class="sql-keyword">DECIMAL</span>(10,2);
+    <span class="sql-keyword">DECLARE</span> @CustomerTotal <span class="sql-keyword">DECIMAL</span>(10,2);
+    
+    <span class="sql-comment">-- Outer cursor: Customers</span>
+    <span class="sql-keyword">DECLARE</span> customer_cursor <span class="sql-keyword">CURSOR LOCAL FAST_FORWARD FOR</span>
+        <span class="sql-keyword">SELECT</span> CustomerID, CustomerName
+        <span class="sql-keyword">FROM</span> Customers
+        <span class="sql-keyword">WHERE</span> IsActive = 1;
+    
+    <span class="sql-keyword">OPEN</span> customer_cursor;
+    <span class="sql-keyword">FETCH NEXT FROM</span> customer_cursor <span class="sql-keyword">INTO</span> @CustomerID, @CustomerName;
+    
+    <span class="sql-keyword">WHILE</span> @@FETCH_STATUS = 0
+    <span class="sql-keyword">BEGIN</span>
+        <span class="sql-keyword">SET</span> @CustomerTotal = 0;
+        
+        <span class="sql-keyword">PRINT</span> <span class="sql-string">'Customer: '</span> + @CustomerName;
+        
+        <span class="sql-comment">-- Inner cursor: Orders for this customer</span>
+        <span class="sql-keyword">DECLARE</span> order_cursor <span class="sql-keyword">CURSOR LOCAL FAST_FORWARD FOR</span>
+            <span class="sql-keyword">SELECT</span> OrderID, OrderTotal
+            <span class="sql-keyword">FROM</span> Orders
+            <span class="sql-keyword">WHERE</span> CustomerID = @CustomerID
+                <span class="sql-keyword">AND</span> InvoiceGenerated = 0;
+        
+        <span class="sql-keyword">OPEN</span> order_cursor;
+        <span class="sql-keyword">FETCH NEXT FROM</span> order_cursor <span class="sql-keyword">INTO</span> @OrderID, @OrderTotal;
+        
+        <span class="sql-keyword">WHILE</span> @@FETCH_STATUS = 0
+        <span class="sql-keyword">BEGIN</span>
+            <span class="sql-comment">-- Process each order</span>
+            <span class="sql-keyword">PRINT</span> <span class="sql-string">'  Order '</span> + <span class="sql-function">CAST</span>(@OrderID <span class="sql-keyword">AS VARCHAR</span>) + 
+                  <span class="sql-string">': $'</span> + <span class="sql-function">CAST</span>(@OrderTotal <span class="sql-keyword">AS VARCHAR</span>);
+            
+            <span class="sql-keyword">SET</span> @CustomerTotal = @CustomerTotal + @OrderTotal;
+            
+            <span class="sql-keyword">FETCH NEXT FROM</span> order_cursor <span class="sql-keyword">INTO</span> @OrderID, @OrderTotal;
+        <span class="sql-keyword">END</span>;
+        
+        <span class="sql-keyword">CLOSE</span> order_cursor;
+        <span class="sql-keyword">DEALLOCATE</span> order_cursor;
+        
+        <span class="sql-keyword">PRINT</span> <span class="sql-string">'  Total: $'</span> + <span class="sql-function">CAST</span>(@CustomerTotal <span class="sql-keyword">AS VARCHAR</span>);
+        <span class="sql-keyword">PRINT</span> <span class="sql-string">''</span>;
+        
+        <span class="sql-keyword">FETCH NEXT FROM</span> customer_cursor <span class="sql-keyword">INTO</span> @CustomerID, @CustomerName;
+    <span class="sql-keyword">END</span>;
+    
+    <span class="sql-keyword">CLOSE</span> customer_cursor;
+    <span class="sql-keyword">DEALLOCATE</span> customer_cursor;
+<span class="sql-keyword">END</span>;
+                            </div>
+
+                    <div class="tip-box">
+                        <h4>💡 Better Alternative (Set-Based):</h4>
+                        <div class="code-block">
+<span class="sql-comment">-- This does the same thing MUCH faster without nested cursors</span>
+<span class="sql-keyword">SELECT</span> 
+    c.CustomerID,
+    c.CustomerName,
+    o.OrderID,
+    o.OrderTotal,
+    <span class="sql-function">SUM</span>(o.OrderTotal) <span class="sql-keyword">OVER</span> (<span class="sql-keyword">PARTITION BY</span> c.CustomerID) <span class="sql-keyword">AS</span> CustomerTotal
+<span class="sql-keyword">FROM</span> Customers c
+<span class="sql-keyword">INNER JOIN</span> Orders o <span class="sql-keyword">ON</span> c.CustomerID = o.CustomerID
+<span class="sql-keyword">WHERE</span> c.IsActive = 1
+    <span class="sql-keyword">AND</span> o.InvoiceGenerated = 0
+<span class="sql-keyword">ORDER BY</span> c.CustomerName, o.OrderID;
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Section 5: Performance Considerations -->
+            <button class="collapsible">5. Performance Considerations and Alternatives</button>
+            <div class="collapsible-content">
+                <div class="collapsible-inner">
+                    <h3>Why Cursors Are Slow</h3>
+
+                    <div class="perf-card">
+                        <h4>Performance Issues with Cursors</h4>
+                        <ol>
+                            <li><strong>Row-by-row processing:</strong> Each fetch requires a round trip, no bulk operations</li>
+                            <li><strong>No query optimization:</strong> Optimizer can't optimize procedural code</li>
+                            <li><strong>Locks held longer:</strong> If in a transaction, locks are held during entire loop</li>
+                            <li><strong>Memory overhead:</strong> Cursor structures consume memory</li>
+                            <li><strong>Tempdb usage:</strong> Some cursor types use tempdb extensively</li>
+                            <li><strong>Network traffic:</strong> More round trips between SQL Server and client</li>
+                        </ol>
+                    </div>
+
+                    <h3>Performance Comparison: Cursor vs Set-Based</h3>
+
+                    <div class="code-block">
+<span class="sql-comment">-- Test scenario: Update 10,000 employee salaries</span>
+
+<span class="sql-comment">-- ❌ SLOW: Using cursor (typically 2-5 seconds)</span>
+<span class="sql-keyword">DECLARE</span> @EmpID <span class="sql-keyword">INT</span>, @CurrentSalary <span class="sql-keyword">DECIMAL</span>(10,2);
+
+<span class="sql-keyword">DECLARE</span> emp_cursor <span class="sql-keyword">CURSOR FOR</span>
+    <span class="sql-keyword">SELECT</span> EmployeeID, Salary
+    <span class="sql-keyword">FROM</span> Employees;
+
+<span class="sql-keyword">OPEN</span> emp_cursor;
+<span class="sql-keyword">FETCH NEXT FROM</span> emp_cursor <span class="sql-keyword">INTO</span> @EmpID, @CurrentSalary;
+
+<span class="sql-keyword">WHILE</span> @@FETCH_STATUS = 0
+<span class="sql-keyword">BEGIN</span>
+    <span class="sql-keyword">UPDATE</span> Employees
+    <span class="sql-keyword">SET</span> Salary = @CurrentSalary * 1.05
+    <span class="sql-keyword">WHERE</span> EmployeeID = @EmpID;
+    
+    <span class="sql-keyword">FETCH NEXT FROM</span> emp_cursor <span class="sql-keyword">INTO</span> @EmpID, @CurrentSalary;
+<span class="sql-keyword">END</span>;
+
+<span class="sql-keyword">CLOSE</span> emp_cursor;
+<span class="sql-keyword">DEALLOCATE</span> emp_cursor;
+
+<span class="sql-comment">-- ✅ FAST: Set-based operation (typically < 100 milliseconds)</span>
+<span class="sql-keyword">UPDATE</span> Employees
+<span class="sql-keyword">SET</span> Salary = Salary * 1.05;
+</div>
+
+                    <div class="warning-box">
+                        <p><strong>⚡ Performance Impact:</strong> The cursor version can be <strong>20-100x slower</strong> than the set-based version!</p>
+                    </div>
+
+                    <h3>Set-Based Alternatives to Common Cursor Patterns</h3>
+
+                    <div class="perf-card">
+                        <h4>Pattern 1: Running Totals</h4>
+                        
+                        <div class="bad-practice">
+                            <h4>❌ Using Cursor (Slow)</h4>
+                            <div class="code-block">
+<span class="sql-keyword">DECLARE</span> @OrderID <span class="sql-keyword">INT</span>, @Amount <span class="sql-keyword">DECIMAL</span>(10,2);
+<span class="sql-keyword">DECLARE</span> @RunningTotal <span class="sql-keyword">DECIMAL</span>(10,2) = 0;
+
+<span class="sql-keyword">DECLARE</span> order_cursor <span class="sql-keyword">CURSOR FOR</span>
+    <span class="sql-keyword">SELECT</span> OrderID, Amount
+    <span class="sql-keyword">FROM</span> Orders
+    <span class="sql-keyword">ORDER BY</span> OrderDate;
+
+<span class="sql-keyword">OPEN</span> order_cursor;
+<span class="sql-keyword">FETCH NEXT FROM</span> order_cursor <span class="sql-keyword">INTO</span> @OrderID, @Amount;
+
+<span class="sql-keyword">WHILE</span> @@FETCH_STATUS = 0
+<span class="sql-keyword">BEGIN</span>
+    <span class="sql-keyword">SET</span> @RunningTotal = @RunningTotal + @Amount;
+    
+    <span class="sql-keyword">UPDATE</span> Orders
+    <span class="sql-keyword">SET</span> RunningTotal = @RunningTotal
+    <span class="sql-keyword">WHERE</span> OrderID = @OrderID;
+    
+    <span class="sql-keyword">FETCH NEXT FROM</span> order_cursor <span class="sql-keyword">INTO</span> @OrderID, @Amount;
+<span class="sql-keyword">END</span>;
+
+<span class="sql-keyword">CLOSE</span> order_cursor;
+<span class="sql-keyword">DEALLOCATE</span> order_cursor;
+                            </div>
+                        </div>
+
+                        <div class="good-practice">
+                            <h4>✅ Using Window Functions (Fast)</h4>
+                            <div class="code-block">
+<span class="sql-comment">-- Update all at once using window function</span>
+<span class="sql-keyword">WITH</span> OrdersWithRunningTotal <span class="sql-keyword">AS</span> (
+    <span class="sql-keyword">SELECT</span> 
+        OrderID,
+        <span class="sql-function">SUM</span>(Amount) <span class="sql-keyword">OVER</span> (
+            <span class="sql-keyword">ORDER BY</span> OrderDate
+            <span class="sql-keyword">ROWS BETWEEN UNBOUNDED PRECEDING AND CURRENT ROW</span>
+        ) <span class="sql-keyword">AS</span> RunningTotal
+    <span class="sql-keyword">FROM</span> Orders
+)
+<span class="sql-keyword">UPDATE</span> o
+<span class="sql-keyword">SET</span> o.RunningTotal = ort.RunningTotal
+<span class="sql-keyword">FROM</span> Orders o
+<span class="sql-keyword">INNER JOIN</span> OrdersWithRunningTotal ort 
+    <span class="sql-keyword">ON</span> o.OrderID = ort.OrderID;
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="perf-card">
+                        <h4>Pattern 2: Conditional Updates Based on Other Tables</h4>
+                        
+                        <div class="bad-practice">
+                            <h4>❌ Using Cursor</h4>
+                            <div class="code-block">
+<span class="sql-keyword">DECLARE</span> @ProductID <span class="sql-keyword">INT</span>;
+<span class="sql-keyword">DECLARE</span> @AvgRating <span class="sql-keyword">DECIMAL</span>(3,2);
+
+<span class="sql-keyword">DECLARE</span> prod_cursor <span class="sql-keyword">CURSOR FOR</span>
+    <span class="sql-keyword">SELECT</span> ProductID <span class="sql-keyword">FROM</span> Products;
+
+<span class="sql-keyword">OPEN</span> prod_cursor;
+<span class="sql-keyword">FETCH NEXT FROM</span> prod_cursor <span class="sql-keyword">INTO</span> @ProductID;
+
+<span class="sql-keyword">WHILE</span> @@FETCH_STATUS = 0
+<span class="sql-keyword">BEGIN</span>
+    <span class="sql-keyword">SELECT</span> @AvgRating = <span class="sql-function">AVG</span>(Rating)
+    <span class="sql-keyword">FROM</span> ProductReviews
+    <span class="sql-keyword">WHERE</span> ProductID = @ProductID;
+    
+    <span class="sql-keyword">UPDATE</span> Products
+    <span class="sql-keyword">SET</span> AverageRating = @AvgRating
+    <span class="sql-keyword">WHERE</span> ProductID = @ProductID;
+    
+    <span class="sql-keyword">FETCH NEXT FROM</span> prod_cursor <span class="sql-keyword">INTO</span> @ProductID;
+<span class="sql-keyword">END</span>;
+
+<span class="sql-keyword">CLOSE</span> prod_cursor;
+<span class="sql-keyword">DEALLOCATE</span> prod_cursor;
+                            </div>
+                        </div>
+
+                        <div class="good-practice">
+                            <h4>✅ Using JOIN</h4>
+                            <div class="code-block">
+<span class="sql-comment">-- Single UPDATE with JOIN</span>
+<span class="sql-keyword">UPDATE</span> p
+<span class="sql-keyword">SET</span> p.AverageRating = ratings.AvgRating
+<span class="sql-keyword">FROM</span> Products p
+<span class="sql-keyword">INNER JOIN</span> (
+    <span class="sql-keyword">SELECT</span> 
+        ProductID, 
+        <span class="sql-function">AVG</span>(Rating) <span class="sql-keyword">AS</span> AvgRating
+    <span class="sql-keyword">FROM</span> ProductReviews
+    <span class="sql-keyword">GROUP BY</span> ProductID
+) ratings <span class="sql-keyword">ON</span> p.ProductID = ratings.ProductID;
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="perf-card">
+                        <h4>Pattern 3: Processing in Batches</h4>
+                        
+                        <div class="bad-practice">
+                            <h4>❌ Using Cursor for All Rows</h4>
+                            <div class="code-block">
+<span class="sql-comment">-- Process 1 million rows one at a time</span>
+<span class="sql-keyword">DECLARE</span> log_cursor <span class="sql-keyword">CURSOR FOR</span>
+    <span class="sql-keyword">SELECT</span> LogID <span class="sql-keyword">FROM</span> AccessLogs
+    <span class="sql-keyword">WHERE</span> Archived = 0;
+<span class="sql-comment">-- Very slow for large datasets</span>
+                            </div>
+                        </div>
+
+                        <div class="good-practice">
+                            <h4>✅ Using Batch Processing</h4>
+                            <div class="code-block">
+<span class="sql-comment">-- Process in batches of 10,000</span>
+<span class="sql-keyword">DECLARE</span> @BatchSize <span class="sql-keyword">INT</span> = 10000;
+<span class="sql-keyword">DECLARE</span> @RowsAffected <span class="sql-keyword">INT</span> = @BatchSize;
+
+<span class="sql-keyword">WHILE</span> @RowsAffected = @BatchSize
+<span class="sql-keyword">BEGIN</span>
+    <span class="sql-keyword">UPDATE TOP</span> (@BatchSize) AccessLogs
+    <span class="sql-keyword">SET</span> Archived = 1
+    <span class="sql-keyword">WHERE</span> Archived = 0
+        <span class="sql-keyword">AND</span> LogDate < <span class="sql-function">DATEADD</span>(YEAR, -1, <span class="sql-function">GETDATE</span>());
+    
+    <span class="sql-keyword">SET</span> @RowsAffected = @@ROWCOUNT;
+    
+    <span class="sql-comment">-- Brief pause to avoid blocking</span>
+    <span class="sql-keyword">WAITFOR DELAY</span> <span class="sql-string">'00:00:01'</span>;
+<span class="sql-keyword">END</span>;
+                            </div>
+                        </div>
+                    </div>
+
+                    <h3>When Cursors Are Actually Better</h3>
+
+                    <div class="success-box">
+                        <h4>✅ Legitimate Cursor Use Cases:</h4>
+                        
+                        <p><strong>1. Calling External APIs/Systems:</strong></p>
+                        <div class="code-block">
+<span class="sql-comment">-- Need to call external API for each customer</span>
+<span class="sql-keyword">DECLARE</span> customer_cursor <span class="sql-keyword">CURSOR FOR</span>
+    <span class="sql-keyword">SELECT</span> CustomerID, Email
+    <span class="sql-keyword">FROM</span> Customers
+    <span class="sql-keyword">WHERE</span> EmailPreference = <span class="sql-string">'Weekly'</span>;
+
+<span class="sql-keyword">WHILE</span> @@FETCH_STATUS = 0
+<span class="sql-keyword">BEGIN</span>
+    <span class="sql-comment">-- Call external email service API</span>
+    <span class="sql-keyword">EXEC</span> sp_SendEmailViaAPI @Email, @NewsletterContent;
+<span class="sql-keyword">END</span>;
+                        </div>
+
+                        <p><strong>2. Complex Business Logic Per Row:</strong></p>
+                        <div class="code-block">
+<span class="sql-comment">-- Different calculation for each product type</span>
+<span class="sql-keyword">WHILE</span> @@FETCH_STATUS = 0
+<span class="sql-keyword">BEGIN</span>
+    <span class="sql-keyword">IF</span> @ProductType = <span class="sql-string">'Electronics'</span>
+        <span class="sql-keyword">EXEC</span> CalculateElectronicsPrice @ProductID;
+    <span class="sql-keyword">ELSE IF</span> @ProductType = <span class="sql-string">'Clothing'</span>
+        <span class="sql-keyword">EXEC</span> CalculateClothingPrice @ProductID;
+    <span class="sql-keyword">ELSE IF</span> @ProductType = <span class="sql-string">'Food'</span>
+        <span class="sql-keyword">EXEC</span> CalculateFoodPrice @ProductID;
+    <span class="sql-comment">-- etc...</span>
+<span class="sql-keyword">END</span>;
+                        </div>
+
+                        <p><strong>3. Administrative/Maintenance Tasks:</strong></p>
+                        <div class="code-block">
+<span class="sql-comment">-- Rebuild indexes on all tables (one-time maintenance)</span>
+<span class="sql-keyword">DECLARE</span> table_cursor <span class="sql-keyword">CURSOR FOR</span>
+    <span class="sql-keyword">SELECT</span> name
+    <span class="sql-keyword">FROM</span> sys.tables
+    <span class="sql-keyword">WHERE</span> type = <span class="sql-string">'U'</span>;
+
+<span class="sql-keyword">WHILE</span> @@FETCH_STATUS = 0
+<span class="sql-keyword">BEGIN</span>
+    <span class="sql-keyword">EXEC</span> (<span class="sql-string">'ALTER INDEX ALL ON '</span> + @TableName + <span class="sql-string">' REBUILD'</span>);
+<span class="sql-keyword">END</span>;
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Section 6: Cursor Examples -->
+            <button class="collapsible">6. Practical Cursor Examples</button>
+            <div class="collapsible-content">
+                <div class="collapsible-inner">
+                    <h3>Example 1: Data Cleanup with Logging</h3>
+
+                    <div class="code-block">
+<span class="sql-comment">/*
+    Clean up duplicate customer records
+    Log each merge operation
+*/</span>
+
+<span class="sql-keyword">CREATE PROCEDURE</span> CleanupDuplicateCustomers
+<span class="sql-keyword">AS BEGIN</span>
+    <span class="sql-keyword">SET NOCOUNT ON</span>;
+    
+    <span class="sql-keyword">DECLARE</span> @KeepCustomerID <span class="sql-keyword">INT</span>;
+    <span class="sql-keyword">DECLARE</span> @DuplicateCustomerID <span class="sql-keyword">INT</span>;
+    <span class="sql-keyword">DECLARE</span> @Email <span class="sql-keyword">NVARCHAR</span>(100);
+    <span class="sql-keyword">DECLARE</span> @MergeCount <span class="sql-keyword">INT</span> = 0;
+    
+    <span class="sql-comment">-- Find duplicate emails, keep oldest account</span>
+    <span class="sql-keyword">DECLARE</span> duplicate_cursor <span class="sql-keyword">CURSOR LOCAL FAST_FORWARD FOR</span>
+        <span class="sql-keyword">SELECT</span> 
+            <span class="sql-function">MIN</span>(CustomerID) <span class="sql-keyword">AS</span> KeepID,
+            <span class="sql-function">MAX</span>(CustomerID) <span class="sql-keyword">AS</span> DuplicateID,
+            Email
+        <span class="sql-keyword">FROM</span> Customers
+        <span class="sql-keyword">GROUP BY</span> Email
+        <span class="sql-keyword">HAVING</span> <span class="sql-function">COUNT</span>(*) > 1;
+    
+    <span class="sql-keyword">BEGIN TRY</span>
+        <span class="sql-keyword">OPEN</span> duplicate_cursor;
+        <span class="sql-keyword">FETCH NEXT FROM</span> duplicate_cursor 
+        <span class="sql-keyword">INTO</span> @KeepCustomerID, @DuplicateCustomerID, @Email;
+        
+        <span class="sql-keyword">WHILE</span> @@FETCH_STATUS = 0
+        <span class="sql-keyword">BEGIN</span>
+            <span class="sql-keyword">BEGIN TRANSACTION</span>;
+            
+            <span class="sql-comment">-- Move orders to kept customer</span>
+            <span class="sql-keyword">UPDATE</span> Orders
+            <span class="sql-keyword">SET</span> CustomerID = @KeepCustomerID
+            <span class="sql-keyword">WHERE</span> CustomerID = @DuplicateCustomerID;
+            
+            <span class="sql-comment">-- Log the merge</span>
+            <span class="sql-keyword">INSERT INTO</span> CustomerMergeLog 
+                (KeptCustomerID, MergedCustomerID, Email, MergeDate)
+            <span class="sql-keyword">VALUES</span> 
+                (@KeepCustomerID, @DuplicateCustomerID, @Email, <span class="sql-function">GETDATE</span>());
+            
+            <span class="sql-comment">-- Delete duplicate</span>
+            <span class="sql-keyword">DELETE FROM</span> Customers
+            <span class="sql-keyword">WHERE</span> CustomerID = @DuplicateCustomerID;
+            
+            <span class="sql-keyword">COMMIT TRANSACTION</span>;
+            
+            <span class="sql-keyword">SET</span> @MergeCount = @MergeCount + 1;
+            
+            <span class="sql-keyword">FETCH NEXT FROM</span> duplicate_cursor 
+            <span class="sql-keyword">INTO</span> @KeepCustomerID, @DuplicateCustomerID, @Email;
+        <span class="sql-keyword">END</span>;
+        
+        <span class="sql-keyword">CLOSE</span> duplicate_cursor;
+        <span class="sql-keyword">DEALLOCATE</span> duplicate_cursor;
+        
+        <span class="sql-keyword">PRINT</span> <span class="sql-string">'Merged '</span> + <span class="sql-function">CAST</span>(@MergeCount <span class="sql-keyword">AS VARCHAR</span>) + 
+              <span class="sql-string">' duplicate customers'</span>;
+              
+    <span class="sql-keyword">END TRY</span>
+    <span class="sql-keyword">BEGIN CATCH</span>
+        <span class="sql-keyword">IF</span> @@TRANCOUNT > 0
+            <span class="sql-keyword">ROLLBACK TRANSACTION</span>;
+            
+        <span class="sql-keyword">IF</span> <span class="sql-function">CURSOR_STATUS</span>(<span class="sql-string">'local'</span>, <span class="sql-string">'duplicate_cursor'</span>) >= 0
+        <span class="sql-keyword">BEGIN</span>
+            <span class="sql-keyword">CLOSE</span> duplicate_cursor;
+            <span class="sql-keyword">DEALLOCATE</span> duplicate_cursor;
+        <span class="sql-keyword">END</span>;
+        
+        <span class="sql-keyword">THROW</span>;
+    <span class="sql-keyword">END CATCH</span>;
+<span class="sql-keyword">END</span>;
+                            </div>
+
+                    <h3>Example 2: Dynamic SQL Generation</h3>
+
+                    <div class="code-block">
+<span class="sql-comment">/*
+    Generate and execute dynamic SQL for each table
+    Example: Update statistics on all user tables
+*/</span>
+
+<span class="sql-keyword">CREATE PROCEDURE</span> UpdateAllTableStatistics
+<span class="sql-keyword">AS BEGIN</span>
+    <span class="sql-keyword">DECLARE</span> @TableSchema <span class="sql-keyword">NVARCHAR</span>(128);
+    <span class="sql-keyword">DECLARE</span> @TableName <span class="sql-keyword">NVARCHAR</span>(128);
+    <span class="sql-keyword">DECLARE</span> @SQL <span class="sql-keyword">NVARCHAR</span>(500);
+    <span class="sql-keyword">DECLARE</span> @StartTime <span class="sql-keyword">DATETIME</span>;
+    <span class="sql-keyword">DECLARE</span> @TableCount <span class="sql-keyword">INT</span> = 0;
+    
+    <span class="sql-keyword">DECLARE</span> table_cursor <span class="sql-keyword">CURSOR LOCAL FAST_FORWARD FOR</span>
+        <span class="sql-keyword">SELECT</span> 
+            s.name <span class="sql-keyword">AS</span> SchemaName,
+            t.name <span class="sql-keyword">AS</span> TableName
+        <span class="sql-keyword">FROM</span> sys.tables t
+        <span class="sql-keyword">INNER JOIN</span> sys.schemas s <span class="sql-keyword">ON</span> t.schema_id = s.schema_id
+        <span class="sql-keyword">WHERE</span> t.type = <span class="sql-string">'U'</span>  <span class="sql-comment">-- User tables only</span>
+        <span class="sql-keyword">ORDER BY</span> s.name, t.name;
+    
+    <span class="sql-keyword">PRINT</span> <span class="sql-string">'Starting statistics update at '</span> + 
+          <span class="sql-function">CONVERT</span>(<span class="sql-keyword">VARCHAR</span>, <span class="sql-function">GETDATE</span>(), 120);
+    
+    <span class="sql-keyword">OPEN</span> table_cursor;
+    <span class="sql-keyword">FETCH NEXT FROM</span> table_cursor <span class="sql-keyword">INTO</span> @TableSchema, @TableName;
+    
+    <span class="sql-keyword">WHILE</span> @@FETCH_STATUS = 0
+    <span class="sql-keyword">BEGIN</span>
+        <span class="sql-keyword">SET</span> @StartTime = <span class="sql-function">GETDATE</span>();
+        
+        <span class="sql-comment">-- Build dynamic SQL</span>
+        <span class="sql-keyword">SET</span> @SQL = <span class="sql-string">'UPDATE STATISTICS '</span> + 
+                   <span class="sql-function">QUOTENAME</span>(@TableSchema) + <span class="sql-string">'.'</span> + 
+                   <span class="sql-function">QUOTENAME</span>(@TableName) + 
+                   <span class="sql-string">' WITH FULLSCAN;'</span>;
+        
+        <span class="sql-keyword">BEGIN TRY</span>
+            <span class="sql-comment">-- Execute dynamic SQL</span>
+            <span class="sql-keyword">EXEC</span> sp_executesql @SQL;
+            
+            <span class="sql-keyword">SET</span> @TableCount = @TableCount + 1;
+            
+            <span class="sql-keyword">PRINT</span> <span class="sql-string">'Updated: '</span> + @TableSchema + <span class="sql-string">'.'</span> + @TableName + 
+                  <span class="sql-string">' ('</span> + <span class="sql-function">CAST</span>(<span class="sql-function">DATEDIFF</span>(SECOND, @StartTime, <span class="sql-function">GETDATE</span>()) 
+                  <span class="sql-keyword">AS VARCHAR</span>) + <span class="sql-string">' seconds)'</span>;
+                  
+        <span class="sql-keyword">END TRY</span>
+        <span class="sql-keyword">BEGIN CATCH</span>
+            <span class="sql-keyword">PRINT</span> <span class="sql-string">'ERROR on '</span> + @TableSchema + <span class="sql-string">'.'</span> + @TableName + 
+                  <span class="sql-string">': '</span> + <span class="sql-function">ERROR_MESSAGE</span>();
+        <span class="sql-keyword">END CATCH</span>;
+        
+        <span class="sql-keyword">FETCH NEXT FROM</span> table_cursor <span class="sql-keyword">INTO</span> @TableSchema, @TableName;
+    <span class="sql-keyword">END</span>;
+    
+    <span class="sql-keyword">CLOSE</span> table_cursor;
+    <span class="sql-keyword">DEALLOCATE</span> table_cursor;
+    
+    <span class="sql-keyword">PRINT</span> <span class="sql-string">'Completed '</span> + <span class="sql-function">CAST</span>(@TableCount <span class="sql-keyword">AS VARCHAR</span>) + 
+          <span class="sql-string">' tables at '</span> + <span class="sql-function">CONVERT</span>(<span class="sql-keyword">VARCHAR</span>, <span class="sql-function">GETDATE</span>(), 120);
+<span class="sql-keyword">END</span>;
+                            </div>
+
+                    <h3>Example 3: Scrollable Cursor for Reporting</h3>
+
+                    <div class="code-block">
+<span class="sql-comment">/*
+    Generate a report with context from previous rows
+    Uses SCROLL cursor to access previous values
+*/</span>
+
+<span class="sql-keyword">DECLARE</span> @CurrentSales <span class="sql-keyword">DECIMAL</span>(15,2);
+<span class="sql-keyword">DECLARE</span> @PreviousSales <span class="sql-keyword">DECIMAL</span>(15,2);
+<span class="sql-keyword">DECLARE</span> @Month <span class="sql-keyword">VARCHAR</span>(7);
+<span class="sql-keyword">DECLARE</span> @PercentChange <span class="sql-keyword">DECIMAL</span>(5,2);
+
+<span class="sql-comment">-- Scrollable cursor to move backward</span>
+<span class="sql-keyword">DECLARE</span> sales_cursor <span class="sql-keyword">CURSOR SCROLL FOR</span>
+    <span class="sql-keyword">SELECT</span> 
+        <span class="sql-function">FORMAT</span>(SalesMonth, <span class="sql-string">'yyyy-MM'</span>) <span class="sql-keyword">AS</span> Month,
+        <span class="sql-function">SUM</span>(SalesAmount) <span class="sql-keyword">AS</span> TotalSales
+    <span class="sql-keyword">FROM</span> Sales
+    <span class="sql-keyword">GROUP BY</span> SalesMonth
+    <span class="sql-keyword">ORDER BY</span> SalesMonth;
+
+<span class="sql-keyword">OPEN</span> sales_cursor;
+
+<span class="sql-comment">-- Get first month</span>
+<span class="sql-keyword">FETCH FIRST FROM</span> sales_cursor <span class="sql-keyword">INTO</span> @Month, @CurrentSales;
+<span class="sql-keyword">PRINT</span> @Month + <span class="sql-string">': $'</span> + <span class="sql-function">CAST</span>(@CurrentSales <span class="sql-keyword">AS VARCHAR</span>) + 
+      <span class="sql-string">' (baseline)'</span>;
+
+<span class="sql-comment">-- Move to second month</span>
+<span class="sql-keyword">FETCH NEXT FROM</span> sales_cursor <span class="sql-keyword">INTO</span> @Month, @CurrentSales;
+
+<span class="sql-keyword">WHILE</span> @@FETCH_STATUS = 0
+<span class="sql-keyword">BEGIN</span>
+    <span class="sql-comment">-- Go back to get previous month's sales</span>
+    <span class="sql-keyword">FETCH PRIOR FROM</span> sales_cursor <span class="sql-keyword">INTO</span> @Month, @PreviousSales;
+    
+    <span class="sql-comment">-- Return to current month</span>
+    <span class="sql-keyword">FETCH NEXT FROM</span> sales_cursor <span class="sql-keyword">INTO</span> @Month, @CurrentSales;
+    
+    <span class="sql-comment">-- Calculate percent change</span>
+    <span class="sql-keyword">SET</span> @PercentChange = ((@CurrentSales - @PreviousSales) / @PreviousSales) * 100;
+    
+    <span class="sql-keyword">PRINT</span> @Month + <span class="sql-string">': $'</span> + <span class="sql-function">CAST</span>(@CurrentSales <span class="sql-keyword">AS VARCHAR</span>) + 
+          <span class="sql-string">' ('</span> + <span class="sql-function">CAST</span>(@PercentChange <span class="sql-keyword">AS VARCHAR</span>) + <span class="sql-string">'% change)'</span>;
+    
+    <span class="sql-comment">-- Move to next month</span>
+    <span class="sql-keyword">FETCH NEXT FROM</span> sales_cursor <span class="sql-keyword">INTO</span> @Month, @CurrentSales;
+<span class="sql-keyword">END</span>;
+
+<span class="sql-keyword">CLOSE</span> sales_cursor;
+<span class="sql-keyword">DEALLOCATE</span> sales_cursor;
+                            </div>
+
+                    <div class="tip-box">
+                        <h4>💡 Better Alternative Using LAG():</h4>
+                        <div class="code-block">
+<span class="sql-comment">-- Same result, much faster with window function</span>
+<span class="sql-keyword">SELECT</span> 
+    <span class="sql-function">FORMAT</span>(SalesMonth, <span class="sql-string">'yyyy-MM'</span>) <span class="sql-keyword">AS</span> Month,
+    <span class="sql-function">SUM</span>(SalesAmount) <span class="sql-keyword">AS</span> CurrentSales,
+    <span class="sql-function">LAG</span>(<span class="sql-function">SUM</span>(SalesAmount)) <span class="sql-keyword">OVER</span> (<span class="sql-keyword">ORDER BY</span> SalesMonth) <span class="sql-keyword">AS</span> PreviousSales,
+    ((<span class="sql-function">SUM</span>(SalesAmount) - <span class="sql-function">LAG</span>(<span class="sql-function">SUM</span>(SalesAmount)) 
+        <span class="sql-keyword">OVER</span> (<span class="sql-keyword">ORDER BY</span> SalesMonth)) 
+        / <span class="sql-function">LAG</span>(<span class="sql-function">SUM</span>(SalesAmount)) <span class="sql-keyword">OVER</span> (<span class="sql-keyword">ORDER BY</span> SalesMonth)) * 100 
+        <span class="sql-keyword">AS</span> PercentChange
+<span class="sql-keyword">FROM</span> Sales
+<span class="sql-keyword">GROUP BY</span> SalesMonth
+<span class="sql-keyword">ORDER BY</span> SalesMonth;
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Section 7: Cross-Database Comparison -->
+            <button class="collapsible">7. Cursors Across Different Database Systems</button>
+            <div class="collapsible-content">
+                <div class="collapsible-inner">
+                    <h3>Cursor Implementation Comparison</h3>
+
+                    <table class="comparison-table">
+                        <thead>
+                            <tr>
+                                <th>Feature</th>
+                                <th>SQL Server (T-SQL)</th>
+                                <th>Oracle (PL/SQL)</th>
+                                <th>MySQL</th>
+                                <th>PostgreSQL</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td><strong>Cursor Declaration</strong></td>
+                                <td><code>DECLARE cursor_name CURSOR FOR</code></td>
+                                <td><code>CURSOR cursor_name IS</code></td>
+                                <td><code>DECLARE cursor_name CURSOR FOR</code></td>
+                                <td><code>DECLARE cursor_name CURSOR FOR</code></td>
+                            </tr>
+                            <tr>
+                                <td><strong>Open</strong></td>
+                                <td><code>OPEN cursor_name</code></td>
+                                <td><code>OPEN cursor_name</code></td>
+                                <td><code>OPEN cursor_name</code></td>
+                                <td><code>OPEN cursor_name</code></td>
+                            </tr>
+                            <tr>
+                                <td><strong>Fetch</strong></td>
+                                <td><code>FETCH NEXT FROM cursor INTO @var</code></td>
+                                <td><code>FETCH cursor INTO var</code></td>
+                                <td><code>FETCH cursor INTO var</code></td>
+                                <td><code>FETCH cursor INTO var</code></td>
+                            </tr>
+                            <tr>
+                                <td><strong>Close</strong></td>
+                                <td><code>CLOSE cursor_name</code></td>
+                                <td><code>CLOSE cursor_name</code></td>
+                                <td><code>CLOSE cursor_name</code></td>
+                                <td><code>CLOSE cursor_name</code></td>
+                            </tr>
+                            <tr>
+                                <td><strong>Deallocate</strong></td>
+                                <td><code>DEALLOCATE cursor_name</code></td>
+                                <td>N/A (automatic)</td>
+                                <td>N/A (automatic)</td>
+                                <td>N/A (automatic)</td>
+                            </tr>
+                            <tr>
+                                <td><strong>Loop While Successful</strong></td>
+                                <td><code>WHILE @@FETCH_STATUS = 0</code></td>
+                                <td><code>WHILE cursor%FOUND</code></td>
+                                <td><code>WHILE done = 0</code></td>
+                                <td><code>LOOP ... EXIT WHEN NOT FOUND</code></td>
+                            </tr>
+                            <tr>
+                                <td><strong>Cursor Types</strong></td>
+                                <td>STATIC, KEYSET, DYNAMIC, FAST_FORWARD</td>
+                                <td>Implicit, Explicit, REF CURSOR</td>
+                                <td>Read-only, Forward-only</td>
+                                <td>Scrollable, No-scroll</td>
+                            </tr>
+                            <tr>
+                                <td><strong>Parameterized Cursors</strong></td>
+                                <td>No (use variables in SELECT)</td>
+                                <td>Yes (cursor parameters)</td>
+                                <td>No (use variables)</td>
+                                <td>No (use variables)</td>
+                            </tr>
+                            <tr>
+                                <td><strong>Cursor Variables</strong></td>
+                                <td>No</td>
+                                <td>Yes (REF CURSOR)</td>
+                                <td>No</td>
+                                <td>Yes (cursor variables)</td>
+                            </tr>
+                            <tr>
+                                <td><strong>Cursor FOR Loops</strong></td>
+                                <td>No (manual loop)</td>
+                                <td>Yes (automatic)</td>
+                                <td>No (manual loop)</td>
+                                <td>Yes (implicit)</td>
+                            </tr>
+                        </tbody>
+                    </table>
+
+                    <h3>Syntax Examples by Database</h3>
+
+                    <div class="perf-card">
+                        <h4>SQL Server (T-SQL)</h4>
+                        <div class="code-block">
+<span class="sql-keyword">DECLARE</span> @EmployeeName <span class="sql-keyword">NVARCHAR</span>(100);
+
+<span class="sql-keyword">DECLARE</span> emp_cursor <span class="sql-keyword">CURSOR FAST_FORWARD FOR</span>
+    <span class="sql-keyword">SELECT</span> EmployeeName <span class="sql-keyword">FROM</span> Employees;
+
+<span class="sql-keyword">OPEN</span> emp_cursor;
+<span class="sql-keyword">FETCH NEXT FROM</span> emp_cursor <span class="sql-keyword">INTO</span> @EmployeeName;
+
+<span class="sql-keyword">WHILE</span> @@FETCH_STATUS = 0
+<span class="sql-keyword">BEGIN</span>
+    <span class="sql-keyword">PRINT</span> @EmployeeName;
+    <span class="sql-keyword">FETCH NEXT FROM</span> emp_cursor <span class="sql-keyword">INTO</span> @EmployeeName;
+<span class="sql-keyword">END</span>;
+
+<span class="sql-keyword">CLOSE</span> emp_cursor;
+<span class="sql-keyword">DEALLOCATE</span> emp_cursor;
+                        </div>
+                    </div>
+
+                    <div class="perf-card">
+                        <h4>Oracle (PL/SQL)</h4>
+                        <div class="code-block">
+<span class="sql-keyword">DECLARE</span>
+    v_employee_name VARCHAR2(100);
+    
+    <span class="sql-comment">-- Explicit cursor</span>
+    <span class="sql-keyword">CURSOR</span> emp_cursor <span class="sql-keyword">IS</span>
+        <span class="sql-keyword">SELECT</span> employee_name <span class="sql-keyword">FROM</span> employees;
+        
+<span class="sql-keyword">BEGIN</span>
+    <span class="sql-keyword">OPEN</span> emp_cursor;
+    
+    <span class="sql-keyword">LOOP</span>
+        <span class="sql-keyword">FETCH</span> emp_cursor <span class="sql-keyword">INTO</span> v_employee_name;
+        <span class="sql-keyword">EXIT WHEN</span> emp_cursor%NOTFOUND;
+        
+        DBMS_OUTPUT.PUT_LINE(v_employee_name);
+    <span class="sql-keyword">END LOOP</span>;
+    
+    <span class="sql-keyword">CLOSE</span> emp_cursor;
+<span class="sql-keyword">END</span>;
+
+<span class="sql-comment">-- Cursor FOR loop (easier, automatic open/close/fetch)</span>
+<span class="sql-keyword">BEGIN</span>
+    <span class="sql-keyword">FOR</span> emp_rec <span class="sql-keyword">IN</span> (<span class="sql-keyword">SELECT</span> employee_name <span class="sql-keyword">FROM</span> employees)
+    <span class="sql-keyword">LOOP</span>
+        DBMS_OUTPUT.PUT_LINE(emp_rec.employee_name);
+    <span class="sql-keyword">END LOOP</span>;
+<span class="sql-keyword">END</span>;
+                        </div>
+                    </div>
+
+                    <div class="perf-card">
+                        <h4>MySQL</h4>
+                        <div class="code-block">
+<span class="sql-keyword">DELIMITER $$</span>
+
+<span class="sql-keyword">CREATE PROCEDURE</span> ProcessEmployees()
+<span class="sql-keyword">BEGIN</span>
+    <span class="sql-keyword">DECLARE</span> done <span class="sql-keyword">INT DEFAULT</span> 0;
+    <span class="sql-keyword">DECLARE</span> emp_name <span class="sql-keyword">VARCHAR</span>(100);
+    
+    <span class="sql-keyword">DECLARE</span> emp_cursor <span class="sql-keyword">CURSOR FOR</span>
+        <span class="sql-keyword">SELECT</span> employee_name <span class="sql-keyword">FROM</span> employees;
+    
+    <span class="sql-comment">-- Handler for end of cursor</span>
+    <span class="sql-keyword">DECLARE CONTINUE HANDLER FOR NOT FOUND SET</span> done = 1;
+    
+    <span class="sql-keyword">OPEN</span> emp_cursor;
+    
+    read_loop: <span class="sql-keyword">LOOP</span>
+        <span class="sql-keyword">FETCH</span> emp_cursor <span class="sql-keyword">INTO</span> emp_name;
+        
+        <span class="sql-keyword">IF</span> done <span class="sql-keyword">THEN</span>
+            <span class="sql-keyword">LEAVE</span> read_loop;
+        <span class="sql-keyword">END IF</span>;
+        
+        <span class="sql-keyword">SELECT</span> emp_name;
+    <span class="sql-keyword">END LOOP</span>;
+    
+    <span class="sql-keyword">CLOSE</span> emp_cursor;
+<span class="sql-keyword">END$$</span>
+
+<span class="sql-keyword">DELIMITER ;</span>
+                        </div>
+                    </div>
+
+                    <div class="perf-card">
+                        <h4>PostgreSQL</h4>
+                        <div class="code-block">
+<span class="sql-comment">-- Explicit cursor</span>
+<span class="sql-keyword">DO $$</span>
+<span class="sql-keyword">DECLARE</span>
+    emp_cursor <span class="sql-keyword">CURSOR FOR</span> 
+        <span class="sql-keyword">SELECT</span> employee_name <span class="sql-keyword">FROM</span> employees;
+    emp_record RECORD;
+<span class="sql-keyword">BEGIN</span>
+    <span class="sql-keyword">OPEN</span> emp_cursor;
+    
+    <span class="sql-keyword">LOOP</span>
+        <span class="sql-keyword">FETCH</span> emp_cursor <span class="sql-keyword">INTO</span> emp_record;
+        <span class="sql-keyword">EXIT WHEN NOT FOUND</span>;
+        
+        <span class="sql-keyword">RAISE NOTICE</span> <span class="sql-string">'%'</span>, emp_record.employee_name;
+    <span class="sql-keyword">END LOOP</span>;
+    
+    <span class="sql-keyword">CLOSE</span> emp_cursor;
+<span class="sql-keyword">END $$</span>;
+
+<span class="sql-comment">-- Simpler FOR loop (recommended)</span>
+<span class="sql-keyword">DO $$</span>
+<span class="sql-keyword">DECLARE</span>
+    emp_record RECORD;
+<span class="sql-keyword">BEGIN</span>
+    <span class="sql-keyword">FOR</span> emp_record <span class="sql-keyword">IN</span> 
+        <span class="sql-keyword">SELECT</span> employee_name <span class="sql-keyword">FROM</span> employees
+    <span class="sql-keyword">LOOP</span>
+        <span class="sql-keyword">RAISE NOTICE</span> <span class="sql-string">'%'</span>, emp_record.employee_name;
+    <span class="sql-keyword">END LOOP</span>;
+<span class="sql-keyword">END $$</span>;
+                        </div>
+                    </div>
+
+                    <h3>Key Differences Summary</h3>
+
+                    <div class="info-box">
+                        <h4>📊 Important Distinctions:</h4>
+                        <ul>
+                            <li><strong>Oracle:</strong> Most flexible with cursor parameters and REF CURSORs. Cursor FOR loops are very convenient.</li>
+                            <li><strong>SQL Server:</strong> Requires explicit DEALLOCATE. Best performance with FAST_FORWARD cursors.</li>
+                            <li><strong>MySQL:</strong> Requires CONTINUE HANDLER for cursor completion. Limited cursor types.</li>
+                            <li><strong>PostgreSQL:</strong> Similar to Oracle with implicit cursor loops. Good middle ground.</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Section 8: Best Practices -->
+            <button class="collapsible">8. Cursor Best Practices and Common Mistakes</button>
+            <div class="collapsible-content">
+                <div class="collapsible-inner">
+                    <h3>Best Practices</h3>
+
+                    <div class="good-practice">
+                        <h4>✅ 1. Always Use FAST_FORWARD When Possible</h4>
+                        <div class="code-block">
+<span class="sql-comment">-- Best performance for forward-only processing</span>
+<span class="sql-keyword">DECLARE</span> cursor_name <span class="sql-keyword">CURSOR FAST_FORWARD FOR</span>
+    <span class="sql-keyword">SELECT</span> columns <span class="sql-keyword">FROM</span> table;
+                        </div>
+                    </div>
+
+                    <div class="good-practice">
+                        <h4>✅ 2. Use LOCAL Scope</h4>
+                        <div class="code-block">
+<span class="sql-comment">-- Automatically deallocated when procedure ends</span>
+<span class="sql-keyword">DECLARE</span> cursor_name <span class="sql-keyword">CURSOR LOCAL FOR</span>
+    <span class="sql-keyword">SELECT</span> columns <span class="sql-keyword">FROM</span> table;
+                        </div>
+                    </div>
+
+                    <div class="good-practice">
+                        <h4>✅ 3. Always Use TRY-CATCH with Cleanup</h4>
+                        <div class="code-block">
+<span class="sql-keyword">BEGIN TRY</span>
+    <span class="sql-keyword">OPEN</span> cursor_name;
+    <span class="sql-comment">-- Process rows...</span>
+    <span class="sql-keyword">CLOSE</span> cursor_name;
+    <span class="sql-keyword">DEALLOCATE</span> cursor_name;
+<span class="sql-keyword">END TRY</span>
+<span class="sql-keyword">BEGIN CATCH</span>
+    <span class="sql-keyword">IF</span> <span class="sql-function">CURSOR_STATUS</span>(<span class="sql-string">'local'</span>, <span class="sql-string">'cursor_name'</span>) >= 0
+    <span class="sql-keyword">BEGIN</span>
+        <span class="sql-keyword">CLOSE</span> cursor_name;
+        <span class="sql-keyword">DEALLOCATE</span> cursor_name;
+    <span class="sql-keyword">END</span>;
+    <span class="sql-keyword">THROW</span>;
+<span class="sql-keyword">END CATCH</span>;
+                        </div>
+                    </div>
+
+                    <div class="good-practice">
+                        <h4>✅ 4. Use SET NOCOUNT ON in Stored Procedures</h4>
+                        <div class="code-block">
+<span class="sql-keyword">CREATE PROCEDURE</span> MyProcedure
+<span class="sql-keyword">AS BEGIN</span>
+    <span class="sql-keyword">SET NOCOUNT ON</span>;  <span class="sql-comment">-- Reduces network traffic</span>
+    
+    <span class="sql-comment">-- Cursor code here...</span>
+<span class="sql-keyword">END</span>;
+                        </div>
+                    </div>
+
+                    <div class="good-practice">
+                        <h4>✅ 5. Limit Result Set in Cursor Declaration</h4>
+                        <div class="code-block">
+<span class="sql-comment">-- Filter in cursor SELECT, not in loop</span>
+<span class="sql-keyword">DECLARE</span> cursor_name <span class="sql-keyword">CURSOR FOR</span>
+    <span class="sql-keyword">SELECT</span> columns
+    <span class="sql-keyword">FROM</span> table
+    <span class="sql-keyword">WHERE</span> conditions;  <span class="sql-comment">-- ✓ Filter here</span>
+
+<span class="sql-comment">-- Not this:</span>
+<span class="sql-keyword">WHILE</span> @@FETCH_STATUS = 0
+<span class="sql-keyword">BEGIN</span>
+    <span class="sql-keyword">IF</span> @condition  <span class="sql-comment">-- ✗ Don't filter in loop</span>
+    <span class="sql-keyword">BEGIN</span>
+        ...
+    <span class="sql-keyword">END</span>;
+<span class="sql-keyword">END</span>;
+                        </div>
+                    </div>
+
+                    <div class="good-practice">
+                        <h4>✅ 6. Process in Small Transactions for Large Datasets</h4>
+                        <div class="code-block">
+<span class="sql-keyword">WHILE</span> @@FETCH_STATUS = 0
+<span class="sql-keyword">BEGIN</span>
+    <span class="sql-keyword">BEGIN TRANSACTION</span>;
+    
+    <span class="sql-comment">-- Process one row</span>
+    ...
+    
+    <span class="sql-keyword">COMMIT TRANSACTION</span>;
+    
+    <span class="sql-keyword">FETCH NEXT FROM</span> cursor_name <span class="sql-keyword">INTO</span> @variables;
+<span class="sql-keyword">END</span>;
+                        </div>
+                    </div>
+
+                    <h3>Common Mistakes</h3>
+
+                    <div class="bad-practice">
+                        <h4>❌ 1. Forgetting to DEALLOCATE</h4>
+                        <div class="code-block">
+<span class="sql-keyword">OPEN</span> cursor_name;
+<span class="sql-comment">-- Process rows...</span>
+<span class="sql-keyword">CLOSE</span> cursor_name;
+<span class="sql-comment">-- Missing: DEALLOCATE cursor_name;</span>
+<span class="sql-comment">-- Result: Memory leak!</span>
+                        </div>
+                    </div>
+
+                    <div class="bad-practice">
+                        <h4>❌ 2. Not Handling Errors</h4>
+                        <div class="code-block">
+<span class="sql-keyword">OPEN</span> cursor_name;
+<span class="sql-keyword">WHILE</span> @@FETCH_STATUS = 0
+<span class="sql-keyword">BEGIN</span>
+    <span class="sql-comment">-- What if this fails?</span>
+    <span class="sql-keyword">UPDATE</span> table <span class="sql-keyword">SET</span> column = @value;
+    <span class="sql-comment">-- Cursor never gets closed/deallocated!</span>
+<span class="sql-keyword">END</span>;
+                        </div>
+                    </div>
+
+                    <div class="bad-practice">
+                        <h4>❌ 3. Using Cursors for Simple Set Operations</h4>
+                        <div class="code-block">
+<span class="sql-comment">-- DON'T DO THIS:</span>
+<span class="sql-keyword">DECLARE</span> @Total <span class="sql-keyword">DECIMAL</span>(10,2) = 0;
+<span class="sql-keyword">WHILE</span> @@FETCH_STATUS = 0
+<span class="sql-keyword">BEGIN</span>
+    <span class="sql-keyword">SET</span> @Total = @Total + @Amount;
+<span class="sql-keyword">END</span>;
+
+<span class="sql-comment">-- DO THIS INSTEAD:</span>
+<span class="sql-keyword">SELECT</span> @Total = <span class="sql-function">SUM</span>(Amount) <span class="sql-keyword">FROM</span> table;
+                        </div>
+                    </div>
+
+                    <div class="bad-practice">
+                        <h4>❌ 4. Updating the Same Table Being Cursored</h4>
+                        <div class="code-block">
+<span class="sql-comment">-- Can cause blocking and unexpected results</span>
+<span class="sql-keyword">DECLARE</span> cursor_name <span class="sql-keyword">CURSOR FOR</span>
+    <span class="sql-keyword">SELECT</span> ID, Value <span class="sql-keyword">FROM</span> MyTable;
+
+<span class="sql-keyword">WHILE</span> @@FETCH_STATUS = 0
+<span class="sql-keyword">BEGIN</span>
+    <span class="sql-keyword">UPDATE</span> MyTable  <span class="sql-comment">-- Same table!</span>
+    <span class="sql-keyword">SET</span> Value = @NewValue
+    <span class="sql-keyword">WHERE</span> ID = @ID;
+<span class="sql-keyword">END</span>;
+                        </div>
+                    </div>
+
+                    <div class="bad-practice">
+                        <h4>❌ 5. Nested Cursors Without Justification</h4>
+                        <div class="code-block">
+<span class="sql-comment">-- Extremely slow - O(n²) performance</span>
+<span class="sql-keyword">WHILE</span> @@FETCH_STATUS = 0  <span class="sql-comment">-- Outer cursor</span>
+<span class="sql-keyword">BEGIN</span>
+    <span class="sql-keyword">WHILE</span> @@FETCH_STATUS = 0  <span class="sql-comment">-- Inner cursor</span>
+    <span class="sql-keyword">BEGIN</span>
+        <span class="sql-comment">-- Almost always can be done with JOINs</span>
+    <span class="sql-keyword">END</span>;
+<span class="sql-keyword">END</span>;
+                        </div>
+                    </div>
+
+                    <h3>Decision Tree: Should I Use a Cursor?</h3>
+
+                    <div class="code-block" style="background: #f8f9fa; color: #2c3e50; border: 2px solid #dee2e6;">
+START: Do I need to process rows individually?
+│
+├─ NO → Use set-based SQL ✅
+│
+└─ YES → Can it be done with:
+         │
+         ├─ Window functions (ROW_NUMBER, LAG, LEAD, etc.)? → Use those instead ✅
+         ├─ CTEs or derived tables? → Use those instead ✅
+         ├─ Simple UPDATE/DELETE with WHERE clause? → Use that instead ✅
+         │
+         └─ None of the above work?
+                │
+                ├─ Need to call external APIs/stored procs? → Cursor OK ✅
+                ├─ Complex per-row business logic? → Cursor OK ✅
+                ├─ Administrative one-time task? → Cursor OK ✅
+                │
+                └─ Still not sure? → Try set-based first, measure performance
+                    </div>
+
+                    <h3>Performance Checklist</h3>
+
+                    <div class="checklist" style="background: white; border: 2px solid #e74c3c;">
+                        <h4>Before Using a Cursor in Production:</h4>
+                        <ul style="list-style: none; margin-left: 0;">
+                            <li style="margin: 10px 0;">☐ Tried to solve with set-based SQL</li>
+                            <li style="margin: 10px 0;">☐ Tested with expected data volume</li>
+                            <li style="margin: 10px 0;">☐ Used FAST_FORWARD type</li>
+                            <li style="margin: 10px 0;">☐ Limited result set in cursor SELECT</li>
+                            <li style="margin: 10px 0;">☐ Implemented proper error handling</li>
+                            <li style="margin: 10px 0;">☐ Ensured cursor is always deallocated</li>
+                            <li style="margin: 10px 0;">☐ Considered batch processing instead</li>
+                            <li style="margin: 10px 0;">☐ Documented why cursor is necessary</li>
+                            <li style="margin: 10px 0;">☐ Compared performance vs alternatives</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+
+        <div class="footer">
+            <p>&copy; 2024 COP4709 Database Systems | Cursors and Data Iteration</p>
+            <p>Remember: Set-based operations are almost always faster than cursors!</p>
+        </div>
+    </div>
+
+    <script>
+        // Make collapsible sections work
+        const collapsibles = document.getElementsByClassName("collapsible");
+        
+        for (let i = 0; i < collapsibles.length; i++) {
+            collapsibles[i].addEventListener("click", function() {
+                this.classList.toggle("active");
+                const content = this.nextElementSibling;
+                
+                if (content.style.maxHeight) {
+                    content.style.maxHeight = null;
+                } else {
+                    content.style.maxHeight = content.scrollHeight + "px";
+                }
+            });
+        }
+
+        // Expand first section by default
+        if (collapsibles.length > 0) {
+            collapsibles[0].click();
+        }
+    </script>
+</body>
+</html>

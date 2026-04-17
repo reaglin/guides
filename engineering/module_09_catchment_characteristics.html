@@ -1,0 +1,940 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Module 9: Catchment Characteristics — BMPFast Learning System</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700&family=Source+Serif+4:ital,wght@0,300;0,400;0,600;1,400&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --forest-green: #2D5016;
+      --forest-mid: #3D6B1F;
+      --forest-light: #5A8A35;
+      --forest-muted: #7AAD52;
+      --warm-white: #FAF7F2;
+      --warm-off: #F2EDE4;
+      --warm-border: #DDD5C8;
+      --warm-dark: #4A3F35;
+      --text-primary: #2A2118;
+      --text-secondary: #5C4F42;
+      --accent-gold: #B8860B;
+      --accent-light: #E8F5D6;
+      --sidebar-width: 240px;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: 'Source Serif 4', serif;
+      background: var(--warm-white);
+      color: var(--text-primary);
+      line-height: 1.7;
+      display: flex;
+    }
+
+    /* ── Sidebar ── */
+    nav {
+      width: var(--sidebar-width);
+      min-height: 100vh;
+      background: var(--forest-green);
+      position: sticky;
+      top: 0;
+      height: 100vh;
+      overflow-y: auto;
+      flex-shrink: 0;
+      padding: 2rem 0;
+    }
+
+    .nav-brand {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.65rem;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      color: var(--forest-muted);
+      padding: 0 1.5rem 1.5rem;
+      border-bottom: 1px solid rgba(255,255,255,0.1);
+      margin-bottom: 1.5rem;
+    }
+
+    .nav-brand strong {
+      display: block;
+      color: #fff;
+      font-size: 0.8rem;
+      margin-bottom: 0.2rem;
+    }
+
+    nav ul { list-style: none; }
+
+    nav ul li a {
+      display: block;
+      padding: 0.55rem 1.5rem;
+      font-family: 'Source Serif 4', serif;
+      font-size: 0.82rem;
+      color: rgba(255,255,255,0.75);
+      text-decoration: none;
+      transition: background 0.15s, color 0.15s;
+      border-left: 3px solid transparent;
+    }
+
+    nav ul li a:hover,
+    nav ul li a.active {
+      background: rgba(255,255,255,0.08);
+      color: #fff;
+      border-left-color: var(--forest-muted);
+    }
+
+    nav ul li.section-head a {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.68rem;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--forest-muted);
+      margin-top: 1rem;
+      cursor: default;
+      pointer-events: none;
+    }
+
+    /* ── Main ── */
+    main {
+      flex: 1;
+      max-width: 900px;
+      padding: 0 3rem 5rem;
+      margin: 0 auto;
+    }
+
+    /* ── Hero ── */
+    .hero {
+      background: linear-gradient(135deg, var(--forest-green) 0%, var(--forest-mid) 60%, var(--forest-light) 100%);
+      margin: 0 -3rem 3rem;
+      padding: 4rem 3rem 3rem;
+      color: #fff;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .hero::before {
+      content: '';
+      position: absolute;
+      top: -40px; right: -40px;
+      width: 260px; height: 260px;
+      border-radius: 50%;
+      background: rgba(255,255,255,0.04);
+    }
+
+    .hero-meta {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.7rem;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      color: var(--forest-muted);
+      margin-bottom: 0.75rem;
+    }
+
+    .hero h1 {
+      font-family: 'Playfair Display', serif;
+      font-size: 2.6rem;
+      font-weight: 700;
+      line-height: 1.15;
+      margin-bottom: 1rem;
+    }
+
+    .hero-byline {
+      font-size: 0.9rem;
+      color: rgba(255,255,255,0.7);
+      font-style: italic;
+    }
+
+    /* ── Section headings ── */
+    h2 {
+      font-family: 'Playfair Display', serif;
+      font-size: 1.65rem;
+      font-weight: 600;
+      color: var(--forest-green);
+      margin: 2.5rem 0 1rem;
+      padding-bottom: 0.4rem;
+      border-bottom: 2px solid var(--forest-muted);
+    }
+
+    h3 {
+      font-family: 'Playfair Display', serif;
+      font-size: 1.15rem;
+      font-weight: 600;
+      color: var(--forest-mid);
+      margin: 1.8rem 0 0.6rem;
+    }
+
+    /* ── Body text ── */
+    p { margin-bottom: 1rem; font-size: 1rem; }
+
+    /* ── Callout boxes ── */
+    .callout {
+      background: var(--accent-light);
+      border-left: 4px solid var(--forest-light);
+      padding: 1rem 1.25rem;
+      margin: 1.5rem 0;
+      border-radius: 0 4px 4px 0;
+    }
+
+    .callout.definition {
+      background: #EEF6FF;
+      border-left-color: #3B6FA0;
+    }
+
+    .callout-label {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.65rem;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--forest-mid);
+      margin-bottom: 0.4rem;
+      font-weight: 500;
+    }
+
+    .callout.definition .callout-label { color: #3B6FA0; }
+
+    /* ── Learning Objectives ── */
+    .objectives {
+      background: var(--warm-off);
+      border: 1px solid var(--warm-border);
+      border-radius: 6px;
+      padding: 1.5rem 2rem;
+      margin: 1.5rem 0 2.5rem;
+    }
+
+    .objectives h3 {
+      margin-top: 0;
+      color: var(--forest-green);
+      font-size: 1rem;
+      font-family: 'JetBrains Mono', monospace;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+    }
+
+    .objectives ol {
+      margin: 0.75rem 0 0 1.2rem;
+      font-size: 0.95rem;
+    }
+
+    .objectives ol li { margin-bottom: 0.4rem; }
+
+    /* ── Data tables ── */
+    .data-table {
+      width: 100%;
+      border-collapse: collapse;
+      margin: 1.5rem 0;
+      font-size: 0.88rem;
+    }
+
+    .data-table th {
+      background: var(--forest-green);
+      color: #fff;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.72rem;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      padding: 0.65rem 1rem;
+      text-align: left;
+    }
+
+    .data-table td {
+      padding: 0.55rem 1rem;
+      border-bottom: 1px solid var(--warm-border);
+      vertical-align: top;
+    }
+
+    .data-table tr:nth-child(even) td { background: var(--warm-off); }
+
+    .data-table .val {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.82rem;
+      color: var(--forest-mid);
+    }
+
+    /* ── Worksheet display ── */
+    .worksheet {
+      background: #fff;
+      border: 1px solid var(--warm-border);
+      border-radius: 6px;
+      overflow: hidden;
+      margin: 1.5rem 0;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+    }
+
+    .worksheet-header {
+      background: var(--forest-green);
+      color: #fff;
+      padding: 0.6rem 1.25rem;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.72rem;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+    }
+
+    .worksheet-body {
+      padding: 1.25rem;
+    }
+
+    .ws-row {
+      display: flex;
+      align-items: baseline;
+      padding: 0.35rem 0;
+      border-bottom: 1px solid var(--warm-border);
+      font-size: 0.88rem;
+      gap: 1rem;
+    }
+
+    .ws-row:last-child { border-bottom: none; }
+
+    .ws-label {
+      flex: 1;
+      color: var(--text-secondary);
+    }
+
+    .ws-value {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.82rem;
+      color: var(--forest-mid);
+      min-width: 60px;
+      text-align: right;
+    }
+
+    .ws-tag {
+      display: inline-block;
+      background: var(--forest-light);
+      color: #fff;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.7rem;
+      padding: 0.15rem 0.5rem;
+      border-radius: 3px;
+      margin-right: 0.5rem;
+    }
+
+    /* ── Image placeholder ── */
+    .img-placeholder {
+      width: 100%;
+      background: var(--warm-off);
+      border: 2px dashed var(--warm-border);
+      border-radius: 6px;
+      padding: 2.5rem 1rem;
+      text-align: center;
+      margin: 1.5rem 0;
+      color: var(--text-secondary);
+    }
+
+    .img-placeholder .ph-icon {
+      font-size: 2rem;
+      margin-bottom: 0.5rem;
+      opacity: 0.4;
+    }
+
+    .img-placeholder .ph-label {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.75rem;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--forest-mid);
+      display: block;
+      margin-bottom: 0.25rem;
+    }
+
+    .img-placeholder .ph-caption {
+      font-size: 0.85rem;
+      font-style: italic;
+      color: var(--text-secondary);
+    }
+
+    /* ── Source citation ── */
+    .source-cite {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.72rem;
+      color: var(--text-secondary);
+      border-top: 1px solid var(--warm-border);
+      padding-top: 0.5rem;
+      margin-top: 1rem;
+    }
+
+    /* ── Performance standard dropdown list ── */
+    .dropdown-list {
+      background: #fff;
+      border: 1px solid var(--warm-border);
+      border-radius: 4px;
+      padding: 0.5rem 0;
+      margin: 0.75rem 0;
+      font-size: 0.88rem;
+    }
+
+    .dropdown-list li {
+      list-style: none;
+      padding: 0.3rem 1rem;
+      color: var(--text-secondary);
+    }
+
+    .dropdown-list li.selected {
+      background: #1565C0;
+      color: #fff;
+    }
+
+    /* ── Summary box ── */
+    .summary-box {
+      background: var(--forest-green);
+      color: #fff;
+      border-radius: 6px;
+      padding: 1.75rem 2rem;
+      margin: 2.5rem 0;
+    }
+
+    .summary-box h2 {
+      color: #fff;
+      border-bottom-color: rgba(255,255,255,0.3);
+      margin-top: 0;
+      font-size: 1.4rem;
+    }
+
+    .summary-box ol {
+      margin-left: 1.2rem;
+      font-size: 0.95rem;
+      line-height: 1.8;
+    }
+
+    /* ── Composite CN table ── */
+    .cn-example {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 1.5rem;
+      margin: 1.5rem 0;
+    }
+
+    .cn-result {
+      background: var(--accent-light);
+      border: 1px solid var(--forest-muted);
+      border-radius: 6px;
+      padding: 1.25rem;
+    }
+
+    .cn-result p { margin-bottom: 0.4rem; font-size: 0.9rem; }
+
+    .cn-result .big-val {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 1.4rem;
+      font-weight: 500;
+      color: var(--forest-green);
+    }
+
+    @media (max-width: 768px) {
+      body { flex-direction: column; }
+      nav { width: 100%; height: auto; position: relative; }
+      main { padding: 0 1.25rem 3rem; }
+      .hero { margin: 0 -1.25rem 2rem; padding: 2.5rem 1.25rem 2rem; }
+      .hero h1 { font-size: 1.8rem; }
+      .cn-example { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- ════════════ SIDEBAR ════════════ -->
+<nav>
+  <div class="nav-brand">
+    <strong>BMPFast</strong>
+    Learning System
+  </div>
+  <ul>
+    <li class="section-head"><a>Module 9</a></li>
+    <li><a href="#objectives">Learning Objectives</a></li>
+    <li><a href="#definitions">Definitions</a></li>
+    <li><a href="#catchment-config">Catchment Configuration</a></li>
+    <li><a href="#open-bmpfast">Opening BMPFast</a></li>
+    <li><a href="#worksheet">Catchment Worksheet</a></li>
+    <li><a href="#multiple-land-uses">Multiple Land Uses</a></li>
+    <li><a href="#wet-pond">Wet Pond Contribution</a></li>
+    <li><a href="#user-emc">User Defined EMCs</a></li>
+    <li><a href="#summary">Module Summary</a></li>
+  </ul>
+</nav>
+
+<!-- ════════════ MAIN ════════════ -->
+<main>
+
+  <!-- Hero -->
+  <div class="hero">
+    <div class="hero-meta">BMPFast Learning System &nbsp;/&nbsp; Module 9</div>
+    <h1>Catchment Characteristics</h1>
+    <div class="hero-byline">By Marty Wanielista &nbsp;·&nbsp; January 2026</div>
+  </div>
+
+  <!-- ── Learning Objectives ── -->
+  <section id="objectives">
+    <h2>Learning Objectives</h2>
+    <div class="objectives">
+      <h3>After completing this module, you will be able to:</h3>
+      <ol>
+        <li>Define what a catchment is and how it is delineated.</li>
+        <li>Identify and use worksheet inputs and outputs in BMPFast.</li>
+        <li>Locate relevant EMC values in the Applicant's Handbook.</li>
+        <li>Apply user-defined Event Mean Concentration (EMC) values.</li>
+        <li>Combine multiple land uses within a single catchment.</li>
+        <li>Account for wet pond area in catchment loading calculations.</li>
+      </ol>
+    </div>
+  </section>
+
+  <!-- ── Definitions ── -->
+  <section id="definitions">
+    <h2>Definitions</h2>
+
+    <h3>Best Management Practice (BMP)</h3>
+    <div class="callout definition">
+      <div class="callout-label">Source: Applicant's Handbook, Volume 1, Section 2 — Definitions and Terms, June 28, 2024</div>
+      <p>A <strong>Best Management Practice (BMP)</strong> for stormwater treatment means a practice or combination of practices, based on research, field-testing, and expert review, to be the most effective and practicable — including economic and technological considerations — for improving water quality by reducing excess nutrients and other pollutant loads in water.</p>
+      <p>Traditional BMPs for stormwater treatment are identified and described in Appendix O and the applicable Applicant's Handbook Volume II. Provisions for proposing alternative BMPs are specified in Section 9.5.2 of Volume I.</p>
+    </div>
+
+    <h3>Catchment</h3>
+    <div class="callout">
+      <p>A <strong>catchment</strong> is an area which discharges runoff water to a surface water or groundwater through retention. Within or at the discharge point, there is potential for the management of stormwater by a BMP.</p>
+      <p>The catchment area is defined by a point of discharge and the possible BMP location at or near that point.</p>
+    </div>
+  </section>
+
+  <!-- ── Catchment Configuration ── -->
+  <section id="catchment-config">
+    <h2>Catchment Configuration and Flow Direction</h2>
+
+    <p>A catchment is delineated based on topography and drainage patterns that converge at a single discharge point. Understanding flow direction and catchment boundaries is essential before entering data into BMPFast.</p>
+
+    <p>A single project site may contain multiple catchments, each with its own discharge point and potential BMP location. The flow relationships between catchments — which drain to which — must be established before analysis begins.</p>
+
+    <div class="img-placeholder">
+      <div class="ph-icon">🗺</div>
+      <span class="ph-label">Figure 9-1 — Site Catchment Map</span>
+      <span class="ph-caption">Aerial map showing 426-acre project site with 17 individual catchments delineated by drainage basin boundaries. Catchments are numbered and labeled with discharge points. (Source: Courtesy of Ferguson Engineering)</span>
+    </div>
+
+    <div class="img-placeholder">
+      <div class="ph-icon">📐</div>
+      <span class="ph-label">Figure 9-2 — Catchment Flow Diagram</span>
+      <span class="ph-caption">Hand-drawn flow network diagram for the 17 catchments shown in Figure 9-1, illustrating flow direction between each catchment node including wet ponds, retention areas, and discharge structures.</span>
+    </div>
+
+    <div class="callout">
+      <div class="callout-label">Key Concept</div>
+      <p>Each catchment is uniquely identified by its discharge point. For the 426-acre example site illustrated in this module, 17 individual catchments were delineated. The flow network diagram maps how runoff from upstream catchments contributes to downstream areas.</p>
+    </div>
+  </section>
+
+  <!-- ── Opening BMPFast ── -->
+  <section id="open-bmpfast">
+    <h2>Opening BMPFast — Project Setup</h2>
+
+    <p>Before entering catchment data, the BMPFast project must be configured with site-wide parameters. These settings apply to all catchments in the project.</p>
+
+    <div class="worksheet">
+      <div class="worksheet-header">BMPFast — Project Initialization Parameters</div>
+      <div class="worksheet-body">
+        <div class="ws-row">
+          <span class="ws-label">Select Meteorological Zone for Project</span>
+          <span class="ws-value">Florida Zone 4</span>
+        </div>
+        <div class="ws-row">
+          <span class="ws-label">Enter the Mean Annual Rainfall</span>
+          <span class="ws-value">52 inches</span>
+        </div>
+        <div class="ws-row">
+          <span class="ws-label">Performance Standard of Surface Discharge Analysis</span>
+          <span class="ws-value">[see options below]</span>
+        </div>
+        <div class="ws-row">
+          <span class="ws-label">Conduct Groundwater Analysis</span>
+          <span class="ws-value">Yes / No</span>
+        </div>
+        <div class="ws-row">
+          <span class="ws-label">Nitrogen Removal Efficiency (%)</span>
+          <span class="ws-value">55</span>
+        </div>
+        <div class="ws-row">
+          <span class="ws-label">Phosphorus Removal Efficiency (%)</span>
+          <span class="ws-value">80</span>
+        </div>
+      </div>
+    </div>
+
+    <h3>Performance Standard Options</h3>
+    <p>The Performance Standard of Surface Discharge Analysis dropdown offers the following options. Select the standard that applies to the project based on receiving water classification and project type:</p>
+
+    <ul class="dropdown-list">
+      <li class="selected">All sites non-exempted</li>
+      <li>OFW</li>
+      <li>Impaired Water</li>
+      <li>Impaired Water + OFW</li>
+      <li>Redevelopment</li>
+      <li>Redevelopment + OFW</li>
+      <li>Redevelopment + Impaired</li>
+      <li>Specified Removal Efficiency</li>
+      <li>Net Improvement</li>
+      <li>BMP Analysis</li>
+    </ul>
+
+    <p>Once project-level parameters are saved, the workflow proceeds to Step 1: Enter Catchment.</p>
+  </section>
+
+  <!-- ── Catchment Worksheet ── -->
+  <section id="worksheet">
+    <h2>Catchment Worksheet — Inputs and Outputs</h2>
+
+    <p>The Watershed Characteristics Worksheet is used to define each catchment's pre- and post-development land use, physical characteristics, and pollutant loadings. A catchment name and land use must be entered along with all corresponding data fields. Once the first catchment is fully entered, additional catchments can be added using the <em>Add Catchment</em> button.</p>
+
+    <div class="worksheet">
+      <div class="worksheet-header">Watershed Characteristics Worksheet — Example: Catchment 1 "New Homes"</div>
+      <div class="worksheet-body">
+        <div class="ws-row">
+          <span class="ws-label">Catchment Name</span>
+          <span class="ws-value">New Homes</span>
+        </div>
+        <div class="ws-row">
+          <span class="ws-label"><span class="ws-tag">Pre</span> Land Use</span>
+          <span class="ws-value">Agricultural – Citrus (TN=2.110, TP=0.180)</span>
+        </div>
+        <div class="ws-row">
+          <span class="ws-label"><span class="ws-tag">Post</span> Land Use</span>
+          <span class="ws-value">Single-Family (TN=1.770, TP=0.327)</span>
+        </div>
+        <div class="ws-row">
+          <span class="ws-label">Total Pre-Development Catchment Area (ac)</span>
+          <span class="ws-value">12.00</span>
+        </div>
+        <div class="ws-row">
+          <span class="ws-label">Total Post-Development Catchment Area (ac)</span>
+          <span class="ws-value">12.00</span>
+        </div>
+        <div class="ws-row">
+          <span class="ws-label">Pre-Development Non DCIA Curve Number</span>
+          <span class="ws-value">50.00</span>
+        </div>
+        <div class="ws-row">
+          <span class="ws-label">Pre-Development DCIA Percentage (0–100%)</span>
+          <span class="ws-value">0.00</span>
+        </div>
+        <div class="ws-row">
+          <span class="ws-label">Post-Development Non DCIA Curve Number</span>
+          <span class="ws-value">64.00</span>
+        </div>
+        <div class="ws-row">
+          <span class="ws-label">Post-Development DCIA Percentage (0–100%)</span>
+          <span class="ws-value">27.00</span>
+        </div>
+        <div class="ws-row">
+          <span class="ws-label">Wet Pond Area — No loading from this area (ac)</span>
+          <span class="ws-value">0.00</span>
+        </div>
+        <div class="ws-row">
+          <span class="ws-label">Load from pumped/other non-runoff sources — Pre N (kg/yr)</span>
+          <span class="ws-value">0.000</span>
+        </div>
+        <div class="ws-row">
+          <span class="ws-label">Load from pumped/other non-runoff sources — Pre P (kg/yr)</span>
+          <span class="ws-value">0.000</span>
+        </div>
+        <div class="ws-row">
+          <span class="ws-label">Load from pumped/other non-runoff sources — Post N (kg/yr)</span>
+          <span class="ws-value">0.000</span>
+        </div>
+        <div class="ws-row">
+          <span class="ws-label">Load from pumped/other non-runoff sources — Post P (kg/yr)</span>
+          <span class="ws-value">0.000</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="callout">
+      <div class="callout-label">Note on DCIA</div>
+      <p><strong>Directly Connected Impervious Area (DCIA)</strong> is the percentage of the catchment area consisting of impervious surfaces that drain directly to the stormwater collection system without first passing over pervious areas. DCIA is entered as a percentage (0–100%). Surfaces such as rooftops draining to grass before reaching the collection system are NOT considered DCIA.</p>
+    </div>
+  </section>
+
+  <!-- ── Multiple Land Uses ── -->
+  <section id="multiple-land-uses">
+    <h2>Multiple Land Uses in a Catchment</h2>
+
+    <p>When a catchment contains more than one land use type, a composite Curve Number (CN) must be calculated. BMPFast provides a Composite CN Calculator for this purpose. The user enters the area (in acres) and CN value for each land use sub-area. For impervious areas, CN = 95 is used by convention.</p>
+
+    <p>The key distinction is that BMPFast does <em>not</em> use the area-weighted average CN directly. Instead, the software adds the individual runoff volumes calculated for each land use area and then back-calculates the single equivalent CN that produces the same total runoff. This approach more accurately represents the non-linear relationship between CN and runoff depth.</p>
+
+    <div class="cn-example">
+      <div>
+        <h3>Example: 12-Acre Single-Family Development</h3>
+        <table class="data-table">
+          <thead>
+            <tr>
+              <th>Area (ac)</th>
+              <th>CN</th>
+              <th>C</th>
+              <th>Weighted C</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td class="val">8.219</td>
+              <td class="val">50</td>
+              <td class="val">0.230</td>
+              <td class="val">0.216</td>
+            </tr>
+            <tr>
+              <td class="val">0.541</td>
+              <td class="val">95</td>
+              <td class="val">0.513</td>
+              <td class="val">0.032</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="cn-result">
+        <p><strong>Avg Weighted C:</strong> <span class="big-val">0.247</span></p>
+        <p style="margin-top:1rem"><strong>DCIA Percent:</strong> <span class="big-val">27.0%</span></p>
+        <p style="margin-top:1rem"><strong>Area-Averaged CN:</strong> 52.78</p>
+        <p><strong>Simple Average CN:</strong> 72.5</p>
+        <p style="margin-top:0.5rem; font-style:italic; font-size:0.85rem;">CN used in BMPFast (back-calculated from runoff volumes):</p>
+        <p><span class="big-val">64.00</span></p>
+      </div>
+    </div>
+
+    <div class="callout">
+      <div class="callout-label">Why the Back-Calculated CN Differs</div>
+      <p>The simple arithmetic average of CN values (72.5 in this example) overestimates runoff because it ignores the area weighting. The area-weighted average (52.78) is closer but still not used directly. BMPFast sums the runoff from each land-use area individually, then solves for the equivalent CN — yielding CN = 64 in this example. This value is what should be entered into the catchment worksheet.</p>
+    </div>
+
+    <div class="img-placeholder">
+      <div class="ph-icon">🖥</div>
+      <span class="ph-label">Figure 9-3 — Composite CN Calculator Screenshot</span>
+      <span class="ph-caption">BMPFast Composite CN Calculator interface showing area, CN, C, and weighted C columns for each land-use sub-area. Results display Avg Weighted C, DCIA Percent, and Composite CN. Confirmation dialog asks: "Do you want to use this value as the Curve Number? CCN = 64.00"</span>
+    </div>
+  </section>
+
+  <!-- ── Wet Pond ── -->
+  <section id="wet-pond">
+    <h2>Wet Pond Contribution to Loadings</h2>
+
+    <p>A wet pond (permanent pool) within the catchment boundary is treated differently from other land areas in BMPFast. The water surface of a wet pond does not generate runoff-borne pollutant loads in the same manner as upland land uses. Users enter the wet pond surface area (in acres) in the designated field on the catchment worksheet, and BMPFast excludes this area from land-use-based loading calculations.</p>
+
+    <p>The example below compares calculated outputs for the same 12-acre single-family catchment with and without a one-acre wet pond surface area entered.</p>
+
+    <table class="data-table">
+      <thead>
+        <tr>
+          <th>Output Parameter</th>
+          <th>Without Wet Pond (0 ac)</th>
+          <th>With 1-Acre Wet Pond</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>Annual Runoff Coefficient (ROC)</td>
+          <td class="val">0.022</td>
+          <td class="val">0.260</td>
+        </tr>
+        <tr>
+          <td>Runoff (ac-ft/yr)</td>
+          <td class="val">1.144</td>
+          <td class="val">12.374</td>
+        </tr>
+        <tr>
+          <td>N Loading (kg/yr)</td>
+          <td class="val">2.976</td>
+          <td class="val">27.006</td>
+        </tr>
+        <tr>
+          <td>P Loading (kg/yr)</td>
+          <td class="val">0.254</td>
+          <td class="val">4.989</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <div class="callout">
+      <div class="callout-label">Interpretation</div>
+      <p>Adding a one-acre wet pond surface changes the catchment loading outputs significantly because the open water area has its own rainfall-based loading characteristics distinct from the upland land use. Accurately entering wet pond area ensures the loading analysis correctly apportions nutrient contributions from each land cover type.</p>
+    </div>
+  </section>
+
+  <!-- ── User Defined EMC ── -->
+  <section id="user-emc">
+    <h2>User Defined EMC Values</h2>
+
+    <p>By default, BMPFast assigns Event Mean Concentration (EMC) values for nitrogen and phosphorus based on the selected land use type from the Applicant's Handbook lookup tables. However, the software provides a <em>User Defined Values</em> option in the Post-Development land use dropdown, allowing engineers to input site-specific or agreed-upon EMC values when standard handbook values are not appropriate.</p>
+
+    <p>User-defined EMC values are commonly used when a portion of the Directly Connected Impervious Area (DCIA) has been physically disconnected from the storm system — for example, rooftop drainage redirected to infiltration areas. In these cases, separate EMC values are negotiated with the permitting agency for the impervious and pervious sub-areas.</p>
+
+    <h3>Composite EMC Calculation</h3>
+    <p>When user-defined values are selected, BMPFast opens the Composite EMC Calculator, which functions similarly to the Composite CN Calculator. The user enters the area, EMC, and CN for each sub-area, and the tool computes the weighted composite EMC.</p>
+
+    <div class="worksheet">
+      <div class="worksheet-header">Composite EMC Calculator — Example: Catchment 1 "Sub Division 3" (Total Nitrogen, Post-Development)</div>
+      <div class="worksheet-body">
+        <div class="ws-row">
+          <span class="ws-label">Pre Land Use</span>
+          <span class="ws-value">Agricultural – Citrus (TN=2.110, TP=0.180)</span>
+        </div>
+        <div class="ws-row">
+          <span class="ws-label">Post Land Use</span>
+          <span class="ws-value">User Defined Values</span>
+        </div>
+      </div>
+    </div>
+
+    <table class="data-table">
+      <thead>
+        <tr>
+          <th>Area (ac)</th>
+          <th>EMC (mg/L)</th>
+          <th>CN</th>
+          <th>C</th>
+          <th>Weighted C</th>
+          <th>Sub-Area Type</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td class="val">8.220</td>
+          <td class="val">1.200</td>
+          <td class="val">50</td>
+          <td class="val">0.230</td>
+          <td class="val">0.216</td>
+          <td>Pervious area</td>
+        </tr>
+        <tr>
+          <td class="val">0.540</td>
+          <td class="val">1.800</td>
+          <td class="val">95</td>
+          <td class="val">0.513</td>
+          <td class="val">0.032</td>
+          <td>Disconnected impervious area</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <table class="data-table" style="max-width:420px">
+      <thead>
+        <tr>
+          <th>Summary</th>
+          <th>Pre</th>
+          <th>Post</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>EMC(N) mg/L</td>
+          <td class="val">2.110</td>
+          <td class="val">1.277</td>
+        </tr>
+        <tr>
+          <td>EMC(P) mg/L</td>
+          <td class="val">0.180</td>
+          <td class="val">0.250</td>
+        </tr>
+        <tr>
+          <td>Avg Weighted C</td>
+          <td class="val">—</td>
+          <td class="val">0.247</td>
+        </tr>
+        <tr>
+          <td>DCIA Percent</td>
+          <td class="val">—</td>
+          <td class="val">27.0%</td>
+        </tr>
+        <tr>
+          <td>Composite EMC(N)</td>
+          <td class="val">—</td>
+          <td class="val">1.277</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <div class="callout">
+      <div class="callout-label">Key Values — Agreed-Upon EMCs for This Example</div>
+      <p>The agreed-upon EMC values negotiated with the permitting agency for this site were <strong>1.80 mg/L</strong> for the disconnected impervious area and <strong>1.20 mg/L</strong> for the pervious area. These values were entered directly into the Composite EMC Calculator. The resulting composite post-development EMC for total nitrogen was calculated by the tool as <strong>1.277 mg/L</strong>.</p>
+    </div>
+
+    <div class="img-placeholder">
+      <div class="ph-icon">🖥</div>
+      <span class="ph-label">Figure 9-4 — User Defined EMC Calculator Screenshot</span>
+      <span class="ph-caption">BMPFast Composite EMC Calculator for Post-Development Total Nitrogen showing area (8.220 ac at EMC 1.200 mg/L and 0.540 ac at EMC 1.800 mg/L), resulting in composite EMC = 1.277 mg/L. Summary panel shows Pre EMC(N) = 2.110, Post EMC(N) = 1.277, Pre EMC(P) = 0.180, Post EMC(P) = 0.25.</span>
+    </div>
+  </section>
+
+  <!-- ── Summary ── -->
+  <section id="summary">
+    <div class="summary-box">
+      <h2>Module Summary — What Did We Learn?</h2>
+      <ol>
+        <li><strong>What a catchment is</strong> — an area defined by a single discharge point where BMP placement is possible.</li>
+        <li><strong>Worksheet inputs and outputs</strong> — land use, area, CN, DCIA percentage, wet pond area, and non-runoff pollutant loads; outputs include annual runoff coefficient, runoff volume, and N and P loadings. Noted how EMC values change between pre- and post-development land use selections.</li>
+        <li><strong>User Defined EMCs</strong> — how to enter site-specific or agency-agreed EMC values when standard handbook values are not applicable, including partial DCIA disconnection scenarios.</li>
+        <li><strong>Combined land uses and CN/EMC calculations</strong> — use of the Composite CN Calculator to compute a single equivalent curve number from multiple sub-areas, and the analogous Composite EMC Calculator for weighted average pollutant concentrations.</li>
+        <li><strong>Wet pond area</strong> — how entering the wet pond surface area in the catchment worksheet affects loading calculations by segregating the open-water area from upland land use loading.</li>
+      </ol>
+    </div>
+  </section>
+
+  <!-- ── Referenced Figures ── -->
+  <section id="references">
+    <h2>Referenced Figures</h2>
+    <p>The following figures are referenced in this module and should be inserted at the locations indicated above when final document assembly is complete:</p>
+
+    <table class="data-table">
+      <thead>
+        <tr>
+          <th>Figure</th>
+          <th>Description</th>
+          <th>Section</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td class="val">Fig. 9-1</td>
+          <td>Aerial catchment delineation map — 426-acre site, 17 catchments (Courtesy of Ferguson Engineering)</td>
+          <td>§ Catchment Configuration</td>
+        </tr>
+        <tr>
+          <td class="val">Fig. 9-2</td>
+          <td>Hand-drawn catchment flow network diagram showing flow direction between all 17 catchment nodes</td>
+          <td>§ Catchment Configuration</td>
+        </tr>
+        <tr>
+          <td class="val">Fig. 9-3</td>
+          <td>BMPFast Composite CN Calculator interface — example calculation for 12-acre single-family development yielding Composite CN = 64</td>
+          <td>§ Multiple Land Uses</td>
+        </tr>
+        <tr>
+          <td class="val">Fig. 9-4</td>
+          <td>BMPFast Composite EMC Calculator — User Defined Values example with disconnected impervious area, composite post-development EMC(N) = 1.277 mg/L</td>
+          <td>§ User Defined EMCs</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <div class="source-cite">
+      Primary Reference: Applicant's Handbook, Volume 1 — Definitions and Terms, Section 2. Florida Department of Environmental Protection / Water Management Districts. June 28, 2024.
+    </div>
+  </section>
+
+</main>
+
+<script>
+  // Highlight active nav link on scroll
+  const sections = document.querySelectorAll('section[id]');
+  const navLinks = document.querySelectorAll('nav ul li a[href^="#"]');
+
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) {
+        navLinks.forEach(link => {
+          link.classList.toggle('active', link.getAttribute('href') === '#' + entry.target.id);
+        });
+      }
+    });
+  }, { rootMargin: '-20% 0px -70% 0px' });
+
+  sections.forEach(s => observer.observe(s));
+</script>
+</body>
+</html>

@@ -1,0 +1,1355 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CEN3722 - Guide to Heuristic Evaluation</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.6;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            padding: 20px;
+            color: #333;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.3);
+            overflow: hidden;
+        }
+
+        header {
+            background: linear-gradient(135deg, #2c3e50 0%, #34495e 100%);
+            color: white;
+            padding: 40px;
+            text-align: center;
+        }
+
+        header h1 {
+            font-size: 2.5em;
+            margin-bottom: 10px;
+        }
+
+        header p {
+            font-size: 1.2em;
+            opacity: 0.9;
+        }
+
+        .content {
+            padding: 40px;
+        }
+
+        .intro-box {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 30px;
+            border-radius: 10px;
+            margin-bottom: 30px;
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.3);
+        }
+
+        .intro-box h2 {
+            margin-bottom: 15px;
+        }
+
+        .collapsible {
+            background-color: #3498db;
+            color: white;
+            cursor: pointer;
+            padding: 18px;
+            width: 100%;
+            border: none;
+            text-align: left;
+            outline: none;
+            font-size: 1.2em;
+            font-weight: 600;
+            margin-top: 10px;
+            border-radius: 8px;
+            transition: all 0.3s ease;
+            position: relative;
+            padding-right: 50px;
+        }
+
+        .collapsible:hover {
+            background-color: #2980b9;
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(52, 152, 219, 0.3);
+        }
+
+        .collapsible.active {
+            background-color: #2c3e50;
+        }
+
+        .collapsible:after {
+            content: '\002B';
+            color: white;
+            font-weight: bold;
+            font-size: 1.5em;
+            position: absolute;
+            right: 20px;
+            top: 50%;
+            transform: translateY(-50%);
+        }
+
+        .collapsible.active:after {
+            content: "\2212";
+        }
+
+        .collapsible-content {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.3s ease-out;
+            background-color: #f8f9fa;
+            border-left: 4px solid #3498db;
+            margin-bottom: 10px;
+            border-radius: 0 0 8px 8px;
+        }
+
+        .collapsible-inner {
+            padding: 30px;
+        }
+
+        .info-block {
+            background: #e3f2fd;
+            border-left: 5px solid #2196F3;
+            padding: 20px;
+            margin: 20px 0;
+            border-radius: 5px;
+        }
+
+        .info-block.warning {
+            background: #fff3cd;
+            border-left-color: #ffc107;
+        }
+
+        .info-block.success {
+            background: #d4edda;
+            border-left-color: #28a745;
+        }
+
+        .info-block.tip {
+            background: #d1ecf1;
+            border-left-color: #17a2b8;
+        }
+
+        .example-box {
+            background: white;
+            border: 2px solid #ddd;
+            border-radius: 8px;
+            padding: 25px;
+            margin: 20px 0;
+            box-shadow: 0 3px 10px rgba(0,0,0,0.1);
+        }
+
+        .example-box h4 {
+            color: #2c3e50;
+            margin-bottom: 15px;
+            font-size: 1.3em;
+            border-bottom: 2px solid #3498db;
+            padding-bottom: 10px;
+        }
+
+        .code-block {
+            background: #282c34;
+            color: #abb2bf;
+            padding: 20px;
+            border-radius: 8px;
+            overflow-x: auto;
+            margin: 15px 0;
+            font-family: 'Courier New', monospace;
+            line-height: 1.5;
+        }
+
+        .highlight {
+            background: #fff3cd;
+            padding: 2px 6px;
+            border-radius: 3px;
+            font-weight: 600;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 20px 0;
+            background: white;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        }
+
+        th {
+            background: linear-gradient(135deg, #3498db 0%, #2980b9 100%);
+            color: white;
+            padding: 15px;
+            text-align: left;
+            font-weight: 600;
+        }
+
+        td {
+            padding: 12px 15px;
+            border-bottom: 1px solid #ddd;
+        }
+
+        tr:hover {
+            background: #f5f5f5;
+        }
+
+        ul, ol {
+            margin: 15px 0 15px 30px;
+        }
+
+        li {
+            margin: 8px 0;
+        }
+
+        h3 {
+            color: #2c3e50;
+            margin: 25px 0 15px 0;
+            font-size: 1.6em;
+        }
+
+        h4 {
+            color: #34495e;
+            margin: 20px 0 10px 0;
+            font-size: 1.3em;
+        }
+
+        .two-column {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+            margin: 20px 0;
+        }
+
+        .card {
+            background: white;
+            border-radius: 8px;
+            padding: 20px;
+            box-shadow: 0 3px 10px rgba(0,0,0,0.1);
+            border-top: 4px solid #3498db;
+        }
+
+        .card h4 {
+            color: #3498db;
+            margin-top: 0;
+        }
+
+        @media (max-width: 768px) {
+            .two-column {
+                grid-template-columns: 1fr;
+            }
+            
+            header h1 {
+                font-size: 1.8em;
+            }
+            
+            .content {
+                padding: 20px;
+            }
+        }
+
+        .key-points {
+            background: linear-gradient(135deg, #11998e 0%, #38ef7d 100%);
+            color: white;
+            padding: 20px;
+            border-radius: 8px;
+            margin: 20px 0;
+        }
+
+        .key-points ul {
+            list-style: none;
+            margin-left: 0;
+        }
+
+        .key-points li:before {
+            content: "✓ ";
+            font-weight: bold;
+            margin-right: 8px;
+        }
+
+        .heuristic-card {
+            background: white;
+            border-left: 5px solid #3498db;
+            border-radius: 8px;
+            padding: 20px;
+            margin: 15px 0;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        }
+
+        .heuristic-card h4 {
+            color: #3498db;
+            margin-top: 0;
+            margin-bottom: 10px;
+        }
+
+        .heuristic-number {
+            display: inline-block;
+            background: #3498db;
+            color: white;
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            text-align: center;
+            line-height: 30px;
+            font-weight: bold;
+            margin-right: 10px;
+        }
+
+        .severity-badge {
+            display: inline-block;
+            padding: 5px 12px;
+            border-radius: 20px;
+            font-weight: 600;
+            font-size: 0.9em;
+            margin: 3px;
+        }
+
+        .severity-critical {
+            background: #dc3545;
+            color: white;
+        }
+
+        .severity-major {
+            background: #ff6b6b;
+            color: white;
+        }
+
+        .severity-moderate {
+            background: #ffc107;
+            color: #333;
+        }
+
+        .severity-minor {
+            background: #17a2b8;
+            color: white;
+        }
+
+        .good-example {
+            border-left: 5px solid #28a745;
+            background: #d4edda;
+            padding: 15px;
+            margin: 10px 0;
+            border-radius: 5px;
+        }
+
+        .bad-example {
+            border-left: 5px solid #dc3545;
+            background: #f8d7da;
+            padding: 15px;
+            margin: 10px 0;
+            border-radius: 5px;
+        }
+
+        .violation-example {
+            background: #fff3e0;
+            border-left: 4px solid #ff9800;
+            padding: 15px;
+            margin: 10px 0;
+            border-radius: 5px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>CEN3722: Human-Computer Interaction</h1>
+            <p>Guide to Performing Heuristic Evaluations</p>
+        </header>
+
+        <div class="content">
+            <div class="intro-box">
+                <h2>📊 Module Overview</h2>
+                <p>This guide will teach you how to perform a Heuristic Evaluation—a systematic method for examining an interface against established usability principles. You'll learn what it is, understand the ten heuristics, see complete examples, and master how to document your findings to provide valuable feedback.</p>
+            </div>
+
+            <!-- Section 1: What is Heuristic Evaluation -->
+            <button type="button" class="collapsible">What is a Heuristic Evaluation?</button>
+            <div class="collapsible-content">
+                <div class="collapsible-inner">
+                    <h3>Definition</h3>
+                    <p>A <span class="highlight">Heuristic Evaluation (HE)</span> is a usability inspection method where evaluators examine an interface and judge its compliance with recognized usability principles called <strong>"heuristics."</strong></p>
+
+                    <p>Unlike Cognitive Walkthrough which focuses on specific tasks, Heuristic Evaluation looks at the overall design quality of the interface.</p>
+
+                    <div class="info-block">
+                        <h4>Core Concept</h4>
+                        <p>You systematically review the interface, checking whether it follows established usability principles. When you find a violation of a heuristic, you document it as a usability problem.</p>
+                    </div>
+
+                    <h3>Nielsen's 10 Usability Heuristics</h3>
+                    <p>The most widely used heuristics were developed by Jakob Nielsen. These are the principles you'll use to evaluate the interface:</p>
+
+                    <div class="heuristic-card">
+                        <h4><span class="heuristic-number">1</span>Visibility of System Status</h4>
+                        <p><strong>The system should always keep users informed about what is going on, through appropriate feedback within reasonable time.</strong></p>
+                        <p>Examples: Loading indicators, progress bars, confirmation messages, highlighting current page in navigation</p>
+                    </div>
+
+                    <div class="heuristic-card">
+                        <h4><span class="heuristic-number">2</span>Match Between System and Real World</h4>
+                        <p><strong>The system should speak the users' language, using words, phrases, and concepts familiar to the user rather than system-oriented terms.</strong></p>
+                        <p>Examples: Using "Shopping Cart" instead of "SKU Repository," calendar icons for dates, familiar metaphors</p>
+                    </div>
+
+                    <div class="heuristic-card">
+                        <h4><span class="heuristic-number">3</span>User Control and Freedom</h4>
+                        <p><strong>Users often choose system functions by mistake and need a clearly marked "emergency exit" to leave the unwanted state.</strong></p>
+                        <p>Examples: Undo/redo, cancel buttons, back navigation, ability to exit processes</p>
+                    </div>
+
+                    <div class="heuristic-card">
+                        <h4><span class="heuristic-number">4</span>Consistency and Standards</h4>
+                        <p><strong>Users should not have to wonder whether different words, situations, or actions mean the same thing. Follow platform conventions.</strong></p>
+                        <p>Examples: Same button style throughout, consistent terminology, following iOS/Android guidelines</p>
+                    </div>
+
+                    <div class="heuristic-card">
+                        <h4><span class="heuristic-number">5</span>Error Prevention</h4>
+                        <p><strong>Even better than good error messages is careful design which prevents problems from occurring in the first place.</strong></p>
+                        <p>Examples: Confirmation dialogs, input validation, disabling invalid options, constraints on inputs</p>
+                    </div>
+
+                    <div class="heuristic-card">
+                        <h4><span class="heuristic-number">6</span>Recognition Rather Than Recall</h4>
+                        <p><strong>Minimize the user's memory load by making objects, actions, and options visible. The user should not have to remember information from one part of the dialogue to another.</strong></p>
+                        <p>Examples: Visible menu options, autocomplete, recently used items, persistent navigation</p>
+                    </div>
+
+                    <div class="heuristic-card">
+                        <h4><span class="heuristic-number">7</span>Flexibility and Efficiency of Use</h4>
+                        <p><strong>Accelerators—unseen by the novice user—may often speed up the interaction for the expert user such that the system can cater to both inexperienced and experienced users.</strong></p>
+                        <p>Examples: Keyboard shortcuts, quick actions, favorites, search, advanced filters</p>
+                    </div>
+
+                    <div class="heuristic-card">
+                        <h4><span class="heuristic-number">8</span>Aesthetic and Minimalist Design</h4>
+                        <p><strong>Dialogues should not contain information which is irrelevant or rarely needed. Every extra unit of information competes with relevant units of information.</strong></p>
+                        <p>Examples: Clean layouts, appropriate white space, hiding advanced options, progressive disclosure</p>
+                    </div>
+
+                    <div class="heuristic-card">
+                        <h4><span class="heuristic-number">9</span>Help Users Recognize, Diagnose, and Recover from Errors</h4>
+                        <p><strong>Error messages should be expressed in plain language (no codes), precisely indicate the problem, and constructively suggest a solution.</strong></p>
+                        <p>Examples: "Email address is required" instead of "Error 403," specific guidance on fixing errors</p>
+                    </div>
+
+                    <div class="heuristic-card">
+                        <h4><span class="heuristic-number">10</span>Help and Documentation</h4>
+                        <p><strong>Even though it's better if the system can be used without documentation, it may be necessary to provide help and documentation.</strong></p>
+                        <p>Examples: Tooltips, help sections, tutorials, FAQs, contextual help</p>
+                    </div>
+
+                    <div class="key-points">
+                        <h4>🎯 Key Characteristics of Heuristic Evaluation</h4>
+                        <ul>
+                            <li>Evaluates against established principles, not personal opinion</li>
+                            <li>Looks at overall design, not just specific tasks</li>
+                            <li>Can be done by experts without users present</li>
+                            <li>Finds both specific issues and general design problems</li>
+                            <li>Fast and cost-effective evaluation method</li>
+                        </ul>
+                    </div>
+
+                    <h3>HE vs. Cognitive Walkthrough</h3>
+
+                    <table>
+                        <tr>
+                            <th>Aspect</th>
+                            <th>Heuristic Evaluation</th>
+                            <th>Cognitive Walkthrough</th>
+                        </tr>
+                        <tr>
+                            <td><strong>Focus</strong></td>
+                            <td>Overall design quality</td>
+                            <td>Task completion and learnability</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Method</strong></td>
+                            <td>Check against usability principles</td>
+                            <td>Step through tasks asking questions</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Scope</strong></td>
+                            <td>Entire interface or major sections</td>
+                            <td>Specific user tasks</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Finds</strong></td>
+                            <td>Broad usability issues, inconsistencies</td>
+                            <td>Task-specific problems, unclear paths</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Best For</strong></td>
+                            <td>General usability assessment</td>
+                            <td>Evaluating specific workflows</td>
+                        </tr>
+                    </table>
+
+                    <div class="info-block success">
+                        <h4>Why Use Heuristic Evaluation?</h4>
+                        <ul>
+                            <li><strong>Efficient:</strong> Can evaluate entire interface quickly</li>
+                            <li><strong>Comprehensive:</strong> Catches diverse types of usability issues</li>
+                            <li><strong>Early application:</strong> Works with prototypes and designs</li>
+                            <li><strong>No users needed:</strong> Expert evaluation method</li>
+                            <li><strong>Proven principles:</strong> Based on well-established heuristics</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Section 2: Complete Example -->
+            <button type="button" class="collapsible">Complete Example: Performing a Heuristic Evaluation</button>
+            <div class="collapsible-content">
+                <div class="collapsible-inner">
+                    <h3>Example Scenario: Fitness Class Booking App</h3>
+                    <p>Let's walk through a complete Heuristic Evaluation example to see exactly how it works.</p>
+
+                    <div class="example-box">
+                        <h4>📱 App Context</h4>
+                        <div class="code-block">
+<strong>App:</strong> "FitBook" - Mobile app for booking fitness classes<br>
+<br>
+<strong>Target Users:</strong> Adults who attend gym classes<br>
+<strong>Platform:</strong> iOS mobile app<br>
+<br>
+<strong>Screens Being Evaluated:</strong><br>
+- Home/Dashboard<br>
+- Browse Classes<br>
+- Class Detail<br>
+- Booking Confirmation<br>
+<br>
+<strong>Evaluation Approach:</strong><br>
+Systematically review each screen, checking for violations of each <br>
+of the 10 heuristics
+                        </div>
+                    </div>
+
+                    <h3>Heuristic-by-Heuristic Evaluation</h3>
+                    <p>Let's examine the app against each heuristic and document findings:</p>
+
+                    <div class="example-box">
+                        <h4><span class="heuristic-number">1</span>Visibility of System Status</h4>
+                        
+                        <div class="code-block">
+<strong>EVALUATION:</strong><br>
+<br>
+<strong>Screen: Browse Classes</strong><br>
+Checking: Do users know what the system is doing?<br>
+<br>
+✓ GOOD: When filtering classes, a subtle "Filtering..." indicator appears<br>
+✓ GOOD: Current tab in bottom navigation is highlighted<br>
+✓ GOOD: Selected date in calendar is clearly marked<br>
+<br>
+🔴 ISSUE FOUND:<br>
+When user taps "Book Class" button, there's a 2-3 second delay before <br>
+the confirmation screen appears. During this time, there's NO loading <br>
+indicator or feedback. User might think the button didn't work and tap <br>
+again.<br>
+<br>
+<strong>Severity:</strong> MAJOR<br>
+<strong>Heuristic Violated:</strong> #1 - Visibility of System Status<br>
+<strong>Location:</strong> Class Detail screen → Booking transition<br>
+<strong>Problem:</strong> No loading indicator during booking process<br>
+<strong>Impact:</strong> Users are left uncertain if their action worked. May tap <br>
+multiple times, potentially creating duplicate bookings.<br>
+<strong>Recommendation:</strong> Add loading spinner or progress indicator immediately <br>
+after "Book Class" is tapped, with message "Processing your booking..."<br>
+<br>
+<strong>───────────────────────────────────────────────</strong><br>
+<br>
+<strong>Screen: Home Dashboard</strong><br>
+<br>
+✓ GOOD: "Next Class" widget shows upcoming class clearly<br>
+✓ GOOD: "Classes Today" count is prominently displayed<br>
+<br>
+No additional issues found for Heuristic #1 on this screen.
+                        </div>
+                    </div>
+
+                    <div class="example-box">
+                        <h4><span class="heuristic-number">2</span>Match Between System and Real World</h4>
+                        
+                        <div class="code-block">
+<strong>EVALUATION:</strong><br>
+<br>
+<strong>Screen: Browse Classes</strong><br>
+Checking: Does the app use familiar language and concepts?<br>
+<br>
+✓ GOOD: Uses "Classes" instead of "Sessions" or "Events"<br>
+✓ GOOD: Time slots use 12-hour format (9:00 AM) not 24-hour<br>
+✓ GOOD: Difficulty levels use "Beginner/Intermediate/Advanced" not numbers<br>
+<br>
+🟡 MINOR ISSUE FOUND:<br>
+Filter section uses "Duration" as a label. While technically correct, <br>
+"Class Length" or "Time" would be more natural language for average users.<br>
+<br>
+<strong>Severity:</strong> MINOR<br>
+<strong>Heuristic Violated:</strong> #2 - Match Between System and Real World<br>
+<strong>Location:</strong> Browse Classes screen, filter panel<br>
+<strong>Problem:</strong> "Duration" is slightly formal/technical term<br>
+<strong>Impact:</strong> Minor - most users will understand, but could be more natural<br>
+<strong>Recommendation:</strong> Change label to "Class Length" or "Time"<br>
+<br>
+<strong>───────────────────────────────────────────────</strong><br>
+<br>
+<strong>Screen: Class Detail</strong><br>
+<br>
+🔴 ISSUE FOUND:<br>
+Class capacity shows "14/20 slots occupied." The phrase "slots occupied" <br>
+is awkward and slightly technical. Users typically think in terms of <br>
+"spots available" or "spaces left."<br>
+<br>
+<strong>Severity:</strong> MODERATE<br>
+<strong>Heuristic Violated:</strong> #2 - Match Between System and Real World<br>
+<strong>Location:</strong> Class Detail screen, capacity indicator<br>
+<strong>Problem:</strong> "Slots occupied" is not natural language<br>
+<strong>Impact:</strong> Users have to mentally convert to understand "how many <br>
+spots are left"<br>
+<strong>Recommendation:</strong> Change to "6 spots available" or "14 of 20 spots taken"
+                        </div>
+                    </div>
+
+                    <div class="example-box">
+                        <h4><span class="heuristic-number">3</span>User Control and Freedom</h4>
+                        
+                        <div class="code-block">
+<strong>EVALUATION:</strong><br>
+<br>
+<strong>Screen: All screens</strong><br>
+Checking: Can users undo actions and exit unwanted states?<br>
+<br>
+✓ GOOD: Back button on every screen (except home)<br>
+✓ GOOD: Can cancel out of booking process at any step<br>
+<br>
+🔴 CRITICAL ISSUE FOUND:<br>
+After booking a class, there is NO way to cancel or undo the booking <br>
+from within the app. The confirmation screen only shows "View My Schedule" <br>
+and "Book Another Class" buttons. Users who accidentally book the wrong <br>
+class or wrong time are stuck.<br>
+<br>
+<strong>Severity:</strong> CRITICAL<br>
+<strong>Heuristic Violated:</strong> #3 - User Control and Freedom<br>
+<strong>Location:</strong> Booking Confirmation screen<br>
+<strong>Problem:</strong> No way to cancel a booking that was just made<br>
+<strong>Impact:</strong> Users who make mistakes have no recourse. This will cause <br>
+frustration and support calls. Users may stop using app out of fear of <br>
+making irreversible mistakes.<br>
+<strong>Recommendation:</strong> Add "Cancel This Booking" button on confirmation screen. <br>
+Also add ability to cancel bookings from "My Schedule" screen.<br>
+<br>
+<strong>───────────────────────────────────────────────</strong><br>
+<br>
+<strong>Screen: Browse Classes with Filters Applied</strong><br>
+<br>
+🟡 MODERATE ISSUE FOUND:<br>
+When filters are applied (e.g., "Yoga only"), there's no quick way to <br>
+clear all filters at once. User must open filter panel and deselect <br>
+each filter individually.<br>
+<br>
+<strong>Severity:</strong> MODERATE<br>
+<strong>Heuristic Violated:</strong> #3 - User Control and Freedom<br>
+<strong>Location:</strong> Browse Classes screen with active filters<br>
+<strong>Problem:</strong> Cannot quickly clear all filters<br>
+<strong>Impact:</strong> Inefficient when users want to start over with browsing<br>
+<strong>Recommendation:</strong> Add "Clear All Filters" button or "X" to remove <br>
+individual active filter tags
+                        </div>
+                    </div>
+
+                    <div class="example-box">
+                        <h4><span class="heuristic-number">4</span>Consistency and Standards</h4>
+                        
+                        <div class="code-block">
+<strong>EVALUATION:</strong><br>
+<br>
+<strong>Across all screens</strong><br>
+Checking: Is the design consistent? Does it follow platform conventions?<br>
+<br>
+✓ GOOD: Primary action buttons all use same blue color<br>
+✓ GOOD: Navigation follows iOS tab bar pattern<br>
+✓ GOOD: Swipe gestures work as expected (back navigation)<br>
+<br>
+🟡 MODERATE ISSUE FOUND:<br>
+The app uses "Book" button on some screens and "Reserve" button on others <br>
+for the same action. On Class Detail screen, button says "Book This Class." <br>
+On Quick Book widget, it says "Reserve Spot."<br>
+<br>
+<strong>Severity:</strong> MODERATE<br>
+<strong>Heuristic Violated:</strong> #4 - Consistency and Standards<br>
+<strong>Location:</strong> Multiple screens (Class Detail, Quick Book widget)<br>
+<strong>Problem:</strong> Inconsistent terminology for same action<br>
+<strong>Impact:</strong> Creates confusion about whether these are different actions<br>
+<strong>Recommendation:</strong> Standardize on one term throughout app. "Book" is <br>
+recommended as it's more common in this context.<br>
+<br>
+<strong>───────────────────────────────────────────────</strong><br>
+<br>
+🔴 ISSUE FOUND:<br>
+Cancel buttons appear on the RIGHT side on some screens (booking flow) <br>
+and LEFT side on other screens (profile edit). iOS convention is typically <br>
+cancel on left, confirm on right.<br>
+<br>
+<strong>Severity:</strong> MAJOR<br>
+<strong>Heuristic Violated:</strong> #4 - Consistency and Standards<br>
+<strong>Location:</strong> Multiple dialog boxes<br>
+<strong>Problem:</strong> Inconsistent button placement violates iOS conventions<br>
+<strong>Impact:</strong> Users might tap wrong button accidentally, especially when <br>
+acting quickly<br>
+<strong>Recommendation:</strong> Follow iOS convention: Cancel left, Primary action right
+                        </div>
+                    </div>
+
+                    <h3>Evaluation Summary</h3>
+
+                    <div class="example-box">
+                        <h4>Issues Found in This Example</h4>
+                        
+                        <div class="code-block">
+<strong>═══════════════════════════════════════════════</strong><br>
+<strong>HEURISTIC EVALUATION SUMMARY</strong><br>
+<strong>═══════════════════════════════════════════════</strong><br>
+<br>
+<strong>App:</strong> FitBook<br>
+<strong>Screens Evaluated:</strong> 4 main screens<br>
+<strong>Heuristics Applied:</strong> Nielsen's 10 Usability Heuristics<br>
+<br>
+<strong>Issues Found:</strong><br>
+- Critical: 1<br>
+- Major: 2<br>
+- Moderate: 3<br>
+- Minor: 1<br>
+<strong>Total: 7 issues</strong><br>
+<br>
+<strong>Most Violated Heuristics:</strong><br>
+1. #3 (User Control and Freedom) - 2 issues<br>
+2. #4 (Consistency and Standards) - 2 issues<br>
+3. #1, #2 (tied) - 1 issue each<br>
+<br>
+<strong>Critical Issue:</strong><br>
+No way to cancel bookings after confirmation - violates H#3<br>
+<br>
+<strong>Positive Aspects:</strong><br>
++ Good use of familiar language<br>
++ Clear navigation structure<br>
++ Follows most iOS conventions<br>
++ Good visibility of key information
+                        </div>
+                    </div>
+
+                    <div class="info-block tip">
+                        <h4>💡 Note on the Example</h4>
+                        <p>In this example, we only showed detailed evaluation for 4 of the 10 heuristics. In your actual evaluation, you would systematically check ALL 10 heuristics across ALL screens. This example demonstrates the methodology—you would apply the same approach to the remaining heuristics (#5-10).</p>
+                    </div>
+
+                    <div class="key-points">
+                        <h4>🎯 Key Takeaways from This Example</h4>
+                        <ul>
+                            <li>Go through each heuristic systematically across all screens</li>
+                            <li>Note both violations AND good examples of compliance</li>
+                            <li>Severity is based on impact, not just principle violation</li>
+                            <li>Be specific about location and exact problem</li>
+                            <li>Provide actionable recommendations for each issue</li>
+                            <li>Look for patterns (e.g., consistency issues across multiple screens)</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Section 3: Best Practices for Documentation -->
+            <button type="button" class="collapsible">Best Practices for Documenting Your Heuristic Evaluation</button>
+            <div class="collapsible-content">
+                <div class="collapsible-inner">
+                    <h3>Documentation Principles</h3>
+                    <p>Effective documentation helps designers understand and fix usability problems. Your report should be clear, organized, and actionable.</p>
+
+                    <div class="info-block success">
+                        <h4>What Makes Good HE Documentation?</h4>
+                        <ul>
+                            <li><strong>Systematic:</strong> Organized by heuristic or by severity</li>
+                            <li><strong>Specific:</strong> Exact location and clear description</li>
+                            <li><strong>Justified:</strong> Explains which heuristic is violated and why</li>
+                            <li><strong>Actionable:</strong> Provides concrete recommendations</li>
+                            <li><strong>Balanced:</strong> Notes both problems and good design</li>
+                        </ul>
+                    </div>
+
+                    <h3>Severity Ratings</h3>
+                    <p>Rate issues based on their impact on usability:</p>
+
+                    <table>
+                        <tr>
+                            <th>Severity</th>
+                            <th>Definition</th>
+                            <th>Examples</th>
+                        </tr>
+                        <tr>
+                            <td><span class="severity-badge severity-critical">CRITICAL</span></td>
+                            <td>Prevents users from completing important tasks or causes data loss</td>
+                            <td>No way to undo critical action; app crashes; data lost; core feature broken</td>
+                        </tr>
+                        <tr>
+                            <td><span class="severity-badge severity-major">MAJOR</span></td>
+                            <td>Causes significant problems for most users</td>
+                            <td>Poor error messages; inconsistent navigation; missing important feedback</td>
+                        </tr>
+                        <tr>
+                            <td><span class="severity-badge severity-moderate">MODERATE</span></td>
+                            <td>Causes annoyance or inefficiency; affects some users</td>
+                            <td>Unclear labels; minor inconsistencies; missing shortcuts; cluttered screens</td>
+                        </tr>
+                        <tr>
+                            <td><span class="severity-badge severity-minor">MINOR</span></td>
+                            <td>Cosmetic issues or very minor problems</td>
+                            <td>Small text inconsistency; slight alignment issue; minor wording improvement</td>
+                        </tr>
+                    </table>
+
+                    <div class="info-block tip">
+                        <h4>💡 Determining Severity</h4>
+                        <p>Consider three factors:</p>
+                        <ul>
+                            <li><strong>Frequency:</strong> How often will users encounter this?</li>
+                            <li><strong>Impact:</strong> How badly does it affect users?</li>
+                            <li><strong>Persistence:</strong> Will users learn to work around it or is it always a problem?</li>
+                        </ul>
+                        <p>High frequency + High impact + Persistent = Higher severity</p>
+                    </div>
+
+                    <h3>Issue Documentation Template</h3>
+
+                    <div class="example-box">
+                        <h4>Template for Each Issue</h4>
+                        
+                        <div class="code-block">
+<strong>ISSUE #[Number]: [Brief Descriptive Title]</strong><br>
+<br>
+<strong>Heuristic Violated:</strong> #[Number] - [Heuristic Name]<br>
+<br>
+<strong>Location:</strong> [Screen/Section/Component]<br>
+<br>
+<strong>Severity:</strong> [Critical / Major / Moderate / Minor]<br>
+<br>
+<strong>Problem Description:</strong><br>
+[What is the issue? Be specific about what you observed.]<br>
+<br>
+<strong>Why This Violates the Heuristic:</strong><br>
+[Explain how this breaks the heuristic principle]<br>
+<br>
+<strong>User Impact:</strong><br>
+[How does this affect users? What problems does it cause?]<br>
+<br>
+<strong>Recommendation:</strong><br>
+[Specific suggestion for how to fix this issue]<br>
+<br>
+[Screenshot if available]
+                        </div>
+                    </div>
+
+                    <h3>Examples: Good vs. Bad Documentation</h3>
+
+                    <div class="two-column">
+                        <div class="bad-example">
+                            <h4>✗ Bad Example</h4>
+                            <div class="code-block">
+Issue: Error messages are bad<br>
+<br>
+Heuristic: #9<br>
+<br>
+Severity: Bad<br>
+<br>
+Fix: Make them better
+                            </div>
+                            <p><strong>Why this is bad:</strong></p>
+                            <ul>
+                                <li>No specific location</li>
+                                <li>Doesn't explain what's wrong</li>
+                                <li>Doesn't explain the violation</li>
+                                <li>Not actionable</li>
+                                <li>"Bad" is not a severity level</li>
+                            </ul>
+                        </div>
+
+                        <div class="good-example">
+                            <h4>✓ Good Example</h4>
+                            <div class="code-block">
+<strong>ISSUE #5: Error Message Uses Code <br>
+Instead of Plain Language</strong><br>
+<br>
+<strong>Heuristic:</strong> #9 - Help Users Recognize, <br>
+Diagnose, and Recover from Errors<br>
+<br>
+<strong>Location:</strong> Login screen, after <br>
+failed login attempt<br>
+<br>
+<strong>Severity:</strong> MAJOR<br>
+<br>
+<strong>Problem:</strong> When login fails, the error <br>
+message displays "Error 401: <br>
+Authentication failed." This is a <br>
+technical error code that doesn't help <br>
+users understand what went wrong.<br>
+<br>
+<strong>Violation:</strong> Heuristic #9 requires error <br>
+messages in plain language that explain <br>
+the problem and suggest solutions. This <br>
+message uses a code (401) and technical <br>
+term (Authentication) instead of <br>
+user-friendly language.<br>
+<br>
+<strong>Impact:</strong> Users don't understand if they <br>
+entered wrong password, wrong email, or <br>
+if their account has an issue. They <br>
+can't diagnose the problem.<br>
+<br>
+<strong>Recommendation:</strong> Change message to: <br>
+"The email or password you entered is <br>
+incorrect. Please try again or tap <br>
+'Forgot Password' if you need help."
+                            </div>
+                        </div>
+                    </div>
+
+                    <h3>Complete Report Structure</h3>
+
+                    <div class="example-box">
+                        <h4>Recommended Report Format</h4>
+                        
+                        <div class="code-block">
+<strong>═══════════════════════════════════════════════</strong><br>
+<strong>HEURISTIC EVALUATION REPORT</strong><br>
+<strong>═══════════════════════════════════════════════</strong><br>
+<br>
+<strong>Evaluator:</strong> [Your Name]<br>
+<strong>Date:</strong> [Evaluation Date]<br>
+<strong>App Evaluated:</strong> [App Name]<br>
+<strong>Designer:</strong> [Designer's Name]<br>
+<br>
+<strong>───────────────────────────────────────────────</strong><br>
+<strong>1. EXECUTIVE SUMMARY</strong><br>
+<strong>───────────────────────────────────────────────</strong><br>
+<br>
+[2-3 sentences describing the app and overall evaluation]<br>
+<br>
+<strong>Screens/Features Evaluated:</strong><br>
+- [Screen 1]<br>
+- [Screen 2]<br>
+- [Screen 3]<br>
+<br>
+<strong>Summary of Findings:</strong><br>
+- Critical Issues: [#]<br>
+- Major Issues: [#]<br>
+- Moderate Issues: [#]<br>
+- Minor Issues: [#]<br>
+Total Issues: [#]<br>
+<br>
+<strong>Most Violated Heuristics:</strong><br>
+1. [Heuristic name] - [#] issues<br>
+2. [Heuristic name] - [#] issues<br>
+<br>
+<strong>Overall Assessment:</strong><br>
+[Brief paragraph on overall usability quality]<br>
+<br>
+<strong>───────────────────────────────────────────────</strong><br>
+<strong>2. DETAILED FINDINGS BY SEVERITY</strong><br>
+<strong>───────────────────────────────────────────────</strong><br>
+<br>
+<strong>CRITICAL ISSUES</strong><br>
+<br>
+[Use issue template for each critical issue]<br>
+<br>
+<strong>MAJOR ISSUES</strong><br>
+<br>
+[Use issue template for each major issue]<br>
+<br>
+<strong>MODERATE ISSUES</strong><br>
+<br>
+[Use issue template for each moderate issue]<br>
+<br>
+<strong>MINOR ISSUES</strong><br>
+<br>
+[Use issue template for each minor issue]<br>
+<br>
+<strong>───────────────────────────────────────────────</strong><br>
+<strong>3. HEURISTIC COMPLIANCE SUMMARY</strong><br>
+<strong>───────────────────────────────────────────────</strong><br>
+<br>
+<strong>H1: Visibility of System Status</strong><br>
+Issues found: [#]<br>
+Overall compliance: [Good / Fair / Poor]<br>
+Key findings: [Brief summary]<br>
+<br>
+<strong>H2: Match Between System and Real World</strong><br>
+[Repeat for each heuristic]<br>
+<br>
+<strong>───────────────────────────────────────────────</strong><br>
+<strong>4. POSITIVE FINDINGS</strong><br>
+<strong>───────────────────────────────────────────────</strong><br>
+<br>
+<strong>Heuristic #[Number]: [Name]</strong><br>
+[Describe what the app does well regarding this heuristic]<br>
+<br>
+[Repeat for notable positive aspects]<br>
+<br>
+<strong>───────────────────────────────────────────────</strong><br>
+<strong>5. PRIORITIZED RECOMMENDATIONS</strong><br>
+<strong>───────────────────────────────────────────────</strong><br>
+<br>
+<strong>Must Fix (Critical & Major):</strong><br>
+1. [Issue with brief recommendation]<br>
+2. [Issue with brief recommendation]<br>
+<br>
+<strong>Should Fix (Moderate):</strong><br>
+1. [Issue with brief recommendation]<br>
+2. [Issue with brief recommendation]<br>
+<br>
+<strong>Nice to Fix (Minor):</strong><br>
+[List of minor issues]<br>
+<br>
+<strong>───────────────────────────────────────────────</strong><br>
+<strong>6. METHODOLOGY NOTES</strong><br>
+<strong>───────────────────────────────────────────────</strong><br>
+<br>
+<strong>Evaluation Approach:</strong><br>
+[Briefly describe how you conducted the evaluation]<br>
+<br>
+<strong>Limitations:</strong><br>
+[Note any screens not evaluated or known prototype limitations]
+                        </div>
+                    </div>
+
+                    <h3>Alternative Organization: By Heuristic</h3>
+
+                    <div class="example-box">
+                        <h4>Option 2: Organize Findings by Heuristic</h4>
+                        <p>Instead of organizing by severity, you can organize by heuristic:</p>
+                        
+                        <div class="code-block">
+<strong>2. FINDINGS BY HEURISTIC</strong><br>
+<br>
+<strong>HEURISTIC #1: VISIBILITY OF SYSTEM STATUS</strong><br>
+<br>
+<strong>Issue #1: No Loading Indicator During Booking</strong><br>
+Severity: MAJOR<br>
+Location: Class Detail → Booking transition<br>
+Problem: [Details]<br>
+Impact: [Details]<br>
+Recommendation: [Details]<br>
+<br>
+<strong>Issue #2: [Another H1 issue if found]</strong><br>
+[Details]<br>
+<br>
+<strong>Positive:</strong> Current page highlighted in navigation ✓<br>
+<br>
+<strong>Overall H1 Compliance:</strong> Fair - Major issues with loading states<br>
+<br>
+<strong>───────────────────────────────────────────────</strong><br>
+<br>
+<strong>HEURISTIC #2: MATCH BETWEEN SYSTEM AND REAL WORLD</strong><br>
+<br>
+[Continue for all 10 heuristics]
+                        </div>
+                        
+                        <p><strong>Choose based on your preference:</strong></p>
+                        <ul>
+                            <li><strong>By Severity:</strong> Better for prioritizing fixes, easier for designer to act on</li>
+                            <li><strong>By Heuristic:</strong> Better for learning, shows patterns in compliance</li>
+                        </ul>
+                    </div>
+
+                    <h3>Documentation Best Practices</h3>
+
+                    <div class="key-points">
+                        <h4>✓ Do This</h4>
+                        <ul>
+                            <li>Evaluate ALL 10 heuristics across ALL screens</li>
+                            <li>Be systematic - use a checklist to ensure coverage</li>
+                            <li>Document as you go, don't rely on memory</li>
+                            <li>Take screenshots of every issue</li>
+                            <li>Clearly tie each issue to a specific heuristic</li>
+                            <li>Include both problems and positive examples</li>
+                            <li>Provide specific, actionable recommendations</li>
+                            <li>Use consistent severity ratings</li>
+                            <li>Proofread and organize before submitting</li>
+                        </ul>
+                    </div>
+
+                    <div class="info-block warning">
+                        <h4>⚠️ Common Documentation Mistakes</h4>
+                        <ul>
+                            <li><strong>Skipping heuristics:</strong> Not checking all 10 systematically</li>
+                            <li><strong>Personal preference:</strong> "I don't like the color" (not a heuristic violation)</li>
+                            <li><strong>Vague issues:</strong> Not specifying exact location or problem</li>
+                            <li><strong>No justification:</strong> Not explaining which heuristic or why it's violated</li>
+                            <li><strong>Inconsistent severity:</strong> Rating everything major or being too lenient</li>
+                            <li><strong>Only negative:</strong> Not noting what works well</li>
+                            <li><strong>No recommendations:</strong> Identifying problems without solutions</li>
+                            <li><strong>Too brief:</strong> Not providing enough detail to be actionable</li>
+                        </ul>
+                    </div>
+
+                    <h3>Evaluation Process Tips</h3>
+
+                    <div class="two-column">
+                        <div class="info-block">
+                            <h4>During Evaluation</h4>
+                            <ul>
+                                <li>Go through the app multiple times</li>
+                                <li>First pass: General exploration</li>
+                                <li>Subsequent passes: Systematic heuristic checks</li>
+                                <li>Take notes as you find issues</li>
+                                <li>Screenshot everything</li>
+                            </ul>
+                        </div>
+
+                        <div class="info-block">
+                            <h4>For Each Screen</h4>
+                            <ul>
+                                <li>Check against all 10 heuristics</li>
+                                <li>Look at navigation, content, interactions</li>
+                                <li>Try different paths through the screen</li>
+                                <li>Consider edge cases and errors</li>
+                                <li>Note what works well too</li>
+                            </ul>
+                        </div>
+
+                        <div class="info-block tip">
+                            <h4>Time Management</h4>
+                            <ul>
+                                <li>Allow 15-30 minutes per screen</li>
+                                <li>Budget time for documentation</li>
+                                <li>Take breaks between screens</li>
+                                <li>Review and organize findings at the end</li>
+                            </ul>
+                        </div>
+
+                        <div class="info-block">
+                            <h4>Quality Checks</h4>
+                            <ul>
+                                <li>Did I check all 10 heuristics?</li>
+                                <li>Is each issue clearly documented?</li>
+                                <li>Are severity ratings consistent?</li>
+                                <li>Are recommendations specific?</li>
+                                <li>Did I include positive findings?</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Section 4: Quick Reference -->
+            <button type="button" class="collapsible">Quick Reference Guide</button>
+            <div class="collapsible-content">
+                <div class="collapsible-inner">
+                    <h3>The 10 Heuristics (Quick Reference)</h3>
+
+                    <div class="example-box">
+                        <div class="code-block">
+<strong>H1: VISIBILITY OF SYSTEM STATUS</strong><br>
+Keep users informed about what's happening<br>
+→ Look for: Loading indicators, progress, feedback, current location<br>
+<br>
+<strong>H2: MATCH BETWEEN SYSTEM AND REAL WORLD</strong><br>
+Use familiar language and concepts<br>
+→ Look for: Jargon, unclear terms, unusual metaphors<br>
+<br>
+<strong>H3: USER CONTROL AND FREEDOM</strong><br>
+Provide undo and ways to exit unwanted states<br>
+→ Look for: Undo/cancel options, back buttons, escape routes<br>
+<br>
+<strong>H4: CONSISTENCY AND STANDARDS</strong><br>
+Follow conventions and be consistent<br>
+→ Look for: Inconsistent terminology, different patterns, platform violations<br>
+<br>
+<strong>H5: ERROR PREVENTION</strong><br>
+Prevent problems before they occur<br>
+→ Look for: Confirmation dialogs, validation, constraints, defaults<br>
+<br>
+<strong>H6: RECOGNITION RATHER THAN RECALL</strong><br>
+Make options visible, minimize memory load<br>
+→ Look for: Hidden features, remembering info across screens<br>
+<br>
+<strong>H7: FLEXIBILITY AND EFFICIENCY OF USE</strong><br>
+Provide shortcuts and options for power users<br>
+→ Look for: Lack of shortcuts, no customization, inefficient workflows<br>
+<br>
+<strong>H8: AESTHETIC AND MINIMALIST DESIGN</strong><br>
+Remove unnecessary information<br>
+→ Look for: Clutter, irrelevant info, poor visual hierarchy<br>
+<br>
+<strong>H9: HELP USERS RECOGNIZE, DIAGNOSE, AND RECOVER FROM ERRORS</strong><br>
+Error messages should be helpful and in plain language<br>
+→ Look for: Cryptic errors, no guidance, error codes<br>
+<br>
+<strong>H10: HELP AND DOCUMENTATION</strong><br>
+Provide assistance when needed<br>
+→ Look for: No help available, hard to find, not contextual
+                        </div>
+                    </div>
+
+                    <h3>Severity Quick Guide</h3>
+
+                    <table>
+                        <tr>
+                            <th>Severity</th>
+                            <th>When to Use</th>
+                            <th>Quick Test</th>
+                        </tr>
+                        <tr>
+                            <td><span class="severity-badge severity-critical">Critical</span></td>
+                            <td>Prevents completion of important tasks</td>
+                            <td>"Can users accomplish their main goals?"</td>
+                        </tr>
+                        <tr>
+                            <td><span class="severity-badge severity-major">Major</span></td>
+                            <td>Causes significant problems for most users</td>
+                            <td>"Will this frustrate or confuse many users?"</td>
+                        </tr>
+                        <tr>
+                            <td><span class="severity-badge severity-moderate">Moderate</span></td>
+                            <td>Creates inefficiency or confusion</td>
+                            <td>"Will users notice and be annoyed?"</td>
+                        </tr>
+                        <tr>
+                            <td><span class="severity-badge severity-minor">Minor</span></td>
+                            <td>Small cosmetic or polish issues</td>
+                            <td>"Is this a nitpick or minor improvement?"</td>
+                        </tr>
+                    </table>
+
+                    <h3>Evaluation Checklist</h3>
+
+                    <div class="example-box">
+                        <h4>Before You Start</h4>
+                        <div class="code-block">
+☐ I have reviewed all app documentation<br>
+☐ I understand the app's purpose and target users<br>
+☐ I have explored the entire prototype<br>
+☐ I have my documentation template ready<br>
+☐ I have Nielsen's 10 heuristics handy for reference<br>
+☐ I can take screenshots
+                        </div>
+                    </div>
+
+                    <div class="example-box">
+                        <h4>During Evaluation</h4>
+                        <div class="code-block">
+☐ I'm checking EACH screen against ALL 10 heuristics<br>
+☐ I'm documenting issues as I find them<br>
+☐ I'm taking screenshots of problems<br>
+☐ I'm noting positive examples too<br>
+☐ I'm being specific about locations<br>
+☐ I'm basing findings on heuristics, not personal preference
+                        </div>
+                    </div>
+
+                    <div class="example-box">
+                        <h4>Before Submitting</h4>
+                        <div class="code-block">
+☐ Each issue includes:<br>
+   ☐ Specific heuristic violated<br>
+   ☐ Exact location<br>
+   ☐ Severity rating<br>
+   ☐ Clear problem description<br>
+   ☐ Explanation of why it violates heuristic<br>
+   ☐ User impact<br>
+   ☐ Specific recommendation<br>
+   ☐ Screenshot<br>
+☐ I evaluated ALL 10 heuristics<br>
+☐ I evaluated ALL major screens<br>
+☐ I included positive findings<br>
+☐ My severity ratings are consistent<br>
+☐ My recommendations are actionable<br>
+☐ Report is well-organized<br>
+☐ I proofread everything
+                        </div>
+                    </div>
+
+                    <h3>Common Pitfalls to Avoid</h3>
+
+                    <div class="info-block warning">
+                        <ul>
+                            <li>❌ Only looking for problems, ignoring what works well</li>
+                            <li>❌ Basing evaluation on personal taste instead of heuristics</li>
+                            <li>❌ Giving vague feedback like "navigation is confusing"</li>
+                            <li>❌ Not connecting issues to specific heuristics</li>
+                            <li>❌ Rating everything as major or minor (inconsistent severity)</li>
+                            <li>❌ Providing no recommendations, just identifying problems</li>
+                            <li>❌ Skipping heuristics that seem less relevant</li>
+                            <li>❌ Rushing through the evaluation</li>
+                            <li>❌ Focusing only on visual design, ignoring interaction issues</li>
+                        </ul>
+                    </div>
+
+                    <h3>Quick Comparison: HE vs CW</h3>
+
+                    <table>
+                        <tr>
+                            <th>Aspect</th>
+                            <th>Heuristic Evaluation</th>
+                            <th>Cognitive Walkthrough</th>
+                        </tr>
+                        <tr>
+                            <td><strong>What you check</strong></td>
+                            <td>10 usability principles</td>
+                            <td>4 questions per action</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Scope</strong></td>
+                            <td>Entire interface</td>
+                            <td>Specific tasks</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Approach</strong></td>
+                            <td>Free exploration + systematic check</td>
+                            <td>Step-by-step through tasks</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Best for finding</strong></td>
+                            <td>Overall design issues, inconsistencies</td>
+                            <td>Task-specific problems</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Time required</strong></td>
+                            <td>1-2 hours for typical app</td>
+                            <td>30-45 min per task</td>
+                        </tr>
+                    </table>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+    <script>
+        // JavaScript for collapsible sections
+        const collapsibles = document.getElementsByClassName("collapsible");
+        
+        for (let i = 0; i < collapsibles.length; i++) {
+            collapsibles[i].addEventListener("click", function() {
+                this.classList.toggle("active");
+                const content = this.nextElementSibling;
+                
+                if (content.style.maxHeight) {
+                    content.style.maxHeight = null;
+                } else {
+                    content.style.maxHeight = content.scrollHeight + "px";
+                }
+            });
+        }
+
+        // Optional: Open first section by default
+        if (collapsibles.length > 0) {
+            collapsibles[0].click();
+        }
+    </script>
+</body>
+</html>

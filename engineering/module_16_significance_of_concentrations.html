@@ -1,0 +1,1480 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Module 16 — Significance of Concentrations on BMP Performance</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400&family=Source+Serif+4:ital,wght@0,300;0,400;0,600;1,400&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --forest:       #2d5016;
+    --forest-mid:   #3d6b20;
+    --forest-light: #4f8a2a;
+    --forest-pale:  #e8f0df;
+    --forest-tint:  #f3f7ee;
+    --warm-white:   #faf8f4;
+    --cream:        #f5f0e8;
+    --ink:          #1a1a18;
+    --ink-light:    #3a3a35;
+    --muted:        #6b6b62;
+    --rule:         #c8d5b8;
+    --accent:       #8b4513;
+    --accent-light: #c47a3a;
+    --callout-bg:   #eef4e5;
+    --warning-bg:   #fdf4e7;
+    --warning-border: #c47a3a;
+    --data-bg:      #f0f5e8;
+    --table-head:   #2d5016;
+    --table-alt:    #f3f7ee;
+  }
+
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  html { scroll-behavior: smooth; }
+
+  body {
+    font-family: 'Source Serif 4', Georgia, serif;
+    background: var(--warm-white);
+    color: var(--ink);
+    font-size: 17px;
+    line-height: 1.75;
+  }
+
+  /* ── LAYOUT ── */
+  .page-wrap {
+    display: grid;
+    grid-template-columns: 260px 1fr;
+    min-height: 100vh;
+  }
+
+  /* ── SIDEBAR ── */
+  .sidebar {
+    background: var(--forest);
+    color: #d8e8c4;
+    padding: 2rem 0;
+    position: sticky;
+    top: 0;
+    height: 100vh;
+    overflow-y: auto;
+    scrollbar-width: thin;
+    scrollbar-color: var(--forest-light) var(--forest);
+  }
+
+  .sidebar-brand {
+    padding: 0 1.5rem 1.5rem;
+    border-bottom: 1px solid rgba(255,255,255,0.15);
+    margin-bottom: 1.25rem;
+  }
+
+  .sidebar-brand .module-num {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.65rem;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    color: #a8c87a;
+    display: block;
+    margin-bottom: 0.4rem;
+  }
+
+  .sidebar-brand .module-title {
+    font-family: 'Playfair Display', serif;
+    font-size: 0.92rem;
+    font-weight: 600;
+    line-height: 1.35;
+    color: #f0f7e8;
+  }
+
+  .nav-section-label {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.58rem;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: #7aaa50;
+    padding: 0.75rem 1.5rem 0.3rem;
+    display: block;
+  }
+
+  .sidebar nav a {
+    display: block;
+    padding: 0.38rem 1.5rem;
+    color: #c0d8a0;
+    text-decoration: none;
+    font-family: 'Source Serif 4', serif;
+    font-size: 0.82rem;
+    line-height: 1.4;
+    transition: background 0.18s, color 0.18s;
+    border-left: 3px solid transparent;
+  }
+
+  .sidebar nav a:hover {
+    background: rgba(255,255,255,0.08);
+    color: #f0f7e8;
+    border-left-color: #a8c87a;
+  }
+
+  /* ── MAIN ── */
+  main { background: var(--warm-white); }
+
+  /* ── HERO ── */
+  .hero {
+    background: linear-gradient(135deg, var(--forest) 0%, var(--forest-mid) 55%, #5a9a30 100%);
+    color: #fff;
+    padding: 4rem 3.5rem 3rem;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .hero::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: repeating-linear-gradient(
+      -45deg,
+      transparent,
+      transparent 28px,
+      rgba(255,255,255,0.03) 28px,
+      rgba(255,255,255,0.03) 29px
+    );
+  }
+
+  .hero-meta {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.68rem;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    color: #a8d870;
+    margin-bottom: 1rem;
+    position: relative;
+  }
+
+  .hero h1 {
+    font-family: 'Playfair Display', serif;
+    font-size: 2.6rem;
+    font-weight: 700;
+    line-height: 1.18;
+    margin-bottom: 1.25rem;
+    position: relative;
+    max-width: 680px;
+  }
+
+  .hero-byline {
+    font-family: 'Source Serif 4', serif;
+    font-size: 0.95rem;
+    color: #c8e8a0;
+    font-style: italic;
+    position: relative;
+  }
+
+  .hero-divider {
+    width: 60px;
+    height: 3px;
+    background: #a8d870;
+    margin: 1.25rem 0;
+    position: relative;
+  }
+
+  /* ── CONTENT AREA ── */
+  .content {
+    padding: 3rem 3.5rem;
+    max-width: 900px;
+  }
+
+  /* ── SECTION HEADINGS ── */
+  .section-block {
+    margin-bottom: 3.5rem;
+  }
+
+  .section-block h2 {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.65rem;
+    font-weight: 700;
+    color: var(--forest);
+    border-bottom: 2px solid var(--forest-pale);
+    padding-bottom: 0.5rem;
+    margin-bottom: 1.25rem;
+    line-height: 1.25;
+  }
+
+  .section-block h2 .section-num {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.72rem;
+    font-weight: 600;
+    color: var(--forest-light);
+    letter-spacing: 0.1em;
+    display: block;
+    margin-bottom: 0.2rem;
+    text-transform: uppercase;
+  }
+
+  .section-block h3 {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.2rem;
+    font-weight: 600;
+    color: var(--ink);
+    margin: 1.6rem 0 0.6rem;
+  }
+
+  .section-block h4 {
+    font-family: 'Source Serif 4', serif;
+    font-size: 1rem;
+    font-weight: 600;
+    color: var(--forest-mid);
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    margin: 1.2rem 0 0.5rem;
+    font-style: normal;
+  }
+
+  .section-block p {
+    margin-bottom: 1rem;
+    color: var(--ink-light);
+  }
+
+  /* ── CALLOUT BOXES ── */
+  .callout {
+    background: var(--callout-bg);
+    border-left: 4px solid var(--forest-light);
+    padding: 1.1rem 1.4rem;
+    margin: 1.5rem 0;
+    border-radius: 0 6px 6px 0;
+  }
+
+  .callout.warning {
+    background: var(--warning-bg);
+    border-left-color: var(--warning-border);
+  }
+
+  .callout.key-concept {
+    background: var(--forest);
+    border-left-color: #a8d870;
+    color: #f0f7e8;
+  }
+
+  .callout.key-concept p,
+  .callout.key-concept li {
+    color: #d8eebc;
+  }
+
+  .callout p { margin-bottom: 0.5rem; }
+  .callout p:last-child { margin-bottom: 0; }
+
+  .callout-label {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.65rem;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    font-weight: 600;
+    color: var(--forest-light);
+    display: block;
+    margin-bottom: 0.5rem;
+  }
+
+  .callout.warning .callout-label { color: var(--accent); }
+  .callout.key-concept .callout-label { color: #a8d870; }
+
+  /* ── FIGURE PLACEHOLDERS ── */
+  .figure-placeholder {
+    width: 100%;
+    background: linear-gradient(135deg, #e8f0df 0%, #ddeace 100%);
+    border: 2px dashed var(--forest-light);
+    border-radius: 8px;
+    padding: 2rem 2.5rem;
+    margin: 1.5rem 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    min-height: 160px;
+  }
+
+  .figure-placeholder .fig-icon {
+    font-size: 2.2rem;
+    margin-bottom: 0.75rem;
+    opacity: 0.6;
+  }
+
+  .figure-placeholder .fig-label {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.68rem;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--forest-mid);
+    font-weight: 600;
+    margin-bottom: 0.35rem;
+  }
+
+  .figure-placeholder .fig-caption {
+    font-family: 'Source Serif 4', serif;
+    font-size: 0.9rem;
+    color: var(--muted);
+    font-style: italic;
+    max-width: 580px;
+    line-height: 1.5;
+  }
+
+  /* ── TABLES ── */
+  .data-table-wrap {
+    overflow-x: auto;
+    margin: 1.5rem 0;
+    border-radius: 8px;
+    box-shadow: 0 2px 12px rgba(45,80,22,0.1);
+  }
+
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    font-family: 'Source Serif 4', serif;
+    font-size: 0.92rem;
+  }
+
+  table caption {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.7rem;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--muted);
+    text-align: left;
+    padding: 0 0 0.5rem;
+  }
+
+  table thead th {
+    background: var(--table-head);
+    color: #e8f5d0;
+    font-family: 'Source Serif 4', serif;
+    font-weight: 600;
+    padding: 0.75rem 1rem;
+    text-align: left;
+    font-size: 0.88rem;
+    letter-spacing: 0.02em;
+  }
+
+  table thead th:first-child { border-radius: 8px 0 0 0; }
+  table thead th:last-child { border-radius: 0 8px 0 0; }
+
+  table tbody td {
+    padding: 0.62rem 1rem;
+    border-bottom: 1px solid var(--rule);
+    color: var(--ink-light);
+    vertical-align: top;
+  }
+
+  table tbody tr:nth-child(even) td { background: var(--table-alt); }
+  table tbody tr:last-child td { border-bottom: none; }
+  table tbody tr:last-child td:first-child { border-radius: 0 0 0 8px; }
+  table tbody tr:last-child td:last-child { border-radius: 0 0 8px 0; }
+
+  .mono { font-family: 'JetBrains Mono', monospace; font-size: 0.85em; }
+
+  /* ── LEARNING OBJECTIVES ── */
+  .objectives-box {
+    background: var(--forest);
+    color: #e8f5d0;
+    border-radius: 10px;
+    padding: 1.75rem 2rem;
+    margin-bottom: 2.5rem;
+  }
+
+  .objectives-box h3 {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.1rem;
+    color: #a8d870;
+    margin-bottom: 1rem;
+  }
+
+  .objectives-box ol {
+    padding-left: 1.3rem;
+  }
+
+  .objectives-box li {
+    margin-bottom: 0.5rem;
+    color: #c8e8a0;
+    font-size: 0.94rem;
+    line-height: 1.6;
+  }
+
+  /* ── FORMULA BOX ── */
+  .formula-box {
+    background: #1a2e0a;
+    color: #c8e870;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.95rem;
+    padding: 1.25rem 1.75rem;
+    border-radius: 8px;
+    margin: 1.25rem 0;
+    border: 1px solid var(--forest-light);
+    overflow-x: auto;
+    white-space: pre;
+  }
+
+  /* ── SUMMARY TABLE (two column) ── */
+  .two-col {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1.5rem;
+    margin: 1.5rem 0;
+  }
+
+  .info-card {
+    background: var(--forest-tint);
+    border: 1px solid var(--rule);
+    border-radius: 8px;
+    padding: 1.25rem 1.4rem;
+  }
+
+  .info-card h4 {
+    font-family: 'Playfair Display', serif;
+    font-size: 1rem;
+    color: var(--forest);
+    margin-bottom: 0.6rem;
+    text-transform: none;
+    letter-spacing: 0;
+    font-weight: 600;
+  }
+
+  .info-card p, .info-card li {
+    font-size: 0.9rem;
+    color: var(--ink-light);
+    line-height: 1.6;
+  }
+
+  /* ── FLOW DIAGRAM ── */
+  .flow-diagram {
+    display: flex;
+    align-items: center;
+    gap: 0;
+    margin: 1.75rem 0;
+    overflow-x: auto;
+    padding-bottom: 0.5rem;
+  }
+
+  .flow-node {
+    background: var(--forest);
+    color: #fff;
+    border-radius: 8px;
+    padding: 1rem 1.25rem;
+    text-align: center;
+    min-width: 140px;
+    flex-shrink: 0;
+  }
+
+  .flow-node .node-label {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.62rem;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: #a8d870;
+    margin-bottom: 0.25rem;
+  }
+
+  .flow-node .node-val {
+    font-family: 'Source Serif 4', serif;
+    font-size: 0.85rem;
+    color: #e8f5d0;
+    line-height: 1.4;
+  }
+
+  .flow-arrow {
+    padding: 0 0.75rem;
+    color: var(--forest-light);
+    font-size: 1.4rem;
+    flex-shrink: 0;
+  }
+
+  /* ── SECTION DIVIDER ── */
+  .section-divider {
+    border: none;
+    border-top: 1px solid var(--rule);
+    margin: 3rem 0;
+  }
+
+  /* ── FIGURE APPENDIX ── */
+  .figure-appendix {
+    background: var(--cream);
+    border-top: 3px solid var(--forest);
+    padding: 3rem 3.5rem;
+  }
+
+  .figure-appendix h2 {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.5rem;
+    color: var(--forest);
+    margin-bottom: 0.5rem;
+  }
+
+  .figure-appendix .appendix-intro {
+    color: var(--muted);
+    font-style: italic;
+    margin-bottom: 2rem;
+    font-size: 0.92rem;
+  }
+
+  .appendix-item {
+    display: flex;
+    gap: 1.5rem;
+    margin-bottom: 1.75rem;
+    padding-bottom: 1.75rem;
+    border-bottom: 1px solid var(--rule);
+  }
+
+  .appendix-item:last-child { border-bottom: none; margin-bottom: 0; }
+
+  .appendix-fig-num {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.72rem;
+    font-weight: 600;
+    color: var(--forest-light);
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    min-width: 60px;
+    padding-top: 0.1rem;
+    white-space: nowrap;
+  }
+
+  .appendix-fig-desc {
+    font-size: 0.9rem;
+    color: var(--ink-light);
+    line-height: 1.6;
+  }
+
+  .appendix-placeholder {
+    background: linear-gradient(135deg, #e8f0df, #dde8cc);
+    border: 2px dashed var(--forest-light);
+    border-radius: 6px;
+    padding: 1.25rem 1.75rem;
+    margin-bottom: 2.5rem;
+    text-align: center;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.7rem;
+    color: var(--forest-mid);
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+  }
+
+  /* scrollbar */
+  ::-webkit-scrollbar { width: 6px; height: 6px; }
+  ::-webkit-scrollbar-track { background: transparent; }
+  ::-webkit-scrollbar-thumb { background: var(--forest-light); border-radius: 3px; }
+
+  @media (max-width: 900px) {
+    .page-wrap { grid-template-columns: 1fr; }
+    .sidebar { position: static; height: auto; }
+    .hero, .content, .figure-appendix { padding-left: 1.5rem; padding-right: 1.5rem; }
+    .hero h1 { font-size: 1.8rem; }
+    .two-col { grid-template-columns: 1fr; }
+    .flow-diagram { flex-wrap: wrap; }
+  }
+</style>
+</head>
+<body>
+
+<div class="page-wrap">
+
+<!-- ═══════════════════════════════════════════
+     SIDEBAR NAVIGATION
+════════════════════════════════════════════ -->
+<aside class="sidebar">
+  <div class="sidebar-brand">
+    <span class="module-num">BMPFast Learning System · Module 16</span>
+    <span class="module-title">Significance of Concentrations on BMP Performance</span>
+  </div>
+  <nav>
+    <span class="nav-section-label">Contents</span>
+    <a href="#objectives">Learning Objectives</a>
+    <a href="#runoff-p">1 · Phosphorus in Residential Runoff</a>
+    <a href="#runoff-n">2 · Nitrogen in Residential Runoff</a>
+    <a href="#reuse-ponds">3 · Wet Ponds with Reuse Irrigation</a>
+    <a href="#p-species">4 · Distribution of Phosphorus Species</a>
+    <a href="#n-species">5 · Distribution of Nitrogen Species</a>
+    <a href="#wet-ponds">6 · Wet Detention Ponds</a>
+    <a href="#pond-discharge-n">7 · Pond Discharge — Nitrogen</a>
+    <a href="#pond-discharge-p">8 · Pond Discharge — Phosphorus</a>
+    <a href="#pond-concentrations">9 · Irreducible Concentrations</a>
+    <a href="#removal-relationships">10 · Nutrient Removal Relationships</a>
+    <a href="#floating-islands">11 · Floating Island Enhancement</a>
+    <a href="#manufacturer-claims">12 · Manufacturer's Removal Claims</a>
+    <a href="#adsorption-media">13 · Adsorption Media</a>
+    <a href="#hardwood-wetlands">14 · Shallow Hardwood Wetlands</a>
+    <a href="#herbaceous-wetlands">15 · Herbaceous Wetlands</a>
+    <a href="#wetland-polishing">16 · Wetland Polishing</a>
+    <a href="#treatment-train">17 · Treatment Train</a>
+    <a href="#summary">18 · Summary</a>
+    <span class="nav-section-label">Figures</span>
+    <a href="#figure-appendix">Referenced Figures</a>
+  </nav>
+</aside>
+
+<!-- ═══════════════════════════════════════════
+     MAIN CONTENT
+════════════════════════════════════════════ -->
+<main>
+
+  <!-- HERO -->
+  <div class="hero">
+    <div class="hero-meta">BMPFast Learning System &nbsp;·&nbsp; Module 16 &nbsp;·&nbsp; January 2026</div>
+    <h1>Significance of Concentrations on BMP Performance</h1>
+    <div class="hero-divider"></div>
+    <div class="hero-byline">Harvey H. Harper &nbsp;·&nbsp; Environmental Research &amp; Design, Inc. &nbsp;·&nbsp; University of Central Florida</div>
+  </div>
+
+  <div class="content">
+
+    <!-- LEARNING OBJECTIVES -->
+    <div id="objectives" class="objectives-box">
+      <h3>Learning Objectives</h3>
+      <ol>
+        <li>Understand how pollutant concentrations vary across different conveyance and treatment systems in residential runoff.</li>
+        <li>Explain why first-order rate kinetics govern all biological, physical, and chemical removal processes in BMPs.</li>
+        <li>Describe the species distribution of phosphorus and nitrogen and its significance for BMP selection.</li>
+        <li>Identify irreducible concentrations in wet detention ponds for nitrogen and phosphorus.</li>
+        <li>Evaluate manufacturer removal efficiency claims in the context of actual stormwater concentrations.</li>
+        <li>Distinguish how hardwood versus herbaceous wetlands respond to stormwater nutrient inputs.</li>
+        <li>Apply treatment train design principles to optimize overall system performance.</li>
+      </ol>
+    </div>
+
+    <!-- ═══ SECTION 1: PHOSPHORUS IN RESIDENTIAL RUNOFF ═══ -->
+    <div id="runoff-p" class="section-block">
+      <h2><span class="section-num">Section 1</span>Phosphorus Concentrations in Residential Runoff</h2>
+
+      <p>One of the foundational concepts in BMP design is understanding baseline pollutant concentrations entering the treatment system. A study of ten residential sites in Florida compared phosphorus concentrations in curb-and-gutter drainage systems versus roadside swales, examining all major phosphorus fractions.</p>
+
+      <h3>Curb &amp; Gutter vs. Swale: Phosphorus Species</h3>
+
+      <p>Box plot analyses comparing Soluble Reactive Phosphorus (SRP), Dissolved Organic Phosphorus, Particulate Phosphorus, and Total Phosphorus consistently showed lower concentrations in swale runoff than in curb-and-gutter systems. This finding has direct implications for BMP sizing and selection:</p>
+
+      <div class="figure-placeholder">
+        <div class="fig-icon">📊</div>
+        <div class="fig-label">Figure 1</div>
+        <div class="fig-caption">Box plots comparing four phosphorus species (SRP, Dissolved Organic P, Particulate P, Total P) between curb &amp; gutter and swale conveyance systems. Data from n=10 residential sites in Florida. Y-axes scaled to µg/L; statistical descriptors include 10th, 25th, median, mean, 75th, and 90th percentiles plus outliers.</div>
+      </div>
+
+      <div class="callout">
+        <span class="callout-label">Key Finding</span>
+        <p>Concentrations of all phosphorus species are consistently lower in swale runoff than in curb-and-gutter systems. Swales provide effective pretreatment of stormwater runoff before it reaches a detention pond or other structural BMP.</p>
+      </div>
+
+      <p>This difference arises because swales allow infiltration, grass filtering, sedimentation, and biological uptake along the flow path — processes that are absent when runoff is collected and conveyed directly by curb and gutter systems. The implication for BMP design is significant: the choice of conveyance upstream of a treatment facility materially affects the influent concentration and therefore the required treatment volume.</p>
+    </div>
+
+    <hr class="section-divider">
+
+    <!-- ═══ SECTION 2: NITROGEN IN RESIDENTIAL RUNOFF ═══ -->
+    <div id="runoff-n" class="section-block">
+      <h2><span class="section-num">Section 2</span>Nitrogen Concentrations in Residential Runoff</h2>
+
+      <p>The same ten-site study examined nitrogen concentrations across five species: Ammonia (NH₃), Nitrate/Nitrite (NO<sub>x</sub>), Dissolved Organic Nitrogen, Particulate Nitrogen, and Total Nitrogen.</p>
+
+      <div class="figure-placeholder">
+        <div class="fig-icon">📊</div>
+        <div class="fig-label">Figure 2</div>
+        <div class="fig-caption">Box plots comparing five nitrogen species (Ammonia, NOx, Dissolved Organic N, Particulate N, Total N) between curb &amp; gutter and swale conveyance systems. Data from n=10 Florida residential sites. Y-axes range up to approximately 250, 500, 800, 600, and 1,600 µg/L respectively.</div>
+      </div>
+
+      <div class="callout">
+        <span class="callout-label">Key Finding</span>
+        <p>Concentrations of all nitrogen species are lower in swale runoff than in curb-and-gutter systems. This result confirms that swales function as effective pretreatment for both nitrogen and phosphorus.</p>
+      </div>
+
+      <p>The pattern is consistent across all nitrogen fractions. For the inorganic species (ammonia and NO<sub>x</sub>), biological uptake by swale vegetation and microbial activity in the soil-water interface accounts for much of the reduction. For particulate and dissolved organic forms, physical filtration and settling along the swale length play a larger role.</p>
+    </div>
+
+    <hr class="section-divider">
+
+    <!-- ═══ SECTION 3: REUSE IRRIGATION ═══ -->
+    <div id="reuse-ponds" class="section-block">
+      <h2><span class="section-num">Section 3</span>Wet Detention Pond Discharges in Watersheds with Reuse Irrigation</h2>
+
+      <p>A particularly important special case is the behavior of wet detention ponds in residential communities where reclaimed water (reuse) is used for landscape irrigation. Reclaimed water typically contains elevated nutrient concentrations relative to natural stormwater, and when applied to landscaping it contributes to elevated nutrient loads in the resulting runoff.</p>
+
+      <div class="figure-placeholder">
+        <div class="fig-icon">📊</div>
+        <div class="fig-label">Figure 3</div>
+        <div class="fig-caption">Box plots comparing all four phosphorus species (SRP, Dissolved Organic P, Particulate P, Total P) between raw single-family residential runoff and wet detention pond discharges in watersheds with reuse irrigation systems. Y-axes in µg/L; SRP scale extends to 300 µg/L, Total P to 500 µg/L.</div>
+      </div>
+
+      <p>The data reveal a counterintuitive result: phosphorus concentrations for most parameters in pond discharges from reuse-irrigated watersheds are <em>higher</em> than typical raw residential runoff without reuse. This occurs because the pond is receiving nutrient-enriched runoff from reuse-irrigated landscapes, and the standard detention pond is not sized to treat these elevated loads down to pre-development levels.</p>
+
+      <div class="callout warning">
+        <span class="callout-label">Regulatory Implication</span>
+        <p>Watersheds with reuse irrigation require a substantially larger treatment volume to achieve post-development concentrations below pre-development levels. Reuse irrigation may not be compatible with the new Florida Stormwater Rule, which requires post-development pollutant loads to not exceed pre-development conditions.</p>
+      </div>
+    </div>
+
+    <hr class="section-divider">
+
+    <!-- ═══ SECTION 4: PHOSPHORUS SPECIES DISTRIBUTION ═══ -->
+    <div id="p-species" class="section-block">
+      <h2><span class="section-num">Section 4</span>Distribution of Phosphorus Species in Residential Runoff</h2>
+
+      <p>Understanding the speciation of nutrients in runoff is critical to predicting how much removal is achievable with any given BMP. Typical residential stormwater phosphorus is distributed among three principal forms:</p>
+
+      <div class="data-table-wrap">
+        <table>
+          <caption>Typical Residential Runoff Phosphorus Concentrations</caption>
+          <thead>
+            <tr>
+              <th>Parameter</th>
+              <th>Concentration (µg/L)</th>
+              <th>Fraction of Total (%)</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>Soluble Reactive Phosphorus (SRP)</td>
+              <td class="mono">105</td>
+              <td class="mono">43%</td>
+            </tr>
+            <tr>
+              <td>Dissolved Organic Phosphorus</td>
+              <td class="mono">72</td>
+              <td class="mono">30%</td>
+            </tr>
+            <tr>
+              <td>Particulate Phosphorus</td>
+              <td class="mono">67</td>
+              <td class="mono">27%</td>
+            </tr>
+            <tr>
+              <td><strong>Total Phosphorus</strong></td>
+              <td class="mono"><strong>244</strong></td>
+              <td class="mono"><strong>100%</strong></td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="figure-placeholder">
+        <div class="fig-icon">🥧</div>
+        <div class="fig-label">Figure 4</div>
+        <div class="fig-caption">Pie chart showing the typical distribution of phosphorus species in Florida residential stormwater runoff: SRP 43%, Dissolved Organic P 30%, Particulate P 27%.</div>
+      </div>
+
+      <h3>Fate of Phosphorus in Wet Detention Ponds</h3>
+
+      <p>The species distribution determines how much of the total phosphorus load can physically be removed by a wet detention pond:</p>
+
+      <div class="callout">
+        <span class="callout-label">Removal Pathway Analysis</span>
+        <p><strong>Removable species include SRP and Particulate P — approximately 70% of total P.</strong></p>
+        <p>SRP is removed through co-precipitation with metal oxides and biological uptake. Particulate P is removed primarily by gravity settling. Together these two fractions constitute roughly 70% of total phosphorus.</p>
+        <p>Dissolved Organic P (30%) is removed only through slow biological degradation processes, requiring very long detention times.</p>
+        <p>If 85% of the removable species are captured (a typical performance target for well-designed wet ponds), the resulting total phosphorus removal is approximately: <strong>70% × 0.85 = 59.5% ≈ 60%</strong>. This figure aligns closely with the maximum TP removal achieved in wet ponds operating at typical hydraulic detention times.</p>
+        <p>At very long detention times (approximately 180 days), a portion of the dissolved organic P may also be biologically converted and removed, allowing somewhat higher overall removal.</p>
+      </div>
+    </div>
+
+    <hr class="section-divider">
+
+    <!-- ═══ SECTION 5: NITROGEN SPECIES DISTRIBUTION ═══ -->
+    <div id="n-species" class="section-block">
+      <h2><span class="section-num">Section 5</span>Distribution of Nitrogen Species in Residential Runoff</h2>
+
+      <p>The same species-distribution analysis applies to nitrogen, where five fractions must be considered:</p>
+
+      <div class="data-table-wrap">
+        <table>
+          <caption>Typical Residential Runoff Nitrogen Concentrations</caption>
+          <thead>
+            <tr>
+              <th>Parameter</th>
+              <th>Concentration (µg/L)</th>
+              <th>Fraction of Total (%)</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>Ammonia</td>
+              <td class="mono">61</td>
+              <td class="mono">7%</td>
+            </tr>
+            <tr>
+              <td>NOx (Nitrate + Nitrite)</td>
+              <td class="mono">104</td>
+              <td class="mono">12%</td>
+            </tr>
+            <tr>
+              <td>Dissolved Organic Nitrogen</td>
+              <td class="mono">457</td>
+              <td class="mono">52%</td>
+            </tr>
+            <tr>
+              <td>Particulate Nitrogen</td>
+              <td class="mono">260</td>
+              <td class="mono">29%</td>
+            </tr>
+            <tr>
+              <td><strong>Total Nitrogen</strong></td>
+              <td class="mono"><strong>882</strong></td>
+              <td class="mono"><strong>100%</strong></td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="figure-placeholder">
+        <div class="fig-icon">🥧</div>
+        <div class="fig-label">Figure 5</div>
+        <div class="fig-caption">Pie chart showing the typical distribution of nitrogen species in Florida residential stormwater runoff: Dissolved Organic N 52%, Particulate N 29%, NOx-N 12%, Ammonia 7%.</div>
+      </div>
+
+      <h3>Fate of Nitrogen in Wet Detention Ponds</h3>
+
+      <div class="callout">
+        <span class="callout-label">Removal Pathway Analysis</span>
+        <p><strong>Removable species include Ammonia, NOx, and Particulate N — approximately 48% of total N.</strong></p>
+        <p>Dissolved Organic N (52%) is the dominant species and is only slowly removed through biological mineralization processes.</p>
+        <p>If 85% of the removable fraction is captured: <strong>48% × 0.85 = 41%</strong>. This is consistent with maximum TN removal achieved in wet ponds under typical conditions.</p>
+        <p>At long detention times (approximately 1 year or more), a portion of dissolved organic N may be converted and removed, but even at extremely long detention times, TN removal in wet ponds <strong>cannot exceed approximately 40–50%</strong>. This is a fundamental constraint imposed by the species distribution, not by pond design.</p>
+      </div>
+
+      <p>This analysis demonstrates a critical design principle: even a theoretically perfect detention pond — one that removes all setteable and biologically reactive fractions — cannot achieve more than 50% TN removal from typical residential runoff because more than half the nitrogen is present in a dissolved organic form that is resistant to conventional removal mechanisms.</p>
+    </div>
+
+    <hr class="section-divider">
+
+    <!-- ═══ SECTION 6: WET DETENTION PONDS ═══ -->
+    <div id="wet-ponds" class="section-block">
+      <h2><span class="section-num">Section 6</span>Wet Detention Ponds</h2>
+
+      <p>Wet detention ponds are the most widely used stormwater treatment BMP in Florida. They function essentially as engineered lakes, subject to the same physical, biological, and chemical processes that govern natural surface water quality. This makes their performance highly predictable compared to more complex or novel technologies.</p>
+
+      <h3>Physical Structure</h3>
+
+      <p>The treatment function of a wet pond occurs within its permanent pool volume — the water that remains in the pond between storm events. The pond design includes a littoral zone (shallow vegetated margins), a deeper permanent pool, and a control structure with weir and orifice that manages the drawdown of runoff captured during storm events. Typical side slopes are 6:1 or 4:1 in the littoral zone and 2:1 in the deeper pool.</p>
+
+      <div class="figure-placeholder">
+        <div class="fig-icon">🏞️</div>
+        <div class="fig-label">Figure 6</div>
+        <div class="fig-caption">Cross-sectional diagram of a typical wet detention pond showing: Top of Bank (T.O.B.), Groundwater Table (GWT), Normal Water Level (NWL), Littoral Zone with aquatic vegetation, Permanent Pool, Peak Attenuation zone, control structure with Weir and Orifice, Control Elevation, 6:1 or 4:1 side slopes in shallow area, and 2:1 side slopes in deeper zone. Note indicates that pollutant removal processes occur within the permanent pool volume and that removal efficiency is a function of residence time.</div>
+      </div>
+
+      <h3>Pollutant Removal Processes</h3>
+
+      <div class="two-col">
+        <div class="info-card">
+          <h4>Physical Processes</h4>
+          <p><strong>Gravity settling</strong> is the primary physical mechanism. Efficiency depends on pond geometry, permanent pool volume, hydraulic residence time, and particle size distribution of suspended solids. Adsorption onto solid surfaces also occurs, particularly for phosphorus sorption onto mineral particles.</p>
+        </div>
+        <div class="info-card">
+          <h4>Biological Processes</h4>
+          <p>Nutrient uptake by algae and submerged or emergent aquatic plants. Metabolization by bacteria and other microorganisms, particularly important for inorganic nitrogen removal through nitrification/denitrification and biological phosphorus uptake.</p>
+        </div>
+        <div class="info-card">
+          <h4>Chemical Processes</h4>
+          <p>Co-precipitation of phosphorus with metal oxides (iron, aluminum, calcium) — particularly important for SRP removal. This process is concentration-dependent and becomes less effective as SRP concentrations decrease toward irreducible levels.</p>
+        </div>
+        <div class="info-card">
+          <h4>Key Design Principle</h4>
+          <p>All three categories of removal processes are functions of pollutant concentration and residence time. Removal efficiency is directly related to how long the water column remains in contact with the biological, physical, and chemical removal mechanisms in the pond.</p>
+        </div>
+      </div>
+    </div>
+
+    <hr class="section-divider">
+
+    <!-- ═══ SECTION 7: POND DISCHARGE — NITROGEN ═══ -->
+    <div id="pond-discharge-n" class="section-block">
+      <h2><span class="section-num">Section 7</span>Comparison of Residential Runoff and Wet Detention Pond Discharges — Nitrogen</h2>
+
+      <p>Monitoring data comparing raw single-family residential (SFR) runoff against wet pond discharges for all nitrogen fractions demonstrates the treatment performance that can be expected:</p>
+
+      <div class="figure-placeholder">
+        <div class="fig-icon">📊</div>
+        <div class="fig-label">Figure 7</div>
+        <div class="fig-caption">Side-by-side box plots for five nitrogen species (Ammonia, NOx, Dissolved Organic N, Particulate N, Total N) comparing raw residential runoff versus wet detention pond discharge concentrations. Total N scale extends to approximately 1,600 µg/L for raw SFR runoff.</div>
+      </div>
+
+      <div class="callout">
+        <span class="callout-label">Key Finding</span>
+        <p>Concentrations of all nitrogen species are reduced in wet detention ponds. The most dramatic reductions occur for inorganic nitrogen (ammonia and nitrate/nitrite), primarily due to biological assimilation by algae and microorganisms in the pond water column. Dissolved organic nitrogen shows less reduction because it is resistant to rapid biological degradation.</p>
+      </div>
+    </div>
+
+    <hr class="section-divider">
+
+    <!-- ═══ SECTION 8: POND DISCHARGE — PHOSPHORUS ═══ -->
+    <div id="pond-discharge-p" class="section-block">
+      <h2><span class="section-num">Section 8</span>Comparison of Residential Runoff and Wet Detention Pond Discharges — Phosphorus</h2>
+
+      <p>For phosphorus, the comparison data show reductions across all four major fractions. An important note about the dataset: most ponds in the monitoring dataset had longer-than-average detention times, exceeding 100 days.</p>
+
+      <div class="figure-placeholder">
+        <div class="fig-icon">📊</div>
+        <div class="fig-label">Figure 8</div>
+        <div class="fig-caption">Side-by-side box plots for four phosphorus species (SRP, Dissolved Organic P, Particulate P, Total P) comparing raw residential runoff versus wet detention pond discharge concentrations. Most ponds in the dataset had detention times greater than 100 days. SRP scale to ~180 µg/L for raw runoff; Total P scale to ~500 µg/L.</div>
+      </div>
+
+      <p>The reduction in SRP is particularly notable: raw residential runoff typically contains SRP in the range of 80–140 µg/L (interquartile), while pond discharge concentrations cluster near the lower detection range, reflecting the near-complete uptake of biologically and chemically available reactive phosphorus in ponds with adequate residence time.</p>
+    </div>
+
+    <hr class="section-divider">
+
+    <!-- ═══ SECTION 9: IRREDUCIBLE CONCENTRATIONS ═══ -->
+    <div id="pond-concentrations" class="section-block">
+      <h2><span class="section-num">Section 9</span>Wet Detention Pond Concentrations and Irreducible Limits</h2>
+
+      <p>Comprehensive monitoring of wet detention pond discharges from well-performing ponds reveals the typical water quality that can be achieved. These data define the practical lower limits of treatment achievable with this BMP type:</p>
+
+      <div class="data-table-wrap">
+        <table>
+          <caption>Typical Wet Detention Pond Discharge Water Quality</caption>
+          <thead>
+            <tr>
+              <th>Parameter</th>
+              <th>Units</th>
+              <th>Pond Discharge</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr><td>pH</td><td class="mono">s.u.</td><td class="mono">6.87</td></tr>
+            <tr><td>Alkalinity</td><td class="mono">mg/L</td><td class="mono">43.4</td></tr>
+            <tr><td>Conductivity</td><td class="mono">µmho/cm</td><td class="mono">151</td></tr>
+            <tr><td>Ammonia</td><td class="mono">µg/L</td><td class="mono">20</td></tr>
+            <tr><td>NOx</td><td class="mono">µg/L</td><td class="mono">16</td></tr>
+            <tr><td>Dissolved Organic N</td><td class="mono">µg/L</td><td class="mono">266</td></tr>
+            <tr><td>Particulate N</td><td class="mono">µg/L</td><td class="mono">100</td></tr>
+            <tr><td><strong>Total N</strong></td><td class="mono">µg/L</td><td class="mono"><strong>401</strong></td></tr>
+            <tr><td>SRP</td><td class="mono">µg/L</td><td class="mono">6</td></tr>
+            <tr><td>Dissolved Organic P</td><td class="mono">µg/L</td><td class="mono">9</td></tr>
+            <tr><td>Particulate P</td><td class="mono">µg/L</td><td class="mono">9</td></tr>
+            <tr><td><strong>Total P</strong></td><td class="mono">µg/L</td><td class="mono"><strong>24</strong></td></tr>
+            <tr><td>Turbidity</td><td class="mono">NTU</td><td class="mono">2.0</td></tr>
+            <tr><td>TSS</td><td class="mono">mg/L</td><td class="mono">2.3</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <h3>Irreducible Concentrations</h3>
+
+      <p>The data in the table above illustrate a fundamental principle: nutrient concentrations in well-performing pond discharges are so low that further removal is biologically and chemically impossible — the system has reached its <strong>irreducible concentration</strong>.</p>
+
+      <div class="callout key-concept">
+        <span class="callout-label">Irreducible Concentration Concept</span>
+        <p>When nutrient concentrations in the water column drop below the minimum threshold required for biological uptake or chemical precipitation, no additional removal can occur regardless of detention time. For wet detention ponds, the irreducible concentrations are approximately:</p>
+        <p style="margin-top:0.75rem;"><strong style="color:#a8d870;">Total Nitrogen: ~ 350–400 µg/L</strong></p>
+        <p><strong style="color:#a8d870;">Total Phosphorus: ~ 10–15 µg/L</strong></p>
+      </div>
+
+      <p>The specific observations that define these irreducible conditions are:</p>
+
+      <p><strong>Inorganic nitrogen</strong> — Ammonia (20 µg/L) and NOx (16 µg/L) are near the biological uptake limit. Algae and microorganisms cannot access nitrogen at concentrations below approximately 130 µg/L total inorganic nitrogen (TIN), so no further uptake is possible.</p>
+
+      <p><strong>Dissolved Organic N</strong> — At 266 µg/L, this fraction dominates the residual TN (~66% of total). It remains resistant to removal because it requires slow biological mineralization.</p>
+
+      <p><strong>SRP</strong> — At 6 µg/L, the pond is operating at or below the threshold for biological phosphorus uptake and chemical co-precipitation. Minimum uptake concentrations for SRP are approximately 10 µg/L (0.01 mg/L); below this threshold, uptake ceases.</p>
+
+      <p><strong>TSS and Turbidity</strong> — Extremely low values (2.3 mg/L TSS; 2.0 NTU turbidity) confirm that essentially all setteable solids have been removed.</p>
+
+      <p>The practical conclusion is that a pond performing at these concentrations has maximized its treatment capability. Adding more surface area, deepening the pond, or extending detention time will yield no meaningful additional pollutant reduction. This defines the design ceiling for wet detention technology on residential runoff.</p>
+    </div>
+
+    <hr class="section-divider">
+
+    <!-- ═══ SECTION 10: NUTRIENT REMOVAL RELATIONSHIPS ═══ -->
+    <div id="removal-relationships" class="section-block">
+      <h2><span class="section-num">Section 10</span>Nutrient Removal Relationships for Wet Ponds</h2>
+
+      <p>Empirical data from monitored wet detention ponds have been used to develop statistical removal relationships as functions of hydraulic detention time. These relationships confirm that <strong>nutrient removal is primarily a function of detention time</strong>.</p>
+
+      <h3>Regression Equations</h3>
+
+      <p>For <strong>Total Nitrogen</strong>, the best-fit relationship is linear in detention time (R² = 0.808):</p>
+
+      <div class="formula-box">Efficiency (%) = (5.46 × t_d) / (44.72 + t_d)
+
+where t_d = hydraulic detention time (days)</div>
+
+      <p>For <strong>Total Phosphorus</strong>, the best-fit relationship is logarithmic in detention time (R² = 0.894):</p>
+
+      <div class="formula-box">Percent Removal = 40.15 + 6.366 × ln(t_d) + 0.214 × [ln(t_d)]²
+
+where t_d = hydraulic detention time (days)</div>
+
+      <div class="figure-placeholder">
+        <div class="fig-icon">📈</div>
+        <div class="fig-label">Figure 9</div>
+        <div class="fig-caption">Two scatter plots with regression curves: (Left) Total Nitrogen removal efficiency (%) vs. detention time t_d (0–450 days); data points as open circles, showing separate zones for removal of particulates (rapid initial removal ~20%) and dissolved species (gradual increase, asymptoting ~40–45%); R² = 0.808. (Right) Total Phosphorus removal efficiency (%) vs. detention time t_d (0–500 days); data points as filled circles, showing rapid initial removal of particulates ~40%, then continued increase for dissolved species removal, reaching 80–85% at long detention times; R² = 0.894. Both graphs annotated to identify removal zones for particulates vs. dissolved species.</div>
+      </div>
+
+      <h3>Important Limitations of These Relationships</h3>
+
+      <div class="callout warning">
+        <span class="callout-label">Critical Limitation</span>
+        <p>These empirical removal relationships were developed using data from ponds receiving <strong>untreated runoff only</strong>. They do not apply when the incoming runoff has already received pretreatment (e.g., from swales, other BMPs, or treatment trains). Applying these curves to pretreated runoff will significantly overestimate achievable removal efficiency.</p>
+      </div>
+
+      <p>The underlying reason for this limitation is the first-order kinetic nature of pollutant removal. Removal of dissolved pollutants is a function of the water column concentration at any given moment:</p>
+
+      <p>As concentrations decrease toward the irreducible threshold, removal rates slow and eventually stop entirely. When pretreated water enters a pond at already-low concentrations, the standard removal curves — which assume untreated runoff concentrations as the starting point — are no longer valid. The irreducible concentrations for wet ponds are approximately TN = 350 µg/L and TP = 10 µg/L.</p>
+    </div>
+
+    <hr class="section-divider">
+
+    <!-- ═══ SECTION 11: FLOATING ISLANDS ═══ -->
+    <div id="floating-islands" class="section-block">
+      <h2><span class="section-num">Section 11</span>Wet Detention Enhancement — Floating Treatment Islands</h2>
+
+      <p>Floating treatment islands (FTIs) consist of buoyant mats planted with emergent aquatic vegetation. The plant root systems hang below the mat into the water column, providing surface area for microbial biofilm growth and direct nutrient uptake by plant roots. A field study was conducted to evaluate FTI performance in an existing wet detention pond.</p>
+
+      <div class="figure-placeholder">
+        <div class="fig-icon">🌿</div>
+        <div class="fig-label">Figure 10</div>
+        <div class="fig-caption">Six photographs documenting the floating island study: (1) Adding plants to buoyant mats; (2) Dragging mats to selected location in pond; (3) Grown plants established in mat; (4) Root mass development at end of study; (5) Root mass beneath mat at end of study showing dense fibrous root growth; (6) Inflow monitoring site with bulk precipitation collector and flow monitoring equipment.</div>
+      </div>
+
+      <h3>Study Findings</h3>
+
+      <p>The study was conducted in a watershed with reuse irrigation, which produced elevated water column nutrient concentrations. Under these conditions, the FTI achieved:</p>
+
+      <p><strong>Approximately 10% concentration reduction for Total Phosphorus</strong> and a 12% increase for Total Nitrogen (likely due to nitrogen fixation by organisms in the biofilm community).</p>
+
+      <div class="callout">
+        <span class="callout-label">Minimum Nutrient Concentrations for Uptake</span>
+        <p>The critical issue explaining why FTIs provide marginal improvement in most conventional wet pond applications is that typical pond discharge concentrations are below the minimum threshold required for active plant and microbial uptake. Reference typical pond concentrations against minimum uptake thresholds:</p>
+      </div>
+
+      <div class="data-table-wrap">
+        <table>
+          <caption>Typical Wet Pond Concentrations vs. Minimum Uptake Thresholds</caption>
+          <thead>
+            <tr>
+              <th>Parameter</th>
+              <th>Units</th>
+              <th>Typical Pond Discharge</th>
+              <th>Min. Uptake Concentration</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr><td>Ammonia</td><td class="mono">µg/L</td><td class="mono">20</td><td class="mono" rowspan="2">~130 µg/L (as TIN)</td></tr>
+            <tr><td>NOx</td><td class="mono">µg/L</td><td class="mono">16</td></tr>
+            <tr><td>Dissolved Organic N</td><td class="mono">µg/L</td><td class="mono">266</td><td class="mono">—</td></tr>
+            <tr><td>Particulate N</td><td class="mono">µg/L</td><td class="mono">100</td><td class="mono">—</td></tr>
+            <tr><td>Total N</td><td class="mono">µg/L</td><td class="mono">401</td><td class="mono">—</td></tr>
+            <tr><td>SRP</td><td class="mono">µg/L</td><td class="mono">6</td><td class="mono">&gt;10 µg/L (0.01 mg/L)</td></tr>
+            <tr><td>Dissolved Organic P</td><td class="mono">µg/L</td><td class="mono">9</td><td class="mono">—</td></tr>
+            <tr><td>Particulate P</td><td class="mono">µg/L</td><td class="mono">9</td><td class="mono">—</td></tr>
+            <tr><td>Total P</td><td class="mono">µg/L</td><td class="mono">24</td><td class="mono">—</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <p>With SRP at 6 µg/L (below the 10 µg/L minimum) and total inorganic nitrogen (ammonia + NOx) at 36 µg/L (well below the 130 µg/L minimum), neither phosphorus nor nitrogen is available at concentrations sufficient to sustain active plant uptake. <strong>Floating treatment islands are best suited for applications where nutrient concentrations are elevated</strong>, such as in watersheds with reuse irrigation, rather than as post-treatment for already well-performing wet ponds.</p>
+    </div>
+
+    <hr class="section-divider">
+
+    <!-- ═══ SECTION 12: MANUFACTURER CLAIMS ═══ -->
+    <div id="manufacturer-claims" class="section-block">
+      <h2><span class="section-num">Section 12</span>Manufacturer's Removal Claims</h2>
+
+      <p>A recurring problem in stormwater BMP evaluation is the misapplication of performance data developed at nutrient concentrations far higher than those typically encountered in stormwater. Understanding the mechanism behind this discrepancy is essential for engineering practice.</p>
+
+      <div class="figure-placeholder">
+        <div class="fig-icon">📊</div>
+        <div class="fig-label">Figure 11</div>
+        <div class="fig-caption">Bar chart comparing inflow SRP (1,000 µg/L) vs. outflow SRP (100 µg/L) from a product testing study, demonstrating an apparent 90% removal efficiency. Horizontal dashed line indicates the actual typical stormwater SRP concentration (~100 µg/L), illustrating that the outflow concentration equals or exceeds typical stormwater influent concentrations.</div>
+      </div>
+
+      <h3>The Concentration Problem</h3>
+
+      <p>Many product testing studies for stormwater BMPs are conducted using concentrations far higher than those actually observed in stormwater runoff — drawn from wastewater treatment technology or agricultural irrigation contexts. Product efficiency claims are commonly based on the most favorable testing results obtained at these elevated concentrations.</p>
+
+      <div class="data-table-wrap">
+        <table>
+          <caption>SRP Removal Efficiency vs. Initial Concentration (Illustrative Example)</caption>
+          <thead>
+            <tr>
+              <th>Initial Conc. (µg/L)</th>
+              <th>Final Conc. (µg/L)</th>
+              <th>Removal Efficiency (%)</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr><td class="mono">5,000</td><td class="mono">100</td><td class="mono">98</td></tr>
+            <tr><td class="mono">2,500</td><td class="mono">100</td><td class="mono">96</td></tr>
+            <tr><td class="mono">1,000</td><td class="mono">100</td><td class="mono">90</td></tr>
+            <tr><td class="mono">500</td><td class="mono">100</td><td class="mono">80</td></tr>
+            <tr><td class="mono">250</td><td class="mono">100</td><td class="mono">60</td></tr>
+            <tr><td class="mono" style="background:#fff0f0;"><strong>100</strong></td><td class="mono" style="background:#fff0f0;"><strong>100</strong></td><td class="mono" style="background:#fff0f0;"><strong>0</strong></td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <p>This table demonstrates the core issue: a product capable of reducing SRP from 1,000 µg/L to 100 µg/L (90% removal) cannot remove any SRP when the starting concentration is already 100 µg/L. The final concentration of 100 µg/L represents the irreducible minimum for that technology.</p>
+
+      <div class="data-table-wrap">
+        <table>
+          <caption>Typical SRP Concentrations by Source</caption>
+          <thead>
+            <tr>
+              <th>Source</th>
+              <th>SRP (µg/L)</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr><td>Raw Residential Runoff</td><td class="mono">105</td></tr>
+            <tr><td>Swale Discharge</td><td class="mono">50</td></tr>
+            <tr><td>Wet Pond Discharge</td><td class="mono">6</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="callout warning">
+        <span class="callout-label">Practitioner Guidance</span>
+        <p>When evaluating any BMP product for nutrient removal, always ask for performance data at <strong>the concentration range expected in your specific application</strong>. Products that work effectively on wastewater or agricultural runoff — where nutrient concentrations are one to two orders of magnitude greater than stormwater — frequently provide zero measurable benefit when applied to stormwater at typical concentrations.</p>
+      </div>
+    </div>
+
+    <hr class="section-divider">
+
+    <!-- ═══ SECTION 13: ADSORPTION MEDIA ═══ -->
+    <div id="adsorption-media" class="section-block">
+      <h2><span class="section-num">Section 13</span>Adsorption Media</h2>
+
+      <h3>Description and Mechanism</h3>
+
+      <p>Adsorption media BMPs remove stormwater pollutants through two primary mechanisms: sorption of dissolved constituents onto solid surfaces, and physical entrapment of particulate matter within the media matrix. Different media types are designed to maximize removal of specific target pollutants.</p>
+
+      <p>Evaluated media types include sand, clay, carbon sources (compost, sawdust, cardboard, paper, and agricultural residues), lime rock, and various manufactured media blends.</p>
+
+      <div class="figure-placeholder">
+        <div class="fig-icon">🧱</div>
+        <div class="fig-label">Figure 12</div>
+        <div class="fig-caption">Three images illustrating adsorption media BMP configurations: (1) 3D cross-section schematic of a filter media vault with bypass weir, inflow, filter media layer, and outflow pipe; (2) Photograph of an installed streetside bioretention filter in an urban environment; (3) Detailed cross-section diagram of a bioretention system (copyright Healthy Waterways Limited, 2010) showing: Overflow Pit, Bypass Weir, Extended Detention zone, Vegetation, Geofabric Liner, Drainage Layer (fine aggregate), Transition Layer (coarse sand), Filter Media (sandy loam), Under-drains, and Cleanout access.</div>
+      </div>
+
+      <h3>Concentration Dependence of Sorption</h3>
+
+      <p>Like all other BMP removal mechanisms, sorption processes obey first-order rate kinetics and are fundamentally concentration-dependent:</p>
+
+      <div class="figure-placeholder">
+        <div class="fig-icon">📈</div>
+        <div class="fig-label">Figure 13</div>
+        <div class="fig-caption">Michaelis-Menten kinetics curve (enzyme kinetics / sorption rate curve) plotting Rate of Reaction (y-axis) vs. Substrate Concentration (x-axis). Curve shows: initial rapid increase from origin, inflection point at Km (half-saturation constant) corresponding to 1/2 Vmax, then asymptote approaching maximum velocity Vmax. Illustrates that reaction rate increases proportionally with concentration at low concentrations and that all media have a minimum required concentration below which no removal occurs.</div>
+      </div>
+
+      <p>Key principles governing adsorption media performance:</p>
+
+      <p>Sorption rates increase as concentrations increase. At low concentrations, the reaction rate decreases until it reaches zero at the minimum uptake concentration. Minimum uptake concentrations vary by media type and target constituent. All media have a minimum required concentration below which no removal occurs. Manufacturer's efficiency claims frequently lack information on the concentration range used in testing.</p>
+
+      <h3>UCF Bold &amp; Gold Media</h3>
+
+      <p>A commonly evaluated adsorption medium for stormwater nutrient removal is the University of Central Florida Bold &amp; Gold (B&amp;G) media. Two formulations have been developed:</p>
+
+      <p><strong>Original composition:</strong> 50% sand in natural soil, 30% tire crumb, 20% sawdust.</p>
+
+      <p><strong>Current version — CTS24</strong> (developed specifically for highway runoff): expanded clay, tire crumb, and sand.</p>
+
+      <p>Performance data from field testing reveal a critical finding about nitrogen treatment with this media:</p>
+
+      <div class="data-table-wrap">
+        <table>
+          <caption>Bold &amp; Gold Media Performance Comparison</caption>
+          <thead>
+            <tr>
+              <th>Parameter</th>
+              <th>Inflow Conc. (µg/L)</th>
+              <th>B&amp;G Outflow Conc. (µg/L)</th>
+              <th>Wet Pond Discharge (µg/L)</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr><td>Ammonia</td><td class="mono">476</td><td class="mono">126</td><td class="mono">20</td></tr>
+            <tr><td>NOx</td><td class="mono">306</td><td class="mono">1,328</td><td class="mono">16</td></tr>
+            <tr><td>Dissolved Organic N</td><td class="mono">169</td><td class="mono">397</td><td class="mono">266</td></tr>
+            <tr><td>Particulate N</td><td class="mono">127</td><td class="mono">245</td><td class="mono">100</td></tr>
+            <tr><td><strong>Total N</strong></td><td class="mono"><strong>1,078</strong></td><td class="mono" style="background:#fff0f0;"><strong>2,096</strong></td><td class="mono"><strong>401</strong></td></tr>
+            <tr><td>SRP</td><td class="mono">164</td><td class="mono">8</td><td class="mono">6</td></tr>
+            <tr><td><strong>Total P</strong></td><td class="mono"><strong>189</strong></td><td class="mono"><strong>85</strong></td><td class="mono"><strong>24</strong></td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <p>The B&amp;G media achieves excellent SRP removal (164 to 8 µg/L) and meaningful Total P reduction. However, Total N actually increases from 1,078 µg/L in the inflow to 2,096 µg/L in the outflow, primarily because the carbon-rich sawdust component promotes biological nitrification that converts ammonia to NOx, and the organic carbon leaches dissolved organic nitrogen. This illustrates that media designed for phosphorus removal may perform counterproductively for nitrogen. By comparison, the wet detention pond achieves superior performance for both parameters at far lower effluent concentrations.</p>
+    </div>
+
+    <hr class="section-divider">
+
+    <!-- ═══ SECTION 14: HARDWOOD WETLANDS ═══ -->
+    <div id="hardwood-wetlands" class="section-block">
+      <h2><span class="section-num">Section 14</span>Shallow Hardwood Wetlands</h2>
+
+      <h3>Characteristics</h3>
+
+      <p>Hardwood forested wetlands (cypress domes, mixed hardwood swamps) are shallow waterbodies with nutrient-rich, acidic, and typically anaerobic soils. The water quality of discharges from these systems is governed primarily by an equilibrium between the accumulated organic soils and the water column — a fundamentally different mechanism from what occurs in open water wet ponds.</p>
+
+      <div class="figure-placeholder">
+        <div class="fig-icon">🌲</div>
+        <div class="fig-label">Figure 14</div>
+        <div class="fig-caption">Two photographs: (Top) A shallow hardwood wetland (cypress or mixed hardwood swamp) with trees standing in water, thick leaf litter on ground, low light penetration through canopy. (Bottom) Detailed diagram of phosphorus cycling in a wetland system showing: inflows of Runoff and Atmospheric Deposition, plant biomass P, litterfall, aerobic and anaerobic zones, and biogeochemical pathways including DIP (dissolved inorganic phosphorus), DOP (dissolved organic phosphorus), POP (particulate organic phosphorus), PIP (particulate inorganic phosphorus), adsorbed P, Fe/Al/Ca-bound P, and peat accretion. Illustrates the complex soil-water phosphorus equilibrium.</div>
+      </div>
+
+      <h3>Equilibrium Behavior</h3>
+
+      <p>Unlike wet detention ponds, the water quality of hardwood wetland discharges is not primarily a function of residence time relative to an untreated runoff starting concentration. Instead, water quality is governed by an equilibrium between the water column and the organic soils:</p>
+
+      <p><strong>First-order reaction kinetics</strong> based on the concentration gradient between water column and soil pore water govern the rate of exchange. <strong>Equilibrium is reached rapidly</strong> — typically within 3–4 days of residence in the wetland. <strong>High-concentration inputs will be reduced</strong> as the water column equilibrates toward the soil porewater concentration. <strong>Low-concentration inputs will be increased</strong> — the wetland releases nutrients into the water column if the incoming concentration is below the equilibrium level.</p>
+
+      <h3>Equilibrium Concentrations in Hardwood Wetlands</h3>
+
+      <div class="figure-placeholder">
+        <div class="fig-icon">📈</div>
+        <div class="fig-label">Figure 15</div>
+        <div class="fig-caption">Eight time-series plots (0–200 hours) documenting nutrient equilibration experiments in a hardwood wetland with three treatment conditions: Alum-treated runoff with sediment contact (black circles), Untreated runoff with sediment contact (red squares), and Untreated runoff without sediment contact (green triangles). Parameters shown: SRP, Total P, Color (Pt-Co units), Conductivity, Ammonia, NOx, Dissolved Organic N, and Total N. Data illustrate rapid equilibration of all parameters toward soil-controlled equilibrium concentrations within 3–4 days.</div>
+      </div>
+
+      <p>The equilibrium data confirm the following characteristic discharge concentrations for hardwood wetlands:</p>
+
+      <div class="callout key-concept">
+        <span class="callout-label">Hardwood Wetland Equilibrium Concentrations</span>
+        <p><strong style="color:#a8d870;">Total Phosphorus: approximately 0.100 mg/L (100 µg/L)</strong></p>
+        <p><strong style="color:#a8d870;">Total Nitrogen: approximately 1–2 mg/L (1,000–2,000 µg/L)</strong></p>
+        <p>These equilibrium concentrations represent the asymptotic water quality that results from extended contact with hardwood wetland soils, regardless of the concentration of the incoming water.</p>
+      </div>
+
+      <p>A critical implication is that pre-treating runoff with alum or other coagulants before routing through a hardwood wetland provides no lasting benefit — the sediment contact re-equilibrates the treated water back toward the soil-controlled concentration within days.</p>
+    </div>
+
+    <hr class="section-divider">
+
+    <!-- ═══ SECTION 15: HERBACEOUS WETLANDS ═══ -->
+    <div id="herbaceous-wetlands" class="section-block">
+      <h2><span class="section-num">Section 15</span>Nutrient Equilibrium in Herbaceous Wetlands</h2>
+
+      <p>Shallow herbaceous wetlands — dominated by emergent vegetation such as cattails, bulrush, and pickerelweed — function fundamentally differently from hardwood forested wetlands. The ecological structure of herbaceous systems creates conditions highly favorable for nutrient removal.</p>
+
+      <div class="figure-placeholder">
+        <div class="fig-icon">🌾</div>
+        <div class="fig-label">Figure 16</div>
+        <div class="fig-caption">Photograph of a shallow herbaceous wetland showing dense stands of emergent vegetation (cattails, bulrush, and mixed grasses) with standing water visible between plant stalks. Low topography, open sky, and flooded ground visible throughout frame.</div>
+      </div>
+
+      <h3>Mechanisms of Nutrient Removal</h3>
+
+      <p>The dense emergent vegetation provides a large amount of structural surface area — plant stalks, submerged stems, root masses — that supports a large and diverse community of algae, bacteria, and micro-organisms. These biological communities form a dense, gelatinous biofilm layer on plant stalks referred to as <em>zoogleal</em> material.</p>
+
+      <p>Water flowing through the wetland meanders around and between plant stalks. This tortuous flow path provides extended contact time with the zoogleal biofilm communities, creating large opportunity for biological uptake of nutrients at every point in the flow path.</p>
+
+      <p>While herbaceous wetland soils are also anaerobic, a critical distinction from hardwood wetlands is that the dense vegetation effectively limits contact between the water column and the nutrient-rich soils. Sediment nutrient release is therefore minimal in well-established herbaceous systems.</p>
+
+      <h3>Contrast with Hardwood Wetlands</h3>
+
+      <p>In a hardwood wetland, the absence of dense emergent vegetation means water has direct and prolonged contact with nutrient-releasing soils — leading to equilibrium conditions that control (and often increase) outlet nutrient concentrations. In a herbaceous wetland, the vegetation structure intercepts the water column and drives biological treatment before significant soil contact occurs. This is the key difference that makes herbaceous wetlands effective for stormwater polishing applications.</p>
+    </div>
+
+    <hr class="section-divider">
+
+    <!-- ═══ SECTION 16: WETLAND POLISHING ═══ -->
+    <div id="wetland-polishing" class="section-block">
+      <h2><span class="section-num">Section 16</span>Wetland "Polishing" — Contrasting Wetland Types</h2>
+
+      <p>A direct comparison of what happens when wet detention pond discharge is routed through a hardwood versus an herbaceous wetland illustrates the critical importance of wetland type selection in treatment train design.</p>
+
+      <div class="figure-placeholder">
+        <div class="fig-icon">🌿</div>
+        <div class="fig-label">Figure 17</div>
+        <div class="fig-caption">Side-by-side process diagram: (Left) Wet detention pond photograph (residential pond with fountain) with arrow showing inflow at TP=250 µg/L, TN=1,500 µg/L and outflow at TP=35 µg/L, TN=750 µg/L, labeled "Removes solids and dissolved nutrients." (Right) Hardwood wetland photograph (cypress swamp) with arrow showing outflow at TP=100 µg/L, TN=1,000–2,000 µg/L, labeled "Little uptake by vegetation; water reaches equilibrium with soils." Bottom banner reads: "Wet detention efficiency will be reduced by a substantial amount."</div>
+      </div>
+
+      <h3>Hardwood Wetland Polishing — Net Result</h3>
+
+      <div class="flow-diagram">
+        <div class="flow-node">
+          <div class="node-label">Influent</div>
+          <div class="node-val">TP = 250 µg/L<br>TN = 1,500 µg/L</div>
+        </div>
+        <div class="flow-arrow">→</div>
+        <div class="flow-node" style="background:var(--forest-mid);">
+          <div class="node-label">Wet Pond</div>
+          <div class="node-val">TP = 35 µg/L<br>TN = 750 µg/L</div>
+        </div>
+        <div class="flow-arrow">→</div>
+        <div class="flow-node" style="background:#6b4400;">
+          <div class="node-label">Hardwood Wetland</div>
+          <div class="node-val">TP = 100 µg/L<br>TN = 1,000–2,000 µg/L</div>
+        </div>
+      </div>
+
+      <div class="callout warning">
+        <span class="callout-label">Net Effect</span>
+        <p>Routing wet pond effluent (TP = 35 µg/L) through a hardwood wetland causes TP to increase from 35 µg/L to approximately 100 µg/L — a threefold increase. TN also increases substantially as the treated water equilibrates with nutrient-rich forest soils. <strong>Wet detention efficiency will be reduced by a substantial amount</strong> when followed by hardwood wetland polishing.</p>
+      </div>
+    </div>
+
+    <hr class="section-divider">
+
+    <!-- ═══ SECTION 17: TREATMENT TRAIN ═══ -->
+    <div id="treatment-train" class="section-block">
+      <h2><span class="section-num">Section 17</span>Treatment Train — Wet Pond + Shallow Herbaceous Wetland</h2>
+
+      <p>When a wet detention pond is followed by a properly designed shallow herbaceous wetland, a very different result is obtained compared to the hardwood wetland scenario. The herbaceous wetland acts as a true polishing step, achieving further reductions in both nitrogen and phosphorus from already-treated pond effluent.</p>
+
+      <div class="figure-placeholder">
+        <div class="fig-icon">🌱</div>
+        <div class="fig-label">Figure 18</div>
+        <div class="fig-caption">Side-by-side process diagram: (Left) Wet detention pond photograph with arrow showing inflow at TP=250 µg/L, TN=1,500 µg/L and outflow at TP=35 µg/L, TN=750 µg/L, labeled "Removes solids and dissolved nutrients." (Right) Shallow herbaceous wetland photograph (dense cattail/bulrush stand with flowering forbs) with arrow showing outflow at TP=15 µg/L, TN=400 µg/L, labeled "Significant uptake by vegetation and biology attached to plant stalks." Bottom banner reads: "Wet detention efficiency will be increased."</div>
+      </div>
+
+      <div class="flow-diagram">
+        <div class="flow-node">
+          <div class="node-label">Influent</div>
+          <div class="node-val">TP = 250 µg/L<br>TN = 1,500 µg/L</div>
+        </div>
+        <div class="flow-arrow">→</div>
+        <div class="flow-node" style="background:var(--forest-mid);">
+          <div class="node-label">Wet Pond</div>
+          <div class="node-val">TP = 35 µg/L<br>TN = 750 µg/L</div>
+        </div>
+        <div class="flow-arrow">→</div>
+        <div class="flow-node" style="background:#1a6b20;">
+          <div class="node-label">Herbaceous Wetland</div>
+          <div class="node-val">TP = 15 µg/L<br>TN = 400 µg/L</div>
+        </div>
+      </div>
+
+      <h3>Design Principles for the Treatment Train</h3>
+
+      <p>The wet detention pond performs the primary function — removal of solids and dissolved nutrients — and its efficiency is calculated using the standard empirical removal curves (Section 10). The herbaceous wetland then receives pond effluent at 35 µg/L TP and 750 µg/L TN and achieves additional removal through biological uptake by the zoogleal biofilm communities and emergent vegetation, driving concentrations down to approximately 15 µg/L TP and 400 µg/L TN.</p>
+
+      <div class="callout key-concept">
+        <span class="callout-label">Critical Design Note</span>
+        <p>The standard wet detention pond removal curves cannot be applied directly when sizing the pond in a treatment train that includes downstream herbaceous wetland polishing. The curves were developed for direct discharge from the pond, not for systems where additional treatment occurs downstream. The pond efficiency must be modeled as the first stage, with herbaceous wetland removal applied incrementally to pond effluent concentrations — not to raw influent concentrations.</p>
+      </div>
+    </div>
+
+    <hr class="section-divider">
+
+    <!-- ═══ SECTION 18: SUMMARY ═══ -->
+    <div id="summary" class="section-block">
+      <h2><span class="section-num">Section 18</span>Summary</h2>
+
+      <p>This module has established the central principle that governs all BMP selection and sizing decisions: <strong>the concentration of target pollutants in the source water must be matched to the concentration reduction capabilities of the selected BMP</strong>. Failing to account for actual stormwater concentrations — whether by over-relying on manufacturer claims, misapplying wetland types, or using removal curves outside their applicable range — leads to systems that perform far below design expectations or fail entirely.</p>
+
+      <h3>First-Order Rate Kinetics</h3>
+
+      <p>All biological, physical, and chemical removal processes in stormwater BMPs obey first-order rate kinetics. This means removal rate increases and decreases in direct proportion to the water column concentration of the target pollutant. Every process — biological uptake, adsorption, co-precipitation, gravity settling — requires a minimum concentration to initiate. Below the minimum concentration, no removal occurs regardless of residence time, media surface area, or biological activity.</p>
+
+      <h3>Evaluating Manufacturer Claims</h3>
+
+      <p>Literature removal efficiencies are frequently based on elevated nutrient concentrations where removals are greatest and most impressive. A product that achieves 90% removal starting from 1,000 µg/L will achieve 0% removal starting from 100 µg/L — both results may be technically accurate, but only one is relevant to a typical stormwater application.</p>
+
+      <p>Product removal efficiencies stated as percentage values have little practical meaning without disclosure of the concentration range tested. The minimum achievable effluent concentration for a BMP is far more important than its rated percentage removal.</p>
+
+      <p>When evaluating any product, always ask: What are the typical stormwater concentrations for my application? What effluent concentrations was this product tested at? What is the minimum achievable effluent concentration? What are the field performance data under actual stormwater conditions?</p>
+
+      <h3>Technology Transfer Limitations</h3>
+
+      <p>Techniques that are successful in wastewater treatment frequently cannot be transferred to stormwater applications. Wastewater nutrient concentrations are typically one order of magnitude greater than stormwater concentrations — providing the minimum concentration conditions required for many removal technologies to function effectively. The same technology applied to stormwater will often find that influent concentrations are already below the minimum threshold for removal.</p>
+
+      <h3>Field Testing</h3>
+
+      <p>Field testing under actual site conditions is essential before implementing any retrofit BMP, particularly novel or proprietary technologies. Laboratory or controlled testing results at elevated concentrations do not substitute for field performance data. Testing should be conducted using actual site runoff, at actual site concentrations, over a sufficient monitoring period to capture the range of storm events and seasonal variation.</p>
+    </div>
+
+  </div><!-- end .content -->
+
+  <!-- ═══════════════════════════════════════════
+       FIGURE APPENDIX
+  ════════════════════════════════════════════ -->
+  <div id="figure-appendix" class="figure-appendix">
+    <h2>Referenced Figures</h2>
+    <p class="appendix-intro">The following figures are referenced in the text and should be sourced from the original presentation materials by Harvey H. Harper, Environmental Research &amp; Design, Inc. Figures containing charts and graphs should be recreated as publication-quality graphics; photographs of stormwater systems are for illustration only.</p>
+
+    <div class="appendix-item">
+      <div class="appendix-fig-num">Fig. 1</div>
+      <div class="appendix-fig-desc">Box plots — Phosphorus species comparison: SRP, Dissolved Organic P, Particulate P, and Total P in curb &amp; gutter versus swale residential runoff. Four panels; n=10 Florida sites. Statistical descriptors: 10th, 25th, median (red line), mean, 75th, 90th percentiles, and outliers (red dots). Y-axes in µg/L; SRP and Dissolved Organic P scale to 180; Particulate P to 140; Total P to 500.</div>
+    </div>
+
+    <div class="appendix-item">
+      <div class="appendix-fig-num">Fig. 2</div>
+      <div class="appendix-fig-desc">Box plots — Nitrogen species comparison: Ammonia, NOx, Dissolved Organic N, Particulate N, and Total N in curb &amp; gutter versus swale residential runoff. Five panels; n=10 Florida sites. Y-axes in µg/L; Ammonia to 250; NOx to 500; Dissolved Organic N to 800; Particulate N to 600; Total N to 1,600.</div>
+    </div>
+
+    <div class="appendix-item">
+      <div class="appendix-fig-num">Fig. 3</div>
+      <div class="appendix-fig-desc">Box plots — Phosphorus species in raw residential runoff versus wet detention pond discharge in watersheds with reuse irrigation. Four panels (SRP, Dissolved Organic P, Particulate P, Total P). Demonstrates that pond discharge concentrations exceed typical raw runoff concentrations when reuse irrigation is present in the watershed.</div>
+    </div>
+
+    <div class="appendix-item">
+      <div class="appendix-fig-num">Fig. 4</div>
+      <div class="appendix-fig-desc">Pie chart — Distribution of phosphorus species in typical Florida residential runoff: SRP 43%, Dissolved Organic P 30%, Particulate P 27%. Should accompany the table of typical concentrations in Section 4.</div>
+    </div>
+
+    <div class="appendix-item">
+      <div class="appendix-fig-num">Fig. 5</div>
+      <div class="appendix-fig-desc">Pie chart — Distribution of nitrogen species in typical Florida residential runoff: Dissolved Organic N 52%, Particulate N 29%, NOx-N 12%, Ammonia 7%. Should accompany the table of typical concentrations in Section 5.</div>
+    </div>
+
+    <div class="appendix-item">
+      <div class="appendix-fig-num">Fig. 6</div>
+      <div class="appendix-fig-desc">Cross-section schematic — Typical wet detention pond design. Components labeled: Top of Bank (T.O.B.), GWT (groundwater table), Normal Water Level (NWL), Littoral Zone with aquatic vegetation, Permanent Pool, Peak Attenuation, Sod, Weir, Orifice, Control Elevation; side slopes noted as 6:1 or 4:1 (shallow) and 2:1 (deep). Notes indicate pollutant removal occurs in permanent pool and that removal efficiency is a function of residence time.</div>
+    </div>
+
+    <div class="appendix-item">
+      <div class="appendix-fig-num">Fig. 7</div>
+      <div class="appendix-fig-desc">Box plots — Nitrogen species comparison: raw single-family residential (SFR) runoff versus wet detention pond discharge. Five panels (Ammonia, NOx, Dissolved Organic N, Particulate N, Total N). Demonstrates concentration reduction across all nitrogen fractions with greatest reduction in inorganic nitrogen species.</div>
+    </div>
+
+    <div class="appendix-item">
+      <div class="appendix-fig-num">Fig. 8</div>
+      <div class="appendix-fig-desc">Box plots — Phosphorus species comparison: raw SFR runoff versus wet detention pond discharge. Four panels (SRP, Dissolved Organic P, Particulate P, Total P). Most ponds in dataset had detention times exceeding 100 days. Shows dramatic reduction in SRP to near-zero concentrations at pond outlet.</div>
+    </div>
+
+    <div class="appendix-item">
+      <div class="appendix-fig-num">Fig. 9</div>
+      <div class="appendix-fig-desc">Two scatter plots with regression curves for nutrient removal as a function of hydraulic detention time. Left panel: Total Nitrogen removal efficiency (%) vs. t_d (0–450 days); R²=0.808; annotated zones for particulate and dissolved species removal. Right panel: Total Phosphorus removal efficiency (%) vs. t_d (0–500 days); R²=0.894; annotated zones for particulate (rapid, ~40%) and dissolved species removal (gradual, up to ~85%).</div>
+    </div>
+
+    <div class="appendix-item">
+      <div class="appendix-fig-num">Fig. 10</div>
+      <div class="appendix-fig-desc">Six field photographs from the floating treatment island study: adding plants to mats; dragging mats to selected pond location; established (grown) plants in mat; root mass at end of study; root mass beneath mat at end of study showing dense fibrous growth; inflow monitoring site with bulk precipitation collector.</div>
+    </div>
+
+    <div class="appendix-item">
+      <div class="appendix-fig-num">Fig. 11</div>
+      <div class="appendix-fig-desc">Bar chart — Manufacturer's removal claim example: Inflow SRP at 1,000 µg/L vs. outflow SRP at 100 µg/L, annotated "90% reduction." Horizontal dashed reference line at 100 µg/L shows that the outflow concentration equals the typical raw stormwater SRP concentration, demonstrating that actual removal from stormwater influent would be near zero.</div>
+    </div>
+
+    <div class="appendix-item">
+      <div class="appendix-fig-num">Fig. 12</div>
+      <div class="appendix-fig-desc">Three images — adsorption media BMP configurations: 3D cross-section vault schematic; installed streetside bioretention photograph; detailed bioretention cross-section diagram (Healthy Waterways Limited, 2010) showing extended detention, vegetation, topsoil, drainage layer, transition layer, filter media (sandy loam), geofabric liner, under-drains, overflow pit, and bypass weir.</div>
+    </div>
+
+    <div class="appendix-item">
+      <div class="appendix-fig-num">Fig. 13</div>
+      <div class="appendix-fig-desc">Michaelis-Menten kinetics curve — Rate of Reaction (y-axis) vs. Substrate Concentration (x-axis). Shows rapid proportional increase from origin, inflection at Km = 1/2 Vmax, and asymptote approaching Vmax. Illustrates the concentration dependence of all sorption and biological removal processes. Labels: Km, Vmax, 1/2 Vmax, Rate of Reaction, Substrate Concentration.</div>
+    </div>
+
+    <div class="appendix-item">
+      <div class="appendix-fig-num">Fig. 14</div>
+      <div class="appendix-fig-desc">Two images — Shallow hardwood wetland: (1) Photograph of hardwood forested wetland (cypress or mixed hardwood swamp) with trees in standing water and heavy leaf litter; (2) Schematic diagram of phosphorus cycling in a wetland system showing aerobic and anaerobic zones, plant biomass, litterfall, runoff/atmospheric deposition inputs, and biogeochemical pathways (DIP, DOP, POP, PIP, adsorbed P, Fe/Al/Ca-bound P, peat accretion, periphyton).</div>
+    </div>
+
+    <div class="appendix-item">
+      <div class="appendix-fig-num">Fig. 15</div>
+      <div class="appendix-fig-desc">Eight time-series graphs (0–200 hours) from hardwood wetland equilibration experiments. Three treatment conditions (color-coded): Alum-treated runoff with sediment contact (black), Untreated runoff with sediment contact (red), Untreated runoff without sediment contact (green). Parameters: SRP (0–70 µg/L), Total P (0–160 µg/L), Color (0–250 Pt-Co units), Conductivity (0–500 µmho/cm), Ammonia (0–600 µg/L), NOx (0–1,000 µg/L), Dissolved Organic N (0–1,800 µg/L), Total N (0–2,500 µg/L). All parameters trend toward soil-equilibrium values within 3–4 days.</div>
+    </div>
+
+    <div class="appendix-item">
+      <div class="appendix-fig-num">Fig. 16</div>
+      <div class="appendix-fig-desc">Photograph — Shallow herbaceous wetland showing dense emergent vegetation (cattails, bulrush, mixed grasses) with standing water visible between plant stalks. Open flat landscape with tree line visible in background.</div>
+    </div>
+
+    <div class="appendix-item">
+      <div class="appendix-fig-num">Fig. 17</div>
+      <div class="appendix-fig-desc">Process flow diagram — Hardwood wetland polishing: Wet detention pond (photograph with fountain) receives inflow at TP=250 µg/L, TN=1,500 µg/L and discharges at TP=35 µg/L, TN=750 µg/L. That discharge enters a hardwood wetland (cypress swamp photograph) which discharges at TP=100 µg/L, TN=1,000–2,000 µg/L. Label: "Wet detention efficiency will be reduced by a substantial amount."</div>
+    </div>
+
+    <div class="appendix-item">
+      <div class="appendix-fig-num">Fig. 18</div>
+      <div class="appendix-fig-desc">Process flow diagram — Treatment train: Wet detention pond receives inflow at TP=250 µg/L, TN=1,500 µg/L and discharges at TP=35 µg/L, TN=750 µg/L into a shallow herbaceous wetland (photograph of diverse flowering emergent vegetation) which discharges at TP=15 µg/L, TN=400 µg/L. Labels describe each system's treatment function. Bottom banner: "Wet detention efficiency will be increased."</div>
+    </div>
+
+  </div><!-- end figure-appendix -->
+
+</main>
+</div><!-- end page-wrap -->
+
+</body>
+</html>

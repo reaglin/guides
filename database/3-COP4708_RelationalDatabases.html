@@ -1,0 +1,2079 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>COP 4708 – Module 2: Relational Databases</title>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700;800&family=Source+Sans+3:ital,wght@0,300;0,400;0,600;0,700;1,400&family=Source+Code+Pro:wght@400;600&display=swap" rel="stylesheet"/>
+  <style>
+    /* ═══════════════════════════════════════
+       RESET & ROOT VARIABLES
+    ═══════════════════════════════════════ */
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      /* Course palette — COP 4708 navy/teal identity */
+      --navy:         #0b1929;
+      --deep-teal:    #0e4d6e;
+      --teal:         #1672a0;
+      --sky:          #2196c4;
+      --ice:          #d6eaf8;
+      --pale:         #eaf4fb;
+
+      /* Module 2 accent — amber/copper */
+      --amber:        #c8720c;
+      --amber-mid:    #e8943a;
+      --amber-light:  #fdf0e2;
+      --amber-border: #f5c48a;
+
+      /* Semantic colors */
+      --green:        #1a7a4a;
+      --green-light:  #e8f5ee;
+      --red:          #aa3030;
+      --red-light:    #fdecea;
+      --purple:       #5040a0;
+      --purple-light: #eeeaff;
+
+      /* Neutrals */
+      --white:        #ffffff;
+      --off-white:    #f5f8fc;
+      --border:       #c4d8ea;
+      --text:         #18293c;
+      --muted:        #557a92;
+      --radius:       10px;
+      --shadow:       0 4px 20px rgba(11,25,41,.10);
+      --shadow-lg:    0 8px 32px rgba(11,25,41,.15);
+    }
+
+    html { scroll-behavior: smooth; }
+    body {
+      font-family: 'Source Sans 3', sans-serif;
+      font-weight: 400;
+      color: var(--text);
+      background: var(--off-white);
+      line-height: 1.72;
+    }
+
+    /* ═══════════════════════════════════════
+       HEADER
+    ═══════════════════════════════════════ */
+    header {
+      background: linear-gradient(140deg, var(--navy) 0%, #0a3d5e 50%, #105a80 100%);
+      color: var(--white);
+      position: relative;
+      overflow: hidden;
+    }
+    header::before {
+      content: '';
+      position: absolute; inset: 0;
+      background:
+        radial-gradient(ellipse at 75% 30%, rgba(200,114,12,.18) 0%, transparent 55%),
+        radial-gradient(ellipse at 10% 80%, rgba(22,114,160,.25) 0%, transparent 50%),
+        url("data:image/svg+xml,%3Csvg width='80' height='80' viewBox='0 0 80 80' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='%23ffffff' fill-opacity='0.025'%3E%3Cpath d='M0 0h80v80H0z' fill='none'/%3E%3Ccircle cx='40' cy='40' r='1'/%3E%3Ccircle cx='0' cy='0' r='1'/%3E%3Ccircle cx='80' cy='0' r='1'/%3E%3Ccircle cx='0' cy='80' r='1'/%3E%3Ccircle cx='80' cy='80' r='1'/%3E%3C/g%3E%3C/svg%3E");
+      pointer-events: none;
+    }
+    /* decorative relational lines SVG feel */
+    header::after {
+      content: '';
+      position: absolute;
+      right: -20px; top: 20px;
+      width: 320px; height: 220px;
+      background: url("data:image/svg+xml,%3Csvg viewBox='0 0 320 220' xmlns='http://www.w3.org/2000/svg'%3E%3Crect x='10' y='10' width='120' height='80' rx='6' fill='none' stroke='%23ffffff' stroke-opacity='.07' stroke-width='1.5'/%3E%3Crect x='180' y='10' width='120' height='80' rx='6' fill='none' stroke='%23ffffff' stroke-opacity='.07' stroke-width='1.5'/%3E%3Crect x='10' y='130' width='120' height='80' rx='6' fill='none' stroke='%23ffffff' stroke-opacity='.07' stroke-width='1.5'/%3E%3Cline x1='130' y1='50' x2='180' y2='50' stroke='%23c8720c' stroke-opacity='.3' stroke-width='1.5' stroke-dasharray='4 3'/%3E%3Cline x1='70' y1='90' x2='70' y2='130' stroke='%23c8720c' stroke-opacity='.3' stroke-width='1.5' stroke-dasharray='4 3'/%3E%3Ccircle cx='130' cy='50' r='4' fill='%23c8720c' fill-opacity='.4'/%3E%3Ccircle cx='180' cy='50' r='4' fill='%23c8720c' fill-opacity='.4'/%3E%3Ccircle cx='70' cy='90' r='4' fill='%23c8720c' fill-opacity='.4'/%3E%3Ccircle cx='70' cy='130' r='4' fill='%23c8720c' fill-opacity='.4'/%3E%3C/svg%3E");
+      background-size: contain;
+      background-repeat: no-repeat;
+      pointer-events: none;
+      opacity: .9;
+    }
+    .header-inner {
+      position: relative; z-index: 1;
+      max-width: 980px;
+      margin: 0 auto;
+      padding: 52px 32px 44px;
+    }
+    .course-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      background: rgba(200,114,12,.2);
+      border: 1px solid rgba(200,114,12,.45);
+      color: #f5c992;
+      font-size: .77rem;
+      font-weight: 700;
+      letter-spacing: .12em;
+      text-transform: uppercase;
+      padding: 5px 14px;
+      border-radius: 20px;
+      margin-bottom: 16px;
+    }
+    .course-badge::before { content: '◈'; font-size: 1em; }
+    header h1 {
+      font-family: 'Playfair Display', serif;
+      font-size: 2.6rem;
+      line-height: 1.18;
+      color: var(--white);
+      margin-bottom: 10px;
+      max-width: 640px;
+    }
+    header h1 em {
+      font-style: normal;
+      color: #f5c07a;
+    }
+    header h2 {
+      font-size: 1.05rem;
+      font-weight: 300;
+      color: #9ac4dc;
+      margin-bottom: 26px;
+      max-width: 560px;
+    }
+    .header-chips {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+    }
+    .chip {
+      background: rgba(255,255,255,.1);
+      border: 1px solid rgba(255,255,255,.18);
+      color: #cce5f5;
+      font-size: .8rem;
+      font-weight: 600;
+      padding: 5px 14px;
+      border-radius: 20px;
+    }
+
+    /* ═══════════════════════════════════════
+       OUTCOMES BANNER
+    ═══════════════════════════════════════ */
+    .outcomes-wrap {
+      background: var(--amber-light);
+      border-left: 6px solid var(--amber);
+      max-width: 980px;
+      margin: 0 auto;
+      border-radius: 0 var(--radius) var(--radius) 0;
+      padding: 22px 28px;
+    }
+    .outcomes-wrap h3 {
+      font-family: 'Playfair Display', serif;
+      font-size: 1rem;
+      color: #7a3d00;
+      margin-bottom: 14px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .outcomes-wrap h3::before { content: '🎯'; }
+    .outcomes-wrap ol {
+      padding-left: 20px;
+      color: #5c2e00;
+      font-size: .93rem;
+    }
+    .outcomes-wrap ol li { margin-bottom: 7px; }
+    .outcomes-wrap .clo-note {
+      margin-top: 14px;
+      font-size: .82rem;
+      color: #7a3d00;
+      font-style: italic;
+      font-weight: 600;
+    }
+
+    /* ═══════════════════════════════════════
+       MAIN LAYOUT
+    ═══════════════════════════════════════ */
+    main {
+      max-width: 980px;
+      margin: 40px auto 64px;
+      padding: 0 20px;
+    }
+
+    /* ═══════════════════════════════════════
+       NAVIGATION
+    ═══════════════════════════════════════ */
+    .progress-nav {
+      background: var(--white);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 18px 22px;
+      margin-bottom: 10px;
+      box-shadow: var(--shadow);
+    }
+    .progress-nav h3 {
+      font-size: .77rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: .1em;
+      color: var(--muted);
+      margin-bottom: 12px;
+    }
+    .nav-links {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+    }
+    .nav-links a {
+      background: var(--pale);
+      border: 1px solid var(--border);
+      color: var(--deep-teal);
+      font-size: .8rem;
+      font-weight: 600;
+      padding: 5px 13px;
+      border-radius: 20px;
+      text-decoration: none;
+      transition: background .15s, color .15s, border-color .15s;
+    }
+    .nav-links a:hover {
+      background: var(--amber);
+      color: var(--white);
+      border-color: var(--amber);
+    }
+    .expand-controls {
+      display: flex;
+      gap: 10px;
+      justify-content: flex-end;
+      margin-bottom: 16px;
+    }
+    .ctrl-btn {
+      background: var(--white);
+      border: 1px solid var(--border);
+      color: var(--deep-teal);
+      font-size: .8rem;
+      font-weight: 700;
+      padding: 6px 16px;
+      border-radius: 20px;
+      cursor: pointer;
+      transition: all .15s;
+    }
+    .ctrl-btn:hover { background: var(--teal); color: var(--white); border-color: var(--teal); }
+
+    /* ═══════════════════════════════════════
+       SECTION LABEL
+    ═══════════════════════════════════════ */
+    .section-label {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin: 44px 0 8px;
+    }
+    .section-label .num {
+      background: linear-gradient(135deg, var(--deep-teal), var(--teal));
+      color: var(--white);
+      font-family: 'Playfair Display', serif;
+      font-size: .95rem;
+      font-weight: 700;
+      min-width: 36px; height: 36px;
+      border-radius: 8px;
+      display: flex; align-items: center; justify-content: center;
+      flex-shrink: 0;
+      box-shadow: 0 3px 10px rgba(14,77,110,.3);
+    }
+    .section-label h2 {
+      font-family: 'Playfair Display', serif;
+      font-size: 1.45rem;
+      color: var(--navy);
+    }
+    .section-label .outcome-tag {
+      background: var(--amber-light);
+      border: 1px solid var(--amber-border);
+      color: var(--amber);
+      font-size: .72rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: .07em;
+      padding: 3px 10px;
+      border-radius: 12px;
+      margin-left: 4px;
+    }
+
+    /* ═══════════════════════════════════════
+       COLLAPSIBLE CARDS
+    ═══════════════════════════════════════ */
+    .card {
+      background: var(--white);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      margin-bottom: 14px;
+      box-shadow: var(--shadow);
+      overflow: hidden;
+      transition: box-shadow .2s;
+    }
+    .card:hover { box-shadow: var(--shadow-lg); }
+
+    .card-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 17px 22px;
+      cursor: pointer;
+      user-select: none;
+      background: var(--white);
+      transition: background .15s;
+      gap: 12px;
+    }
+    .card-header:hover, .card-header.open { background: var(--pale); }
+    .card-header.open { border-bottom: 2px solid var(--amber-mid); }
+
+    .ch-left { display: flex; align-items: center; gap: 12px; }
+    .card-icon { font-size: 1.35rem; line-height: 1; }
+    .card-header h3 {
+      font-family: 'Playfair Display', serif;
+      font-size: 1.08rem;
+      color: var(--navy);
+    }
+    .card-header h3 span {
+      display: block;
+      font-family: 'Source Sans 3', sans-serif;
+      font-size: .75rem;
+      font-weight: 700;
+      color: var(--muted);
+      text-transform: uppercase;
+      letter-spacing: .08em;
+      margin-bottom: 2px;
+    }
+    .toggle-btn {
+      width: 28px; height: 28px;
+      border-radius: 50%;
+      background: var(--ice);
+      border: none; cursor: pointer;
+      display: flex; align-items: center; justify-content: center;
+      flex-shrink: 0;
+      transition: background .18s, transform .25s;
+      font-size: .8rem;
+      color: var(--teal);
+      font-weight: 700;
+    }
+    .toggle-btn.open {
+      background: var(--amber);
+      color: var(--white);
+      transform: rotate(180deg);
+    }
+
+    .card-body {
+      display: none;
+      padding: 26px 28px 30px;
+      border-top: 1px solid var(--border);
+      animation: fadeSlide .22s ease;
+    }
+    .card-body.open { display: block; }
+
+    @keyframes fadeSlide {
+      from { opacity: 0; transform: translateY(-8px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+
+    /* ═══════════════════════════════════════
+       BODY TYPOGRAPHY
+    ═══════════════════════════════════════ */
+    .card-body h4 {
+      font-family: 'Playfair Display', serif;
+      font-size: 1.02rem;
+      color: var(--deep-teal);
+      margin: 24px 0 10px;
+      padding-bottom: 6px;
+      border-bottom: 1px dashed var(--border);
+    }
+    .card-body h4:first-child { margin-top: 0; }
+    .card-body h5 {
+      font-size: .92rem;
+      font-weight: 700;
+      color: var(--navy);
+      margin: 16px 0 6px;
+    }
+    .card-body p { margin-bottom: 14px; font-size: .96rem; }
+    .card-body p:last-child { margin-bottom: 0; }
+    .card-body ul, .card-body ol { padding-left: 22px; margin-bottom: 14px; font-size: .95rem; }
+    .card-body li { margin-bottom: 7px; }
+    strong { font-weight: 700; color: var(--navy); }
+    em { font-style: italic; color: var(--deep-teal); }
+    code {
+      font-family: 'Source Code Pro', monospace;
+      font-size: .85em;
+      background: var(--pale);
+      border: 1px solid var(--border);
+      color: var(--deep-teal);
+      padding: 1px 6px;
+      border-radius: 4px;
+    }
+
+    /* ═══════════════════════════════════════
+       DEFINITION BOX
+    ═══════════════════════════════════════ */
+    .def-box {
+      background: linear-gradient(135deg, var(--navy) 0%, #0d3d5c 100%);
+      color: var(--white);
+      border-radius: var(--radius);
+      padding: 22px 26px;
+      margin: 6px 0 18px;
+      position: relative;
+      overflow: hidden;
+    }
+    .def-box::before {
+      content: '"';
+      position: absolute;
+      top: -12px; left: 16px;
+      font-family: 'Playfair Display', serif;
+      font-size: 9rem;
+      color: rgba(255,255,255,.05);
+      line-height: 1;
+      pointer-events: none;
+    }
+    .def-box .def-label {
+      font-size: .7rem;
+      font-weight: 700;
+      letter-spacing: .14em;
+      text-transform: uppercase;
+      color: var(--amber-mid);
+      margin-bottom: 8px;
+    }
+    .def-box p {
+      font-size: 1rem;
+      color: #ddeef8;
+      font-style: italic;
+      position: relative; z-index: 1;
+      margin-bottom: 0;
+    }
+
+    /* ═══════════════════════════════════════
+       CALLOUT BOXES
+    ═══════════════════════════════════════ */
+    .callout {
+      border-radius: var(--radius);
+      padding: 15px 18px;
+      margin: 16px 0;
+      font-size: .93rem;
+      display: flex;
+      gap: 12px;
+      align-items: flex-start;
+    }
+    .callout-icon { font-size: 1.25rem; flex-shrink: 0; margin-top: 1px; }
+    .callout-body { flex: 1; }
+    .callout-body strong { display: block; margin-bottom: 4px; }
+
+    .callout-info    { background: var(--ice);          border-left: 4px solid var(--sky); }
+    .callout-tip     { background: var(--green-light);  border-left: 4px solid var(--green); }
+    .callout-warning { background: #fff3e0;              border-left: 4px solid #e07820; }
+    .callout-key     { background: var(--purple-light); border-left: 4px solid var(--purple); }
+    .callout-amber   { background: var(--amber-light);  border-left: 4px solid var(--amber); }
+
+    /* ═══════════════════════════════════════
+       STYLED TABLE
+    ═══════════════════════════════════════ */
+    .styled-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: .91rem;
+      margin: 14px 0;
+      border-radius: var(--radius);
+      overflow: hidden;
+      box-shadow: 0 2px 12px rgba(11,25,41,.08);
+    }
+    .styled-table thead tr {
+      background: var(--deep-teal);
+      color: var(--white);
+    }
+    .styled-table thead th {
+      padding: 12px 16px;
+      text-align: left;
+      font-weight: 700;
+      font-size: .83rem;
+      letter-spacing: .04em;
+      text-transform: uppercase;
+    }
+    .styled-table tbody tr {
+      border-bottom: 1px solid var(--border);
+      transition: background .12s;
+    }
+    .styled-table tbody tr:hover { background: var(--pale); }
+    .styled-table tbody tr:last-child { border-bottom: none; }
+    .styled-table tbody td { padding: 11px 16px; vertical-align: top; }
+    .styled-table td.hl { font-weight: 700; color: var(--deep-teal); }
+    .styled-table td.amber { font-weight: 700; color: var(--amber); }
+    .styled-table td code { font-size: .84em; }
+
+    /* ═══════════════════════════════════════
+       ANNOTATED RELATION DIAGRAM
+    ═══════════════════════════════════════ */
+    .relation-diagram {
+      border: 2px solid var(--teal);
+      border-radius: var(--radius);
+      overflow: hidden;
+      margin: 20px 0;
+      box-shadow: var(--shadow);
+    }
+    .rel-title-bar {
+      background: var(--deep-teal);
+      color: var(--white);
+      padding: 10px 16px;
+      font-weight: 700;
+      font-size: .92rem;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .rel-title-bar .rel-label {
+      background: var(--amber);
+      color: var(--white);
+      font-size: .68rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: .08em;
+      padding: 2px 8px;
+      border-radius: 8px;
+    }
+    .rel-header-row {
+      display: grid;
+      background: #d4e9f7;
+      border-bottom: 2px solid var(--teal);
+    }
+    .rel-header-row .rh {
+      padding: 9px 12px;
+      font-size: .82rem;
+      font-weight: 700;
+      color: var(--navy);
+      text-transform: uppercase;
+      letter-spacing: .06em;
+      border-right: 1px solid var(--border);
+      position: relative;
+    }
+    .rel-header-row .rh:last-child { border-right: none; }
+    .rel-header-row .rh .attr-badge {
+      display: inline-block;
+      font-size: .62rem;
+      font-weight: 700;
+      padding: 1px 6px;
+      border-radius: 8px;
+      margin-left: 4px;
+      text-transform: uppercase;
+      vertical-align: middle;
+    }
+    .badge-pk { background: #ffe4b5; color: #8b5000; border: 1px solid #f5c48a; }
+    .badge-fk { background: #d4f0e0; color: #155a30; border: 1px solid #7dcba0; }
+    .badge-attr { background: var(--ice); color: var(--deep-teal); border: 1px solid var(--border); }
+
+    .rel-data-row {
+      display: grid;
+      border-bottom: 1px solid var(--border);
+      transition: background .12s;
+    }
+    .rel-data-row:hover { background: var(--pale); }
+    .rel-data-row:last-child { border-bottom: none; }
+    .rel-data-row .rc {
+      padding: 9px 12px;
+      font-size: .88rem;
+      border-right: 1px solid var(--border);
+      font-family: 'Source Code Pro', monospace;
+      color: var(--text);
+    }
+    .rel-data-row .rc:last-child { border-right: none; }
+    .rel-data-row .rc.pk-val { font-weight: 700; color: var(--amber); }
+    .rel-data-row .rc.fk-val { font-weight: 700; color: var(--green); }
+
+    .rel-annotation {
+      background: var(--pale);
+      border-top: 1px solid var(--border);
+      padding: 12px 16px;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 14px;
+    }
+    .ann-item {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      font-size: .8rem;
+      color: var(--muted);
+    }
+    .ann-item .dot {
+      width: 10px; height: 10px;
+      border-radius: 50%;
+      display: inline-block;
+    }
+
+    /* ═══════════════════════════════════════
+       CODE BLOCKS
+    ═══════════════════════════════════════ */
+    .code-wrap {
+      margin: 16px 0;
+      border-radius: var(--radius);
+      overflow: hidden;
+      border: 1px solid #1a3a55;
+      box-shadow: 0 3px 14px rgba(11,25,41,.18);
+    }
+    .code-topbar {
+      background: #152a3e;
+      padding: 8px 16px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+    .code-topbar .lang-badge {
+      font-family: 'Source Code Pro', monospace;
+      font-size: .72rem;
+      font-weight: 600;
+      color: #7ec8e3;
+      text-transform: uppercase;
+      letter-spacing: .1em;
+    }
+    .code-dots { display: flex; gap: 5px; }
+    .code-dots span {
+      width: 10px; height: 10px;
+      border-radius: 50%;
+    }
+    .code-dots .d1 { background: #ff5f57; }
+    .code-dots .d2 { background: #febc2e; }
+    .code-dots .d3 { background: #28c840; }
+    .code-block {
+      background: #0b1929;
+      color: #c8e6ff;
+      padding: 20px 24px;
+      font-family: 'Source Code Pro', monospace;
+      font-size: .85rem;
+      line-height: 1.85;
+      overflow-x: auto;
+      white-space: pre;
+      margin: 0;
+    }
+    .kw  { color: #79b8ff; }
+    .str { color: #9ecbff; }
+    .cmt { color: #4a7a96; font-style: italic; }
+    .fn  { color: #b392f0; }
+    .num { color: #f8c555; }
+    .op  { color: #e8943a; }
+    .nm  { color: #ffa07a; }
+
+    /* ═══════════════════════════════════════
+       TWO-COLUMN LAYOUT
+    ═══════════════════════════════════════ */
+    .two-col {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 14px;
+      margin: 14px 0;
+    }
+    @media (max-width: 640px) {
+      .two-col { grid-template-columns: 1fr; }
+      header h1 { font-size: 1.9rem; }
+      .dbms-grid { grid-template-columns: 1fr; }
+    }
+
+    /* ═══════════════════════════════════════
+       TERM CARDS
+    ═══════════════════════════════════════ */
+    .term-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(210px, 1fr));
+      gap: 13px;
+      margin: 14px 0;
+    }
+    .term-card {
+      background: var(--pale);
+      border: 1px solid var(--border);
+      border-top: 4px solid var(--teal);
+      border-radius: var(--radius);
+      padding: 14px 16px;
+    }
+    .term-card.amber-top { border-top-color: var(--amber); }
+    .term-card.green-top { border-top-color: var(--green); }
+    .term-card.purple-top { border-top-color: var(--purple); }
+    .term-card .tname {
+      font-weight: 700;
+      font-size: .84rem;
+      color: var(--deep-teal);
+      text-transform: uppercase;
+      letter-spacing: .05em;
+      margin-bottom: 6px;
+    }
+    .term-card.amber-top .tname { color: var(--amber); }
+    .term-card.green-top .tname { color: var(--green); }
+    .term-card.purple-top .tname { color: var(--purple); }
+    .term-card p { font-size: .86rem; color: var(--text); margin-bottom: 0; }
+
+    /* ═══════════════════════════════════════
+       TERMINOLOGY COMPARISON CARDS
+    ═══════════════════════════════════════ */
+    .terminology-box {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 1px;
+      border-radius: var(--radius);
+      overflow: hidden;
+      border: 1px solid var(--border);
+      margin: 16px 0;
+      box-shadow: var(--shadow);
+    }
+    @media (max-width: 640px) { .terminology-box { grid-template-columns: 1fr; } }
+    .term-col { background: var(--white); }
+    .term-col-header {
+      padding: 12px 16px;
+      font-weight: 700;
+      font-size: .82rem;
+      text-transform: uppercase;
+      letter-spacing: .07em;
+      color: var(--white);
+      text-align: center;
+    }
+    .term-col-header.formal   { background: var(--deep-teal); }
+    .term-col-header.tabular  { background: #1a7a4a; }
+    .term-col-header.legacy   { background: #7a4a00; }
+    .term-col-row {
+      padding: 10px 16px;
+      font-size: .9rem;
+      text-align: center;
+      border-top: 1px solid var(--border);
+      font-weight: 600;
+    }
+    .term-col-row.formal-val  { color: var(--deep-teal); }
+    .term-col-row.tabular-val { color: #1a7a4a; }
+    .term-col-row.legacy-val  { color: #7a4a00; }
+    .term-col-row:nth-child(even) { background: var(--pale); }
+
+    /* ═══════════════════════════════════════
+       FUNCTIONAL DEPENDENCY DIAGRAM
+    ═══════════════════════════════════════ */
+    .fd-box {
+      background: var(--navy);
+      border-radius: var(--radius);
+      padding: 24px 28px;
+      margin: 18px 0;
+      color: var(--white);
+      font-family: 'Source Code Pro', monospace;
+    }
+    .fd-box .fd-label {
+      font-family: 'Source Sans 3', sans-serif;
+      font-size: .7rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: .14em;
+      color: var(--amber-mid);
+      margin-bottom: 12px;
+    }
+    .fd-row {
+      display: flex;
+      align-items: center;
+      gap: 0;
+      margin-bottom: 14px;
+      flex-wrap: wrap;
+    }
+    .fd-row:last-child { margin-bottom: 0; }
+    .fd-det {
+      background: rgba(200,114,12,.2);
+      border: 1px solid rgba(200,114,12,.5);
+      color: #f5c07a;
+      padding: 8px 16px;
+      border-radius: 6px 0 0 6px;
+      font-size: .9rem;
+    }
+    .fd-arrow {
+      background: rgba(255,255,255,.1);
+      color: #7ec8e3;
+      padding: 8px 14px;
+      font-size: 1rem;
+      border-top: 1px solid rgba(255,255,255,.1);
+      border-bottom: 1px solid rgba(255,255,255,.1);
+    }
+    .fd-dep {
+      background: rgba(22,114,160,.25);
+      border: 1px solid rgba(22,114,160,.5);
+      color: #9ecbff;
+      padding: 8px 16px;
+      border-radius: 0 6px 6px 0;
+      font-size: .9rem;
+    }
+    .fd-note {
+      font-family: 'Source Sans 3', sans-serif;
+      font-size: .82rem;
+      color: #7a9bb5;
+      margin-left: 16px;
+      font-style: italic;
+    }
+
+    /* ═══════════════════════════════════════
+       FD TYPE CARDS
+    ═══════════════════════════════════════ */
+    .fd-type-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(230px, 1fr));
+      gap: 14px;
+      margin: 16px 0;
+    }
+    .fd-type-card {
+      border-radius: var(--radius);
+      padding: 18px;
+      border: 1px solid;
+    }
+    .fd-type-card.full    { background: var(--green-light);  border-color: #7dcba0; }
+    .fd-type-card.partial { background: var(--amber-light);  border-color: var(--amber-border); }
+    .fd-type-card.trans   { background: var(--purple-light); border-color: #a090d8; }
+    .fd-type-card .fdt-title {
+      font-weight: 700;
+      font-size: .9rem;
+      margin-bottom: 6px;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+    .fd-type-card.full .fdt-title    { color: var(--green); }
+    .fd-type-card.partial .fdt-title { color: var(--amber); }
+    .fd-type-card.trans .fdt-title   { color: var(--purple); }
+    .fd-type-card p { font-size: .86rem; color: var(--text); margin: 0; }
+    .fd-type-card .fd-mini {
+      font-family: 'Source Code Pro', monospace;
+      font-size: .82rem;
+      margin-top: 10px;
+      padding: 7px 10px;
+      border-radius: 6px;
+      background: rgba(0,0,0,.05);
+    }
+
+    /* ═══════════════════════════════════════
+       KEY COMPARISON BOX
+    ═══════════════════════════════════════ */
+    .key-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+      gap: 14px;
+      margin: 16px 0;
+    }
+    .key-card {
+      border-radius: var(--radius);
+      padding: 18px;
+      border: 1px solid;
+      position: relative;
+      overflow: hidden;
+    }
+    .key-card::before {
+      content: attr(data-icon);
+      position: absolute;
+      top: -8px; right: 8px;
+      font-size: 4rem;
+      opacity: .07;
+      line-height: 1;
+      pointer-events: none;
+    }
+    .key-card.primary   { background: #fff8e8; border-color: #f5c48a; }
+    .key-card.candidate { background: var(--pale); border-color: var(--border); }
+    .key-card.composite { background: var(--purple-light); border-color: #a090d8; }
+    .key-card.surrogate { background: var(--green-light); border-color: #7dcba0; }
+    .key-card.natural   { background: #fef0f0; border-color: #f0b8b8; }
+    .key-card.alternate { background: #f0f8ff; border-color: #a8d0e8; }
+    .key-card .kc-name {
+      font-weight: 700;
+      font-size: .88rem;
+      text-transform: uppercase;
+      letter-spacing: .06em;
+      margin-bottom: 8px;
+    }
+    .key-card.primary .kc-name   { color: #8b5000; }
+    .key-card.candidate .kc-name { color: var(--deep-teal); }
+    .key-card.composite .kc-name { color: var(--purple); }
+    .key-card.surrogate .kc-name { color: var(--green); }
+    .key-card.natural .kc-name   { color: var(--red); }
+    .key-card.alternate .kc-name { color: var(--teal); }
+    .key-card p { font-size: .86rem; color: var(--text); margin-bottom: 0; }
+    .key-card .kc-example {
+      margin-top: 10px;
+      font-family: 'Source Code Pro', monospace;
+      font-size: .81rem;
+      background: rgba(0,0,0,.05);
+      padding: 6px 10px;
+      border-radius: 5px;
+      color: var(--text);
+    }
+
+    /* ═══════════════════════════════════════
+       CHARACTERISTICS LIST
+    ═══════════════════════════════════════ */
+    .char-list { list-style: none; padding: 0; margin: 14px 0; }
+    .char-list li {
+      display: flex;
+      gap: 14px;
+      align-items: flex-start;
+      padding: 14px 16px;
+      border-radius: var(--radius);
+      margin-bottom: 8px;
+      background: var(--white);
+      border: 1px solid var(--border);
+      font-size: .94rem;
+      transition: background .15s;
+    }
+    .char-list li:hover { background: var(--pale); }
+    .char-num {
+      min-width: 28px; height: 28px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, var(--teal), var(--sky));
+      color: var(--white);
+      font-size: .78rem;
+      font-weight: 700;
+      display: flex; align-items: center; justify-content: center;
+      flex-shrink: 0;
+    }
+    .char-content strong {
+      display: block;
+      font-size: .92rem;
+      margin-bottom: 3px;
+    }
+    .char-content span { font-size: .88rem; color: var(--muted); }
+
+    /* ═══════════════════════════════════════
+       SUMMARY STRIP
+    ═══════════════════════════════════════ */
+    .strip {
+      background: linear-gradient(90deg, var(--deep-teal), var(--teal));
+      color: var(--white);
+      border-radius: var(--radius);
+      padding: 18px 24px;
+      margin: 16px 0;
+      font-size: .95rem;
+    }
+    .strip strong { color: #d6f0ff; }
+
+    /* ═══════════════════════════════════════
+       CHECKLIST
+    ═══════════════════════════════════════ */
+    .checklist { list-style: none; padding: 0; margin: 0; }
+    .checklist li {
+      padding: 7px 0;
+      font-size: .93rem;
+      border-bottom: 1px dashed var(--border);
+      display: flex;
+      align-items: baseline;
+      gap: 10px;
+    }
+    .checklist li:last-child { border-bottom: none; }
+    .checklist li::before {
+      content: '☐';
+      font-size: 1rem;
+      flex-shrink: 0;
+    }
+
+    /* ═══════════════════════════════════════
+       FOOTER
+    ═══════════════════════════════════════ */
+    footer {
+      background: var(--navy);
+      color: #6a90aa;
+      text-align: center;
+      padding: 28px 20px;
+      font-size: .82rem;
+    }
+    footer span { color: #a0c4dc; font-weight: 700; }
+  </style>
+</head>
+<body>
+
+<!-- ══════════════════════════════════════
+     HEADER
+══════════════════════════════════════ -->
+<header>
+  <div class="header-inner">
+    <div class="course-badge">COP 4708 · Introduction to Databases</div>
+    <h1>Module 2: <em>Relational Databases</em></h1>
+    <h2>Terminology, relations, functional dependencies, and keys — the structural heart of the relational model</h2>
+    <div class="header-chips">
+      <span class="chip">📗 Module 2</span>
+      <span class="chip">🎓 CLO 2 Support</span>
+      <span class="chip">⏱ Estimated 60–75 min</span>
+      <span class="chip">5 Learning Outcomes</span>
+    </div>
+  </div>
+</header>
+
+<!-- ══════════════════════════════════════
+     OUTCOMES
+══════════════════════════════════════ -->
+<div class="outcomes-wrap">
+  <h3>Module Learning Outcomes</h3>
+  <ol>
+    <li>Explain basic <em>relational terminology</em> (relation, tuple, attribute, domain, degree, cardinality)</li>
+    <li>Explain the <em>characteristics of relations</em> (rules that define a well-formed relation)</li>
+    <li>Identify <em>alternative terminology</em> used when describing the relational model</li>
+    <li>Identify and use <em>functional dependencies</em>, determinants, and dependent attributes</li>
+    <li>Identify and use <em>primary, candidate, and composite keys</em></li>
+  </ol>
+  <p class="clo-note">📌 Supports CLO 2: Design, normalize, and implement database systems.</p>
+</div>
+
+<!-- ══════════════════════════════════════
+     MAIN CONTENT
+══════════════════════════════════════ -->
+<main>
+
+  <!-- Navigation -->
+  <div class="progress-nav">
+    <h3>Jump to Section</h3>
+    <div class="nav-links">
+      <a href="#sec1">1. Relational Terminology</a>
+      <a href="#sec2">2. Characteristics of Relations</a>
+      <a href="#sec3">3. Alternative Terminology</a>
+      <a href="#sec4">4. Functional Dependencies</a>
+      <a href="#sec5">5. Keys: Primary, Candidate &amp; Composite</a>
+      <a href="#sec6">Summary &amp; Key Terms</a>
+    </div>
+  </div>
+
+  <div class="expand-controls">
+    <button class="ctrl-btn" onclick="setAll(true)">Expand All</button>
+    <button class="ctrl-btn" onclick="setAll(false)">Collapse All</button>
+  </div>
+
+
+  <!-- ───────────────────────────────────────
+       SECTION 1 — RELATIONAL TERMINOLOGY
+  ─────────────────────────────────────── -->
+  <div class="section-label" id="sec1">
+    <div class="num">1</div>
+    <h2>Basic Relational Terminology</h2>
+    <span class="outcome-tag">Outcome 1</span>
+  </div>
+
+  <!-- Card 1.1 — Core Concepts -->
+  <div class="card">
+    <div class="card-header open" onclick="toggle(this)">
+      <div class="ch-left">
+        <span class="card-icon">📐</span>
+        <h3><span>Outcome 1 · Foundation</span>The Core Vocabulary of the Relational Model</h3>
+      </div>
+      <button class="toggle-btn open">▲</button>
+    </div>
+    <div class="card-body open">
+
+      <p>E.F. Codd introduced the relational model in 1970 using precise mathematical language based on set theory and first-order predicate logic. Understanding the formal vocabulary is critical to understanding how databases are structured, queried, and normalized.</p>
+
+      <h4>The Six Core Terms — Defined</h4>
+      <div class="term-grid">
+        <div class="term-card">
+          <div class="tname">Relation</div>
+          <p>A two-dimensional table with a unique name. Each relation represents a single, distinct subject (e.g., <code>Student</code>, <code>Course</code>). Named from the mathematical concept of a set of tuples.</p>
+        </div>
+        <div class="term-card amber-top">
+          <div class="tname">Tuple</div>
+          <p>A single row within a relation. Represents one instance of the subject. A tuple is an ordered set of attribute values—one value per attribute in the relation.</p>
+        </div>
+        <div class="term-card">
+          <div class="tname">Attribute</div>
+          <p>A named column in a relation. Each attribute represents a single property of the subject. An attribute has a name and is associated with a domain.</p>
+        </div>
+        <div class="term-card amber-top">
+          <div class="tname">Domain</div>
+          <p>The complete set of permissible values for an attribute. Defines the allowed data type and range. Example: the domain of <code>GradeLevel</code> might be {Freshman, Sophomore, Junior, Senior}.</p>
+        </div>
+        <div class="term-card green-top">
+          <div class="tname">Degree</div>
+          <p>The number of attributes (columns) in a relation. A relation with 5 attributes has a <em>degree of 5</em>. Also called <em>arity</em>. A higher degree means more data per tuple.</p>
+        </div>
+        <div class="term-card green-top">
+          <div class="tname">Cardinality</div>
+          <p>The number of tuples (rows) in a relation at a given moment. A relation with 200 student records has a <em>cardinality of 200</em>. Cardinality changes as rows are added or removed.</p>
+        </div>
+      </div>
+
+      <h4>Visualizing All Six Terms on One Relation</h4>
+      <p>The following diagram labels every term on a real example relation. Hover over rows to highlight them.</p>
+
+      <!-- Annotated Relation Diagram — STUDENT -->
+      <div class="relation-diagram">
+        <div class="rel-title-bar">
+          <span>STUDENT</span>
+          <span class="rel-label">Relation (Table)</span>
+          <span style="margin-left:auto;font-size:.78rem;color:#9ac4dc;">Degree = 5 (attributes) &nbsp;|&nbsp; Cardinality = 4 (tuples)</span>
+        </div>
+        <!-- Header Row — 5 attributes = degree 5 -->
+        <div class="rel-header-row" style="grid-template-columns: repeat(5, 1fr);">
+          <div class="rh">StudentID <span class="attr-badge badge-pk">PK</span></div>
+          <div class="rh">LastName <span class="attr-badge badge-attr">attr</span></div>
+          <div class="rh">FirstName <span class="attr-badge badge-attr">attr</span></div>
+          <div class="rh">Major <span class="attr-badge badge-attr">attr</span></div>
+          <div class="rh">GPA <span class="attr-badge badge-attr">attr</span></div>
+        </div>
+        <!-- 4 Tuples = cardinality 4 -->
+        <div class="rel-data-row" style="grid-template-columns: repeat(5, 1fr);">
+          <div class="rc pk-val">S-1001</div>
+          <div class="rc">Rodriguez</div>
+          <div class="rc">Maria</div>
+          <div class="rc">Computer Science</div>
+          <div class="rc">3.82</div>
+        </div>
+        <div class="rel-data-row" style="grid-template-columns: repeat(5, 1fr);">
+          <div class="rc pk-val">S-1002</div>
+          <div class="rc">Okafor</div>
+          <div class="rc">James</div>
+          <div class="rc">Information Systems</div>
+          <div class="rc">3.55</div>
+        </div>
+        <div class="rel-data-row" style="grid-template-columns: repeat(5, 1fr);">
+          <div class="rc pk-val">S-1003</div>
+          <div class="rc">Chen</div>
+          <div class="rc">Linda</div>
+          <div class="rc">Computer Science</div>
+          <div class="rc">3.90</div>
+        </div>
+        <div class="rel-data-row" style="grid-template-columns: repeat(5, 1fr);">
+          <div class="rc pk-val">S-1004</div>
+          <div class="rc">Patel</div>
+          <div class="rc">Raj</div>
+          <div class="rc">Cybersecurity</div>
+          <div class="rc">3.70</div>
+        </div>
+        <div class="rel-annotation">
+          <div class="ann-item"><span class="dot" style="background:var(--amber);"></span> Attribute values in gold = Primary Key (uniquely identifies each tuple)</div>
+          <div class="ann-item"><span class="dot" style="background:#888;"></span> Each row = one <strong>Tuple</strong></div>
+          <div class="ann-item"><span class="dot" style="background:var(--teal);"></span> Each column header = one <strong>Attribute</strong></div>
+        </div>
+      </div>
+
+      <h4>Domains Defined for Each Attribute</h4>
+      <table class="styled-table">
+        <thead>
+          <tr>
+            <th>Attribute</th>
+            <th>Domain (Allowed Values)</th>
+            <th>SQL Data Type</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td class="hl">StudentID</td>
+            <td>Format S-XXXX where XXXX is a 4-digit number; unique per student</td>
+            <td><code>CHAR(6)</code></td>
+          </tr>
+          <tr>
+            <td class="hl">LastName</td>
+            <td>Any string of letters up to 50 characters; cannot be NULL</td>
+            <td><code>VARCHAR(50) NOT NULL</code></td>
+          </tr>
+          <tr>
+            <td class="hl">FirstName</td>
+            <td>Any string of letters up to 50 characters; cannot be NULL</td>
+            <td><code>VARCHAR(50) NOT NULL</code></td>
+          </tr>
+          <tr>
+            <td class="hl">Major</td>
+            <td>Any string describing a recognized major; up to 100 characters</td>
+            <td><code>VARCHAR(100)</code></td>
+          </tr>
+          <tr>
+            <td class="hl">GPA</td>
+            <td>Decimal number between 0.00 and 4.00 inclusive</td>
+            <td><code>DECIMAL(3,2)</code> — CHECK (0.00–4.00)</td>
+          </tr>
+        </tbody>
+      </table>
+
+      <div class="callout callout-key">
+        <span class="callout-icon">🔑</span>
+        <div class="callout-body">
+          <strong>Domain Integrity</strong>
+          Enforcing domains means the database only accepts valid values for each attribute. This is done through data types, CHECK constraints, and NOT NULL rules in SQL. Domain integrity is one of the four types of data integrity in the relational model.
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+
+  <!-- ───────────────────────────────────────
+       SECTION 2 — CHARACTERISTICS OF RELATIONS
+  ─────────────────────────────────────── -->
+  <div class="section-label" id="sec2">
+    <div class="num">2</div>
+    <h2>Characteristics of Relations</h2>
+    <span class="outcome-tag">Outcome 2</span>
+  </div>
+
+  <div class="card">
+    <div class="card-header open" onclick="toggle(this)">
+      <div class="ch-left">
+        <span class="card-icon">📏</span>
+        <h3><span>Outcome 2 · Rules</span>The Seven Defining Properties of a Well-Formed Relation</h3>
+      </div>
+      <button class="toggle-btn open">▲</button>
+    </div>
+    <div class="card-body open">
+
+      <p>Not every table in a database qualifies as a <em>relation</em> in the strict mathematical sense. A relation must satisfy all seven of the following properties. Understanding these characteristics is essential to designing correct, normalized databases.</p>
+
+      <ul class="char-list">
+        <li>
+          <div class="char-num">1</div>
+          <div class="char-content">
+            <strong>Every relation has a unique name</strong>
+            <span>No two relations in the same database schema may share the same name. The name identifies the subject the relation describes (e.g., <code>Student</code>, <code>Enrollment</code>, <code>Course</code>).</span>
+          </div>
+        </li>
+        <li>
+          <div class="char-num">2</div>
+          <div class="char-content">
+            <strong>Every attribute within a relation has a unique name</strong>
+            <span>Column names must be distinct within the same relation. Two tables can have a column named <code>ID</code>, but within a single table, <code>ID</code> can only appear once.</span>
+          </div>
+        </li>
+        <li>
+          <div class="char-num">3</div>
+          <div class="char-content">
+            <strong>All values in a column belong to the same domain</strong>
+            <span>Every cell in a given column must contain a value drawn from that attribute's domain. You cannot store a name string in a numeric GPA column, even once.</span>
+          </div>
+        </li>
+        <li>
+          <div class="char-num">4</div>
+          <div class="char-content">
+            <strong>The order of tuples is insignificant</strong>
+            <span>A relation is a mathematical set — sets are unordered. The rows in a table have no inherent top-to-bottom order. Any ordering seen in a query result is a display choice, not a property of the relation itself.</span>
+          </div>
+        </li>
+        <li>
+          <div class="char-num">5</div>
+          <div class="char-content">
+            <strong>The order of attributes is insignificant</strong>
+            <span>Similarly, columns have no inherent left-to-right ordering in the relational model. Attributes are always referenced by name, never by position.</span>
+          </div>
+        </li>
+        <li>
+          <div class="char-num">6</div>
+          <div class="char-content">
+            <strong>Every tuple is unique — no duplicate tuples are allowed</strong>
+            <span>Because a relation is a set, and sets do not allow duplicates, no two tuples may be identical across all attribute values. This is why every relation requires a key — to guarantee uniqueness.</span>
+          </div>
+        </li>
+        <li>
+          <div class="char-num">7</div>
+          <div class="char-content">
+            <strong>All attribute values are atomic (indivisible)</strong>
+            <span>Each cell must contain a single, indivisible value — no lists, no repeating groups, no embedded arrays. This property is the definition of First Normal Form (1NF). Example: a <code>PhoneNumber</code> column should contain one number, not "555-1234, 555-5678".</span>
+          </div>
+        </li>
+      </ul>
+
+      <h4>Violating Atomicity — A Common Mistake</h4>
+      <div class="two-col">
+        <div>
+          <p style="font-size:.82rem;font-weight:700;color:var(--red);text-transform:uppercase;letter-spacing:.06em;margin-bottom:8px;">❌ Not a Valid Relation (violates atomicity)</p>
+          <table class="styled-table">
+            <thead><tr><th>StudentID</th><th>Courses Enrolled</th></tr></thead>
+            <tbody>
+              <tr><td>S-1001</td><td style="color:var(--red);">COP4708, MAT3400, ENC3211</td></tr>
+              <tr><td>S-1002</td><td style="color:var(--red);">COP4708, CGS1060</td></tr>
+            </tbody>
+          </table>
+          <p style="font-size:.83rem;color:var(--red);">Multi-valued column is <strong>not atomic</strong>. This is a repeating group — it violates 1NF and characteristic #7.</p>
+        </div>
+        <div>
+          <p style="font-size:.82rem;font-weight:700;color:var(--green);text-transform:uppercase;letter-spacing:.06em;margin-bottom:8px;">✅ Valid Relation (atomic values, no duplicates)</p>
+          <table class="styled-table">
+            <thead><tr><th>StudentID</th><th>CourseID</th></tr></thead>
+            <tbody>
+              <tr><td>S-1001</td><td>COP4708</td></tr>
+              <tr><td>S-1001</td><td>MAT3400</td></tr>
+              <tr><td>S-1001</td><td>ENC3211</td></tr>
+              <tr><td>S-1002</td><td>COP4708</td></tr>
+              <tr><td>S-1002</td><td>CGS1060</td></tr>
+            </tbody>
+          </table>
+          <p style="font-size:.83rem;color:var(--green);">Each cell contains exactly one value. This is an <strong>Enrollment</strong> relation — atomic and correct.</p>
+        </div>
+      </div>
+
+      <div class="callout callout-warning">
+        <span class="callout-icon">⚠️</span>
+        <div class="callout-body">
+          <strong>Practical Note: SQL vs. Pure Relational Theory</strong>
+          Real SQL databases (like SQL Server) do permit some deviations from pure relational theory — such as duplicate rows in a table without a primary key, or ordering data with <code>ORDER BY</code>. SQL is based on the relational model but is not a perfect mathematical implementation. Always define primary keys to enforce tuple uniqueness in practice.
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+
+  <!-- ───────────────────────────────────────
+       SECTION 3 — ALTERNATIVE TERMINOLOGY
+  ─────────────────────────────────────── -->
+  <div class="section-label" id="sec3">
+    <div class="num">3</div>
+    <h2>Alternative Terminology</h2>
+    <span class="outcome-tag">Outcome 3</span>
+  </div>
+
+  <div class="card">
+    <div class="card-header open" onclick="toggle(this)">
+      <div class="ch-left">
+        <span class="card-icon">🗂️</span>
+        <h3><span>Outcome 3 · Vocabulary</span>Three Ways to Say the Same Thing</h3>
+      </div>
+      <button class="toggle-btn open">▲</button>
+    </div>
+    <div class="card-body open">
+
+      <p>The same database concepts are described using different vocabulary depending on the context — formal mathematical theory, modern database practice, or legacy file-system thinking. All three sets of terms remain in active use, so professionals must recognize and translate between them.</p>
+
+      <h4>Side-by-Side Terminology Comparison</h4>
+
+      <div class="terminology-box">
+        <div class="term-col">
+          <div class="term-col-header formal">Formal / Relational Theory</div>
+          <div class="term-col-row formal-val">Relation</div>
+          <div class="term-col-row formal-val">Tuple</div>
+          <div class="term-col-row formal-val">Attribute</div>
+          <div class="term-col-row formal-val">Domain</div>
+          <div class="term-col-row formal-val">Degree</div>
+          <div class="term-col-row formal-val">Cardinality</div>
+          <div class="term-col-row formal-val">Schema</div>
+        </div>
+        <div class="term-col">
+          <div class="term-col-header tabular">Table-Based / SQL Practice</div>
+          <div class="term-col-row tabular-val">Table</div>
+          <div class="term-col-row tabular-val">Row</div>
+          <div class="term-col-row tabular-val">Column</div>
+          <div class="term-col-row tabular-val">Data Type / Constraint</div>
+          <div class="term-col-row tabular-val">Number of Columns</div>
+          <div class="term-col-row tabular-val">Number of Rows</div>
+          <div class="term-col-row tabular-val">Database / Schema</div>
+        </div>
+        <div class="term-col">
+          <div class="term-col-header legacy">Legacy File / Informal</div>
+          <div class="term-col-row legacy-val">File</div>
+          <div class="term-col-row legacy-val">Record</div>
+          <div class="term-col-row legacy-val">Field</div>
+          <div class="term-col-row legacy-val">Field Type / Length</div>
+          <div class="term-col-row legacy-val">Number of Fields</div>
+          <div class="term-col-row legacy-val">Number of Records</div>
+          <div class="term-col-row legacy-val">Data Definition</div>
+        </div>
+      </div>
+
+      <h4>Where You Will Encounter Each Vocabulary Set</h4>
+      <table class="styled-table">
+        <thead>
+          <tr>
+            <th>Context</th>
+            <th>Vocabulary Used</th>
+            <th>Example</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td class="hl">Database textbooks &amp; theory</td>
+            <td>Formal / Relational Theory</td>
+            <td>"The STUDENT relation contains 4 tuples with degree 5."</td>
+          </tr>
+          <tr>
+            <td class="hl">SQL Server, MySQL, PostgreSQL</td>
+            <td>Table-Based / SQL Practice</td>
+            <td>"The Students table has 4 rows and 5 columns."</td>
+          </tr>
+          <tr>
+            <td class="hl">Access databases, spreadsheets</td>
+            <td>Legacy / Informal</td>
+            <td>"The Students file has 4 records and 5 fields."</td>
+          </tr>
+          <tr>
+            <td class="hl">Job interviews &amp; team discussions</td>
+            <td>Mixed (all three)</td>
+            <td>Understanding all three lets you communicate clearly in any context.</td>
+          </tr>
+        </tbody>
+      </table>
+
+      <div class="callout callout-tip">
+        <span class="callout-icon">💡</span>
+        <div class="callout-body">
+          <strong>Study Tip: Quick Memory Map</strong>
+          Relation = Table = File &nbsp;|&nbsp; Tuple = Row = Record &nbsp;|&nbsp; Attribute = Column = Field.
+          The formal term is always more precise. The table-based term is what you'll use every day in SQL.
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+
+  <!-- ───────────────────────────────────────
+       SECTION 4 — FUNCTIONAL DEPENDENCIES
+  ─────────────────────────────────────── -->
+  <div class="section-label" id="sec4">
+    <div class="num">4</div>
+    <h2>Functional Dependencies</h2>
+    <span class="outcome-tag">Outcome 4</span>
+  </div>
+
+  <!-- Card 4.1 — Core Concept -->
+  <div class="card">
+    <div class="card-header open" onclick="toggle(this)">
+      <div class="ch-left">
+        <span class="card-icon">🔍</span>
+        <h3><span>Outcome 4 · Concept</span>Determinants, Dependents &amp; the FD Notation</h3>
+      </div>
+      <button class="toggle-btn open">▲</button>
+    </div>
+    <div class="card-body open">
+
+      <div class="def-box">
+        <div class="def-label">Definition — Functional Dependency</div>
+        <p>Attribute B is <strong>functionally dependent</strong> on attribute A if, for every valid value of A, there is exactly one associated value of B. Written formally: <strong>A → B</strong> (read: "A determines B" or "B is functionally dependent on A").</p>
+      </div>
+
+      <h4>Determinant &amp; Dependent Defined</h4>
+      <div class="two-col">
+        <div class="callout callout-amber">
+          <span class="callout-icon">🔶</span>
+          <div class="callout-body">
+            <strong>Determinant</strong>
+            The attribute(s) on the <em>left side</em> of the functional dependency arrow (A in A → B). Knowing the value of the determinant uniquely determines the value of the dependent. Also called the <em>source</em> or <em>left-hand side</em>.
+          </div>
+        </div>
+        <div class="callout callout-info">
+          <span class="callout-icon">🔷</span>
+          <div class="callout-body">
+            <strong>Dependent Attribute</strong>
+            The attribute(s) on the <em>right side</em> of the arrow (B in A → B). Its value is determined by — dependent on — the determinant. Also called the <em>dependent</em> or <em>right-hand side</em>.
+          </div>
+        </div>
+      </div>
+
+      <h4>Reading the Functional Dependency Notation</h4>
+      <div class="fd-box">
+        <div class="fd-label">Functional Dependency Notation — A → B</div>
+        <div class="fd-row">
+          <div class="fd-det">StudentID</div>
+          <div class="fd-arrow">&nbsp;→&nbsp;</div>
+          <div class="fd-dep">LastName, FirstName, Major, GPA</div>
+          <div class="fd-note">Knowing StudentID uniquely determines all other student attributes</div>
+        </div>
+        <div class="fd-row">
+          <div class="fd-det">CourseID</div>
+          <div class="fd-arrow">&nbsp;→&nbsp;</div>
+          <div class="fd-dep">CourseName, Credits, DepartmentID</div>
+          <div class="fd-note">Knowing CourseID uniquely determines all course details</div>
+        </div>
+        <div class="fd-row">
+          <div class="fd-det">ZipCode</div>
+          <div class="fd-arrow">&nbsp;→&nbsp;</div>
+          <div class="fd-dep">City, State</div>
+          <div class="fd-note">A ZIP code always maps to exactly one city and state</div>
+        </div>
+        <div class="fd-row">
+          <div class="fd-det">EmployeeID, ProjectID</div>
+          <div class="fd-arrow">&nbsp;→&nbsp;</div>
+          <div class="fd-dep">HoursWorked</div>
+          <div class="fd-note">Hours worked depends on the specific employee <em>and</em> specific project (composite determinant)</div>
+        </div>
+      </div>
+
+      <h4>How to Verify a Functional Dependency</h4>
+      <p>Ask yourself: <em>"If I know the value of A, can I always look up exactly one value of B?"</em></p>
+      <ul>
+        <li><strong>YES</strong> → A → B is a valid functional dependency</li>
+        <li><strong>NO / Sometimes multiple</strong> → A does not functionally determine B</li>
+      </ul>
+
+      <div class="callout callout-warning">
+        <span class="callout-icon">⚠️</span>
+        <div class="callout-body">
+          <strong>Common Misconception</strong>
+          A functional dependency is a semantic, business-rule constraint — it cannot be determined just by looking at the data at one point in time. Even if all current records happen to have a 1:1 relationship, the FD only holds if it must always be true by definition. For example, two students can have the same first name, so <code>FirstName → StudentID</code> is NOT a valid FD.
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- Card 4.2 — Types of FDs -->
+  <div class="card">
+    <div class="card-header open" onclick="toggle(this)">
+      <div class="ch-left">
+        <span class="card-icon">🌿</span>
+        <h3><span>Outcome 4 · Types</span>Full, Partial &amp; Transitive Functional Dependencies</h3>
+      </div>
+      <button class="toggle-btn open">▲</button>
+    </div>
+    <div class="card-body open">
+
+      <p>The <em>type</em> of functional dependency in a relation is the foundation of normalization. Identifying which type exists tells you what normal form violations are present and how to correct them.</p>
+
+      <div class="fd-type-grid">
+        <div class="fd-type-card full">
+          <div class="fdt-title">✅ Full Functional Dependency</div>
+          <p>Attribute B is fully functionally dependent on A when B is dependent on the <em>entire</em> composite key and cannot be determined by any subset of it. This is the desired state for well-normalized tables.</p>
+          <div class="fd-mini">{StudentID, CourseID} → Grade<br/>Grade cannot be determined by StudentID alone or CourseID alone.</div>
+        </div>
+        <div class="fd-type-card partial">
+          <div class="fdt-title">⚠️ Partial Functional Dependency</div>
+          <p>Attribute B is only dependent on <em>part</em> of a composite key, not all of it. This violates Second Normal Form (2NF) and causes data redundancy. The solution is to remove the partially dependent attribute to its own table.</p>
+          <div class="fd-mini">{StudentID, CourseID} → CourseName<br/>CourseName depends only on CourseID — a partial dependency.</div>
+        </div>
+        <div class="fd-type-card trans">
+          <div class="fdt-title">🔄 Transitive Dependency</div>
+          <p>Attribute B depends on attribute C, which itself depends on the primary key A. So B is indirectly dependent on A through C. This violates Third Normal Form (3NF) and must be resolved by splitting the table.</p>
+          <div class="fd-mini">StudentID → MajorID → DepartmentHead<br/>DepartmentHead depends on MajorID, not directly on StudentID.</div>
+        </div>
+      </div>
+
+      <h4>Detailed Example: Identifying All Three Types</h4>
+      <p>Consider a single (poorly designed) <code>ENROLLMENT</code> table with the following columns:</p>
+
+      <!-- Enrollment Problem Table -->
+      <div class="relation-diagram">
+        <div class="rel-title-bar">
+          <span>ENROLLMENT (Un-normalized)</span>
+          <span class="rel-label">Composite PK: StudentID + CourseID</span>
+        </div>
+        <div class="rel-header-row" style="grid-template-columns: repeat(7, 1fr);">
+          <div class="rh">StudentID <span class="attr-badge badge-pk">PK</span></div>
+          <div class="rh">CourseID <span class="attr-badge badge-pk">PK</span></div>
+          <div class="rh">StudentName</div>
+          <div class="rh">CourseName</div>
+          <div class="rh">DeptID</div>
+          <div class="rh">DeptName</div>
+          <div class="rh">Grade</div>
+        </div>
+        <div class="rel-data-row" style="grid-template-columns: repeat(7, 1fr);">
+          <div class="rc pk-val">S-1001</div>
+          <div class="rc pk-val">COP4708</div>
+          <div class="rc">M. Rodriguez</div>
+          <div class="rc">Databases</div>
+          <div class="rc">D01</div>
+          <div class="rc">Computing</div>
+          <div class="rc">A</div>
+        </div>
+        <div class="rel-data-row" style="grid-template-columns: repeat(7, 1fr);">
+          <div class="rc pk-val">S-1001</div>
+          <div class="rc pk-val">MAT3400</div>
+          <div class="rc">M. Rodriguez</div>
+          <div class="rc">Calc III</div>
+          <div class="rc">D02</div>
+          <div class="rc">Mathematics</div>
+          <div class="rc">B+</div>
+        </div>
+        <div class="rel-data-row" style="grid-template-columns: repeat(7, 1fr);">
+          <div class="rc pk-val">S-1002</div>
+          <div class="rc pk-val">COP4708</div>
+          <div class="rc">J. Okafor</div>
+          <div class="rc">Databases</div>
+          <div class="rc">D01</div>
+          <div class="rc">Computing</div>
+          <div class="rc">A-</div>
+        </div>
+      </div>
+
+      <h4>Identifying the Dependencies</h4>
+      <table class="styled-table">
+        <thead>
+          <tr>
+            <th>Functional Dependency</th>
+            <th>Type</th>
+            <th>Problem Caused</th>
+            <th>Solution</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><code>{StudentID, CourseID} → Grade</code></td>
+            <td style="color:var(--green);font-weight:700;">✅ Full</td>
+            <td>None — this is the only attribute that should remain</td>
+            <td>Keep in ENROLLMENT table</td>
+          </tr>
+          <tr>
+            <td><code>StudentID → StudentName</code></td>
+            <td style="color:var(--amber);font-weight:700;">⚠️ Partial</td>
+            <td>StudentName repeats every time the student enrolls (redundancy)</td>
+            <td>Move to a STUDENT table</td>
+          </tr>
+          <tr>
+            <td><code>CourseID → CourseName, DeptID</code></td>
+            <td style="color:var(--amber);font-weight:700;">⚠️ Partial</td>
+            <td>CourseName and DeptID repeat for every enrollment in that course</td>
+            <td>Move to a COURSE table</td>
+          </tr>
+          <tr>
+            <td><code>DeptID → DeptName</code></td>
+            <td style="color:var(--purple);font-weight:700;">🔄 Transitive</td>
+            <td>DeptName is transitively dependent on the PK through DeptID — update anomalies possible</td>
+            <td>Move to a DEPARTMENT table</td>
+          </tr>
+        </tbody>
+      </table>
+
+      <div class="callout callout-key">
+        <span class="callout-icon">🔑</span>
+        <div class="callout-body">
+          <strong>Connection to Normalization</strong>
+          Eliminating partial dependencies achieves <strong>Second Normal Form (2NF)</strong>. Eliminating transitive dependencies achieves <strong>Third Normal Form (3NF)</strong>. Identifying functional dependencies is therefore the prerequisite for every normalization decision.
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+
+  <!-- ───────────────────────────────────────
+       SECTION 5 — KEYS
+  ─────────────────────────────────────── -->
+  <div class="section-label" id="sec5">
+    <div class="num">5</div>
+    <h2>Keys: Primary, Candidate &amp; Composite</h2>
+    <span class="outcome-tag">Outcome 5</span>
+  </div>
+
+  <!-- Card 5.1 — Types of Keys -->
+  <div class="card">
+    <div class="card-header open" onclick="toggle(this)">
+      <div class="ch-left">
+        <span class="card-icon">🗝️</span>
+        <h3><span>Outcome 5 · Concept</span>The Complete Key Taxonomy</h3>
+      </div>
+      <button class="toggle-btn open">▲</button>
+    </div>
+    <div class="card-body open">
+
+      <p>Keys are attributes (or combinations of attributes) that play special roles in identifying tuples and establishing relationships between relations. Each type of key serves a specific purpose in database design.</p>
+
+      <div class="key-grid">
+
+        <div class="key-card candidate" data-icon="🔑">
+          <div class="kc-name">🔑 Candidate Key</div>
+          <p>Any attribute or minimal set of attributes that could uniquely identify every tuple in a relation. There may be <em>multiple</em> candidate keys in one relation. All candidate keys are minimal — removing any attribute would break uniqueness.</p>
+          <div class="kc-example">Employee: SSN, EmployeeID, and Email may all qualify as candidate keys.</div>
+        </div>
+
+        <div class="key-card primary" data-icon="⭐">
+          <div class="kc-name">⭐ Primary Key</div>
+          <p>The one candidate key chosen by the designer to officially and permanently identify tuples. It must be: <strong>unique</strong> (no two rows share the same PK), <strong>not null</strong>, <strong>stable</strong> (rarely or never changes), and <strong>minimal</strong>.</p>
+          <div class="kc-example">Employee: EmployeeID is chosen as PK from the candidate keys above.</div>
+        </div>
+
+        <div class="key-card composite" data-icon="🔒">
+          <div class="kc-name">🔒 Composite Key</div>
+          <p>A primary (or candidate) key made up of <em>two or more attributes</em> working together. No single attribute alone is sufficient for uniqueness. Common in junction/bridge tables representing many-to-many relationships.</p>
+          <div class="kc-example">Enrollment: {StudentID + CourseID} together are unique, but neither alone is sufficient.</div>
+        </div>
+
+        <div class="key-card alternate" data-icon="🔐">
+          <div class="kc-name">🔐 Alternate Key</div>
+          <p>Any candidate key that was <em>not</em> selected as the primary key. These are still valid unique identifiers — often enforced with a UNIQUE constraint in SQL.</p>
+          <div class="kc-example">Employee: SSN and Email become alternate keys once EmployeeID is selected as PK.</div>
+        </div>
+
+        <div class="key-card surrogate" data-icon="🤖">
+          <div class="kc-name">🤖 Surrogate Key</div>
+          <p>An artificial, system-generated key with no real-world meaning. Typically an auto-incrementing integer (<code>IDENTITY</code> in SQL Server). Used when no natural key is suitable — stable, guaranteed unique, and small.</p>
+          <div class="kc-example">CustomerID INT IDENTITY(1,1) — the database generates 1, 2, 3… automatically.</div>
+        </div>
+
+        <div class="key-card natural" data-icon="🌿">
+          <div class="kc-name">🌿 Natural Key</div>
+          <p>A key derived from real-world data that already exists and has inherent meaning. Can be problematic if values change or if they are long and difficult to use as a foreign key reference.</p>
+          <div class="kc-example">SSN, ISBN (book), VIN (vehicle), Email address — all carry real-world meaning.</div>
+        </div>
+
+      </div>
+
+      <h4>The Relationship Between Key Types</h4>
+      <table class="styled-table">
+        <thead>
+          <tr>
+            <th>Key Type</th>
+            <th>Uniquely Identifies?</th>
+            <th>Can Be Null?</th>
+            <th>How Many Per Relation?</th>
+            <th>SQL Implementation</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td class="hl">Candidate Key</td>
+            <td>✅ Yes</td>
+            <td>❌ No</td>
+            <td>One or more</td>
+            <td>All enforced via UNIQUE or PRIMARY KEY</td>
+          </tr>
+          <tr>
+            <td class="hl">Primary Key</td>
+            <td>✅ Yes</td>
+            <td>❌ No (enforced)</td>
+            <td>Exactly one</td>
+            <td><code>PRIMARY KEY</code> constraint</td>
+          </tr>
+          <tr>
+            <td class="hl">Composite Key</td>
+            <td>✅ Yes (combined)</td>
+            <td>❌ No</td>
+            <td>One (is the PK or candidate)</td>
+            <td><code>PRIMARY KEY (colA, colB)</code></td>
+          </tr>
+          <tr>
+            <td class="hl">Alternate Key</td>
+            <td>✅ Yes</td>
+            <td>❌ No (usually)</td>
+            <td>Zero or more</td>
+            <td><code>UNIQUE</code> constraint</td>
+          </tr>
+          <tr>
+            <td class="hl">Surrogate Key</td>
+            <td>✅ Yes (artificial)</td>
+            <td>❌ No</td>
+            <td>At most one (is the PK)</td>
+            <td><code>IDENTITY(1,1)</code></td>
+          </tr>
+          <tr>
+            <td class="hl">Natural Key</td>
+            <td>✅ Usually</td>
+            <td>Context-dependent</td>
+            <td>Varies</td>
+            <td>As PK or UNIQUE constraint</td>
+          </tr>
+        </tbody>
+      </table>
+
+    </div>
+  </div>
+
+  <!-- Card 5.2 — SQL Implementation -->
+  <div class="card">
+    <div class="card-header open" onclick="toggle(this)">
+      <div class="ch-left">
+        <span class="card-icon">💻</span>
+        <h3><span>Outcome 5 · SQL</span>Implementing Keys in T-SQL (SQL Server)</h3>
+      </div>
+      <button class="toggle-btn open">▲</button>
+    </div>
+    <div class="card-body open">
+
+      <p>Understanding key concepts is only half the job — you must also know how to implement them correctly in SQL. The following examples show how each key type is defined in a real database.</p>
+
+      <h4>Example 1 — Simple Surrogate Primary Key</h4>
+      <div class="code-wrap">
+        <div class="code-topbar">
+          <div class="code-dots"><span class="d1"></span><span class="d2"></span><span class="d3"></span></div>
+          <span class="lang-badge">T-SQL · Primary Key · Surrogate</span>
+        </div>
+        <div class="code-block"><span class="cmt">-- Surrogate Primary Key using IDENTITY (auto-increment)</span>
+<span class="cmt">-- StudentID has no real-world meaning — purely a generated integer</span>
+
+<span class="kw">CREATE TABLE</span> Student (
+    StudentID   <span class="nm">INT</span>           <span class="kw">IDENTITY</span>(<span class="num">1</span>,<span class="num">1</span>)  <span class="kw">NOT NULL</span>,
+    LastName    <span class="nm">VARCHAR</span>(<span class="num">50</span>)                  <span class="kw">NOT NULL</span>,
+    FirstName   <span class="nm">VARCHAR</span>(<span class="num">50</span>)                  <span class="kw">NOT NULL</span>,
+    Email       <span class="nm">VARCHAR</span>(<span class="num">100</span>)                 <span class="kw">NOT NULL</span>,
+    GPA         <span class="nm">DECIMAL</span>(<span class="num">3</span>,<span class="num">2</span>)
+
+    <span class="cmt">-- Surrogate primary key: single integer, auto-generated</span>
+    CONSTRAINT PK_Student       <span class="kw">PRIMARY KEY</span> (StudentID),
+
+    <span class="cmt">-- Enforce alternate keys with UNIQUE constraints</span>
+    CONSTRAINT UQ_Student_Email <span class="kw">UNIQUE</span>       (Email)
+);</div>
+      </div>
+
+      <h4>Example 2 — Composite Primary Key (Junction Table)</h4>
+      <div class="code-wrap">
+        <div class="code-topbar">
+          <div class="code-dots"><span class="d1"></span><span class="d2"></span><span class="d3"></span></div>
+          <span class="lang-badge">T-SQL · Composite Key · Many-to-Many</span>
+        </div>
+        <div class="code-block"><span class="cmt">-- Composite Primary Key: StudentID + CourseID together are unique</span>
+<span class="cmt">-- Neither column alone is sufficient to identify a single enrollment</span>
+
+<span class="kw">CREATE TABLE</span> Enrollment (
+    StudentID   <span class="nm">INT</span>          <span class="kw">NOT NULL</span>,
+    CourseID    <span class="nm">CHAR</span>(<span class="num">10</span>)     <span class="kw">NOT NULL</span>,
+    Grade       <span class="nm">CHAR</span>(<span class="num">2</span>)      <span class="kw">NULL</span>,
+    EnrollDate  <span class="nm">DATE</span>         <span class="kw">NOT NULL</span>
+
+    <span class="cmt">-- Composite PK: the combination of both columns is the identifier</span>
+    CONSTRAINT PK_Enrollment
+        <span class="kw">PRIMARY KEY</span> (StudentID, CourseID),
+
+    <span class="cmt">-- Foreign Keys enforce referential integrity to parent tables</span>
+    CONSTRAINT FK_Enrollment_Student
+        <span class="kw">FOREIGN KEY</span> (StudentID) <span class="kw">REFERENCES</span> Student (StudentID),
+
+    CONSTRAINT FK_Enrollment_Course
+        <span class="kw">FOREIGN KEY</span> (CourseID)  <span class="kw">REFERENCES</span> Course  (CourseID)
+);</div>
+      </div>
+
+      <h4>Example 3 — Natural Key</h4>
+      <div class="code-wrap">
+        <div class="code-topbar">
+          <div class="code-dots"><span class="d1"></span><span class="d2"></span><span class="d3"></span></div>
+          <span class="lang-badge">T-SQL · Natural Key · Course Example</span>
+        </div>
+        <div class="code-block"><span class="cmt">-- Natural Primary Key: CourseID is a meaningful code (e.g., 'COP4708')</span>
+<span class="cmt">-- It carries real-world meaning but is stable and unlikely to change</span>
+
+<span class="kw">CREATE TABLE</span> Course (
+    CourseID    <span class="nm">CHAR</span>(<span class="num">10</span>)     <span class="kw">NOT NULL</span>,  <span class="cmt">-- Natural key: e.g., 'COP4708'</span>
+    CourseName  <span class="nm">VARCHAR</span>(<span class="num">100</span>)  <span class="kw">NOT NULL</span>,
+    Credits     <span class="nm">TINYINT</span>      <span class="kw">NOT NULL</span>
+                    <span class="kw">CONSTRAINT</span> CK_Credits <span class="kw">CHECK</span> (Credits <span class="kw">BETWEEN</span> <span class="num">1</span> <span class="kw">AND</span> <span class="num">6</span>),
+    DeptID      <span class="nm">CHAR</span>(<span class="num">5</span>)      <span class="kw">NOT NULL</span>,
+
+    CONSTRAINT PK_Course  <span class="kw">PRIMARY KEY</span> (CourseID),
+    CONSTRAINT FK_Course_Dept
+        <span class="kw">FOREIGN KEY</span> (DeptID) <span class="kw">REFERENCES</span> Department (DeptID)
+);</div>
+      </div>
+
+      <h4>Choosing Between a Surrogate and Natural Key</h4>
+      <table class="styled-table">
+        <thead>
+          <tr>
+            <th>Consideration</th>
+            <th>Surrogate Key</th>
+            <th>Natural Key</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td class="hl">Stability</td>
+            <td>✅ Never changes — system-assigned</td>
+            <td>⚠️ May change (e.g., student name, email)</td>
+          </tr>
+          <tr>
+            <td class="hl">Meaningfulness</td>
+            <td>❌ No business meaning (just a number)</td>
+            <td>✅ Has real-world significance (e.g., course code)</td>
+          </tr>
+          <tr>
+            <td class="hl">Size as Foreign Key</td>
+            <td>✅ Small integer — efficient joins</td>
+            <td>⚠️ May be large (SSN, email) — larger index</td>
+          </tr>
+          <tr>
+            <td class="hl">Guaranteed Uniqueness</td>
+            <td>✅ Database enforces it automatically</td>
+            <td>⚠️ Must validate uniqueness against real-world source</td>
+          </tr>
+          <tr>
+            <td class="hl">Best Used When</td>
+            <td>No stable natural identifier exists; joining performance matters</td>
+            <td>A stable, unique, meaningful code already exists (ISBN, VIN, course code)</td>
+          </tr>
+        </tbody>
+      </table>
+
+      <div class="callout callout-tip">
+        <span class="callout-icon">💡</span>
+        <div class="callout-body">
+          <strong>Best Practice</strong>
+          In enterprise database design, surrogate keys (auto-incrementing integers) are the default choice for primary keys because they are lightweight, stable, and always unique. Natural keys are retained as alternate keys with UNIQUE constraints so business users can still look up records by meaningful values.
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- Card 5.3 — Identifying Candidate Keys -->
+  <div class="card">
+    <div class="card-header" onclick="toggle(this)">
+      <div class="ch-left">
+        <span class="card-icon">🔬</span>
+        <h3><span>Outcome 5 · Practice</span>How to Identify Candidate Keys in a Relation</h3>
+      </div>
+      <button class="toggle-btn">▲</button>
+    </div>
+    <div class="card-body">
+
+      <p>Identifying candidate keys requires systematic analysis of the data and business rules — not just guessing. Follow this process for any relation.</p>
+
+      <h4>Step-by-Step Process</h4>
+      <ol>
+        <li><strong>List all attributes</strong> in the relation</li>
+        <li><strong>Identify attributes (or combinations) that could be unique</strong> across all tuples — now and always, by the rules of the business</li>
+        <li><strong>Test for minimality</strong> — can you remove any attribute from the combination and still maintain uniqueness? If yes, the larger set is not minimal and is therefore not a candidate key</li>
+        <li><strong>List all valid minimal unique sets</strong> — these are your candidate keys</li>
+        <li><strong>Choose one as the primary key</strong> based on stability, size, and simplicity</li>
+      </ol>
+
+      <h4>Worked Example — EMPLOYEE Relation</h4>
+      <div class="relation-diagram">
+        <div class="rel-title-bar">
+          <span>EMPLOYEE</span>
+          <span class="rel-label">Find the candidate keys</span>
+        </div>
+        <div class="rel-header-row" style="grid-template-columns: repeat(6, 1fr);">
+          <div class="rh">EmployeeID</div>
+          <div class="rh">SSN</div>
+          <div class="rh">LastName</div>
+          <div class="rh">FirstName</div>
+          <div class="rh">Email</div>
+          <div class="rh">DeptID</div>
+        </div>
+        <div class="rel-data-row" style="grid-template-columns: repeat(6, 1fr);">
+          <div class="rc pk-val">E-001</div><div class="rc">123-45-6789</div>
+          <div class="rc">Smith</div><div class="rc">John</div>
+          <div class="rc">jsmith@co.com</div><div class="rc">D01</div>
+        </div>
+        <div class="rel-data-row" style="grid-template-columns: repeat(6, 1fr);">
+          <div class="rc pk-val">E-002</div><div class="rc">987-65-4321</div>
+          <div class="rc">Smith</div><div class="rc">Jane</div>
+          <div class="rc">jasmith@co.com</div><div class="rc">D02</div>
+        </div>
+        <div class="rel-data-row" style="grid-template-columns: repeat(6, 1fr);">
+          <div class="rc pk-val">E-003</div><div class="rc">456-78-9012</div>
+          <div class="rc">Jones</div><div class="rc">Robert</div>
+          <div class="rc">rjones@co.com</div><div class="rc">D01</div>
+        </div>
+      </div>
+
+      <table class="styled-table" style="margin-top:14px;">
+        <thead>
+          <tr>
+            <th>Attribute(s)</th>
+            <th>Unique by Business Rule?</th>
+            <th>Minimal?</th>
+            <th>Candidate Key?</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><code>EmployeeID</code></td>
+            <td>✅ Yes — company assigns unique IDs</td>
+            <td>✅ Yes — single attribute</td>
+            <td style="color:var(--green);font-weight:700;">✅ YES</td>
+          </tr>
+          <tr>
+            <td><code>SSN</code></td>
+            <td>✅ Yes — government-issued, globally unique</td>
+            <td>✅ Yes — single attribute</td>
+            <td style="color:var(--green);font-weight:700;">✅ YES</td>
+          </tr>
+          <tr>
+            <td><code>Email</code></td>
+            <td>✅ Yes — company ensures unique email per employee</td>
+            <td>✅ Yes — single attribute</td>
+            <td style="color:var(--green);font-weight:700;">✅ YES</td>
+          </tr>
+          <tr>
+            <td><code>LastName</code></td>
+            <td>❌ No — two employees named "Smith"</td>
+            <td>—</td>
+            <td style="color:var(--red);font-weight:700;">❌ NO</td>
+          </tr>
+          <tr>
+            <td><code>LastName + FirstName</code></td>
+            <td>❌ No — could have duplicate full names</td>
+            <td>—</td>
+            <td style="color:var(--red);font-weight:700;">❌ NO</td>
+          </tr>
+          <tr>
+            <td><code>EmployeeID + SSN</code></td>
+            <td>✅ Yes — unique combination</td>
+            <td>❌ No — EmployeeID alone is sufficient</td>
+            <td style="color:var(--red);font-weight:700;">❌ NO (not minimal)</td>
+          </tr>
+        </tbody>
+      </table>
+
+      <div class="callout callout-amber">
+        <span class="callout-icon">📌</span>
+        <div class="callout-body">
+          <strong>Conclusion</strong>
+          The EMPLOYEE relation has <strong>3 candidate keys</strong>: EmployeeID, SSN, and Email. The designer would typically choose <strong>EmployeeID</strong> as the primary key (it is short, stable, and has no privacy concerns like SSN). SSN and Email become <strong>alternate keys</strong>, enforced with UNIQUE constraints.
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+
+  <!-- ───────────────────────────────────────
+       SECTION 6 — SUMMARY & KEY TERMS
+  ─────────────────────────────────────── -->
+  <div class="section-label" id="sec6">
+    <div class="num" style="background:var(--amber);color:var(--white);">✓</div>
+    <h2>Module Summary &amp; Key Terms</h2>
+  </div>
+
+  <div class="card">
+    <div class="card-header open" onclick="toggle(this)">
+      <div class="ch-left">
+        <span class="card-icon">📋</span>
+        <h3><span>Review</span>Glossary, Summary &amp; Outcome Checklist</h3>
+      </div>
+      <button class="toggle-btn open">▲</button>
+    </div>
+    <div class="card-body open">
+
+      <div class="strip">
+        <strong>Module 2 Complete!</strong> You now understand the precise vocabulary and structure of the relational model — the conceptual foundation for every SQL operation, every normalization step, and every database design decision you will make in this course.
+      </div>
+
+      <h4>Complete Glossary</h4>
+      <table class="styled-table">
+        <thead><tr><th>Term</th><th>Definition</th></tr></thead>
+        <tbody>
+          <tr><td class="hl">Relation</td><td>A two-dimensional table with a unique name representing a single subject</td></tr>
+          <tr><td class="hl">Tuple</td><td>A single row/record in a relation; represents one instance of the subject</td></tr>
+          <tr><td class="hl">Attribute</td><td>A named column in a relation representing a single property of the subject</td></tr>
+          <tr><td class="hl">Domain</td><td>The complete set of permissible values for an attribute (type + constraints)</td></tr>
+          <tr><td class="hl">Degree</td><td>The number of attributes (columns) in a relation</td></tr>
+          <tr><td class="hl">Cardinality</td><td>The number of tuples (rows) in a relation at a given time</td></tr>
+          <tr><td class="hl">Atomic Value</td><td>A single, indivisible value in a cell — required for First Normal Form</td></tr>
+          <tr><td class="hl">Functional Dependency</td><td>A → B: knowing A uniquely determines the value of B</td></tr>
+          <tr><td class="hl">Determinant</td><td>The left-hand side of a functional dependency (A in A → B); the "known" value</td></tr>
+          <tr><td class="hl">Dependent Attribute</td><td>The right-hand side of a functional dependency (B in A → B); the "determined" value</td></tr>
+          <tr><td class="hl">Full FD</td><td>B depends on the entire composite key — not just part of it</td></tr>
+          <tr><td class="hl">Partial FD</td><td>B depends on only part of a composite key; violates 2NF</td></tr>
+          <tr><td class="hl">Transitive FD</td><td>B depends on A through an intermediate attribute C (A → C → B); violates 3NF</td></tr>
+          <tr><td class="hl">Candidate Key</td><td>Any minimal set of attributes that uniquely identifies every tuple</td></tr>
+          <tr><td class="hl">Primary Key</td><td>The one chosen candidate key; unique, not null, stable</td></tr>
+          <tr><td class="hl">Composite Key</td><td>A primary/candidate key made of two or more attributes</td></tr>
+          <tr><td class="hl">Alternate Key</td><td>A candidate key not selected as the primary key; enforced with UNIQUE</td></tr>
+          <tr><td class="hl">Surrogate Key</td><td>An auto-generated, system-assigned key with no business meaning</td></tr>
+          <tr><td class="hl">Natural Key</td><td>A key derived from real-world, meaningful data already in the domain</td></tr>
+          <tr><td class="hl">Foreign Key</td><td>An attribute that references the primary key of another relation</td></tr>
+        </tbody>
+      </table>
+
+      <h4>Outcome Checklist — Self Assessment</h4>
+      <div class="callout callout-tip">
+        <span class="callout-icon">✅</span>
+        <div class="callout-body">
+          <ul class="checklist">
+            <li>I can define <strong>relation, tuple, attribute, domain, degree</strong>, and <strong>cardinality</strong> and identify each on a diagram</li>
+            <li>I can list all <strong>7 characteristics of a valid relation</strong> and explain why each matters</li>
+            <li>I can translate between <strong>formal, table-based, and legacy</strong> database terminology</li>
+            <li>I can write and read <strong>functional dependency notation</strong> (A → B) and identify the determinant and dependent</li>
+            <li>I can classify a functional dependency as <strong>full, partial, or transitive</strong> and explain what normalization violation each type represents</li>
+            <li>I can identify all <strong>candidate keys</strong> in a relation and select the most appropriate <strong>primary key</strong></li>
+            <li>I can define a <strong>composite key</strong> and write the SQL to implement it with a <code>PRIMARY KEY (colA, colB)</code> constraint</li>
+            <li>I understand the trade-offs between a <strong>surrogate key</strong> and a <strong>natural key</strong></li>
+          </ul>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+</main>
+
+<!-- ══════════════════════════════════════
+     FOOTER
+══════════════════════════════════════ -->
+<footer>
+  <span>COP 4708 – Introduction to Databases</span> &nbsp;|&nbsp; Module 2: Relational Databases
+  <br/>
+  <span style="font-weight:300;color:#4a6a80;font-size:.78rem;margin-top:6px;display:block;">
+    Supports CLO 2: Design, normalize, and implement database systems.
+  </span>
+</footer>
+
+<!-- ══════════════════════════════════════
+     SCRIPT
+══════════════════════════════════════ -->
+<script>
+  function toggle(header) {
+    const body = header.nextElementSibling;
+    const btn  = header.querySelector('.toggle-btn');
+    const isOpen = body.classList.contains('open');
+    body.classList.toggle('open', !isOpen);
+    header.classList.toggle('open', !isOpen);
+    btn.classList.toggle('open', !isOpen);
+  }
+
+  function setAll(open) {
+    document.querySelectorAll('.card-body').forEach(b => b.classList.toggle('open', open));
+    document.querySelectorAll('.card-header').forEach(h => h.classList.toggle('open', open));
+    document.querySelectorAll('.toggle-btn').forEach(b => b.classList.toggle('open', open));
+  }
+</script>
+</body>
+</html>

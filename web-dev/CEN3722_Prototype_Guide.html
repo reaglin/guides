@@ -1,0 +1,2130 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CEN3722 - Developing the Prototype</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.6;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            padding: 20px;
+            color: #333;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.3);
+            overflow: hidden;
+        }
+
+        header {
+            background: linear-gradient(135deg, #2c3e50 0%, #34495e 100%);
+            color: white;
+            padding: 40px;
+            text-align: center;
+        }
+
+        header h1 {
+            font-size: 2.5em;
+            margin-bottom: 10px;
+        }
+
+        header p {
+            font-size: 1.2em;
+            opacity: 0.9;
+        }
+
+        .content {
+            padding: 40px;
+        }
+
+        .intro-box {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 30px;
+            border-radius: 10px;
+            margin-bottom: 30px;
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.3);
+        }
+
+        .intro-box h2 {
+            margin-bottom: 15px;
+        }
+
+        .collapsible {
+            background-color: #3498db;
+            color: white;
+            cursor: pointer;
+            padding: 18px;
+            width: 100%;
+            border: none;
+            text-align: left;
+            outline: none;
+            font-size: 1.2em;
+            font-weight: 600;
+            margin-top: 10px;
+            border-radius: 8px;
+            transition: all 0.3s ease;
+            position: relative;
+            padding-right: 50px;
+        }
+
+        .collapsible:hover {
+            background-color: #2980b9;
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(52, 152, 219, 0.3);
+        }
+
+        .collapsible.active {
+            background-color: #2c3e50;
+        }
+
+        .collapsible:after {
+            content: '\002B';
+            color: white;
+            font-weight: bold;
+            font-size: 1.5em;
+            position: absolute;
+            right: 20px;
+            top: 50%;
+            transform: translateY(-50%);
+        }
+
+        .collapsible.active:after {
+            content: "\2212";
+        }
+
+        .collapsible-content {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.3s ease-out;
+            background-color: #f8f9fa;
+            border-left: 4px solid #3498db;
+            margin-bottom: 10px;
+            border-radius: 0 0 8px 8px;
+        }
+
+        .collapsible-inner {
+            padding: 30px;
+        }
+
+        .info-block {
+            background: #e3f2fd;
+            border-left: 5px solid #2196F3;
+            padding: 20px;
+            margin: 20px 0;
+            border-radius: 5px;
+        }
+
+        .info-block.warning {
+            background: #fff3cd;
+            border-left-color: #ffc107;
+        }
+
+        .info-block.success {
+            background: #d4edda;
+            border-left-color: #28a745;
+        }
+
+        .info-block.tip {
+            background: #d1ecf1;
+            border-left-color: #17a2b8;
+        }
+
+        .info-block.critical {
+            background: #f8d7da;
+            border-left-color: #dc3545;
+        }
+
+        .example-box {
+            background: white;
+            border: 2px solid #ddd;
+            border-radius: 8px;
+            padding: 25px;
+            margin: 20px 0;
+            box-shadow: 0 3px 10px rgba(0,0,0,0.1);
+        }
+
+        .example-box h4 {
+            color: #2c3e50;
+            margin-bottom: 15px;
+            font-size: 1.3em;
+            border-bottom: 2px solid #3498db;
+            padding-bottom: 10px;
+        }
+
+        .code-block {
+            background: #282c34;
+            color: #abb2bf;
+            padding: 20px;
+            border-radius: 8px;
+            overflow-x: auto;
+            margin: 15px 0;
+            font-family: 'Courier New', monospace;
+            line-height: 1.5;
+        }
+
+        .highlight {
+            background: #fff3cd;
+            padding: 2px 6px;
+            border-radius: 3px;
+            font-weight: 600;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 20px 0;
+            background: white;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        }
+
+        th {
+            background: linear-gradient(135deg, #3498db 0%, #2980b9 100%);
+            color: white;
+            padding: 15px;
+            text-align: left;
+            font-weight: 600;
+        }
+
+        td {
+            padding: 12px 15px;
+            border-bottom: 1px solid #ddd;
+        }
+
+        tr:hover {
+            background: #f5f5f5;
+        }
+
+        ul, ol {
+            margin: 15px 0 15px 30px;
+        }
+
+        li {
+            margin: 8px 0;
+        }
+
+        h3 {
+            color: #2c3e50;
+            margin: 25px 0 15px 0;
+            font-size: 1.6em;
+        }
+
+        h4 {
+            color: #34495e;
+            margin: 20px 0 10px 0;
+            font-size: 1.3em;
+        }
+
+        .two-column {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+            margin: 20px 0;
+        }
+
+        .three-column {
+            display: grid;
+            grid-template-columns: 1fr 1fr 1fr;
+            gap: 20px;
+            margin: 20px 0;
+        }
+
+        .card {
+            background: white;
+            border-radius: 8px;
+            padding: 20px;
+            box-shadow: 0 3px 10px rgba(0,0,0,0.1);
+            border-top: 4px solid #3498db;
+        }
+
+        .card h4 {
+            color: #3498db;
+            margin-top: 0;
+        }
+
+        @media (max-width: 768px) {
+            .two-column, .three-column {
+                grid-template-columns: 1fr;
+            }
+            
+            header h1 {
+                font-size: 1.8em;
+            }
+            
+            .content {
+                padding: 20px;
+            }
+        }
+
+        .key-points {
+            background: linear-gradient(135deg, #11998e 0%, #38ef7d 100%);
+            color: white;
+            padding: 20px;
+            border-radius: 8px;
+            margin: 20px 0;
+        }
+
+        .key-points ul {
+            list-style: none;
+            margin-left: 0;
+        }
+
+        .key-points li:before {
+            content: "✓ ";
+            font-weight: bold;
+            margin-right: 8px;
+        }
+
+        .prototype-level {
+            background: #f8f9fa;
+            border-left: 5px solid #3498db;
+            padding: 20px;
+            margin: 15px 0;
+            border-radius: 5px;
+        }
+
+        .prototype-level h4 {
+            color: #3498db;
+            margin-top: 0;
+        }
+
+        .checklist {
+            background: white;
+            border: 2px solid #28a745;
+            border-radius: 8px;
+            padding: 20px;
+            margin: 20px 0;
+        }
+
+        .checklist h4 {
+            color: #28a745;
+            margin-top: 0;
+        }
+
+        .checklist ul {
+            list-style: none;
+            margin-left: 0;
+        }
+
+        .checklist li {
+            padding: 8px 0;
+            border-bottom: 1px solid #eee;
+        }
+
+        .checklist li:before {
+            content: "☐ ";
+            font-size: 1.2em;
+            margin-right: 10px;
+            color: #28a745;
+        }
+
+        .tool-card {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border-radius: 8px;
+            padding: 20px;
+            margin: 15px 0;
+        }
+
+        .tool-card h4 {
+            color: white;
+            margin-top: 0;
+        }
+
+        .comparison-table {
+            margin: 20px 0;
+        }
+
+        .comparison-table td:first-child {
+            font-weight: 600;
+            background: #f8f9fa;
+        }
+
+        .mockup-frame {
+            border: 3px solid #333;
+            border-radius: 30px;
+            padding: 50px 20px 20px 20px;
+            margin: 20px auto;
+            max-width: 375px;
+            background: white;
+            position: relative;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+        }
+
+        .mockup-frame:before {
+            content: "●";
+            position: absolute;
+            top: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            font-size: 10px;
+            color: #333;
+        }
+
+        .screen-content {
+            background: #f5f5f5;
+            border-radius: 5px;
+            padding: 15px;
+            min-height: 400px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>CEN3722: Human-Computer Interaction</h1>
+            <p>Developing and Documenting Mobile App Prototypes</p>
+        </header>
+
+        <div class="content">
+            <div class="intro-box">
+                <h2>📱 Course Module Overview</h2>
+                <p>This guide will help you develop and document a mobile app prototype that other students can effectively evaluate. You'll learn about different prototyping approaches, tools, and how to create documentation that supports Cognitive Walkthroughs and Heuristic Evaluations.</p>
+                <p><strong>Key Goal:</strong> Create a prototype and documentation package that allows peer reviewers to thoroughly evaluate your design without your presence.</p>
+            </div>
+
+            <!-- Section 1: Introduction -->
+            <button type="button" class="collapsible">Introduction: The Role of Prototyping</button>
+            <div class="collapsible-content">
+                <div class="collapsible-inner">
+                    <h3>Why Prototype?</h3>
+                    <p>Prototyping is the process of creating an early version of your application to test ideas, gather feedback, and refine your design before investing in full development. For mobile apps, prototyping is especially critical because:</p>
+
+                    <div class="two-column">
+                        <div class="card">
+                            <h4>💰 Cost-Effective</h4>
+                            <p>Finding and fixing design problems in a prototype costs a fraction of what it costs after development.</p>
+                        </div>
+                        <div class="card">
+                            <h4>⚡ Fast Iteration</h4>
+                            <p>Quickly test multiple design approaches without writing production code.</p>
+                        </div>
+                        <div class="card">
+                            <h4>👥 User Feedback</h4>
+                            <p>Get real user input on your design before committing resources to development.</p>
+                        </div>
+                        <div class="card">
+                            <h4>🎯 Validate Assumptions</h4>
+                            <p>Test whether your design actually solves the user's problem.</p>
+                        </div>
+                    </div>
+
+                    <h3>The Prototype Spectrum</h3>
+                    <p>Prototypes exist on a spectrum from low-fidelity (quick sketches) to high-fidelity (looks and behaves like the final product):</p>
+
+                    <div class="info-block">
+                        <h4>Fidelity Dimensions</h4>
+                        <ul>
+                            <li><strong>Visual Fidelity:</strong> How closely does it match the final visual design?</li>
+                            <li><strong>Functional Fidelity:</strong> How much of the functionality is actually working?</li>
+                            <li><strong>Content Fidelity:</strong> Is it using real content or placeholder text/images?</li>
+                        </ul>
+                    </div>
+
+                    <div class="key-points">
+                        <h4>🎯 For This Course</h4>
+                        <ul>
+                            <li>You'll create a <strong>medium to high-fidelity prototype</strong> of a mobile app</li>
+                            <li>It should be <strong>interactive</strong> enough for others to walk through key tasks</li>
+                            <li>Documentation is as important as the prototype itself</li>
+                            <li>Your prototype must support evaluation by peers who haven't seen it before</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Section 2: Types of Prototypes -->
+            <button type="button" class="collapsible">Types of Prototypes: Choosing Your Approach</button>
+            <div class="collapsible-content">
+                <div class="collapsible-inner">
+                    <h3>Low-Fidelity Prototypes</h3>
+                    
+                    <div class="prototype-level">
+                        <h4>📝 Paper Prototypes</h4>
+                        <p><strong>What:</strong> Hand-drawn screens on paper, index cards, or sticky notes</p>
+                        <p><strong>Best For:</strong> Early ideation, rapid iteration, team brainstorming</p>
+                        
+                        <div class="two-column">
+                            <div>
+                                <p><strong>Advantages:</strong></p>
+                                <ul>
+                                    <li>Extremely fast to create</li>
+                                    <li>No tools required</li>
+                                    <li>Easy to throw away and start over</li>
+                                    <li>Encourages creativity</li>
+                                </ul>
+                            </div>
+                            <div>
+                                <p><strong>Disadvantages:</strong></p>
+                                <ul>
+                                    <li>Difficult to share remotely</li>
+                                    <li>Can't simulate mobile interactions well</li>
+                                    <li>May feel too crude for stakeholders</li>
+                                    <li>Hard to test visual design</li>
+                                </ul>
+                            </div>
+                        </div>
+                        
+                        <div class="info-block warning">
+                            <strong>For This Course:</strong> Paper prototypes alone are <strong>not recommended</strong> for your final submission, as they're difficult for peers to evaluate independently. However, they're great for initial design work.
+                        </div>
+                    </div>
+
+                    <div class="prototype-level">
+                        <h4>🖼️ Digital Wireframes</h4>
+                        <p><strong>What:</strong> Simple, grayscale layouts showing structure and content without visual design</p>
+                        <p><strong>Best For:</strong> Defining information architecture, layout, and navigation</p>
+                        
+                        <div class="two-column">
+                            <div>
+                                <p><strong>Advantages:</strong></p>
+                                <ul>
+                                    <li>Focus on functionality over aesthetics</li>
+                                    <li>Quick to create with tools</li>
+                                    <li>Easy to share digitally</li>
+                                    <li>Can be made clickable</li>
+                                </ul>
+                            </div>
+                            <div>
+                                <p><strong>Disadvantages:</strong></p>
+                                <ul>
+                                    <li>Lacks visual appeal</li>
+                                    <li>May be hard for non-designers to visualize</li>
+                                    <li>Doesn't test visual hierarchy</li>
+                                    <li>Limited interaction testing</li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+
+                    <h3>Medium-Fidelity Prototypes</h3>
+                    
+                    <div class="prototype-level">
+                        <h4>🎨 Interactive Mockups</h4>
+                        <p><strong>What:</strong> Clickable designs with some visual styling and realistic content</p>
+                        <p><strong>Best For:</strong> User testing, stakeholder presentations, design validation</p>
+                        
+                        <div class="two-column">
+                            <div>
+                                <p><strong>Advantages:</strong></p>
+                                <ul>
+                                    <li>Looks more like final product</li>
+                                    <li>Can test visual design and interaction</li>
+                                    <li>Good balance of speed and fidelity</li>
+                                    <li>Works well for remote evaluation</li>
+                                </ul>
+                            </div>
+                            <div>
+                                <p><strong>Disadvantages:</strong></p>
+                                <ul>
+                                    <li>Takes more time than wireframes</li>
+                                    <li>May still have limited interactions</li>
+                                    <li>Can create false expectations</li>
+                                    <li>Requires design tool proficiency</li>
+                                </ul>
+                            </div>
+                        </div>
+                        
+                        <div class="info-block success">
+                            <strong>For This Course:</strong> This is the <strong>recommended approach</strong>. Interactive mockups provide enough fidelity for meaningful evaluation while being achievable within course timeframes.
+                        </div>
+                    </div>
+
+                    <h3>High-Fidelity Prototypes</h3>
+                    
+                    <div class="prototype-level">
+                        <h4>📱 High-Fidelity Interactive Prototypes</h4>
+                        <p><strong>What:</strong> Fully designed, highly interactive prototypes that closely mimic the final app</p>
+                        <p><strong>Best For:</strong> Final validation, investor presentations, complex interaction testing</p>
+                        
+                        <div class="two-column">
+                            <div>
+                                <p><strong>Advantages:</strong></p>
+                                <ul>
+                                    <li>Realistic user experience</li>
+                                    <li>Tests complex interactions</li>
+                                    <li>Impressive to stakeholders</li>
+                                    <li>Can include animations and transitions</li>
+                                </ul>
+                            </div>
+                            <div>
+                                <p><strong>Disadvantages:</strong></p>
+                                <ul>
+                                    <li>Time-intensive to create</li>
+                                    <li>Harder to make changes</li>
+                                    <li>Requires advanced tool knowledge</li>
+                                    <li>May over-commit to a design direction</li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="prototype-level">
+                        <h4>💻 Coded Prototypes</h4>
+                        <p><strong>What:</strong> Functional prototypes built with actual code</p>
+                        <p><strong>Best For:</strong> Testing technical feasibility, performance testing, developer handoff</p>
+                        
+                        <div class="info-block warning">
+                            <strong>For This Course:</strong> Coded prototypes are <strong>not required</strong> and generally <strong>not recommended</strong> unless you have strong development skills. The focus should be on design and usability, not implementation.
+                        </div>
+                    </div>
+
+                    <h3>Choosing the Right Level</h3>
+                    
+                    <table class="comparison-table">
+                        <tr>
+                            <th>Question</th>
+                            <th>Low-Fi</th>
+                            <th>Medium-Fi</th>
+                            <th>High-Fi</th>
+                        </tr>
+                        <tr>
+                            <td>How much time do you have?</td>
+                            <td>Hours</td>
+                            <td>Days</td>
+                            <td>Weeks</td>
+                        </tr>
+                        <tr>
+                            <td>How certain are you of the design?</td>
+                            <td>Exploring</td>
+                            <td>Refining</td>
+                            <td>Validating</td>
+                        </tr>
+                        <tr>
+                            <td>What needs testing?</td>
+                            <td>Concept, flow</td>
+                            <td>Interactions, layout</td>
+                            <td>Visual design, polish</td>
+                        </tr>
+                        <tr>
+                            <td>Will it be evaluated remotely?</td>
+                            <td>Difficult</td>
+                            <td>Good</td>
+                            <td>Excellent</td>
+                        </tr>
+                        <tr>
+                            <td>Recommended for course?</td>
+                            <td>No</td>
+                            <td>Yes ✓</td>
+                            <td>Optional</td>
+                        </tr>
+                    </table>
+                </div>
+            </div>
+
+            <!-- Section 3: Prototyping Tools -->
+            <button type="button" class="collapsible">Prototyping Tools for Mobile Apps</button>
+            <div class="collapsible-content">
+                <div class="collapsible-inner">
+                    <h3>Popular Prototyping Tools</h3>
+                    <p>There are many excellent tools for creating mobile app prototypes. Choose based on your skill level, time available, and desired fidelity.</p>
+
+                    <div class="tool-card">
+                        <h4>🎨 Figma (Recommended)</h4>
+                        <p><strong>Type:</strong> Browser-based design and prototyping tool</p>
+                        <p><strong>Best For:</strong> Collaborative design, medium to high-fidelity prototypes</p>
+                        
+                        <div style="margin-top: 15px;">
+                            <p><strong>Why We Recommend It:</strong></p>
+                            <ul>
+                                <li>✓ Free for students and individuals</li>
+                                <li>✓ Works in browser (no installation needed)</li>
+                                <li>✓ Easy sharing via link</li>
+                                <li>✓ Good mobile app templates</li>
+                                <li>✓ Interactive prototyping built-in</li>
+                                <li>✓ Large community with tutorials</li>
+                            </ul>
+                        </div>
+                        
+                        <div style="margin-top: 15px;">
+                            <p><strong>Learning Curve:</strong> Moderate (1-2 weeks to become productive)</p>
+                            <p><strong>Output:</strong> Shareable link that works on any device</p>
+                        </div>
+                    </div>
+
+                    <div class="three-column">
+                        <div class="card">
+                            <h4>Adobe XD</h4>
+                            <p><strong>Free:</strong> Yes (starter plan)</p>
+                            <p><strong>Platform:</strong> Desktop app</p>
+                            <p><strong>Pros:</strong></p>
+                            <ul>
+                                <li>Intuitive interface</li>
+                                <li>Good iOS/Android kits</li>
+                                <li>Voice prototyping</li>
+                            </ul>
+                            <p><strong>Cons:</strong></p>
+                            <ul>
+                                <li>Requires installation</li>
+                                <li>Less collaboration features</li>
+                            </ul>
+                        </div>
+
+                        <div class="card">
+                            <h4>Sketch</h4>
+                            <p><strong>Free:</strong> 30-day trial</p>
+                            <p><strong>Platform:</strong> Mac only</p>
+                            <p><strong>Pros:</strong></p>
+                            <ul>
+                                <li>Industry standard</li>
+                                <li>Huge plugin ecosystem</li>
+                                <li>Powerful design tools</li>
+                            </ul>
+                            <p><strong>Cons:</strong></p>
+                            <ul>
+                                <li>Mac only</li>
+                                <li>Paid subscription</li>
+                                <li>Need plugin for prototyping</li>
+                            </ul>
+                        </div>
+
+                        <div class="card">
+                            <h4>Marvel</h4>
+                            <p><strong>Free:</strong> Yes (limited projects)</p>
+                            <p><strong>Platform:</strong> Browser-based</p>
+                            <p><strong>Pros:</strong></p>
+                            <ul>
+                                <li>Very easy to learn</li>
+                                <li>Quick prototyping</li>
+                                <li>User testing built-in</li>
+                            </ul>
+                            <p><strong>Cons:</strong></p>
+                            <ul>
+                                <li>Limited design features</li>
+                                <li>Better for simple prototypes</li>
+                            </ul>
+                        </div>
+
+                        <div class="card">
+                            <h4>Proto.io</h4>
+                            <p><strong>Free:</strong> 15-day trial</p>
+                            <p><strong>Platform:</strong> Browser-based</p>
+                            <p><strong>Pros:</strong></p>
+                            <ul>
+                                <li>High-fidelity interactions</li>
+                                <li>Mobile-focused</li>
+                                <li>Good animation tools</li>
+                            </ul>
+                            <p><strong>Cons:</strong></p>
+                            <ul>
+                                <li>Steeper learning curve</li>
+                                <li>Paid subscription</li>
+                            </ul>
+                        </div>
+
+                        <div class="card">
+                            <h4>InVision</h4>
+                            <p><strong>Free:</strong> Yes (1 prototype)</p>
+                            <p><strong>Platform:</strong> Browser-based</p>
+                            <p><strong>Pros:</strong></p>
+                            <ul>
+                                <li>Good commenting features</li>
+                                <li>Easy handoff to developers</li>
+                                <li>Freehand for ideation</li>
+                            </ul>
+                            <p><strong>Cons:</strong></p>
+                            <ul>
+                                <li>Limited free plan</li>
+                                <li>Not as full-featured for design</li>
+                            </ul>
+                        </div>
+
+                        <div class="card">
+                            <h4>Framer</h4>
+                            <p><strong>Free:</strong> Yes (limited)</p>
+                            <p><strong>Platform:</strong> Browser-based</p>
+                            <p><strong>Pros:</strong></p>
+                            <ul>
+                                <li>Code-based (React)</li>
+                                <li>Very powerful</li>
+                                <li>Real components</li>
+                            </ul>
+                            <p><strong>Cons:</strong></p>
+                            <ul>
+                                <li>Requires coding knowledge</li>
+                                <li>Complex for beginners</li>
+                            </ul>
+                        </div>
+                    </div>
+
+                    <div class="info-block success">
+                        <h4>💡 Our Recommendation for This Course</h4>
+                        <p><strong>Use Figma</strong> unless you have a strong reason to choose another tool. It's free, easy to share, and has everything you need for this assignment. Most importantly, your evaluators can access your prototype with just a link—no special software needed.</p>
+                    </div>
+
+                    <h3>Mobile-Specific Resources</h3>
+                    
+                    <div class="example-box">
+                        <h4>UI Kits and Templates</h4>
+                        <p>Don't start from scratch! Use these resources to speed up your prototyping:</p>
+                        
+                        <ul>
+                            <li><strong>iOS Design Resources:</strong> Apple's official UI kit with all standard iOS components</li>
+                            <li><strong>Material Design:</strong> Google's comprehensive design system for Android</li>
+                            <li><strong>Figma Community:</strong> Thousands of free mobile templates and UI kits</li>
+                            <li><strong>Mobbin:</strong> Mobile design patterns library (for inspiration)</li>
+                            <li><strong>UI8, Uplabs:</strong> Premium and free mobile design resources</li>
+                        </ul>
+
+                        <div class="info-block tip">
+                            <strong>Pro Tip:</strong> Using a UI kit ensures your prototype uses standard mobile patterns, which makes it easier to evaluate and appears more professional.
+                        </div>
+                    </div>
+
+                    <h3>Screen Sizes and Devices</h3>
+                    
+                    <table>
+                        <tr>
+                            <th>Device Type</th>
+                            <th>Common Sizes</th>
+                            <th>Recommendation</th>
+                        </tr>
+                        <tr>
+                            <td><strong>iPhone</strong></td>
+                            <td>390x844 (iPhone 14/15)<br>393x852 (iPhone 14 Pro)</td>
+                            <td>Use 390x844 for most designs</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Android</strong></td>
+                            <td>360x800 (common baseline)<br>412x915 (Pixel)</td>
+                            <td>Use 360x800 or 412x915</td>
+                        </tr>
+                        <tr>
+                            <td><strong>General</strong></td>
+                            <td>375x667 (older standard)</td>
+                            <td>Safe choice for compatibility</td>
+                        </tr>
+                    </table>
+
+                    <div class="info-block">
+                        <strong>For This Course:</strong> Pick ONE device size and design for that. Document which size you chose. Don't try to make it responsive—focus on one screen size and do it well.
+                    </div>
+                </div>
+            </div>
+
+            <!-- Section 4: Creating Your Prototype -->
+            <button type="button" class="collapsible">Creating Your Mobile App Prototype</button>
+            <div class="collapsible-content">
+                <div class="collapsible-inner">
+                    <h3>The Prototype Development Process</h3>
+
+                    <div class="example-box">
+                        <h4>Step-by-Step Workflow</h4>
+                        
+                        <div class="code-block">
+<strong>PHASE 1: PLANNING (Before You Design)</strong><br>
+<br>
+1. Define Core User Tasks<br>
+   - List 3-5 primary tasks users will complete<br>
+   - Write brief use cases for each<br>
+   - Identify the screens needed for each task<br>
+<br>
+2. Create a Screen Flow Diagram<br>
+   - Map out navigation between screens<br>
+   - Show decision points<br>
+   - Identify entry and exit points<br>
+<br>
+3. Identify Key Screens<br>
+   - Onboarding/login<br>
+   - Home/dashboard<br>
+   - Main task screens<br>
+   - Forms and inputs<br>
+   - Confirmation/success states<br>
+   - Error states<br>
+<br>
+<strong>PHASE 2: DESIGN (Creating Screens)</strong><br>
+<br>
+4. Start with Low-Fi Sketches<br>
+   - Sketch 2-3 versions of key screens<br>
+   - Get feedback from classmates<br>
+   - Select the best direction<br>
+<br>
+5. Create Screen Designs<br>
+   - Set up artboards in your tool<br>
+   - Use a UI kit or design system<br>
+   - Design all screens for your main tasks<br>
+   - Maintain visual consistency<br>
+<br>
+6. Add Real Content<br>
+   - Replace Lorem Ipsum with realistic text<br>
+   - Use appropriate images<br>
+   - Include actual data examples<br>
+   - Make it feel authentic<br>
+<br>
+<strong>PHASE 3: PROTOTYPING (Making it Interactive)</strong><br>
+<br>
+7. Create Interactive Flows<br>
+   - Link screens together with hotspots<br>
+   - Add navigation interactions<br>
+   - Define transitions (if supported)<br>
+   - Test the flow yourself<br>
+<br>
+8. Add Interaction States<br>
+   - Button hover/pressed states<br>
+   - Form field focus states<br>
+   - Loading states<br>
+   - Success/error feedback<br>
+<br>
+9. Refine and Polish<br>
+   - Check all links work<br>
+   - Verify mobile gestures (tap targets)<br>
+   - Test on actual device size<br>
+   - Fix any broken interactions<br>
+<br>
+<strong>PHASE 4: DOCUMENTATION (Critical for Peer Review)</strong><br>
+<br>
+10. Create Documentation<br>
+    - Write overview of the app<br>
+    - List user tasks with instructions<br>
+    - Provide access link/files<br>
+    - Include any special notes
+                        </div>
+                    </div>
+
+                    <h3>Design Best Practices for Mobile</h3>
+
+                    <div class="two-column">
+                        <div class="info-block">
+                            <h4>Touch Targets</h4>
+                            <ul>
+                                <li><strong>Minimum size:</strong> 44x44 pixels (iOS) or 48x48 dp (Android)</li>
+                                <li>Larger for primary actions</li>
+                                <li>Adequate spacing between targets</li>
+                                <li>Easy to reach with thumb</li>
+                            </ul>
+                        </div>
+
+                        <div class="info-block">
+                            <h4>Typography</h4>
+                            <ul>
+                                <li><strong>Body text:</strong> 16px minimum</li>
+                                <li><strong>Line height:</strong> 1.4-1.6 for readability</li>
+                                <li>Limit line length on larger screens</li>
+                                <li>Sufficient contrast (4.5:1 minimum)</li>
+                            </ul>
+                        </div>
+
+                        <div class="info-block">
+                            <h4>Navigation</h4>
+                            <ul>
+                                <li>Use standard mobile patterns (tab bar, hamburger menu)</li>
+                                <li>Make navigation always accessible</li>
+                                <li>Show current location clearly</li>
+                                <li>Provide back navigation</li>
+                            </ul>
+                        </div>
+
+                        <div class="info-block">
+                            <h4>Forms</h4>
+                            <ul>
+                                <li>One column layout</li>
+                                <li>Appropriate input types (email, number, date)</li>
+                                <li>Clear field labels</li>
+                                <li>Inline validation</li>
+                            </ul>
+                        </div>
+                    </div>
+
+                    <h3>What to Include in Your Prototype</h3>
+
+                    <div class="checklist">
+                        <h4>✓ Required Screens and States</h4>
+                        <ul>
+                            <li><strong>All screens for 3-5 core user tasks</strong> (must be complete flows)</li>
+                            <li><strong>Welcome/onboarding screen</strong> (if applicable to your app)</li>
+                            <li><strong>Home screen or main dashboard</strong></li>
+                            <li><strong>Navigation UI</strong> (tab bar, menu, back buttons)</li>
+                            <li><strong>Form screens</strong> (if users input data)</li>
+                            <li><strong>At least one confirmation/success screen</strong></li>
+                            <li><strong>At least one error state</strong> (show how errors are handled)</li>
+                            <li><strong>Empty states</strong> (what shows when there's no content)</li>
+                        </ul>
+                    </div>
+
+                    <div class="info-block warning">
+                        <h4>⚠️ Common Mistakes to Avoid</h4>
+                        <ul>
+                            <li><strong>Incomplete flows:</strong> Don't leave dead ends—every interactive element should go somewhere</li>
+                            <li><strong>Inconsistent navigation:</strong> Use the same navigation pattern throughout</li>
+                            <li><strong>Too many screens:</strong> Focus on core tasks; don't try to design the entire app</li>
+                            <li><strong>Ignoring mobile constraints:</strong> Design for thumbs and small screens</li>
+                            <li><strong>Lorem Ipsum everywhere:</strong> Use real content so evaluators understand context</li>
+                            <li><strong>No feedback:</strong> Show loading, success, and error states</li>
+                        </ul>
+                    </div>
+
+                    <h3>Testing Your Prototype</h3>
+
+                    <div class="example-box">
+                        <h4>Self-Testing Checklist</h4>
+                        <p>Before sharing with peers, test your prototype yourself:</p>
+                        
+                        <ol>
+                            <li><strong>Walk through each task</strong>
+                                <ul>
+                                    <li>Can you complete it from start to finish?</li>
+                                    <li>Are there any broken links or dead ends?</li>
+                                    <li>Does the flow make logical sense?</li>
+                                </ul>
+                            </li>
+                            <li><strong>Check on an actual mobile device</strong>
+                                <ul>
+                                    <li>Text readable? Touch targets large enough?</li>
+                                    <li>Does it feel like a real mobile app?</li>
+                                    <li>Any layout issues on the actual screen size?</li>
+                                </ul>
+                            </li>
+                            <li><strong>Test with a friend</strong>
+                                <ul>
+                                    <li>Give them a task without explaining</li>
+                                    <li>Can they figure out what to do?</li>
+                                    <li>Watch where they get confused</li>
+                                </ul>
+                            </li>
+                            <li><strong>Review visual consistency</strong>
+                                <ul>
+                                    <li>Same fonts and sizes throughout?</li>
+                                    <li>Consistent colors and buttons?</li>
+                                    <li>Aligned elements?</li>
+                                </ul>
+                            </li>
+                        </ol>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Section 5: Documentation -->
+            <button type="button" class="collapsible">Documenting Your Prototype for Peer Review</button>
+            <div class="collapsible-content">
+                <div class="collapsible-inner">
+                    <h3>Why Documentation Matters</h3>
+                    <p>Your prototype will be evaluated by other students who:</p>
+                    <ul>
+                        <li>Have never seen your app before</li>
+                        <li>Don't know what it's supposed to do</li>
+                        <li>Need to understand the context to provide meaningful feedback</li>
+                        <li>Will be conducting structured evaluations (Cognitive Walkthrough, Heuristic Evaluation)</li>
+                    </ul>
+
+                    <div class="info-block critical">
+                        <strong>Critical Point:</strong> Without good documentation, evaluators can't do their job. A brilliant prototype with poor documentation will receive poor evaluations. Treat documentation as 50% of your deliverable.
+                    </div>
+
+                    <h3>Required Documentation Components</h3>
+
+                    <div class="example-box">
+                        <h4>📄 1. Project Overview Document</h4>
+                        <p>Create a document (PDF, Google Doc, or README) that includes:</p>
+                        
+                        <div class="code-block">
+<strong>APP NAME: [Your App Name]</strong><br>
+<br>
+<strong>PROJECT OVERVIEW</strong><br>
+<br>
+<strong>Purpose:</strong><br>
+[2-3 sentences: What problem does this app solve? Who is it for?]<br>
+<br>
+Example: "FitTrack helps busy professionals stay consistent with their <br>
+fitness goals by providing quick, gym-free workout routines that can be <br>
+completed in 15 minutes or less."<br>
+<br>
+<strong>Target Users:</strong><br>
+[1-2 sentences: Who will use this app?]<br>
+<br>
+Example: "Working adults ages 25-45 who want to exercise but have limited <br>
+time and no gym membership."<br>
+<br>
+<strong>Key Features:</strong><br>
+- [Feature 1 - brief description]<br>
+- [Feature 2 - brief description]<br>
+- [Feature 3 - brief description]<br>
+<br>
+<strong>Prototype Access:</strong><br>
+[Include link or instructions for accessing the prototype]<br>
+<br>
+<strong>Platform:</strong> iOS / Android / Both<br>
+<strong>Screen Size:</strong> [e.g., iPhone 14 - 390x844]<br>
+<strong>Tool Used:</strong> [e.g., Figma]
+                        </div>
+                    </div>
+
+                    <div class="example-box">
+                        <h4>🎯 2. User Task Scenarios</h4>
+                        <p>Provide 3-5 specific tasks that evaluators should walk through. Each task should include:</p>
+                        
+                        <div class="code-block">
+<strong>TASK 1: [Task Name]</strong><br>
+<br>
+<strong>Scenario:</strong><br>
+[Set the context - who is the user and what do they want to accomplish?]<br>
+<br>
+Example: "You're Sarah, a 32-year-old marketing manager. It's Monday morning <br>
+and you want to find a quick 15-minute workout you can do before your first <br>
+meeting at 9am."<br>
+<br>
+<strong>Starting Point:</strong><br>
+[Where should the evaluator start in the prototype?]<br>
+<br>
+Example: "Start at the Home screen"<br>
+<br>
+<strong>Goal:</strong><br>
+[What should the user accomplish?]<br>
+<br>
+Example: "Find and start a 15-minute upper body workout suitable for <br>
+beginners with no equipment."<br>
+<br>
+<strong>Success Criteria:</strong><br>
+[How will the evaluator know they completed the task correctly?]<br>
+<br>
+Example: "You've successfully started a workout and can see the first <br>
+exercise with instructions and a timer."<br>
+<br>
+<strong>Expected Path:</strong> (Optional but helpful)<br>
+[Brief list of screens user should visit]<br>
+<br>
+Example:<br>
+1. Home Screen<br>
+2. Browse Workouts<br>
+3. Filter by duration and difficulty<br>
+4. Select "Quick Upper Body Blast"<br>
+5. Review workout details<br>
+6. Tap "Start Workout"<br>
+7. View first exercise
+                        </div>
+                    </div>
+
+                    <div class="example-box">
+                        <h4>🗺️ 3. Screen Flow Diagram</h4>
+                        <p>Create a visual diagram showing how screens connect. This can be:</p>
+                        <ul>
+                            <li>A simple flowchart made in any tool (draw.io, Lucidchart, or even PowerPoint)</li>
+                            <li>A screenshot from your prototyping tool showing the flow view</li>
+                            <li>A hand-drawn diagram that's been scanned/photographed</li>
+                        </ul>
+                        
+                        <div class="info-block tip">
+                            <strong>Pro Tip:</strong> Most prototyping tools (Figma, Adobe XD, etc.) have a "flow view" that shows your screens and connections. Take a screenshot of this and include it!
+                        </div>
+                    </div>
+
+                    <div class="example-box">
+                        <h4>📱 4. Screen Inventory</h4>
+                        <p>List all screens in your prototype with brief descriptions:</p>
+                        
+                        <div class="code-block">
+<strong>SCREEN INVENTORY</strong><br>
+<br>
+1. <strong>Welcome Screen</strong><br>
+   Purpose: First-time user onboarding<br>
+   Key elements: App intro, "Get Started" button<br>
+<br>
+2. <strong>Sign Up</strong><br>
+   Purpose: Create new account<br>
+   Key elements: Name, email, password fields, "Create Account" button<br>
+<br>
+3. <strong>Home/Dashboard</strong><br>
+   Purpose: Main screen after login<br>
+   Key elements: Today's suggested workout, workout history, navigation<br>
+<br>
+4. <strong>Browse Workouts</strong><br>
+   Purpose: Explore available workouts<br>
+   Key elements: Search bar, filters, workout cards with difficulty/duration<br>
+<br>
+5. <strong>Workout Detail</strong><br>
+   Purpose: Show information about a specific workout<br>
+   Key elements: Exercise list, total time, difficulty, "Start" button<br>
+<br>
+[Continue for all screens...]
+                        </div>
+                    </div>
+
+                    <h3>Additional Helpful Documentation</h3>
+
+                    <div class="two-column">
+                        <div class="card">
+                            <h4>Design Decisions</h4>
+                            <p>Brief notes on key design choices:</p>
+                            <ul>
+                                <li>Why you chose certain patterns</li>
+                                <li>Alternatives you considered</li>
+                                <li>Known limitations</li>
+                            </ul>
+                            <p><em>Optional but shows thoughtfulness</em></p>
+                        </div>
+
+                        <div class="card">
+                            <h4>Interaction Notes</h4>
+                            <p>Explain any non-obvious interactions:</p>
+                            <ul>
+                                <li>Swipe gestures</li>
+                                <li>Long-press actions</li>
+                                <li>Multi-step processes</li>
+                            </ul>
+                            <p><em>Important if you use non-standard interactions</em></p>
+                        </div>
+
+                        <div class="card">
+                            <h4>Known Issues</h4>
+                            <p>Be transparent about limitations:</p>
+                            <ul>
+                                <li>Incomplete features</li>
+                                <li>Placeholder content</li>
+                                <li>Simplified flows</li>
+                            </ul>
+                            <p><em>Helps evaluators focus on what's complete</em></p>
+                        </div>
+
+                        <div class="card">
+                            <h4>Evaluation Notes</h4>
+                            <p>Help evaluators understand your app:</p>
+                            <ul>
+                                <li>What to focus on</li>
+                                <li>What's out of scope</li>
+                                <li>Any context they need</li>
+                            </ul>
+                            <p><em>Guides more useful feedback</em></p>
+                        </div>
+                    </div>
+
+                    <h3>Documentation Format Options</h3>
+
+                    <table>
+                        <tr>
+                            <th>Format</th>
+                            <th>Best For</th>
+                            <th>Advantages</th>
+                        </tr>
+                        <tr>
+                            <td><strong>PDF Document</strong></td>
+                            <td>Comprehensive documentation</td>
+                            <td>Professional, portable, easy to share</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Google Doc</strong></td>
+                            <td>Collaborative documentation</td>
+                            <td>Easy to update, built-in comments</td>
+                        </tr>
+                        <tr>
+                            <td><strong>README.md</strong></td>
+                            <td>Tech-savvy audiences</td>
+                            <td>Simple, version-controllable</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Notion Page</strong></td>
+                            <td>Interactive documentation</td>
+                            <td>Embedded links, nice formatting</td>
+                        </tr>
+                        <tr>
+                            <td><strong>In-Tool Comments</strong></td>
+                            <td>Supplementary notes</td>
+                            <td>Contextual to each screen</td>
+                        </tr>
+                    </table>
+
+                    <div class="info-block success">
+                        <h4>💡 Recommended Approach</h4>
+                        <p>Create a <strong>Google Doc or PDF</strong> with all required sections, then add in-tool comments for screen-specific notes. Share both the document and prototype link with evaluators.</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Section 6: Cognitive Walkthrough Prep -->
+            <button type="button" class="collapsible">Preparing for Cognitive Walkthrough</button>
+            <div class="collapsible-content">
+                <div class="collapsible-inner">
+                    <h3>What is a Cognitive Walkthrough?</h3>
+                    <p>A Cognitive Walkthrough is a usability evaluation method where evaluators step through specific tasks in your interface, asking themselves questions about whether users will understand what to do at each step.</p>
+
+                    <div class="info-block">
+                        <h4>What Evaluators Will Ask</h4>
+                        <p>For each action in a task, evaluators consider:</p>
+                        <ol>
+                            <li><strong>Will users know what to do?</strong> Is the correct action obvious?</li>
+                            <li><strong>Will users see how to do it?</strong> Is the control/element visible and understandable?</li>
+                            <li><strong>Will users understand the feedback?</strong> After acting, will they know if it worked?</li>
+                            <li><strong>Will users know they're making progress?</strong> Can they tell they're moving toward their goal?</li>
+                        </ol>
+                    </div>
+
+                    <h3>What You Need to Provide</h3>
+
+                    <div class="example-box">
+                        <h4>📋 Cognitive Walkthrough Documentation Package</h4>
+                        
+                        <div class="code-block">
+<strong>FOR COGNITIVE WALKTHROUGH EVALUATORS</strong><br>
+<br>
+<strong>APP DESCRIPTION:</strong><br>
+[2-3 sentence description of what the app does]<br>
+<br>
+<strong>USER PROFILE:</strong><br>
+Who is the typical user?<br>
+- Age range: [e.g., 25-45]<br>
+- Technical skill: [e.g., Comfortable with smartphones]<br>
+- Prior knowledge: [e.g., Familiar with fitness apps]<br>
+- Usage context: [e.g., Uses app 3-4 times per week]<br>
+<br>
+<strong>TASK SCENARIOS:</strong><br>
+<br>
+<strong>Task 1: [Task Name]</strong><br>
+<strong>Context:</strong> [Detailed scenario setting up the situation]<br>
+<strong>Goal:</strong> [What the user wants to accomplish]<br>
+<strong>Starting Screen:</strong> [Where to begin]<br>
+<strong>Success:</strong> [What screen/state indicates completion]<br>
+<br>
+<strong>Task 2: [Task Name]</strong><br>
+[Repeat for 3-5 tasks]<br>
+<br>
+<strong>PROTOTYPE ACCESS:</strong><br>
+Link: [URL to prototype]<br>
+Instructions: [Any special instructions for accessing/viewing]<br>
+<br>
+<strong>WALKTHROUGH TIPS:</strong><br>
+- Step through each action as if you're the user<br>
+- At each step, ask: Would the user know what to do?<br>
+- Note any confusion, hesitation, or unclear paths<br>
+- Don't assume knowledge the user wouldn't have
+                        </div>
+                    </div>
+
+                    <h3>Design Considerations for Cognitive Walkthroughs</h3>
+
+                    <div class="two-column">
+                        <div class="info-block">
+                            <h4>✓ Make Actions Obvious</h4>
+                            <ul>
+                                <li>Use clear, action-oriented labels</li>
+                                <li>Place buttons where users expect them</li>
+                                <li>Use familiar icons with labels</li>
+                                <li>Make tappable elements look tappable</li>
+                            </ul>
+                        </div>
+
+                        <div class="info-block">
+                            <h4>✓ Provide Clear Feedback</h4>
+                            <ul>
+                                <li>Show when buttons are pressed</li>
+                                <li>Display loading states</li>
+                                <li>Confirm successful actions</li>
+                                <li>Explain errors clearly</li>
+                            </ul>
+                        </div>
+
+                        <div class="info-block">
+                            <h4>✓ Show Progress</h4>
+                            <ul>
+                                <li>Use progress indicators for multi-step tasks</li>
+                                <li>Highlight current location in navigation</li>
+                                <li>Show what's completed vs. remaining</li>
+                                <li>Provide breadcrumbs when appropriate</li>
+                            </ul>
+                        </div>
+
+                        <div class="info-block">
+                            <h4>✓ Match Mental Models</h4>
+                            <ul>
+                                <li>Use familiar patterns and conventions</li>
+                                <li>Group related items logically</li>
+                                <li>Label things as users would name them</li>
+                                <li>Follow platform guidelines (iOS/Android)</li>
+                            </ul>
+                        </div>
+                    </div>
+
+                    <div class="example-box">
+                        <h4>Example Task Write-Up for Cognitive Walkthrough</h4>
+                        
+                        <div class="code-block">
+<strong>TASK: Book a Hair Appointment</strong><br>
+<br>
+<strong>User Profile:</strong><br>
+Jennifer is a 28-year-old teacher who has used the salon's services before <br>
+but this is her first time using their new mobile app. She's comfortable <br>
+with smartphone apps and regularly uses apps like OpenTable and ClassPass.<br>
+<br>
+<strong>Context/Scenario:</strong><br>
+It's Sunday evening and Jennifer realizes she needs a haircut before next <br>
+weekend. She wants to book an appointment with her regular stylist, Maria, <br>
+for sometime next Wednesday after 3pm. She opens the salon's app on her <br>
+iPhone.<br>
+<br>
+<strong>Starting Point:</strong><br>
+App Home Screen (user is already logged in)<br>
+<br>
+<strong>Goal:</strong><br>
+Successfully book a haircut appointment with Maria for next Wednesday <br>
+after 3pm.<br>
+<br>
+<strong>Success Criteria:</strong><br>
+User sees a confirmation screen showing:<br>
+- Appointment date and time<br>
+- Stylist name (Maria)<br>
+- Service (Haircut)<br>
+- Confirmation number<br>
+<br>
+<strong>Expected Path:</strong><br>
+1. Home Screen → Tap "Book Appointment"<br>
+2. Service Selection → Select "Haircut"<br>
+3. Stylist Selection → Select "Maria"<br>
+4. Date/Time Selection → Choose next Wednesday, time after 3pm<br>
+5. Confirmation → Review and confirm booking<br>
+6. Success Screen → See confirmation details<br>
+<br>
+<strong>Things to Watch For:</strong><br>
+- Can user easily find the booking feature?<br>
+- Is it clear how to select a specific stylist?<br>
+- Can user see only available time slots?<br>
+- Does the app confirm the booking clearly?
+                        </div>
+                    </div>
+
+                    <div class="info-block warning">
+                        <h4>⚠️ Common Issues Found in Cognitive Walkthroughs</h4>
+                        <ul>
+                            <li><strong>Unclear labels:</strong> Buttons that don't clearly indicate what they do</li>
+                            <li><strong>Hidden features:</strong> Important actions buried in menus</li>
+                            <li><strong>Weak feedback:</strong> User taps but nothing appears to happen</li>
+                            <li><strong>No error recovery:</strong> User makes mistake but can't go back</li>
+                            <li><strong>Inconsistent patterns:</strong> Same action works differently in different places</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Section 7: Heuristic Evaluation Prep -->
+            <button type="button" class="collapsible">Preparing for Heuristic Evaluation</button>
+            <div class="collapsible-content">
+                <div class="collapsible-inner">
+                    <h3>What is a Heuristic Evaluation?</h3>
+                    <p>A Heuristic Evaluation is where evaluators examine your interface against established usability principles (heuristics). Unlike Cognitive Walkthrough which focuses on specific tasks, Heuristic Evaluation looks at the overall design quality.</p>
+
+                    <div class="info-block">
+                        <h4>Nielsen's 10 Usability Heuristics</h4>
+                        <p>Evaluators will check your design against these principles:</p>
+                        <ol>
+                            <li><strong>Visibility of system status</strong> - Keep users informed</li>
+                            <li><strong>Match between system and real world</strong> - Use familiar language</li>
+                            <li><strong>User control and freedom</strong> - Provide undo/escape</li>
+                            <li><strong>Consistency and standards</strong> - Follow conventions</li>
+                            <li><strong>Error prevention</strong> - Design to prevent problems</li>
+                            <li><strong>Recognition rather than recall</strong> - Make options visible</li>
+                            <li><strong>Flexibility and efficiency</strong> - Support different skill levels</li>
+                            <li><strong>Aesthetic and minimalist design</strong> - Remove unnecessary elements</li>
+                            <li><strong>Help users recognize, diagnose, and recover from errors</strong> - Clear error messages</li>
+                            <li><strong>Help and documentation</strong> - Provide support when needed</li>
+                        </ol>
+                    </div>
+
+                    <h3>What You Need to Provide</h3>
+
+                    <div class="example-box">
+                        <h4>📋 Heuristic Evaluation Documentation Package</h4>
+                        
+                        <div class="code-block">
+<strong>FOR HEURISTIC EVALUATION</strong><br>
+<br>
+<strong>APP OVERVIEW:</strong><br>
+[Brief description of the app and its purpose]<br>
+<br>
+<strong>PROTOTYPE ACCESS:</strong><br>
+Link: [URL to prototype]<br>
+Platform: [iOS/Android]<br>
+Device Size: [e.g., iPhone 14 - 390x844]<br>
+<br>
+<strong>EVALUATION SCOPE:</strong><br>
+Please evaluate the following screens/flows:<br>
+- [Flow 1: e.g., User onboarding]<br>
+- [Flow 2: e.g., Creating a new workout]<br>
+- [Flow 3: e.g., Tracking progress]<br>
+- [General: Overall navigation and consistency]<br>
+<br>
+<strong>KEY SCREENS TO REVIEW:</strong><br>
+1. Home/Dashboard<br>
+2. [Main feature screen 1]<br>
+3. [Main feature screen 2]<br>
+4. Forms/Input screens<br>
+5. Error states<br>
+6. Settings/Profile<br>
+<br>
+<strong>WHAT TO FOCUS ON:</strong><br>
+- Overall consistency of design<br>
+- Clarity of navigation<br>
+- Quality of feedback and error handling<br>
+- Adherence to mobile platform conventions<br>
+<br>
+<strong>OUT OF SCOPE:</strong><br>
+[List any incomplete features or placeholder content that shouldn't be <br>
+evaluated]<br>
+<br>
+Example: "Settings screen is incomplete - do not evaluate. Focus on <br>
+workout creation and tracking flows."
+                        </div>
+                    </div>
+
+                    <h3>Design Checklist by Heuristic</h3>
+
+                    <div class="example-box">
+                        <h4>Self-Evaluation Before Submission</h4>
+                        <p>Check your design against each heuristic:</p>
+                        
+                        <div class="code-block">
+<strong>1. VISIBILITY OF SYSTEM STATUS</strong><br>
+□ Loading indicators for any wait times<br>
+□ Progress indicators for multi-step processes<br>
+□ Selected/active state clearly shown in navigation<br>
+□ Success messages after actions complete<br>
+□ Current location obvious in the app<br>
+<br>
+<strong>2. MATCH BETWEEN SYSTEM AND REAL WORLD</strong><br>
+□ Language users would actually use (not technical jargon)<br>
+□ Icons that match user expectations<br>
+□ Familiar metaphors and concepts<br>
+□ Information presented in logical order<br>
+<br>
+<strong>3. USER CONTROL AND FREEDOM</strong><br>
+□ Back button on every screen (except home)<br>
+□ Way to cancel actions in progress<br>
+□ Undo for destructive actions<br>
+□ Easy way to return to main navigation<br>
+<br>
+<strong>4. CONSISTENCY AND STANDARDS</strong><br>
+□ Same action button style throughout<br>
+□ Navigation works the same way on all screens<br>
+□ Same placement for common elements (e.g., titles, buttons)<br>
+□ Follows iOS or Android design guidelines<br>
+<br>
+<strong>5. ERROR PREVENTION</strong><br>
+□ Confirmation before destructive actions (delete, cancel)<br>
+□ Input validation (e.g., correct keyboard type)<br>
+□ Constraints on inputs (date pickers, not free text)<br>
+□ Disable invalid actions rather than showing errors<br>
+<br>
+<strong>6. RECOGNITION RATHER THAN RECALL</strong><br>
+□ Options visible, not hidden in menus<br>
+□ Previous entries/history shown<br>
+□ Labels on all icons<br>
+□ Context always clear<br>
+<br>
+<strong>7. FLEXIBILITY AND EFFICIENCY OF USE</strong><br>
+□ Quick actions for common tasks<br>
+□ Shortcuts where appropriate<br>
+□ Recently used items accessible<br>
+□ Favorites or bookmarks for frequent items<br>
+<br>
+<strong>8. AESTHETIC AND MINIMALIST DESIGN</strong><br>
+□ Only essential information on each screen<br>
+□ Clear visual hierarchy<br>
+□ White space used effectively<br>
+□ No unnecessary decorative elements<br>
+<br>
+<strong>9. ERROR RECOGNITION, DIAGNOSIS, AND RECOVERY</strong><br>
+□ Clear error messages (not codes)<br>
+□ Explain what went wrong<br>
+□ Suggest how to fix it<br>
+□ Error visible where relevant (e.g., next to form field)<br>
+<br>
+<strong>10. HELP AND DOCUMENTATION</strong><br>
+□ Onboarding for new users<br>
+□ Tooltips or hints where needed<br>
+□ Help accessible but not intrusive<br>
+□ FAQ or support easy to find
+                        </div>
+                    </div>
+
+                    <h3>Mobile-Specific Heuristics</h3>
+
+                    <div class="info-block tip">
+                        <h4>Additional Considerations for Mobile</h4>
+                        <p>Beyond Nielsen's heuristics, mobile apps have unique requirements:</p>
+                        
+                        <ul>
+                            <li><strong>Touch-friendly:</strong> Adequate touch target sizes (44x44+ pixels)</li>
+                            <li><strong>Thumb-reachable:</strong> Important actions within easy thumb reach</li>
+                            <li><strong>Readable:</strong> Text size appropriate for mobile viewing</li>
+                            <li><strong>Responsive:</strong> Fast interactions, no lag</li>
+                            <li><strong>Offline-capable:</strong> Graceful degradation without network</li>
+                            <li><strong>Battery-conscious:</strong> No unnecessary processing or GPS</li>
+                            <li><strong>Contextual:</strong> Adapts to user's context and environment</li>
+                        </ul>
+                    </div>
+
+                    <div class="example-box">
+                        <h4>Example: Annotated Screen for Heuristics</h4>
+                        <p>Consider creating an annotated version showing how your design addresses heuristics:</p>
+                        
+                        <div class="code-block">
+[Fitness App - Workout Screen Example]<br>
+<br>
+┌─────────────────────────────────┐<br>
+│ ← Workouts        [Heart] [:]   │ → H3: Back button (user control)<br>
+│─────────────────────────────────│<br>
+│                                 │<br>
+│  Quick HIIT Burn                │ → H2: Clear, descriptive title<br>
+│  15 min • Intermediate          │ → H1: Key info visible<br>
+│  [Progress: 3/5 completed]      │ → H1: Status visible<br>
+│                                 │<br>
+│  TODAY'S EXERCISES:             │<br>
+│                                 │<br>
+│  ✓ Jumping Jacks (50 sec)      │ → H6: Recognition<br>
+│  ✓ Push-ups (30 sec)           │    (checkmarks show progress)<br>
+│  → High Knees (50 sec)         │ → H1: Current status clear<br>
+│    Plank (45 sec)              │<br>
+│    Burpees (30 sec)            │<br>
+│                                 │<br>
+│  [Pause Workout]  [End]        │ → H3: User control<br>
+│─────────────────────────────────│<br>
+│  Rest Time Remaining: 0:45     │ → H1: Countdown visible<br>
+│─────────────────────────────────│<br>
+│  [Start Next Exercise]         │ → H5: Disabled until rest done<br>
+│                                 │    (error prevention)<br>
+└─────────────────────────────────┘<br>
+<br>
+<strong>Heuristic Compliance Notes:</strong><br>
+H1 (Visibility): Progress shown, current exercise highlighted, timer visible<br>
+H2 (Real world): Clear labels, workout jargon users know<br>
+H3 (Control): Back button, ability to pause or end<br>
+H4 (Consistency): Matches patterns from other workout apps<br>
+H5 (Error prevention): Next exercise disabled during rest<br>
+H6 (Recognition): Visual progress indicators, don't need to remember<br>
+H8 (Minimalist): Only relevant info for current context
+                        </div>
+                    </div>
+
+                    <div class="info-block warning">
+                        <h4>⚠️ Common Heuristic Violations in Student Projects</h4>
+                        <ul>
+                            <li><strong>No feedback after actions:</strong> User taps button, nothing indicates it worked</li>
+                            <li><strong>Inconsistent navigation:</strong> Back button works differently on different screens</li>
+                            <li><strong>Cryptic error messages:</strong> "Error 404" instead of "We couldn't find that workout"</li>
+                            <li><strong>No way to undo:</strong> Especially for delete or cancel actions</li>
+                            <li><strong>Hidden critical features:</strong> Important actions in overflow menus</li>
+                            <li><strong>Cluttered screens:</strong> Trying to show too much at once</li>
+                            <li><strong>Unlabeled icons:</strong> Users have to guess what icons mean</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Section 8: Complete Example -->
+            <button type="button" class="collapsible">Complete Example: Documentation Package</button>
+            <div class="collapsible-content">
+                <div class="collapsible-inner">
+                    <h3>Sample Documentation for a Mobile App</h3>
+                    <p>Here's a complete example showing what your documentation package should look like:</p>
+
+                    <div class="example-box">
+                        <h4>📱 Example App: "MealMatch" - Recipe Sharing App</h4>
+                        
+                        <div class="code-block">
+<strong>═══════════════════════════════════════════════</strong><br>
+<strong>MEALMATCH - PROTOTYPE DOCUMENTATION</strong><br>
+<strong>═══════════════════════════════════════════════</strong><br>
+<br>
+<strong>STUDENT NAME:</strong> Jane Smith<br>
+<strong>COURSE:</strong> CEN3722 - Human-Computer Interaction<br>
+<strong>DATE:</strong> February 11, 2026<br>
+<br>
+<strong>─────────────────────────────────────────────────</strong><br>
+<strong>1. PROJECT OVERVIEW</strong><br>
+<strong>─────────────────────────────────────────────────</strong><br>
+<br>
+<strong>App Name:</strong> MealMatch<br>
+<br>
+<strong>Purpose:</strong><br>
+MealMatch helps college students and young adults discover and share <br>
+easy, affordable recipes. Users can browse recipes by dietary restrictions, <br>
+save favorites, and share their own simple recipes with the community.<br>
+<br>
+<strong>Target Users:</strong><br>
+College students and young adults (ages 18-25) who:<br>
+- Are learning to cook<br>
+- Have limited budgets<br>
+- Want quick, simple recipes<br>
+- Live in dorms or small apartments<br>
+- Have dietary restrictions or preferences<br>
+<br>
+<strong>Key Features:</strong><br>
+- Browse recipes by dietary needs (vegetarian, gluten-free, etc.)<br>
+- Filter by cooking time and difficulty<br>
+- Save favorite recipes to collections<br>
+- Share your own simple recipes<br>
+- Rate and review recipes<br>
+<br>
+<strong>Platform:</strong> iOS<br>
+<strong>Device:</strong> iPhone 14 (390 x 844 pixels)<br>
+<strong>Tool Used:</strong> Figma<br>
+<br>
+<strong>─────────────────────────────────────────────────</strong><br>
+<strong>2. PROTOTYPE ACCESS</strong><br>
+<strong>─────────────────────────────────────────────────</strong><br>
+<br>
+<strong>Figma Prototype Link:</strong><br>
+[URL would go here]<br>
+<br>
+<strong>How to View:</strong><br>
+1. Click the link above<br>
+2. Click the "Play" button (▶) in top right to enter prototype mode<br>
+3. Start at the "Home" screen<br>
+4. Click on elements to navigate (not everything is interactive)<br>
+5. Best viewed on a phone or narrow browser window<br>
+<br>
+<strong>Account Notes:</strong><br>
+Prototype assumes user is already logged in as "Sarah Chen"<br>
+(No login screens are prototyped)<br>
+<br>
+<strong>─────────────────────────────────────────────────</strong><br>
+<strong>3. WHAT'S INCLUDED IN THE PROTOTYPE</strong><br>
+<strong>─────────────────────────────────────────────────</strong><br>
+<br>
+<strong>Complete Flows:</strong><br>
+✓ Browse recipes by dietary filter<br>
+✓ View recipe details<br>
+✓ Save recipe to favorites<br>
+✓ Share a new recipe<br>
+✓ View saved recipes collection<br>
+<br>
+<strong>Screens Included:</strong><br>
+1. Home/Dashboard (starting point)<br>
+2. Browse Recipes (with filters)<br>
+3. Recipe Detail<br>
+4. My Saved Recipes<br>
+5. Add Recipe (form)<br>
+6. Add Recipe - Success confirmation<br>
+7. Profile (basic view)<br>
+<br>
+<strong>What's NOT Included:</strong><br>
+- Login/signup flow<br>
+- Settings screen (only basic shell)<br>
+- Search functionality (visual only, not interactive)<br>
+- Notifications<br>
+- Social features (following users, comments)<br>
+<br>
+<strong>─────────────────────────────────────────────────</strong><br>
+<strong>4. USER TASK SCENARIOS</strong><br>
+<strong>─────────────────────────────────────────────────</strong><br>
+<br>
+<strong>TASK 1: Find a Vegetarian Recipe for Dinner</strong><br>
+<br>
+<strong>User Profile:</strong><br>
+Sarah is a 20-year-old sophomore living in a dorm with a shared kitchen. <br>
+She recently became vegetarian and is looking for easy recipes she can <br>
+make with limited equipment. She's comfortable using recipe apps like <br>
+AllRecipes but finds them overwhelming with too many options.<br>
+<br>
+<strong>Scenario:</strong><br>
+It's 5pm on a Tuesday and Sarah wants to find something quick to make <br>
+for dinner. She has about 30 minutes and wants a vegetarian recipe that's <br>
+easy for a beginner. She opens MealMatch on her iPhone.<br>
+<br>
+<strong>Starting Point:</strong> Home Screen<br>
+<br>
+<strong>Goal:</strong><br>
+Find a vegetarian recipe that takes 30 minutes or less and is rated <br>
+"Easy" difficulty.<br>
+<br>
+<strong>Success Criteria:</strong><br>
+User has found a recipe that meets the criteria and can view the full <br>
+recipe details including ingredients and instructions.<br>
+<br>
+<strong>Expected Path:</strong><br>
+1. Home Screen → Tap "Browse Recipes"<br>
+2. Browse Recipes → Tap "Filters" button<br>
+3. Filters → Select "Vegetarian" dietary filter<br>
+4. Filters → Select "Under 30 min" time filter<br>
+5. Filters → Select "Easy" difficulty<br>
+6. Filters → Tap "Apply Filters"<br>
+7. Browse Recipes (filtered) → Tap on recipe card<br>
+8. Recipe Detail → View full recipe<br>
+<br>
+<strong>What to Look For:</strong><br>
+- Can user easily find the filter option?<br>
+- Are filter options clearly labeled?<br>
+- Is it obvious how to apply filters?<br>
+- Do results clearly show they're filtered?<br>
+- Is the recipe detail screen clear and complete?<br>
+<br>
+<strong>─────────────────────────────────────────────────</strong><br>
+<br>
+<strong>TASK 2: Save a Recipe to Favorites</strong><br>
+<br>
+<strong>User Profile:</strong> Same as Task 1 (Sarah)<br>
+<br>
+<strong>Scenario:</strong><br>
+Sarah found a recipe she likes and wants to save it so she can easily <br>
+find it again later. She's viewing the recipe details.<br>
+<br>
+<strong>Starting Point:</strong> Recipe Detail Screen (any recipe)<br>
+<br>
+<strong>Goal:</strong><br>
+Save the current recipe to her favorites and confirm it was saved.<br>
+<br>
+<strong>Success Criteria:</strong><br>
+User sees confirmation that the recipe was saved and can navigate to <br>
+view their saved recipes.<br>
+<br>
+<strong>Expected Path:</strong><br>
+1. Recipe Detail Screen → Tap the heart icon (top right)<br>
+2. See visual feedback (heart fills in, toast message appears)<br>
+3. Tap "My Recipes" in bottom navigation<br>
+4. My Saved Recipes → See the saved recipe in the list<br>
+<br>
+<strong>What to Look For:</strong><br>
+- Is the save action (heart icon) noticeable and recognizable?<br>
+- Does the user get clear feedback that save worked?<br>
+- Can user easily find their saved recipes?<br>
+<br>
+<strong>─────────────────────────────────────────────────</strong><br>
+<br>
+<strong>TASK 3: Share Your Own Recipe</strong><br>
+<br>
+<strong>User Profile:</strong> Same as Task 1 (Sarah)<br>
+<br>
+<strong>Scenario:</strong><br>
+Sarah made a really good pasta dish last night and wants to share it <br>
+with the MealMatch community. She has all the recipe details in her <br>
+head and is ready to add it.<br>
+<br>
+<strong>Starting Point:</strong> Home Screen<br>
+<br>
+<strong>Goal:</strong><br>
+Successfully submit a new recipe with title, ingredients, instructions, <br>
+prep time, and difficulty level.<br>
+<br>
+<strong>Success Criteria:</strong><br>
+User sees a confirmation that the recipe was submitted successfully.<br>
+<br>
+<strong>Expected Path:</strong><br>
+1. Home Screen → Tap "+" button in center of bottom nav<br>
+2. Add Recipe Form → Enter recipe title<br>
+3. Add Recipe Form → Add 3-4 ingredients (tap "+ Add Ingredient")<br>
+4. Add Recipe Form → Enter cooking instructions<br>
+5. Add Recipe Form → Select prep time (20 minutes)<br>
+6. Add Recipe Form → Select difficulty (Easy)<br>
+7. Add Recipe Form → Tap "Share Recipe" button<br>
+8. Success Screen → See confirmation<br>
+<br>
+<strong>What to Look For:</strong><br>
+- Is the "+ " button obvious and labeled clearly?<br>
+- Is the form layout easy to understand?<br>
+- Are required fields clearly marked?<br>
+- Does adding multiple ingredients work smoothly?<br>
+- Is there feedback during submission?<br>
+- Is success confirmation clear?<br>
+<br>
+<strong>─────────────────────────────────────────────────</strong><br>
+<strong>5. SCREEN FLOW DIAGRAM</strong><br>
+<strong>─────────────────────────────────────────────────</strong><br>
+<br>
+[See attached image: MealMatch_ScreenFlow.png]<br>
+<br>
+<strong>Main Navigation Paths:</strong><br>
+<br>
+Home → Browse Recipes → Filters → Recipe Detail<br>
+  ↓                                      ↓<br>
+My Recipes ←───────────────────── Save to Favorites<br>
+  ↓<br>
+Profile<br>
+  ↓<br>
+Add Recipe → Success<br>
+<br>
+<strong>─────────────────────────────────────────────────</strong><br>
+<strong>6. DESIGN DECISIONS & NOTES</strong><br>
+<strong>─────────────────────────────────────────────────</strong><br>
+<br>
+<strong>Color Scheme:</strong><br>
+Warm, food-friendly colors (orange, cream) to feel inviting and <br>
+appetizing without being childish.<br>
+<br>
+<strong>Navigation:</strong><br>
+Used iOS tab bar pattern because users are familiar with it and it <br>
+makes main features always accessible.<br>
+<br>
+<strong>Filters:</strong><br>
+Decided on a filter panel rather than inline chips because there are <br>
+many filter options and panel allows better organization by category.<br>
+<br>
+<strong>Recipe Cards:</strong><br>
+Show photo, title, time, difficulty, and rating at a glance so users <br>
+can quickly scan options.<br>
+<br>
+<strong>Form Design:</strong><br>
+Add Recipe form uses one column layout with clear sections. Multiple <br>
+ingredients use a dynamic list that grows as you add more.<br>
+<br>
+<strong>Known Limitations:</strong><br>
+- Search is visual only (not interactive)<br>
+- Filter combinations are limited to what's shown<br>
+- Recipe detail is simplified (no reviews shown, just rating)<br>
+- Profile screen is a placeholder<br>
+<br>
+<strong>─────────────────────────────────────────────────</strong><br>
+<strong>7. FOR COGNITIVE WALKTHROUGH EVALUATORS</strong><br>
+<strong>─────────────────────────────────────────────────</strong><br>
+<br>
+Please complete Tasks 1-3 above, focusing on:<br>
+<br>
+- Would a college student trying to cook know what to do at each step?<br>
+- Are the actions obvious or would users have to search/guess?<br>
+- Is feedback clear when users take actions?<br>
+- Would users know if they're making progress toward their goal?<br>
+<br>
+<strong>Specific Things to Note:</strong><br>
+- Filter discoverability on Browse screen<br>
+- Save action visibility and feedback<br>
+- Add Recipe button placement and clarity<br>
+- Form field clarity and required indicators<br>
+<br>
+<strong>─────────────────────────────────────────────────</strong><br>
+<strong>8. FOR HEURISTIC EVALUATION</strong><br>
+<strong>─────────────────────────────────────────────────</strong><br>
+<br>
+Please evaluate all screens against Nielsen's 10 heuristics, focusing on:<br>
+<br>
+<strong>Critical Flows to Examine:</strong><br>
+1. Browse → Filter → Recipe Detail (consistency, feedback)<br>
+2. Add Recipe form (error prevention, help)<br>
+3. Overall navigation (consistency, user control)<br>
+<br>
+<strong>Pay Special Attention To:</strong><br>
+- Consistency of button styles and placement<br>
+- Feedback after save/submit actions<br>
+- Error prevention in forms<br>
+- Ability to go back/cancel<br>
+- Visual consistency across screens<br>
+<br>
+<strong>Out of Scope:</strong><br>
+- Settings screen (incomplete)<br>
+- Search functionality (placeholder)<br>
+- Social features<br>
+<br>
+<strong>═══════════════════════════════════════════════</strong><br>
+<strong>END OF DOCUMENTATION</strong><br>
+<strong>═══════════════════════════════════════════════</strong>
+                        </div>
+                    </div>
+
+                    <div class="info-block success">
+                        <h4>💡 What Makes This Documentation Good</h4>
+                        <ul>
+                            <li><strong>Complete context:</strong> Evaluators understand who the app is for and what it does</li>
+                            <li><strong>Clear tasks:</strong> Specific scenarios with starting points and success criteria</li>
+                            <li><strong>Honest about scope:</strong> States what's included and what's not</li>
+                            <li><strong>Access instructions:</strong> Clear directions for viewing the prototype</li>
+                            <li><strong>Evaluation guidance:</strong> Specific notes for each evaluation type</li>
+                            <li><strong>Professional:</strong> Well-organized and easy to follow</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Section 9: Submission Checklist -->
+            <button type="button" class="collapsible">Final Checklist and Submission</button>
+            <div class="collapsible-content">
+                <div class="collapsible-inner">
+                    <h3>Before You Submit</h3>
+                    
+                    <div class="checklist">
+                        <h4>✓ Prototype Completeness</h4>
+                        <ul>
+                            <li>All screens for 3-5 core tasks are designed</li>
+                            <li>Navigation is consistent across all screens</li>
+                            <li>Interactive elements are linked/connected</li>
+                            <li>At least one error state is shown</li>
+                            <li>Success/confirmation screens are included</li>
+                            <li>Real content (not Lorem Ipsum) is used</li>
+                            <li>Visual design is consistent throughout</li>
+                            <li>Touch targets are appropriate size (44x44+ pixels)</li>
+                            <li>Text is readable (16px+ for body text)</li>
+                            <li>Prototype works on the specified device size</li>
+                        </ul>
+                    </div>
+
+                    <div class="checklist">
+                        <h4>✓ Documentation Completeness</h4>
+                        <ul>
+                            <li>Project overview with app description and target users</li>
+                            <li>Clear prototype access link/instructions</li>
+                            <li>3-5 detailed task scenarios for Cognitive Walkthrough</li>
+                            <li>Each task has context, goal, starting point, and success criteria</li>
+                            <li>Screen flow diagram showing navigation</li>
+                            <li>Screen inventory listing all screens</li>
+                            <li>Notes on what's in scope vs. out of scope</li>
+                            <li>Specific guidance for Heuristic Evaluation</li>
+                            <li>Design decisions explained (optional but good)</li>
+                            <li>Document is well-formatted and easy to read</li>
+                        </ul>
+                    </div>
+
+                    <div class="checklist">
+                        <h4>✓ Quality Checks</h4>
+                        <ul>
+                            <li>Tested prototype myself - all links work</li>
+                            <li>Tested on a friend without explanation - they understood</li>
+                            <li>Checked on actual mobile device or emulator</li>
+                            <li>Spellchecked all text in prototype and documentation</li>
+                            <li>Verified prototype link works (tested in incognito mode)</li>
+                            <li>Documentation is saved as PDF or accessible Google Doc</li>
+                            <li>All images/diagrams are clear and readable</li>
+                            <li>File names are professional (no "final_final_v3.pdf")</li>
+                        </ul>
+                    </div>
+
+                    <h3>Submission Package Contents</h3>
+
+                    <div class="example-box">
+                        <h4>📦 What to Submit</h4>
+                        
+                        <div class="code-block">
+<strong>Required Files:</strong><br>
+<br>
+1. <strong>Prototype Access</strong><br>
+   - Link to interactive prototype (Figma, Adobe XD, etc.)<br>
+   - OR prototype files if tool requires download<br>
+   - Make sure link has proper sharing permissions!<br>
+<br>
+2. <strong>Documentation PDF or Google Doc</strong><br>
+   - All sections from "Documentation Package" guidelines<br>
+   - Professional formatting<br>
+   - Clear section headers<br>
+   - Page numbers<br>
+<br>
+3. <strong>Screen Flow Diagram</strong><br>
+   - Separate image file OR embedded in documentation<br>
+   - High enough resolution to be readable<br>
+<br>
+<strong>Optional But Recommended:</strong><br>
+<br>
+4. <strong>Screenshots of Key Screens</strong><br>
+   - In case prototype link fails<br>
+   - Helpful for quick reference<br>
+<br>
+5. <strong>Design Files</strong><br>
+   - Source files from your design tool<br>
+   - Allows instructor to examine details<br>
+<br>
+<strong>File Naming Convention:</strong><br>
+LastName_FirstName_ProjectName_Document.pdf<br>
+<br>
+Example:<br>
+Smith_Jane_MealMatch_Documentation.pdf<br>
+Smith_Jane_MealMatch_ScreenFlow.png
+                        </div>
+                    </div>
+
+                    <h3>Common Submission Mistakes</h3>
+
+                    <div class="info-block warning">
+                        <h4>⚠️ Avoid These Pitfalls</h4>
+                        <ul>
+                            <li><strong>Broken prototype link:</strong> Link requires sign-in or doesn't work in incognito mode</li>
+                            <li><strong>Wrong sharing permissions:</strong> Link set to private or requires request access</li>
+                            <li><strong>Missing documentation:</strong> Just submitting prototype without written documentation</li>
+                            <li><strong>Vague task descriptions:</strong> Tasks lack context, starting points, or success criteria</li>
+                            <li><strong>Incomplete flows:</strong> Tasks can't actually be completed in the prototype</li>
+                            <li><strong>No scope definition:</strong> Evaluators don't know what to evaluate vs. what's incomplete</li>
+                            <li><strong>Poor formatting:</strong> Documentation is hard to read or navigate</li>
+                            <li><strong>Last-minute rush:</strong> Not enough time to test or refine before submission</li>
+                        </ul>
+                    </div>
+
+                    <h3>Timeline Recommendation</h3>
+
+                    <table>
+                        <tr>
+                            <th>Phase</th>
+                            <th>Time</th>
+                            <th>Deliverable</th>
+                        </tr>
+                        <tr>
+                            <td><strong>Week 1</strong></td>
+                            <td>3-4 hours</td>
+                            <td>Define app concept, tasks, and sketch low-fi screens</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Week 2</strong></td>
+                            <td>6-8 hours</td>
+                            <td>Design all screens in prototyping tool</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Week 3</strong></td>
+                            <td>3-4 hours</td>
+                            <td>Add interactivity and polish</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Week 4</strong></td>
+                            <td>4-5 hours</td>
+                            <td>Write documentation, test prototype, refine</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Buffer</strong></td>
+                            <td>2-3 hours</td>
+                            <td>Fix issues, final testing, submission prep</td>
+                        </tr>
+                    </table>
+
+                    <div class="key-points">
+                        <h4>🎯 Success Criteria Summary</h4>
+                        <ul>
+                            <li>Prototype demonstrates 3-5 complete user tasks</li>
+                            <li>Design is consistent, professional, and mobile-appropriate</li>
+                            <li>Documentation provides complete context for evaluators</li>
+                            <li>Tasks are clearly defined with scenarios and success criteria</li>
+                            <li>Prototype link works and doesn't require special access</li>
+                            <li>Everything has been tested before submission</li>
+                        </ul>
+                    </div>
+
+                    <div class="info-block success">
+                        <h4>💡 Final Tips for Success</h4>
+                        <ul>
+                            <li><strong>Start early:</strong> You'll need more time than you think</li>
+                            <li><strong>Focus on completeness:</strong> 5 polished screens beats 20 sketchy ones</li>
+                            <li><strong>Get feedback:</strong> Test with friends before submitting</li>
+                            <li><strong>Document as you go:</strong> Don't save all documentation for the end</li>
+                            <li><strong>Use a UI kit:</strong> Don't reinvent standard mobile patterns</li>
+                            <li><strong>Think like an evaluator:</strong> Could someone understand your app without you explaining?</li>
+                            <li><strong>Read the rubric:</strong> Make sure you address all requirements</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+    <script>
+        // JavaScript for collapsible sections
+        const collapsibles = document.getElementsByClassName("collapsible");
+        
+        for (let i = 0; i < collapsibles.length; i++) {
+            collapsibles[i].addEventListener("click", function() {
+                this.classList.toggle("active");
+                const content = this.nextElementSibling;
+                
+                if (content.style.maxHeight) {
+                    content.style.maxHeight = null;
+                } else {
+                    content.style.maxHeight = content.scrollHeight + "px";
+                }
+            });
+        }
+
+        // Optional: Open first section by default
+        if (collapsibles.length > 0) {
+            collapsibles[0].click();
+        }
+    </script>
+</body>
+</html>

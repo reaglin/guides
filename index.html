@@ -1,0 +1,719 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Ron's Guide Collection</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: 'Inter', system-ui, sans-serif;
+    background: #f0f4f8;
+    color: #1e293b;
+    min-height: 100vh;
+  }
+
+  header {
+    background: linear-gradient(135deg, #0f2a5e 0%, #1a3f8c 60%, #1e5aad 100%);
+    color: white;
+    padding: 2.5rem 1.5rem 2rem;
+    text-align: center;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.25);
+  }
+  header h1 { font-size: 2.2rem; font-weight: 700; letter-spacing: -0.02em; }
+  header p { margin-top: 0.5rem; font-size: 1.05rem; opacity: 0.85; }
+
+  .search-bar {
+    max-width: 540px;
+    margin: 1.6rem auto 0;
+    display: flex;
+    gap: 0.5rem;
+  }
+  .search-bar input {
+    flex: 1;
+    padding: 0.65rem 1rem;
+    border: none;
+    border-radius: 8px;
+    font-size: 0.95rem;
+    outline: none;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.15);
+  }
+  .search-bar input:focus { box-shadow: 0 0 0 3px rgba(59,130,246,0.5); }
+
+  .filter-bar {
+    max-width: 1200px;
+    margin: 1.4rem auto 0;
+    padding: 0 1.5rem;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    justify-content: center;
+  }
+  .filter-btn {
+    padding: 0.35rem 0.9rem;
+    border-radius: 20px;
+    border: 2px solid transparent;
+    font-size: 0.8rem;
+    font-weight: 600;
+    cursor: pointer;
+    background: rgba(255,255,255,0.15);
+    color: white;
+    transition: all 0.15s;
+  }
+  .filter-btn:hover, .filter-btn.active {
+    background: white;
+    color: #0f2a5e;
+  }
+
+  main {
+    max-width: 1200px;
+    margin: 2rem auto;
+    padding: 0 1.5rem;
+  }
+
+  .results-count {
+    color: #64748b;
+    font-size: 0.88rem;
+    margin-bottom: 1.2rem;
+  }
+
+  .grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 1.25rem;
+  }
+  @media (max-width: 900px) { .grid { grid-template-columns: repeat(2, 1fr); } }
+  @media (max-width: 560px) { .grid { grid-template-columns: 1fr; } }
+
+  .card {
+    background: white;
+    border-radius: 12px;
+    padding: 1.25rem 1.3rem 1.1rem;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+    display: flex;
+    flex-direction: column;
+    gap: 0.55rem;
+    transition: transform 0.15s, box-shadow 0.15s;
+    border-top: 4px solid var(--cat-color, #94a3b8);
+  }
+  .card:hover { transform: translateY(-3px); box-shadow: 0 6px 18px rgba(0,0,0,0.13); }
+  .card[hidden] { display: none; }
+
+  .card-badge {
+    display: inline-block;
+    padding: 0.2rem 0.65rem;
+    border-radius: 20px;
+    font-size: 0.72rem;
+    font-weight: 700;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    background: var(--cat-color, #94a3b8);
+    color: white;
+    align-self: flex-start;
+  }
+
+  .card h3 {
+    font-size: 0.97rem;
+    font-weight: 600;
+    line-height: 1.4;
+    color: #0f172a;
+    flex: 1;
+  }
+
+  .card p {
+    font-size: 0.83rem;
+    color: #475569;
+    line-height: 1.55;
+    flex: 1;
+  }
+
+  .card a {
+    display: inline-block;
+    margin-top: 0.3rem;
+    padding: 0.45rem 1rem;
+    background: var(--cat-color, #94a3b8);
+    color: white;
+    text-decoration: none;
+    border-radius: 7px;
+    font-size: 0.82rem;
+    font-weight: 600;
+    align-self: flex-start;
+    transition: opacity 0.15s;
+  }
+  .card a:hover { opacity: 0.85; }
+
+  .no-results {
+    text-align: center;
+    color: #94a3b8;
+    padding: 3rem;
+    font-size: 1rem;
+    display: none;
+  }
+
+  footer {
+    text-align: center;
+    padding: 2rem 1rem;
+    color: #94a3b8;
+    font-size: 0.82rem;
+    border-top: 1px solid #e2e8f0;
+    margin-top: 2rem;
+  }
+
+  /* Category colors */
+  .cat-algorithms  { --cat-color: #7c3aed; }
+  .cat-database    { --cat-color: #1d4ed8; }
+  .cat-web-dev     { --cat-color: #059669; }
+  .cat-git         { --cat-color: #d97706; }
+  .cat-engineering { --cat-color: #0891b2; }
+  .cat-dotnet      { --cat-color: #4338ca; }
+  .cat-other       { --cat-color: #6b7280; }
+  .cat-course-tools{ --cat-color: #be185d; }
+</style>
+</head>
+<body>
+
+<header>
+  <h1>Ron's Guide Collection</h1>
+  <p>Instructional guides for courses, engineering, and professional development</p>
+  <div class="search-bar">
+    <input type="text" id="searchInput" placeholder="Search guides by title…" aria-label="Search guides">
+  </div>
+  <div class="filter-bar" id="filterBar">
+    <button class="filter-btn active" data-cat="all">All</button>
+    <button class="filter-btn" data-cat="algorithms">Algorithms</button>
+    <button class="filter-btn" data-cat="database">Database</button>
+    <button class="filter-btn" data-cat="web-dev">Web Dev</button>
+    <button class="filter-btn" data-cat="git">Git</button>
+    <button class="filter-btn" data-cat="engineering">Engineering</button>
+    <button class="filter-btn" data-cat="dotnet">.NET / MAUI</button>
+    <button class="filter-btn" data-cat="course-tools">Course Tools</button>
+    <button class="filter-btn" data-cat="other">Other</button>
+  </div>
+</header>
+
+<main>
+  <p class="results-count" id="resultsCount"></p>
+  <div class="grid" id="grid">
+
+    <!-- ===== ALGORITHMS ===== -->
+    <div class="card cat-algorithms" data-cat="algorithms">
+      <span class="card-badge">Algorithms</span>
+      <h3>COP 3530 – Data Structures Overview</h3>
+      <p>A course-wide introduction to selecting, implementing, and analyzing data structures. Covers time complexity, space trade-offs, and structural properties.</p>
+      <a href="algorithms/1-COP3530 Overview of Data Structures.html">View Guide</a>
+    </div>
+
+    <div class="card cat-algorithms" data-cat="algorithms">
+      <span class="card-badge">Algorithms</span>
+      <h3>COP 3530 – Arrays: The Foundation of Sequential Data Storage</h3>
+      <p>Explains how arrays bridge raw memory and programmer abstractions. Covers fixed-size storage, index-based access, and performance characteristics.</p>
+      <a href="algorithms/2-COP3530 Guide to Arrays.html">View Guide</a>
+    </div>
+
+    <div class="card cat-algorithms" data-cat="algorithms">
+      <span class="card-badge">Algorithms</span>
+      <h3>COP 3530 – The List: A Comprehensive Guide</h3>
+      <p>Explores linked lists, their dynamic growth/shrink behavior, and the trade-offs between pointer-based and array-based storage for real-world use cases.</p>
+      <a href="algorithms/4-COP3530 Guide to Lists.html">View Guide</a>
+    </div>
+
+    <div class="card cat-algorithms" data-cat="algorithms">
+      <span class="card-badge">Algorithms</span>
+      <h3>COP 3530 – Stacks &amp; Queues: LIFO &amp; FIFO Mastery</h3>
+      <p>Covers stack and queue data structures that power function calls, OS process scheduling, and browser history. Includes implementation patterns and use-case analysis.</p>
+      <a href="algorithms/5-COP3530 Guide to Stacks and Queues.html">View Guide</a>
+    </div>
+
+    <div class="card cat-algorithms" data-cat="algorithms">
+      <span class="card-badge">Algorithms</span>
+      <h3>COP 3530 – Recursion: The Art of Self-Reference</h3>
+      <p>A deep dive into recursive thinking as it appears in sorting, tree traversal, and mathematical patterns. Includes base cases, call stacks, and tail recursion.</p>
+      <a href="algorithms/7-COP3530 Guide to Recursion.html">View Guide</a>
+    </div>
+
+    <div class="card cat-algorithms" data-cat="algorithms">
+      <span class="card-badge">Algorithms</span>
+      <h3>COP 3530 – Sorting Algorithms: Ordering the Chaos</h3>
+      <p>Focuses on core sorting strategies—merge sort, quicksort, insertion sort—with trade-offs and guidance on when to reach for each algorithm in practice.</p>
+      <a href="algorithms/8-COP3530 Guide to Sorting.html">View Guide</a>
+    </div>
+
+    <div class="card cat-algorithms" data-cat="algorithms">
+      <span class="card-badge">Algorithms</span>
+      <h3>COP 3530 – Hashes &amp; Hash Algorithms</h3>
+      <p>Explores the mathematics of distribution, collision resolution, and the properties every hash function must satisfy for both data structures and cryptography.</p>
+      <a href="algorithms/9-COP3530 Guide to Hash Algorithms.html">View Guide</a>
+    </div>
+
+    <div class="card cat-algorithms" data-cat="algorithms">
+      <span class="card-badge">Algorithms</span>
+      <h3>COP 3530 – The Tree Data Structure</h3>
+      <p>Covers hierarchical tree vocabulary, traversal algorithms, BSTs, and performance analysis. Connects tree structures to real-world file systems and decision logic.</p>
+      <a href="algorithms/10-COP3530 Guide to Trees.html">View Guide</a>
+    </div>
+
+    <!-- ===== DATABASE ===== -->
+    <div class="card cat-database" data-cat="database">
+      <span class="card-badge">Database</span>
+      <h3>COP 4708 – What You Need to Know in Databases</h3>
+      <p>A career and knowledge roadmap for database professionals. Topics are tagged by skill level, from foundational SQL to advanced performance tuning.</p>
+      <a href="database/1-COP4708 Guide to Databases.html">View Guide</a>
+    </div>
+
+    <div class="card cat-database" data-cat="database">
+      <span class="card-badge">Database</span>
+      <h3>COP 4708 – Module 1: Introduction to Databases</h3>
+      <p>Introduces databases as structured digital filing systems with rules, relationships, and integrity constraints—contrasting them with spreadsheets and flat files.</p>
+      <a href="database/2-COP4708_IntroToDatabases.html">View Guide</a>
+    </div>
+
+    <div class="card cat-database" data-cat="database">
+      <span class="card-badge">Database</span>
+      <h3>COP 4708 – Module 2: Relational Databases</h3>
+      <p>Covers Codd's relational model, set theory foundations, keys, and the formal vocabulary essential for understanding SQL and database design.</p>
+      <a href="database/3-COP4708_RelationalDatabases.html">View Guide</a>
+    </div>
+
+    <div class="card cat-database" data-cat="database">
+      <span class="card-badge">Database</span>
+      <h3>COP 4708 – Module 3: Entity-Relationship Diagrams</h3>
+      <p>A visual guide to ER modeling—entities, attributes, relationships, and cardinality—as the blueprint for translating business rules into database design.</p>
+      <a href="database/5-COP4708_ERDiagrams.html">View Guide</a>
+    </div>
+
+    <div class="card cat-database" data-cat="database">
+      <span class="card-badge">Database</span>
+      <h3>COP 4708 – Module 4: Database Design</h3>
+      <p>Maps ER diagrams to CREATE TABLE statements, indexes, stored procedures, and application code using systematic design rules.</p>
+      <a href="database/6-COP4708_DatabaseDesign.html">View Guide</a>
+    </div>
+
+    <div class="card cat-database" data-cat="database">
+      <span class="card-badge">Database</span>
+      <h3>COP 4708 – Module 5: SQL DDL</h3>
+      <p>Covers SQL Data Definition Language—CREATE, ALTER, DROP—for building and modifying tables, views, indexes, schemas, and stored procedures.</p>
+      <a href="database/7-COP4708_DDL.html">View Guide</a>
+    </div>
+
+    <div class="card cat-database" data-cat="database">
+      <span class="card-badge">Database</span>
+      <h3>COP 4708 – Module 6: SQL DQL</h3>
+      <p>Focuses on Data Query Language using a Student Registration schema. Covers SELECT, WHERE, JOINs, and filtering with AND/OR conditions.</p>
+      <a href="database/10-COP4708_DQL.html">View Guide</a>
+    </div>
+
+    <div class="card cat-database" data-cat="database">
+      <span class="card-badge">Database</span>
+      <h3>COP 4708 – Module 7: Database Normalization</h3>
+      <p>Explains normal forms (1NF–BCNF) and the insertion, update, and deletion anomalies that normalization eliminates from relational schemas.</p>
+      <a href="database/11-COP4708_Normalization.html">View Guide</a>
+    </div>
+
+    <div class="card cat-database" data-cat="database">
+      <span class="card-badge">Database</span>
+      <h3>T-SQL Stored Procedures for Foreign Key Management</h3>
+      <p>Shows how to manage table insertions across foreign key dependencies and identity columns using T-SQL stored procedures with practical examples.</p>
+      <a href="database/3-Stored_Procedures.html">View Guide</a>
+    </div>
+
+    <div class="card cat-database" data-cat="database">
+      <span class="card-badge">Database</span>
+      <h3>T-SQL User-Defined Functions</h3>
+      <p>A comprehensive guide to creating scalar and table-valued UDFs in T-SQL—reusable code modules that accept parameters and return computed results.</p>
+      <a href="database/4-Stored_Functions.html">View Guide</a>
+    </div>
+
+    <div class="card cat-database" data-cat="database">
+      <span class="card-badge">Database</span>
+      <h3>Complete Guide to Database Transactions</h3>
+      <p>Covers ACID properties, transaction management, COMMIT/ROLLBACK, and best practices for maintaining data integrity in concurrent T-SQL environments.</p>
+      <a href="database/5-Transactions.html">View Guide</a>
+    </div>
+
+    <div class="card cat-database" data-cat="database">
+      <span class="card-badge">Database</span>
+      <h3>COP4709 – Cursors and Iterating Through Data</h3>
+      <p>Teaches when and how to use T-SQL cursors for row-by-row processing, along with performance trade-offs and set-based alternatives.</p>
+      <a href="database/6-Cursor_Guide.html">View Guide</a>
+    </div>
+
+    <div class="card cat-database" data-cat="database">
+      <span class="card-badge">Database</span>
+      <h3>COP4709 – Database Reports</h3>
+      <p>Covers database reporting fundamentals and SQL Server Reporting Services (SSRS) for transforming raw data into actionable business intelligence.</p>
+      <a href="database/7-Database_Reports_Guide.html">View Guide</a>
+    </div>
+
+    <div class="card cat-database" data-cat="database">
+      <span class="card-badge">Database</span>
+      <h3>COP4709 – Lookup Tables in Database Design</h3>
+      <p>Explains the standardized structure and purpose of lookup tables for enforcing domain integrity and reducing data redundancy in relational schemas.</p>
+      <a href="database/8-DB_Lookup_Tables.html">View Guide</a>
+    </div>
+
+    <div class="card cat-database" data-cat="database">
+      <span class="card-badge">Database</span>
+      <h3>COP4709 – Aggregation in SQL</h3>
+      <p>Covers aggregate functions (COUNT, SUM, AVG, MIN, MAX), GROUP BY, HAVING, and common patterns for summarizing data in SQL Server.</p>
+      <a href="database/9-Aggregation_Guide.html">View Guide</a>
+    </div>
+
+    <div class="card cat-database" data-cat="database">
+      <span class="card-badge">Database</span>
+      <h3>COP4709 – Full-Text Indexing</h3>
+      <p>Explains how SQL Server's Full-Text Engine builds inverted word indexes and how to query them efficiently for text search applications.</p>
+      <a href="database/10-Full-text_indexing_Guide.html">View Guide</a>
+    </div>
+
+    <div class="card cat-database" data-cat="database">
+      <span class="card-badge">Database</span>
+      <h3>COP4709 – Database Performance</h3>
+      <p>Covers query optimization, indexing strategies, execution plans, and how to measure and improve database response times in SQL Server.</p>
+      <a href="database/11-Database_Performance_Guide.html">View Guide</a>
+    </div>
+
+    <div class="card cat-database" data-cat="database">
+      <span class="card-badge">Database</span>
+      <h3>COP4709 – Database Security</h3>
+      <p>Addresses SQL injection, access control, encryption, and security best practices for protecting high-value database systems in enterprise environments.</p>
+      <a href="database/12-DB_Security_Guide.html">View Guide</a>
+    </div>
+
+    <div class="card cat-database" data-cat="database">
+      <span class="card-badge">Database</span>
+      <h3>COP4709 – Basic Guide to Data Analysis</h3>
+      <p>Covers SQL-based data extraction and preparation techniques that feed analytics pipelines, with comparisons to Power BI and pandas workflows.</p>
+      <a href="database/13-Data_Analysis_Guide.html">View Guide</a>
+    </div>
+
+    <div class="card cat-database" data-cat="database">
+      <span class="card-badge">Database</span>
+      <h3>COP4709 – NoSQL &amp; MongoDB Guide</h3>
+      <p>Explains the NoSQL paradigm, document-based storage in MongoDB, and when to choose a non-relational model over traditional SQL databases.</p>
+      <a href="database/14-NoSQL_Guide.html">View Guide</a>
+    </div>
+
+    <!-- ===== WEB DEV ===== -->
+    <div class="card cat-web-dev" data-cat="web-dev">
+      <span class="card-badge">Web Dev</span>
+      <h3>COP4834 – Guide to Selecting the Tech Stack</h3>
+      <p>Guides students through choosing the right frameworks, languages, and platforms for full-stack development projects based on project requirements.</p>
+      <a href="web-dev/1-COP4834 Guide to Selecting the STACK.html">View Guide</a>
+    </div>
+
+    <div class="card cat-web-dev" data-cat="web-dev">
+      <span class="card-badge">Web Dev</span>
+      <h3>COP4834 – UI Design Basics</h3>
+      <p>Walks through the complete UI design process from wireframes to code-ready forms, covering layout principles, component planning, and design-to-dev handoff.</p>
+      <a href="web-dev/4 - UI Design Guide.html">View Guide</a>
+    </div>
+
+    <div class="card cat-web-dev" data-cat="web-dev">
+      <span class="card-badge">Web Dev</span>
+      <h3>COP4834 – CRUD Operations Guide</h3>
+      <p>A complete guide to Create, Read, Update, Delete operations—the foundation of nearly every web application—with patterns and practical implementation advice.</p>
+      <a href="web-dev/5 - All about CRUD.html">View Guide</a>
+    </div>
+
+    <div class="card cat-web-dev" data-cat="web-dev">
+      <span class="card-badge">Web Dev</span>
+      <h3>COP4834 – Planning and Tracking Software Projects</h3>
+      <p>Covers budgeting, estimation, and progress management for software projects—including how to deliver on time, within scope, and meeting stakeholder expectations.</p>
+      <a href="web-dev/6-COP4834_project_planning_guide.html">View Guide</a>
+    </div>
+
+    <div class="card cat-web-dev" data-cat="web-dev">
+      <span class="card-badge">Web Dev</span>
+      <h3>COP4834 – Client-Server Security</h3>
+      <p>Surveys the attack surfaces of full-stack applications and the defenses needed at each layer, from input validation to HTTPS and authentication hardening.</p>
+      <a href="web-dev/10-COP4834_security_guide.html">View Guide</a>
+    </div>
+
+    <div class="card cat-web-dev" data-cat="web-dev">
+      <span class="card-badge">Web Dev</span>
+      <h3>COP4834 – Guide to Software Testing</h3>
+      <p>Positions testing as a continuous practice, not a final phase. Covers unit, integration, and end-to-end testing methodology for client-server systems.</p>
+      <a href="web-dev/11-COP4834_testing_guide.html">View Guide</a>
+    </div>
+
+    <div class="card cat-web-dev" data-cat="web-dev">
+      <span class="card-badge">Web Dev</span>
+      <h3>COP4834 – Guide to End User Documentation</h3>
+      <p>Teaches how to write helpful, usable documentation that reduces support tickets and speeds resolution—covering structure, tone, and tooling choices.</p>
+      <a href="web-dev/13-COP4834 Guide to User Documentation.html">View Guide</a>
+    </div>
+
+    <div class="card cat-web-dev" data-cat="web-dev">
+      <span class="card-badge">Web Dev</span>
+      <h3>CEN3722 – Guide to User Login &amp; Authentication</h3>
+      <p>Examines login and authentication from a human-computer interaction perspective, balancing security requirements with usability and accessibility goals.</p>
+      <a href="web-dev/6-CEN3722 Guide to User Login Systems.html">View Guide</a>
+    </div>
+
+    <div class="card cat-web-dev" data-cat="web-dev">
+      <span class="card-badge">Web Dev</span>
+      <h3>CEN3722 – Guide to Cognitive Walkthrough</h3>
+      <p>Teaches how to perform a Cognitive Walkthrough—a systematic usability evaluation method that simulates a new user's thought process through interface tasks.</p>
+      <a href="web-dev/CEN3722_Cognitive_Walkthrough_Guide.html">View Guide</a>
+    </div>
+
+    <div class="card cat-web-dev" data-cat="web-dev">
+      <span class="card-badge">Web Dev</span>
+      <h3>CEN3722 – Creating Good Surveys</h3>
+      <p>A guide to designing surveys that yield actionable user feedback on software—covering question types, bias avoidance, and response analysis.</p>
+      <a href="web-dev/CEN3722_Creating_Good_Surveys.html">View Guide</a>
+    </div>
+
+    <div class="card cat-web-dev" data-cat="web-dev">
+      <span class="card-badge">Web Dev</span>
+      <h3>CEN3722 – Guide to Heuristic Evaluation</h3>
+      <p>Explains how to evaluate an interface against Nielsen's usability heuristics—a cost-effective expert review method for identifying UX problems early.</p>
+      <a href="web-dev/CEN3722_Heuristic_Evaluation_Guide.html">View Guide</a>
+    </div>
+
+    <div class="card cat-web-dev" data-cat="web-dev">
+      <span class="card-badge">Web Dev</span>
+      <h3>CEN3722 – Developing the Prototype</h3>
+      <p>Guides students through developing and documenting mobile app prototypes across fidelity levels so they can be effectively evaluated by peers.</p>
+      <a href="web-dev/CEN3722_Prototype_Guide.html">View Guide</a>
+    </div>
+
+    <div class="card cat-web-dev" data-cat="web-dev">
+      <span class="card-badge">Web Dev</span>
+      <h3>CEN3722 – Use Cases &amp; Task Analysis Guide</h3>
+      <p>Covers use case modeling and task analysis as the foundational steps in designing effective user interfaces, translating user goals into system behavior.</p>
+      <a href="web-dev/CEN3722_Use_Cases_Guide.html">View Guide</a>
+    </div>
+
+    <!-- ===== GIT ===== -->
+    <div class="card cat-git" data-cat="git">
+      <span class="card-badge">Git</span>
+      <h3>COP4834 – Git &amp; GitHub Module</h3>
+      <p>Covers essential Git version control skills and GitHub integration for modern software development, including branching, merging, and visual tooling.</p>
+      <a href="git/3 - Getting started with Git.html">View Guide</a>
+    </div>
+
+    <!-- ===== ENGINEERING ===== -->
+    <div class="card cat-engineering" data-cat="engineering">
+      <span class="card-badge">Engineering</span>
+      <h3>BMPFast – Module 1: Introduction to the Learning System</h3>
+      <p>Introduces the BMPFast Learning System—a professional development program for stormwater managers and engineers navigating new Florida regulations.</p>
+      <a href="engineering/module_01-introduction.html">View Guide</a>
+    </div>
+
+    <div class="card cat-engineering" data-cat="engineering">
+      <span class="card-badge">Engineering</span>
+      <h3>Module 2: Florida Stormwater History and Permitting</h3>
+      <p>Covers the regulatory framework and historical context behind Florida's stormwater permitting process, including key rule changes and agency roles.</p>
+      <a href="engineering/module_02_florida_stormwater_history_permitting.html">View Guide</a>
+    </div>
+
+    <div class="card cat-engineering" data-cat="engineering">
+      <span class="card-badge">Engineering</span>
+      <h3>Module 3: Understanding Regulations, Rules and Practice</h3>
+      <p>Walks through the latest Florida stormwater rule changes and how to navigate permitting requirements efficiently to keep projects on schedule.</p>
+      <a href="engineering/module_03_regulations_rules_practice.html">View Guide</a>
+    </div>
+
+    <div class="card cat-engineering" data-cat="engineering">
+      <span class="card-badge">Engineering</span>
+      <h3>Module 4: Florida Rainfall Characteristics</h3>
+      <p>A comprehensive analysis of Florida precipitation patterns, variability, and hydrologic implications—the foundational driver of stormwater design calculations.</p>
+      <a href="engineering/module_04_rainfall_characteristics.html">View Guide</a>
+    </div>
+
+    <div class="card cat-engineering" data-cat="engineering">
+      <span class="card-badge">Engineering</span>
+      <h3>Module 5: Site Characteristics and BMPFast Navigation</h3>
+      <p>Covers site and catchment data input in BMPFast, including navigation through worksheets for characterizing drainage areas and land use.</p>
+      <a href="engineering/module_05_site_characteristics_navigation.html">View Guide</a>
+    </div>
+
+    <div class="card cat-engineering" data-cat="engineering">
+      <span class="card-badge">Engineering</span>
+      <h3>Module 6: Runoff Generation</h3>
+      <p>Explains the mechanisms of stormwater runoff generation from impervious and pervious surfaces, and how BMPFast models annual runoff volumes.</p>
+      <a href="engineering/module_06_runoff_generation.html">View Guide</a>
+    </div>
+
+    <div class="card cat-engineering" data-cat="engineering">
+      <span class="card-badge">Engineering</span>
+      <h3>Module 7: Runoff Characteristics and EMC Values</h3>
+      <p>Addresses the high variability of stormwater pollutant concentrations and how Event Mean Concentration (EMC) values are used in loading calculations.</p>
+      <a href="engineering/module_07_runoff_emc.html">View Guide</a>
+    </div>
+
+    <div class="card cat-engineering" data-cat="engineering">
+      <span class="card-badge">Engineering</span>
+      <h3>Module 8: Runoff Loadings</h3>
+      <p>Shows how to calculate annual pollutant mass loadings by multiplying EMC values by runoff volumes across land use categories in BMPFast.</p>
+      <a href="engineering/module_08_runoff_loadings.html">View Guide</a>
+    </div>
+
+    <div class="card cat-engineering" data-cat="engineering">
+      <span class="card-badge">Engineering</span>
+      <h3>Module 9: Catchment Characteristics</h3>
+      <p>Covers traditional BMP identification from Florida Applicant's Handbook Appendix O and methods for characterizing drainage basin properties in BMPFast.</p>
+      <a href="engineering/module_09_catchment_characteristics.html">View Guide</a>
+    </div>
+
+    <div class="card cat-engineering" data-cat="engineering">
+      <span class="card-badge">Engineering</span>
+      <h3>Module 10: Retention Systems</h3>
+      <p>Introduces stormwater retention BMPs that evacuate treatment volume through percolation or evaporation, with no surface discharge for the treatment volume.</p>
+      <a href="engineering/module_10_retention_systems.html">View Guide</a>
+    </div>
+
+    <div class="card cat-engineering" data-cat="engineering">
+      <span class="card-badge">Engineering</span>
+      <h3>Module 11: Analysis of a Retention Basin</h3>
+      <p>Uses BMPFast to evaluate annual mass removal, treatment depth, and groundwater protection criteria for retention BMP systems with worked examples.</p>
+      <a href="engineering/module_11-retention-basin.html">View Guide</a>
+    </div>
+
+    <div class="card cat-engineering" data-cat="engineering">
+      <span class="card-badge">Engineering</span>
+      <h3>Module 12: Wet Detention Systems</h3>
+      <p>Covers wet detention pond design and pollutant removal processes including TSS, phosphorus, and nitrogen removal in permanent pool systems.</p>
+      <a href="engineering/module_12_wet_detention.html">View Guide</a>
+    </div>
+
+    <div class="card cat-engineering" data-cat="engineering">
+      <span class="card-badge">Engineering</span>
+      <h3>Module 13: Analysis of a Wet Detention Pond</h3>
+      <p>Applies BMPFast to evaluate annual mass removal, residence time, and treatment train configuration for wet detention pond designs.</p>
+      <a href="engineering/module_13_wet_detention.html">View Guide</a>
+    </div>
+
+    <div class="card cat-engineering" data-cat="engineering">
+      <span class="card-badge">Engineering</span>
+      <h3>Module 14: Disconnecting the DCIA</h3>
+      <p>Explains Directly Connected Impervious Area (DCIA) under Florida's Applicant's Handbook and techniques for reducing connected impervious coverage.</p>
+      <a href="engineering/Module_14_Disconnecting_DCIA.html">View Guide</a>
+    </div>
+
+    <div class="card cat-engineering" data-cat="engineering">
+      <span class="card-badge">Engineering</span>
+      <h3>Module 15: BMPFast Analysis for Harvesting</h3>
+      <p>Guides users through BMPFast's harvesting analysis tools—from REV curve interpretation to multi-BMP compliance reporting for over 700 stormwater systems.</p>
+      <a href="engineering/Module_15_BMPFast_Analysis_for_Harvesting.html">View Guide</a>
+    </div>
+
+    <div class="card cat-engineering" data-cat="engineering">
+      <span class="card-badge">Engineering</span>
+      <h3>Module 16: Significance of Concentrations on BMP Performance</h3>
+      <p>Shows how baseline pollutant concentrations entering treatment systems affect BMP performance, using Florida residential phosphorus field studies as examples.</p>
+      <a href="engineering/module_16_significance_of_concentrations.html">View Guide</a>
+    </div>
+
+    <div class="card cat-engineering" data-cat="engineering">
+      <span class="card-badge">Engineering</span>
+      <h3>Module 17: Gross Pollutant Separators</h3>
+      <p>Covers engineered GPS devices designed to intercept coarse solids, debris, and settleable particles from urban stormwater runoff before pond entry.</p>
+      <a href="engineering/module_17_gross_pollutant_separators.html">View Guide</a>
+    </div>
+
+    <div class="card cat-engineering" data-cat="engineering">
+      <span class="card-badge">Engineering</span>
+      <h3>Module 18: Denitrification</h3>
+      <p>Explains biological denitrification in stormwater treatment, field-scale denitrification bed design, and nitrogen removal performance data.</p>
+      <a href="engineering/module_18_denitrification.html">View Guide</a>
+    </div>
+
+    <div class="card cat-engineering" data-cat="engineering">
+      <span class="card-badge">Engineering</span>
+      <h3>Module 19: Vegetated Stormwater Treatment Areas</h3>
+      <p>Covers constructed STAs that use aquatic and emergent vegetation to remove nutrients—particularly phosphorus—from stormwater runoff.</p>
+      <a href="engineering/module_19_Vegetated_Stormwater_Treatment_Areas.html">View Guide</a>
+    </div>
+
+    <!-- ===== DOTNET ===== -->
+    <div class="card cat-dotnet" data-cat="dotnet">
+      <span class="card-badge">.NET / MAUI</span>
+      <h3>MAUI Android → Google Play Store: Publishing Guide</h3>
+      <p>Step-by-step guide to publishing a .NET MAUI Android app through Visual Studio 2022 to the Google Play Console, including one-time setup and signing configuration.</p>
+      <a href="dotnet/maui_publish_to_google_play_guide.html">View Guide</a>
+    </div>
+
+    <!-- ===== COURSE TOOLS ===== -->
+    <div class="card cat-course-tools" data-cat="course-tools">
+      <span class="card-badge">Course Tools</span>
+      <h3>Guide to Writing Good Reports</h3>
+      <p>A student reference for producing clear, professional homework submissions across all courses—covering structure, citations, and report quality standards.</p>
+      <a href="course-tools/Guide to Writing Good Reports (for all classes).html">View Guide</a>
+    </div>
+
+    <!-- ===== OTHER ===== -->
+    <div class="card cat-other" data-cat="other">
+      <span class="card-badge">Other</span>
+      <h3>Florida Civics Literacy Exam – Study Guide</h3>
+      <p>Comprehensive preparation for the Florida Civic Literacy Act examination, covering Enlightenment philosophy, constitutional principles, and government structure.</p>
+      <a href="other/civics_exam_guide.html">View Guide</a>
+    </div>
+
+    <div class="card cat-other" data-cat="other">
+      <span class="card-badge">Other</span>
+      <h3>Florida Civics Literacy – Practice Quiz</h3>
+      <p>Interactive 20-question quiz sessions drawn randomly from a bank of 56 questions spanning all major civics topics aligned with the Florida Civic Literacy Act.</p>
+      <a href="other/civics_quiz.html">View Guide</a>
+    </div>
+
+    <div class="card cat-other" data-cat="other">
+      <span class="card-badge">Other</span>
+      <h3>FCLE Resource Links – Florida Civics Literacy Exam</h3>
+      <p>Curated links to primary source documents, sample questions, and study materials for the Florida Civic Literacy Exam (FCLE).</p>
+      <a href="other/civics_resources.html">View Guide</a>
+    </div>
+
+  </div><!-- /grid -->
+  <p class="no-results" id="noResults">No guides match your search.</p>
+</main>
+
+<footer>
+  <p>Ron's Guide Collection &nbsp;·&nbsp; Last updated: April 17, 2026</p>
+</footer>
+
+<script>
+  const cards = Array.from(document.querySelectorAll('.card'));
+  const searchInput = document.getElementById('searchInput');
+  const filterBtns = document.querySelectorAll('.filter-btn');
+  const noResults = document.getElementById('noResults');
+  const resultsCount = document.getElementById('resultsCount');
+  let activeCat = 'all';
+
+  function updateView() {
+    const q = searchInput.value.trim().toLowerCase();
+    let visible = 0;
+    cards.forEach(card => {
+      const titleText = card.querySelector('h3').textContent.toLowerCase();
+      const descText = card.querySelector('p').textContent.toLowerCase();
+      const cat = card.dataset.cat;
+      const catMatch = activeCat === 'all' || cat === activeCat;
+      const textMatch = !q || titleText.includes(q) || descText.includes(q);
+      const show = catMatch && textMatch;
+      card.hidden = !show;
+      if (show) visible++;
+    });
+    noResults.style.display = visible === 0 ? 'block' : 'none';
+    resultsCount.textContent = `Showing ${visible} of ${cards.length} guides`;
+  }
+
+  searchInput.addEventListener('input', updateView);
+
+  filterBtns.forEach(btn => {
+    btn.addEventListener('click', () => {
+      filterBtns.forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+      activeCat = btn.dataset.cat;
+      updateView();
+    });
+  });
+
+  updateView();
+</script>
+</body>
+</html>

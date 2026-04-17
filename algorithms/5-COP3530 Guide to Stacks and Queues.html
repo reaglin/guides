@@ -1,0 +1,1364 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>COP 3530 – Stacks &amp; Queues: LIFO &amp; FIFO Mastery</title>
+<link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=JetBrains+Mono:wght@400;500;600&family=Exo+2:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --cyber-dark:   #0a0e1a;
+    --cyber-mid:    #1a1f3a;
+    --cyber-light:  #2a3458;
+    --electric:     #00d9ff;
+    --electric-lt:  #33e3ff;
+    --neon:         #00ffff;
+    --neon-pink:    #ff0080;
+    --neon-green:   #00ff41;
+    --neon-orange:  #ff6b00;
+    --purple:       #8b5cf6;
+    --text:         #e0f2ff;
+    --text-dim:     #a0c4ea;
+    --card-bg:      #151b35;
+    --border:       #2d4a7a;
+    --white:        #ffffff;
+  }
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: 'Exo 2', sans-serif;
+    background: linear-gradient(135deg, var(--cyber-dark) 0%, var(--cyber-mid) 100%);
+    color: var(--text);
+    line-height: 1.7;
+    font-size: 15px;
+    min-height: 100vh;
+  }
+
+  /* ── CYBERPUNK BACKGROUND EFFECTS ── */
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background: 
+      radial-gradient(circle at 25% 25%, rgba(0,217,255,0.03) 0%, transparent 50%),
+      radial-gradient(circle at 75% 75%, rgba(255,0,128,0.02) 0%, transparent 50%);
+    pointer-events: none;
+    z-index: -1;
+  }
+
+  /* ── HERO HEADER ── */
+  .hero {
+    background: linear-gradient(135deg, #0a0e1a 0%, #1a2951 50%, #0d1433 100%);
+    border-bottom: 3px solid var(--electric);
+    padding: 50px 40px 42px;
+    position: relative;
+    overflow: hidden;
+  }
+  .hero::after {
+    content: '';
+    position: absolute; inset: 0;
+    background: repeating-linear-gradient(
+      45deg,
+      transparent,
+      transparent 50px,
+      rgba(0,217,255,0.02) 50px,
+      rgba(0,217,255,0.02) 52px
+    );
+    pointer-events: none;
+  }
+  .hero-badge {
+    display: inline-block;
+    background: linear-gradient(90deg, var(--electric), var(--neon));
+    color: var(--cyber-dark);
+    font-family: 'Orbitron', monospace;
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    padding: 5px 16px;
+    border-radius: 20px;
+    margin-bottom: 18px;
+    box-shadow: 0 0 20px rgba(0,217,255,0.3);
+  }
+  .hero h1 {
+    font-family: 'Orbitron', monospace;
+    font-size: clamp(28px, 5vw, 48px);
+    font-weight: 900;
+    color: var(--white);
+    line-height: 1.1;
+    letter-spacing: -1px;
+    text-shadow: 0 0 10px rgba(0,217,255,0.5);
+  }
+  .hero h1 .accent { 
+    color: var(--electric); 
+    text-shadow: 0 0 15px var(--electric);
+  }
+  .hero-sub {
+    font-family: 'Orbitron', monospace;
+    font-size: 16px;
+    color: var(--electric-lt);
+    margin-top: 12px;
+    font-weight: 400;
+    letter-spacing: 1px;
+    text-shadow: 0 0 8px rgba(51,227,255,0.4);
+  }
+  .hero-meta {
+    display: flex;
+    gap: 32px;
+    margin-top: 28px;
+    flex-wrap: wrap;
+  }
+  .hero-meta span {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-size: 13px;
+    color: var(--text-dim);
+    font-family: 'JetBrains Mono', monospace;
+  }
+  .hero-meta span b { 
+    color: var(--neon); 
+    text-shadow: 0 0 5px var(--neon);
+  }
+
+  /* ── MAIN CONTENT ── */
+  .container { max-width: 1160px; margin: 0 auto; padding: 44px 32px 80px; }
+
+  /* ── SECTION TITLES ── */
+  .section-title {
+    font-family: 'Orbitron', monospace;
+    font-size: 24px;
+    font-weight: 700;
+    color: var(--electric);
+    border-left: 4px solid var(--neon);
+    padding-left: 20px;
+    margin: 52px 0 24px;
+    letter-spacing: 0.5px;
+    text-shadow: 0 0 10px rgba(0,217,255,0.3);
+  }
+  .section-title.first { margin-top: 16px; }
+
+  /* ── INTRO CARD ── */
+  .intro-card {
+    background: var(--card-bg);
+    border: 1px solid var(--border);
+    border-left: 4px solid var(--electric);
+    border-radius: 12px;
+    padding: 26px 30px;
+    margin-bottom: 16px;
+    font-size: 15px;
+    color: var(--text);
+    line-height: 1.75;
+    box-shadow: 0 4px 20px rgba(0,217,255,0.08);
+  }
+  .intro-card p + p { margin-top: 16px; }
+  .intro-card strong { color: var(--neon); }
+  .intro-card em { color: var(--electric-lt); font-style: normal; }
+
+  /* ── COLLAPSIBLE DETAILS ── */
+  details {
+    background: var(--card-bg);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    margin-bottom: 16px;
+    overflow: hidden;
+    transition: box-shadow 0.3s, border-color 0.3s;
+  }
+  details[open] { 
+    box-shadow: 0 0 30px rgba(0,217,255,0.15); 
+    border-color: var(--electric);
+  }
+  details[open] summary { 
+    border-bottom: 1px solid var(--border);
+    background: rgba(0,217,255,0.05);
+  }
+
+  summary {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    padding: 20px 24px;
+    cursor: pointer;
+    list-style: none;
+    font-family: 'Orbitron', monospace;
+    font-size: 16px;
+    font-weight: 700;
+    color: var(--text);
+    user-select: none;
+    transition: background 0.2s;
+  }
+  summary::-webkit-details-marker { display: none; }
+  summary::after {
+    content: '▶';
+    margin-left: auto;
+    color: var(--electric);
+    font-size: 14px;
+    transition: transform 0.3s;
+    text-shadow: 0 0 8px var(--electric);
+  }
+  details[open] summary::after { transform: rotate(90deg); }
+  summary:hover { background: rgba(0,217,255,0.08); }
+
+  .summary-icon {
+    width: 40px; height: 40px;
+    border-radius: 10px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 18px;
+    flex-shrink: 0;
+    border: 1px solid;
+  }
+
+  .details-body { padding: 24px 28px 32px; }
+
+  /* ── CONCEPT CARDS ── */
+  .concept-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+    gap: 18px;
+    margin-top: 8px;
+  }
+  .concept-card {
+    background: var(--cyber-light);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 22px 26px;
+    transition: transform 0.25s, box-shadow 0.25s;
+    position: relative;
+    overflow: hidden;
+  }
+  .concept-card:hover { 
+    transform: translateY(-4px); 
+    box-shadow: 0 10px 40px rgba(0,217,255,0.12);
+  }
+  .concept-card::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0; height: 3px;
+    background: linear-gradient(90deg, var(--electric), var(--neon));
+  }
+  .concept-card-header {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 12px;
+    margin-bottom: 14px;
+  }
+  .concept-card-name {
+    font-family: 'Orbitron', monospace;
+    font-weight: 700;
+    font-size: 17px;
+    color: var(--white);
+    text-shadow: 0 0 5px rgba(255,255,255,0.3);
+  }
+  .concept-card p {
+    font-size: 14px;
+    color: var(--text-dim);
+    line-height: 1.65;
+    margin-bottom: 12px;
+  }
+
+  /* ── OPERATION BADGES ── */
+  .operations {
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+    margin-top: 14px;
+  }
+  .op-badge {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    font-weight: 500;
+    padding: 4px 12px;
+    border-radius: 8px;
+    text-align: center;
+    border: 1px solid;
+  }
+  .op-primary   { background: rgba(0,217,255,0.2); color: var(--electric); border-color: var(--electric); }
+  .op-secondary { background: rgba(0,255,255,0.15); color: var(--neon); border-color: var(--neon); }
+  .op-time      { background: rgba(0,255,65,0.15); color: var(--neon-green); border-color: var(--neon-green); }
+
+  /* ── CODE BLOCKS ── */
+  .code-block {
+    background: #0f1729;
+    border: 1px solid var(--border);
+    border-left: 4px solid var(--electric);
+    border-radius: 10px;
+    padding: 20px 24px;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 13px;
+    color: #d4e6f7;
+    overflow-x: auto;
+    white-space: pre;
+    line-height: 1.8;
+    margin: 16px 0;
+    box-shadow: 0 4px 16px rgba(0,0,0,0.3);
+  }
+  .code-comment { color: #6b8db5; font-style: italic; }
+  .code-keyword { color: var(--neon); font-weight: 500; }
+  .code-type    { color: var(--electric-lt); }
+  .code-string  { color: var(--neon-green); }
+  .code-number  { color: var(--neon-orange); }
+  .code-func    { color: var(--neon-pink); }
+
+  /* ── VISUAL DIAGRAMS ── */
+  .diagram {
+    background: var(--cyber-light);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 24px;
+    margin: 18px 0;
+    text-align: center;
+    font-family: 'JetBrains Mono', monospace;
+    position: relative;
+  }
+  .stack-visual, .queue-visual {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 12px;
+    margin: 16px 0;
+  }
+  .stack-visual { flex-direction: column; }
+  
+  .element {
+    background: linear-gradient(135deg, var(--electric), var(--neon));
+    color: var(--cyber-dark);
+    padding: 12px 16px;
+    border-radius: 8px;
+    font-size: 14px;
+    font-weight: 600;
+    min-width: 50px;
+    text-align: center;
+    box-shadow: 0 4px 12px rgba(0,217,255,0.3);
+  }
+  .arrow {
+    color: var(--neon);
+    font-size: 18px;
+    font-weight: bold;
+    text-shadow: 0 0 8px var(--neon);
+  }
+  .label {
+    font-size: 11px;
+    color: var(--text-dim);
+    margin-top: 8px;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+  }
+
+  /* ── COMPARISON TABLE ── */
+  .comparison-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 14px;
+    margin-top: 10px;
+    background: var(--cyber-light);
+    border-radius: 10px;
+    overflow: hidden;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.2);
+  }
+  .comparison-table thead tr {
+    background: var(--cyber-mid);
+    font-family: 'Orbitron', monospace;
+    font-weight: 700;
+    font-size: 12px;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    color: var(--electric);
+  }
+  .comparison-table th, .comparison-table td {
+    padding: 14px 18px;
+    text-align: left;
+    border-bottom: 1px solid var(--border);
+  }
+  .comparison-table tbody tr:hover { 
+    background: rgba(0,217,255,0.08); 
+  }
+  .comparison-table .mono { 
+    font-family: 'JetBrains Mono', monospace; 
+    color: var(--neon-green);
+    text-shadow: 0 0 3px var(--neon-green);
+  }
+
+  /* ── APPLICATIONS GRID ── */
+  .apps-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    gap: 16px;
+    margin-top: 8px;
+  }
+  .app-card {
+    background: var(--cyber-light);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 20px 24px;
+    transition: transform 0.25s;
+    position: relative;
+  }
+  .app-card:hover { transform: translateY(-3px); }
+  .app-card::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0; height: 2px;
+  }
+  .app-card.stack::before { background: var(--electric); }
+  .app-card.queue::before { background: var(--neon); }
+
+  .app-card-header {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    margin-bottom: 12px;
+  }
+  .app-icon {
+    width: 36px; height: 36px;
+    border-radius: 10px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 16px;
+    flex-shrink: 0;
+  }
+  .app-title {
+    font-family: 'Orbitron', monospace;
+    font-weight: 700;
+    font-size: 15px;
+    color: var(--white);
+  }
+  .app-card p { font-size: 13px; color: var(--text-dim); line-height: 1.65; }
+  .app-tech {
+    margin-top: 12px;
+    padding-top: 12px;
+    border-top: 1px solid var(--border);
+    font-size: 11px;
+    font-family: 'JetBrains Mono', monospace;
+    color: var(--text-dim);
+  }
+  .app-tech strong { color: var(--neon); }
+
+  /* ── CALLOUTS ── */
+  .callout {
+    border-radius: 10px;
+    padding: 18px 22px;
+    margin: 16px 0;
+    font-size: 14px;
+    line-height: 1.7;
+    display: flex;
+    gap: 16px;
+    align-items: flex-start;
+    border: 1px solid;
+  }
+  .callout-info { 
+    background: rgba(0,217,255,0.08); 
+    border-color: var(--electric);
+    box-shadow: 0 0 20px rgba(0,217,255,0.05);
+  }
+  .callout-tip { 
+    background: rgba(0,255,255,0.08); 
+    border-color: var(--neon);
+    box-shadow: 0 0 20px rgba(0,255,255,0.05);
+  }
+  .callout-warn { 
+    background: rgba(255,107,0,0.08); 
+    border-color: var(--neon-orange);
+    box-shadow: 0 0 20px rgba(255,107,0,0.05);
+  }
+  .callout-icon { 
+    font-size: 20px; 
+    flex-shrink: 0; 
+    margin-top: 2px;
+    text-shadow: 0 0 8px currentColor;
+  }
+  .callout-content { flex: 1; }
+  .callout-content strong { 
+    display: block; 
+    margin-bottom: 8px; 
+    font-family: 'Orbitron', monospace; 
+    font-size: 14px; 
+    letter-spacing: 0.5px; 
+    color: var(--white);
+  }
+
+  /* ── FOOTER ── */
+  footer {
+    text-align: center;
+    padding: 36px 20px;
+    border-top: 1px solid var(--border);
+    font-size: 12px;
+    font-family: 'JetBrains Mono', monospace;
+    color: var(--text-dim);
+    margin-top: 32px;
+    background: var(--cyber-mid);
+  }
+  footer span { 
+    color: var(--electric); 
+    text-shadow: 0 0 5px var(--electric);
+  }
+
+  /* ── RESPONSIVE ── */
+  @media (max-width: 768px) {
+    .hero-meta { flex-direction: column; gap: 16px; }
+    .concept-grid { grid-template-columns: 1fr; }
+    .apps-grid { grid-template-columns: 1fr; }
+  }
+</style>
+</head>
+<body>
+
+<!-- ═══════════════════════════════════ HERO ═══════════════════════════════════ -->
+<header class="hero">
+  <div class="hero-badge">COP 3530 · Data Structures</div>
+  <h1><span class="accent">Stacks</span> &amp; <span class="accent">Queues</span></h1>
+  <div class="hero-sub">LIFO · FIFO · The Order of Operations</div>
+  <div class="hero-meta">
+    <span>📚 <b>Stack:</b> LIFO - Last In, First Out</span>
+    <span>🚶 <b>Queue:</b> FIFO - First In, First Out</span>
+    <span>⚡ <b>Operations:</b> Push, Pop, Enqueue, Dequeue</span>
+    <span>🎯 <b>Level:</b> Fundamental</span>
+  </div>
+</header>
+
+<div class="container">
+
+  <!-- ═══════════════════ SECTION 1: FUNDAMENTALS ═══════════════════ -->
+  <div class="section-title first">The Power of Ordered Access</div>
+
+  <div class="intro-card">
+    <p><strong>Stacks</strong> and <strong>Queues</strong> are fundamental linear data structures that control the <em>order</em> in which elements are accessed. Unlike arrays or lists where you can access any element at any time, these structures enforce specific insertion and removal patterns that mirror real-world scenarios.</p>
+    <p>A <strong>Stack</strong> follows <em>LIFO (Last In, First Out)</em> — like a stack of plates where you can only add or remove from the top. A <strong>Queue</strong> follows <em>FIFO (First In, First Out)</em> — like a line at a coffee shop where the first person in line is the first to be served.</p>
+    <p>These simple concepts are incredibly powerful. Function calls use stacks. Operating systems use queues for process scheduling. Web browsers use stacks for the back button. Understanding when to apply LIFO vs FIFO thinking is essential for solving algorithmic problems and building efficient systems.</p>
+  </div>
+
+  <div class="callout callout-info">
+    <span class="callout-icon" style="color:var(--electric);">⚡</span>
+    <div class="callout-content">
+      <strong>Why Order Matters</strong>
+      The restriction of access patterns isn't a limitation — it's a feature. By constraining how elements can be added and removed, stacks and queues provide predictable behavior that algorithms can depend on. This predictability enables elegant solutions to complex problems.
+    </div>
+  </div>
+
+  <!-- ═══════════════════ SECTION 2: STACK DEEP DIVE ═══════════════════ -->
+  <div class="section-title">The Stack — LIFO in Action</div>
+
+  <details open>
+    <summary>
+      <div class="summary-icon" style="background:rgba(0,217,255,0.2); color:var(--electric); border-color:var(--electric);">📚</div>
+      Stack Fundamentals &amp; Operations
+    </summary>
+    <div class="details-body">
+      <p style="color:var(--text-dim); margin-bottom:18px; font-size:14px;">A stack is a collection where all insertions and deletions happen at one end, called the <strong>top</strong>. The most recently added element is always the first to be removed — hence LIFO (Last In, First Out).</p>
+
+      <div class="diagram">
+        <div class="label" style="color:var(--electric); margin-bottom:12px;">STACK VISUALIZATION</div>
+        <div class="stack-visual">
+          <div class="element">Item 3 ← TOP</div>
+          <div class="element">Item 2</div>
+          <div class="element">Item 1 ← BOTTOM</div>
+        </div>
+        <div class="label">↑ Push adds here &nbsp;&nbsp;|&nbsp;&nbsp; Pop removes from here ↑</div>
+      </div>
+
+      <div class="concept-grid">
+        <div class="concept-card">
+          <div class="concept-card-header">
+            <div class="concept-card-name">Push Operation</div>
+          </div>
+          <p>Add an element to the top of the stack. Always O(1) time complexity regardless of implementation. The new element becomes the new top.</p>
+          <div class="operations">
+            <span class="op-badge op-primary">push(item)</span>
+            <span class="op-badge op-time">O(1)</span>
+          </div>
+        </div>
+
+        <div class="concept-card">
+          <div class="concept-card-header">
+            <div class="concept-card-name">Pop Operation</div>
+          </div>
+          <p>Remove and return the top element. Fails if stack is empty. Always O(1) time complexity. The element below becomes the new top.</p>
+          <div class="operations">
+            <span class="op-badge op-primary">pop()</span>
+            <span class="op-badge op-time">O(1)</span>
+          </div>
+        </div>
+
+        <div class="concept-card">
+          <div class="concept-card-header">
+            <div class="concept-card-name">Peek/Top Operation</div>
+          </div>
+          <p>View the top element without removing it. Used to inspect what will be popped next. Essential for algorithms that need to look ahead.</p>
+          <div class="operations">
+            <span class="op-badge op-secondary">peek() / top()</span>
+            <span class="op-badge op-time">O(1)</span>
+          </div>
+        </div>
+
+        <div class="concept-card">
+          <div class="concept-card-header">
+            <div class="concept-card-name">isEmpty Check</div>
+          </div>
+          <p>Check if the stack contains no elements. Critical for preventing errors when popping from an empty stack. Used in loop termination conditions.</p>
+          <div class="operations">
+            <span class="op-badge op-secondary">isEmpty()</span>
+            <span class="op-badge op-time">O(1)</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="code-block"><span class="code-comment">// Stack Implementation using Array (C++)</span>
+<span class="code-keyword">class</span> <span class="code-type">Stack</span> {
+<span class="code-keyword">private</span>:
+    <span class="code-type">int</span>* arr;        <span class="code-comment">// Dynamic array to store elements</span>
+    <span class="code-type">int</span> capacity;   <span class="code-comment">// Maximum size of stack</span>
+    <span class="code-type">int</span> top;        <span class="code-comment">// Index of top element (-1 if empty)</span>
+
+<span class="code-keyword">public</span>:
+    <span class="code-type">Stack</span>(<span class="code-type">int</span> size) {
+        arr = <span class="code-keyword">new</span> <span class="code-type">int</span>[size];
+        capacity = size;
+        top = <span class="code-number">-1</span>;  <span class="code-comment">// Empty stack</span>
+    }
+    
+    <span class="code-comment">// O(1) - Push operation</span>
+    <span class="code-keyword">void</span> <span class="code-func">push</span>(<span class="code-type">int</span> item) {
+        <span class="code-keyword">if</span> (top >= capacity - <span class="code-number">1</span>) {
+            <span class="code-keyword">throw</span> std::overflow_error(<span class="code-string">"Stack overflow"</span>);
+        }
+        arr[++top] = item;  <span class="code-comment">// Increment top, then assign</span>
+    }
+    
+    <span class="code-comment">// O(1) - Pop operation</span>
+    <span class="code-type">int</span> <span class="code-func">pop</span>() {
+        <span class="code-keyword">if</span> (top == <span class="code-number">-1</span>) {
+            <span class="code-keyword">throw</span> std::underflow_error(<span class="code-string">"Stack underflow"</span>);
+        }
+        <span class="code-keyword">return</span> arr[top--];  <span class="code-comment">// Return value, then decrement top</span>
+    }
+    
+    <span class="code-comment">// O(1) - Peek operation</span>
+    <span class="code-type">int</span> <span class="code-func">peek</span>() {
+        <span class="code-keyword">if</span> (top == <span class="code-number">-1</span>) {
+            <span class="code-keyword">throw</span> std::underflow_error(<span class="code-string">"Empty stack"</span>);
+        }
+        <span class="code-keyword">return</span> arr[top];    <span class="code-comment">// Just return, don't modify</span>
+    }
+    
+    <span class="code-comment">// O(1) - Check if empty</span>
+    <span class="code-type">bool</span> <span class="code-func">isEmpty</span>() {
+        <span class="code-keyword">return</span> top == <span class="code-number">-1</span>;
+    }
+};</div>
+
+      <div class="callout callout-tip">
+        <span class="callout-icon" style="color:var(--neon);">💡</span>
+        <div class="callout-content">
+          <strong>Implementation Choice: Array vs Linked List</strong>
+          Array-based stacks offer better cache performance and lower memory overhead. Linked list-based stacks provide dynamic resizing but have pointer overhead. For most applications, array-based stacks with dynamic resizing (like std::stack) provide the best balance.
+        </div>
+      </div>
+    </div>
+  </details>
+
+
+  <!-- ═══════════════════ SECTION 3: QUEUE DEEP DIVE ═══════════════════ -->
+  <div class="section-title">The Queue — FIFO in Action</div>
+
+  <details>
+    <summary>
+      <div class="summary-icon" style="background:rgba(0,255,255,0.2); color:var(--neon); border-color:var(--neon);">🚶</div>
+      Queue Fundamentals &amp; Operations
+    </summary>
+    <div class="details-body">
+      <p style="color:var(--text-dim); margin-bottom:18px; font-size:14px;">A queue is a collection where insertions happen at one end (called the <strong>rear</strong> or <strong>back</strong>) and deletions happen at the other end (called the <strong>front</strong>). The first element added is the first to be removed — hence FIFO (First In, First Out).</p>
+
+      <div class="diagram">
+        <div class="label" style="color:var(--neon); margin-bottom:12px;">QUEUE VISUALIZATION</div>
+        <div class="queue-visual">
+          <div class="element">Item 1</div>
+          <span class="arrow">→</span>
+          <div class="element">Item 2</div>
+          <span class="arrow">→</span>
+          <div class="element">Item 3</div>
+        </div>
+        <div class="label">↑ FRONT (dequeue here) &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; REAR (enqueue here) ↑</div>
+      </div>
+
+      <div class="concept-grid">
+        <div class="concept-card">
+          <div class="concept-card-header">
+            <div class="concept-card-name">Enqueue Operation</div>
+          </div>
+          <p>Add an element to the rear (back) of the queue. New elements join the end of the line. Always O(1) with proper implementation.</p>
+          <div class="operations">
+            <span class="op-badge op-primary">enqueue(item)</span>
+            <span class="op-badge op-time">O(1)</span>
+          </div>
+        </div>
+
+        <div class="concept-card">
+          <div class="concept-card-header">
+            <div class="concept-card-name">Dequeue Operation</div>
+          </div>
+          <p>Remove and return the front element. The element that has been waiting longest is served first. Fails if queue is empty.</p>
+          <div class="operations">
+            <span class="op-badge op-primary">dequeue()</span>
+            <span class="op-badge op-time">O(1)</span>
+          </div>
+        </div>
+
+        <div class="concept-card">
+          <div class="concept-card-header">
+            <div class="concept-card-name">Front Operation</div>
+          </div>
+          <p>View the front element without removing it. Shows who is next in line without serving them. Essential for priority-based algorithms.</p>
+          <div class="operations">
+            <span class="op-badge op-secondary">front() / peek()</span>
+            <span class="op-badge op-time">O(1)</span>
+          </div>
+        </div>
+
+        <div class="concept-card">
+          <div class="concept-card-header">
+            <div class="concept-card-name">isEmpty Check</div>
+          </div>
+          <p>Check if the queue has no elements. Prevents dequeue operations on empty queues. Used in processing loops and algorithms.</p>
+          <div class="operations">
+            <span class="op-badge op-secondary">isEmpty()</span>
+            <span class="op-badge op-time">O(1)</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="code-block"><span class="code-comment">// Queue Implementation using Circular Array (C++)</span>
+<span class="code-keyword">class</span> <span class="code-type">Queue</span> {
+<span class="code-keyword">private</span>:
+    <span class="code-type">int</span>* arr;        <span class="code-comment">// Circular array to store elements</span>
+    <span class="code-type">int</span> capacity;   <span class="code-comment">// Maximum size of queue</span>
+    <span class="code-type">int</span> front;      <span class="code-comment">// Index of front element</span>
+    <span class="code-type">int</span> rear;       <span class="code-comment">// Index of rear element</span>
+    <span class="code-type">int</span> size;       <span class="code-comment">// Current number of elements</span>
+
+<span class="code-keyword">public</span>:
+    <span class="code-type">Queue</span>(<span class="code-type">int</span> cap) {
+        arr = <span class="code-keyword">new</span> <span class="code-type">int</span>[cap];
+        capacity = cap;
+        front = rear = <span class="code-number">0</span>;
+        size = <span class="code-number">0</span>;
+    }
+    
+    <span class="code-comment">// O(1) - Enqueue operation</span>
+    <span class="code-keyword">void</span> <span class="code-func">enqueue</span>(<span class="code-type">int</span> item) {
+        <span class="code-keyword">if</span> (size == capacity) {
+            <span class="code-keyword">throw</span> std::overflow_error(<span class="code-string">"Queue overflow"</span>);
+        }
+        arr[rear] = item;
+        rear = (rear + <span class="code-number">1</span>) % capacity;  <span class="code-comment">// Circular increment</span>
+        size++;
+    }
+    
+    <span class="code-comment">// O(1) - Dequeue operation</span>
+    <span class="code-type">int</span> <span class="code-func">dequeue</span>() {
+        <span class="code-keyword">if</span> (size == <span class="code-number">0</span>) {
+            <span class="code-keyword">throw</span> std::underflow_error(<span class="code-string">"Queue underflow"</span>);
+        }
+        <span class="code-type">int</span> item = arr[front];
+        front = (front + <span class="code-number">1</span>) % capacity;  <span class="code-comment">// Circular increment</span>
+        size--;
+        <span class="code-keyword">return</span> item;
+    }
+    
+    <span class="code-comment">// O(1) - Front operation</span>
+    <span class="code-type">int</span> <span class="code-func">getFront</span>() {
+        <span class="code-keyword">if</span> (size == <span class="code-number">0</span>) {
+            <span class="code-keyword">throw</span> std::underflow_error(<span class="code-string">"Empty queue"</span>);
+        }
+        <span class="code-keyword">return</span> arr[front];
+    }
+    
+    <span class="code-comment">// O(1) - Check if empty</span>
+    <span class="code-type">bool</span> <span class="code-func">isEmpty</span>() {
+        <span class="code-keyword">return</span> size == <span class="code-number">0</span>;
+    }
+};</div>
+
+      <div class="callout callout-warn">
+        <span class="callout-icon" style="color:var(--neon-orange);">⚠️</span>
+        <div class="callout-content">
+          <strong>Circular Array Implementation</strong>
+          The circular array technique prevents wasted space that would occur with naive array implementation. Without circularity, repeatedly enqueuing and dequeuing would shift the queue to the right, eventually running out of space even with empty slots at the beginning.
+        </div>
+      </div>
+    </div>
+  </details>
+
+  <!-- ═══════════════════ SECTION 4: IMPLEMENTATION COMPARISON ═══════════════════ -->
+  <div class="section-title">Implementation Strategies</div>
+
+  <details>
+    <summary>
+      <div class="summary-icon" style="background:rgba(139,92,246,0.2); color:var(--purple); border-color:var(--purple);">⚙️</div>
+      Array vs Linked List Implementations
+    </summary>
+    <div class="details-body">
+      <div class="comparison-table">
+        <thead>
+          <tr>
+            <th>Aspect</th>
+            <th>Array-Based Stack</th>
+            <th>Linked List Stack</th>
+            <th>Array-Based Queue</th>
+            <th>Linked List Queue</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><strong>Memory Overhead</strong></td>
+            <td>Low (no pointers)</td>
+            <td>High (pointer per node)</td>
+            <td>Low (circular buffer)</td>
+            <td>High (pointer per node)</td>
+          </tr>
+          <tr>
+            <td><strong>Cache Performance</strong></td>
+            <td><span class="mono">Excellent</span></td>
+            <td>Poor</td>
+            <td><span class="mono">Excellent</span></td>
+            <td>Poor</td>
+          </tr>
+          <tr>
+            <td><strong>Dynamic Resizing</strong></td>
+            <td>Complex (reallocation)</td>
+            <td><span class="mono">Natural</span></td>
+            <td>Complex (reallocation)</td>
+            <td><span class="mono">Natural</span></td>
+          </tr>
+          <tr>
+            <td><strong>Push/Enqueue Time</strong></td>
+            <td><span class="mono">O(1)*</span></td>
+            <td><span class="mono">O(1)</span></td>
+            <td><span class="mono">O(1)</span></td>
+            <td><span class="mono">O(1)</span></td>
+          </tr>
+          <tr>
+            <td><strong>Pop/Dequeue Time</strong></td>
+            <td><span class="mono">O(1)</span></td>
+            <td><span class="mono">O(1)</span></td>
+            <td><span class="mono">O(1)</span></td>
+            <td><span class="mono">O(1)</span></td>
+          </tr>
+          <tr>
+            <td><strong>Space Complexity</strong></td>
+            <td><span class="mono">O(n)</span></td>
+            <td><span class="mono">O(n)</span></td>
+            <td><span class="mono">O(n)</span></td>
+            <td><span class="mono">O(n)</span></td>
+          </tr>
+          <tr>
+            <td><strong>Best Use Case</strong></td>
+            <td>Known size bounds</td>
+            <td>Highly dynamic size</td>
+            <td>Known size bounds</td>
+            <td>Highly dynamic size</td>
+          </tr>
+        </tbody>
+      </table>
+      <p style="color:var(--text-dim); font-size:12px; margin-top:12px; font-family:'JetBrains Mono', monospace;">* = amortized time (occasionally O(n) for resizing)</p>
+
+      <div class="concept-grid" style="margin-top:20px;">
+        <div class="concept-card">
+          <div class="concept-card-header">
+            <div class="concept-card-name">Array-Based Advantages</div>
+          </div>
+          <p>Better cache locality leads to faster access. Lower memory overhead (no pointers). Random access to elements (though not used in stack/queue interface). Generally preferred in performance-critical applications.</p>
+        </div>
+
+        <div class="concept-card">
+          <div class="concept-card-header">
+            <div class="concept-card-name">Linked List Advantages</div>
+          </div>
+          <p>No size limitations (bounded only by available memory). No waste of allocated space. Easier to implement without complex resizing logic. Natural choice when maximum size is unknown.</p>
+        </div>
+      </div>
+
+      <div class="callout callout-info">
+        <span class="callout-icon" style="color:var(--electric);">📊</span>
+        <div class="callout-content">
+          <strong>Standard Library Choices</strong>
+          C++ std::stack and std::queue use deque (double-ended queue) by default, which provides the benefits of both arrays and linked lists. Java's Stack class uses Vector (dynamic array), while ArrayDeque is preferred for queue operations.
+        </div>
+      </div>
+    </div>
+  </details>
+
+
+  <!-- ═══════════════════ SECTION 5: REAL-WORLD APPLICATIONS ═══════════════════ -->
+  <div class="section-title">Where LIFO &amp; FIFO Matter in the Real World</div>
+
+  <details open>
+    <summary>
+      <div class="summary-icon" style="background:rgba(0,255,65,0.2); color:var(--neon-green); border-color:var(--neon-green);">🌍</div>
+      Production Systems &amp; Applications
+    </summary>
+    <div class="details-body">
+      <p style="color:var(--text-dim); margin-bottom:18px; font-size:14px;">Stacks and queues aren't academic concepts — they're fundamental building blocks that power the software you use every day. Understanding these applications helps you recognize when to apply LIFO vs FIFO thinking in your own programs.</p>
+
+      <div class="callout callout-info">
+        <span class="callout-icon" style="color:var(--electric);">🧠</span>
+        <div class="callout-content">
+          <strong>Key Insight</strong>
+          LIFO (Stacks) are perfect when you need to reverse order or handle nested structures. FIFO (Queues) are ideal when fairness, ordering, or buffering is important.
+        </div>
+      </div>
+
+      <div class="apps-grid">
+        <!-- STACK APPLICATIONS -->
+        <div class="app-card stack">
+          <div class="app-card-header">
+            <div class="app-icon" style="background:rgba(0,217,255,0.2); color:var(--electric);">🌐</div>
+            <div class="app-title">Web Browser Back Button</div>
+          </div>
+          <p>Each page you visit gets pushed onto a stack. Clicking "Back" pops the most recent page. This LIFO behavior lets you retrace your navigation path in reverse order.</p>
+          <div class="app-tech"><strong>Implementation:</strong> std::stack&lt;URL&gt; in browser engines</div>
+        </div>
+
+        <div class="app-card stack">
+          <div class="app-card-header">
+            <div class="app-icon" style="background:rgba(0,217,255,0.2); color:var(--electric);">⚡</div>
+            <div class="app-title">Function Call Stack</div>
+          </div>
+          <p>Every function call pushes a frame onto the call stack. When a function returns, its frame is popped. This enables recursion and proper variable scoping in every programming language.</p>
+          <div class="app-tech"><strong>Implementation:</strong> Hardware/OS-level stack management</div>
+        </div>
+
+        <div class="app-card stack">
+          <div class="app-card-header">
+            <div class="app-icon" style="background:rgba(0,217,255,0.2); color:var(--electric);">✏️</div>
+            <div class="app-title">Undo/Redo Systems</div>
+          </div>
+          <p>Text editors, image editors, and IDEs use stacks to track operations. Each action is pushed onto the undo stack. Undo pops operations and pushes them to the redo stack.</p>
+          <div class="app-tech"><strong>Implementation:</strong> Command pattern with dual stacks</div>
+        </div>
+
+        <div class="app-card stack">
+          <div class="app-card-header">
+            <div class="app-icon" style="background:rgba(0,217,255,0.2); color:var(--electric);">🧮</div>
+            <div class="app-title">Expression Evaluation</div>
+          </div>
+          <p>Calculators and programming language interpreters use stacks to evaluate mathematical expressions, handle operator precedence, and convert between infix, postfix, and prefix notation.</p>
+          <div class="app-tech"><strong>Implementation:</strong> Shunting-yard algorithm, recursive descent parsers</div>
+        </div>
+
+        <div class="app-card stack">
+          <div class="app-card-header">
+            <div class="app-icon" style="background:rgba(0,217,255,0.2); color:var(--electric);">🗂️</div>
+            <div class="app-title">Balanced Parentheses Checking</div>
+          </div>
+          <p>Compilers, IDEs, and text editors use stacks to check if parentheses, brackets, and braces are properly matched. Each opening symbol pushes, each closing symbol pops and validates.</p>
+          <div class="app-tech"><strong>Implementation:</strong> Stack-based parsing in compiler front-ends</div>
+        </div>
+
+        <!-- QUEUE APPLICATIONS -->
+        <div class="app-card queue">
+          <div class="app-card-header">
+            <div class="app-icon" style="background:rgba(0,255,255,0.2); color:var(--neon);">💻</div>
+            <div class="app-title">Operating System Process Scheduling</div>
+          </div>
+          <p>OS schedulers use queues to manage processes waiting for CPU time. FIFO ensures fairness — processes are served in the order they arrive, preventing starvation.</p>
+          <div class="app-tech"><strong>Implementation:</strong> Multi-level feedback queues in Linux/Windows</div>
+        </div>
+
+        <div class="app-card queue">
+          <div class="app-card-header">
+            <div class="app-icon" style="background:rgba(0,255,255,0.2); color:var(--neon);">🖨️</div>
+            <div class="app-title">Print Spoolers</div>
+          </div>
+          <p>Print jobs are queued in FIFO order. First document sent to printer is first printed. This prevents chaos when multiple users share a printer and ensures fair access.</p>
+          <div class="app-tech"><strong>Implementation:</strong> CUPS (Common Unix Printing System) uses priority queues</div>
+        </div>
+
+        <div class="app-card queue">
+          <div class="app-card-header">
+            <div class="app-icon" style="background:rgba(0,255,255,0.2); color:var(--neon);">🔍</div>
+            <div class="app-title">Breadth-First Search (BFS)</div>
+          </div>
+          <p>Graph and tree traversal algorithms use queues to explore nodes level by level. This FIFO approach ensures you visit all nodes at distance d before any at distance d+1.</p>
+          <div class="app-tech"><strong>Implementation:</strong> std::queue in graph libraries</div>
+        </div>
+
+        <div class="app-card queue">
+          <div class="app-card-header">
+            <div class="app-icon" style="background:rgba(0,255,255,0.2); color:var(--neon);">🌐</div>
+            <div class="app-title">Web Server Request Handling</div>
+          </div>
+          <p>HTTP servers queue incoming requests. FIFO processing ensures that requests are handled in order of arrival, providing predictable response times and fair service.</p>
+          <div class="app-tech"><strong>Implementation:</strong> Thread pools with work queues in Apache/Nginx</div>
+        </div>
+
+        <div class="app-card queue">
+          <div class="app-card-header">
+            <div class="app-icon" style="background:rgba(0,255,255,0.2); color:var(--neon);">📡</div>
+            <div class="app-title">Network Packet Buffers</div>
+          </div>
+          <p>Network interfaces queue packets for transmission. FIFO ensures packets are sent in order, maintaining network protocols and preventing reordering issues.</p>
+          <div class="app-tech"><strong>Implementation:</strong> Ring buffers in network driver code</div>
+        </div>
+
+        <div class="app-card queue">
+          <div class="app-card-header">
+            <div class="app-icon" style="background:rgba(0,255,255,0.2); color:var(--neon);">🎮</div>
+            <div class="app-title">Game Event Processing</div>
+          </div>
+          <p>Game engines queue player inputs and game events. Processing events in FIFO order ensures consistent gameplay and prevents input lag from affecting game state.</p>
+          <div class="app-tech"><strong>Implementation:</strong> Event queues in Unity, Unreal Engine</div>
+        </div>
+      </div>
+    </div>
+  </details>
+
+  <!-- ═══════════════════ SECTION 6: WHEN TO USE WHICH ═══════════════════ -->
+  <div class="section-title">Decision Guide: Stack vs Queue</div>
+
+  <details>
+    <summary>
+      <div class="summary-icon" style="background:rgba(255,107,0,0.2); color:var(--neon-orange); border-color:var(--neon-orange);">🎯</div>
+      Choosing the Right Data Structure
+    </summary>
+    <div class="details-body">
+      <div class="concept-grid">
+        <div class="concept-card">
+          <div class="concept-card-header">
+            <div class="concept-card-name">Use a Stack When...</div>
+          </div>
+          <p>• You need to reverse the order of processing<br>
+          • Handling nested or recursive structures<br>
+          • Implementing undo functionality<br>
+          • Processing most recent items first<br>
+          • Managing temporary storage during algorithms<br>
+          • Parsing expressions or syntax</p>
+        </div>
+
+        <div class="concept-card">
+          <div class="concept-card-header">
+            <div class="concept-card-name">Use a Queue When...</div>
+          </div>
+          <p>• Fairness is important (first come, first served)<br>
+          • Processing items in arrival order<br>
+          • Buffering between fast producers and slow consumers<br>
+          • Implementing breadth-first algorithms<br>
+          • Scheduling tasks or processes<br>
+          • Handling streaming data</p>
+        </div>
+      </div>
+
+      <div class="code-block"><span class="code-comment">// Quick Recognition Patterns</span>
+
+<span class="code-comment">// STACK PATTERNS - Look for these keywords/concepts:</span>
+<span class="code-string">"Most recent"</span>, <span class="code-string">"Last action"</span>, <span class="code-string">"Reverse order"</span>
+<span class="code-string">"Nested"</span>, <span class="code-string">"Recursive"</span>, <span class="code-string">"Balanced"</span>
+<span class="code-string">"Undo"</span>, <span class="code-string">"Backtrack"</span>, <span class="code-string">"Return path"</span>
+
+<span class="code-comment">// QUEUE PATTERNS - Look for these keywords/concepts:</span>
+<span class="code-string">"First in line"</span>, <span class="code-string">"Fair ordering"</span>, <span class="code-string">"Arrival order"</span>
+<span class="code-string">"Buffer"</span>, <span class="code-string">"Schedule"</span>, <span class="code-string">"Wait list"</span>
+<span class="code-string">"Level by level"</span>, <span class="code-string">"Breadth-first"</span>, <span class="code-string">"Round-robin"</span></div>
+
+      <div class="callout callout-tip">
+        <span class="callout-icon" style="color:var(--neon);">💡</span>
+        <div class="callout-content">
+          <strong>The Ultimate Test</strong>
+          Ask yourself: "If I were physically handling these items, would I naturally pick from a pile (stack) or wait in a line (queue)?" This intuitive test works remarkably well for choosing the right data structure.
+        </div>
+      </div>
+    </div>
+  </details>
+
+
+  <!-- ═══════════════════ SECTION 7: COMMON ALGORITHMS ═══════════════════ -->
+  <div class="section-title">Essential Algorithms &amp; Patterns</div>
+
+  <details>
+    <summary>
+      <div class="summary-icon" style="background:rgba(255,0,128,0.2); color:var(--neon-pink); border-color:var(--neon-pink);">🔧</div>
+      Classic Problems &amp; Solutions
+    </summary>
+    <div class="details-body">
+      <p style="color:var(--text-dim); margin-bottom:18px; font-size:14px;">Certain algorithmic patterns appear repeatedly when working with stacks and queues. Mastering these fundamental patterns prepares you for technical interviews and practical programming challenges.</p>
+
+      <div class="concept-grid">
+        <div class="concept-card">
+          <div class="concept-card-header">
+            <div class="concept-card-name">Balanced Parentheses (Stack)</div>
+          </div>
+          <p>Check if parentheses, brackets, and braces are properly matched. Push opening symbols, pop and validate closing symbols. Stack empty at end means balanced.</p>
+          <div class="operations">
+            <span class="op-badge op-time">O(n) time</span>
+            <span class="op-badge op-secondary">O(n) space</span>
+          </div>
+        </div>
+
+        <div class="concept-card">
+          <div class="concept-card-header">
+            <div class="concept-card-name">Postfix Expression Evaluation (Stack)</div>
+          </div>
+          <p>Evaluate mathematical expressions in postfix notation. Push operands, pop two operands when encountering operators, push result back. Classic stack application.</p>
+          <div class="operations">
+            <span class="op-badge op-time">O(n) time</span>
+            <span class="op-badge op-secondary">O(n) space</span>
+          </div>
+        </div>
+
+        <div class="concept-card">
+          <div class="concept-card-header">
+            <div class="concept-card-name">Next Greater Element (Stack)</div>
+          </div>
+          <p>For each element in array, find the next element that is greater. Use a monotonic decreasing stack. Essential pattern for many optimization problems.</p>
+          <div class="operations">
+            <span class="op-badge op-time">O(n) time</span>
+            <span class="op-badge op-secondary">O(n) space</span>
+          </div>
+        </div>
+
+        <div class="concept-card">
+          <div class="concept-card-header">
+            <div class="concept-card-name">Level Order Traversal (Queue)</div>
+          </div>
+          <p>Visit tree nodes level by level using BFS. Enqueue children of current level, dequeue nodes to process next level. Foundation of many tree algorithms.</p>
+          <div class="operations">
+            <span class="op-badge op-time">O(n) time</span>
+            <span class="op-badge op-secondary">O(w) space</span>
+          </div>
+        </div>
+
+        <div class="concept-card">
+          <div class="concept-card-header">
+            <div class="concept-card-name">Sliding Window Maximum (Deque)</div>
+          </div>
+          <p>Find maximum in every window of size k. Use double-ended queue (deque) to maintain candidates. Combines benefits of both stack and queue operations.</p>
+          <div class="operations">
+            <span class="op-badge op-time">O(n) time</span>
+            <span class="op-badge op-secondary">O(k) space</span>
+          </div>
+        </div>
+
+        <div class="concept-card">
+          <div class="concept-card-header">
+            <div class="concept-card-name">Generate Binary Numbers (Queue)</div>
+          </div>
+          <p>Generate binary representations of numbers 1 to n using queue. Start with "1", generate next by appending "0" and "1" to front of queue. Elegant BFS application.</p>
+          <div class="operations">
+            <span class="op-badge op-time">O(n) time</span>
+            <span class="op-badge op-secondary">O(n) space</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="code-block"><span class="code-comment">// Balanced Parentheses - Classic Stack Problem</span>
+<span class="code-type">bool</span> <span class="code-func">isBalanced</span>(<span class="code-type">string</span> s) {
+    <span class="code-type">stack</span><<span class="code-type">char</span>> st;
+    
+    <span class="code-keyword">for</span> (<span class="code-type">char</span> c : s) {
+        <span class="code-comment">// Push opening brackets</span>
+        <span class="code-keyword">if</span> (c == <span class="code-string">'('</span> || c == <span class="code-string">'['</span> || c == <span class="code-string">'{'</span>) {
+            st.push(c);
+        }
+        <span class="code-comment">// Check closing brackets</span>
+        <span class="code-keyword">else if</span> (c == <span class="code-string">')'</span> || c == <span class="code-string">']'</span> || c == <span class="code-string">'}'</span>) {
+            <span class="code-keyword">if</span> (st.empty()) <span class="code-keyword">return</span> <span class="code-keyword">false</span>;
+            
+            <span class="code-type">char</span> top = st.top();
+            st.pop();
+            
+            <span class="code-comment">// Check if brackets match</span>
+            <span class="code-keyword">if</span> ((c == <span class="code-string">')'</span> && top != <span class="code-string">'('</span>) ||
+                (c == <span class="code-string">']'</span> && top != <span class="code-string">'['</span>) ||
+                (c == <span class="code-string">'}'</span> && top != <span class="code-string">'{'</span>)) {
+                <span class="code-keyword">return</span> <span class="code-keyword">false</span>;
+            }
+        }
+    }
+    
+    <span class="code-keyword">return</span> st.empty();  <span class="code-comment">// Balanced if stack is empty</span>
+}
+
+<span class="code-comment">// Level Order Traversal - Classic Queue Problem</span>
+<span class="code-keyword">void</span> <span class="code-func">levelOrder</span>(<span class="code-type">TreeNode</span>* root) {
+    <span class="code-keyword">if</span> (!root) <span class="code-keyword">return</span>;
+    
+    <span class="code-type">queue</span><<span class="code-type">TreeNode</span>*> q;
+    q.push(root);
+    
+    <span class="code-keyword">while</span> (!q.empty()) {
+        <span class="code-type">int</span> levelSize = q.size();  <span class="code-comment">// Process one level at a time</span>
+        
+        <span class="code-keyword">for</span> (<span class="code-type">int</span> i = <span class="code-number">0</span>; i < levelSize; i++) {
+            <span class="code-type">TreeNode</span>* node = q.front();
+            q.pop();
+            
+            cout << node->val << <span class="code-string">" "</span>;  <span class="code-comment">// Process current node</span>
+            
+            <span class="code-comment">// Add children for next level</span>
+            <span class="code-keyword">if</span> (node->left) q.push(node->left);
+            <span class="code-keyword">if</span> (node->right) q.push(node->right);
+        }
+        cout << endl;  <span class="code-comment">// New line after each level</span>
+    }
+}</div>
+
+      <div class="callout callout-info">
+        <span class="callout-icon" style="color:var(--electric);">🎓</span>
+        <div class="callout-content">
+          <strong>Interview Success Pattern</strong>
+          When you see problems involving nested structures, expression parsing, or backtracking — think Stack. When you see problems involving level-by-level processing, fair scheduling, or buffering — think Queue. These patterns appear in 80%+ of technical interviews.
+        </div>
+      </div>
+    </div>
+  </details>
+
+  <!-- ═══════════════════ SECTION 8: MASTERY SUMMARY ═══════════════════ -->
+  <div class="section-title">Mastery Checklist &amp; Next Steps</div>
+
+  <details open>
+    <summary>
+      <div class="summary-icon" style="background:rgba(0,217,255,0.2); color:var(--electric); border-color:var(--electric);">🎯</div>
+      Complete Understanding Checklist
+    </summary>
+    <div class="details-body">
+      <div class="callout callout-tip">
+        <span class="callout-icon" style="color:var(--neon);">✅</span>
+        <div class="callout-content">
+          <strong>Stack Mastery Checklist</strong>
+          ✅ Understand LIFO principle and when it applies<br>
+          ✅ Implement stack using both arrays and linked lists<br>
+          ✅ Master push, pop, peek, isEmpty operations<br>
+          ✅ Solve balanced parentheses problem from memory<br>
+          ✅ Apply stacks to expression evaluation and parsing<br>
+          ✅ Recognize when LIFO order solves the problem naturally
+        </div>
+      </div>
+
+      <div class="callout callout-info">
+        <span class="callout-icon" style="color:var(--electric);">✅</span>
+        <div class="callout-content">
+          <strong>Queue Mastery Checklist</strong>
+          ✅ Understand FIFO principle and fairness concepts<br>
+          ✅ Implement queue using arrays (circular) and linked lists<br>
+          ✅ Master enqueue, dequeue, front, isEmpty operations<br>
+          ✅ Apply queues to BFS tree/graph traversal<br>
+          ✅ Understand queue applications in system design<br>
+          ✅ Recognize when FIFO ordering is the natural solution
+        </div>
+      </div>
+
+      <div class="concept-grid">
+        <div class="concept-card">
+          <div class="concept-card-header">
+            <div class="concept-card-name">What You've Mastered</div>
+          </div>
+          <p>Two of the most fundamental data structures in computer science. The building blocks for more complex structures like deques, priority queues, and many algorithms. The conceptual framework for understanding ordered access patterns.</p>
+        </div>
+
+        <div class="concept-card">
+          <div class="concept-card-header">
+            <div class="concept-card-name">Next Learning Steps</div>
+          </div>
+          <p><strong>Priority Queues:</strong> Queues where elements have priorities, not just FIFO order.<br>
+          <strong>Deques:</strong> Double-ended queues combining stack and queue operations.<br>
+          <strong>Trees:</strong> Hierarchical structures often traversed using stacks and queues.</p>
+        </div>
+      </div>
+
+      <div class="code-block"><span class="code-comment">// The Foundation You've Built</span>
+
+<span class="code-comment">// Stacks enable:</span>
+- Function call management (recursion)
+- Expression parsing and evaluation  
+- Undo/redo systems
+- Backtracking algorithms
+- Syntax checking and parsing
+
+<span class="code-comment">// Queues enable:</span>
+- Fair resource scheduling
+- Breadth-first search algorithms
+- Producer-consumer buffering
+- Event handling systems
+- Network packet processing
+
+<span class="code-comment">// Together they provide:</span>
+- Understanding of ordered access patterns
+- Foundation for all linear data structures
+- Building blocks for system design
+- Essential interview and practical skills</div>
+
+      <div class="callout callout-warn">
+        <span class="callout-icon" style="color:var(--neon-orange);">🚀</span>
+        <div class="callout-content">
+          <strong>Practice Reinforcement</strong>
+          The concepts are simple, but mastery comes through practice. Implement both structures from scratch multiple times. Solve classic problems until the patterns become second nature. The investment pays dividends throughout your entire career in computer science.
+        </div>
+      </div>
+    </div>
+  </details>
+
+  <!-- Footer -->
+  <footer>
+    <span>COP 3530</span> · Data Structures · Stacks &amp; Queues: Complete Guide
+    &nbsp;|&nbsp; LIFO &amp; FIFO: The foundation of ordered processing
+    &nbsp;|&nbsp; <span>Master the fundamentals</span>
+  </footer>
+
+</div><!-- end .container -->
+
+<script>
+  // Enhanced interactions for cyberpunk aesthetic
+  document.addEventListener('DOMContentLoaded', () => {
+    // Smooth section opening with scroll
+    document.querySelectorAll('summary').forEach(summary => {
+      summary.addEventListener('click', (e) => {
+        const details = summary.parentElement;
+        if (!details.open) {
+          setTimeout(() => {
+            details.scrollIntoView({ 
+              behavior: 'smooth', 
+              block: 'start' 
+            });
+          }, 150);
+        }
+      });
+    });
+
+    // Add glow effects to code blocks on hover
+    document.querySelectorAll('.code-block').forEach(block => {
+      block.addEventListener('mouseenter', () => {
+        block.style.borderLeftColor = 'var(--neon)';
+        block.style.boxShadow = '0 0 20px rgba(0,255,255,0.15)';
+      });
+      block.addEventListener('mouseleave', () => {
+        block.style.borderLeftColor = 'var(--electric)';
+        block.style.boxShadow = '0 4px 16px rgba(0,0,0,0.3)';
+      });
+    });
+
+    // Enhance concept cards with subtle animations
+    document.querySelectorAll('.concept-card').forEach(card => {
+      card.addEventListener('mouseenter', () => {
+        card.style.boxShadow = '0 10px 40px rgba(0,217,255,0.2)';
+      });
+      card.addEventListener('mouseleave', () => {
+        card.style.boxShadow = '';
+      });
+    });
+
+    // Add subtle pulse to operation badges
+    const badges = document.querySelectorAll('.op-badge');
+    badges.forEach(badge => {
+      badge.style.transition = 'all 0.3s ease';
+      badge.addEventListener('mouseenter', () => {
+        badge.style.transform = 'scale(1.05)';
+        badge.style.textShadow = '0 0 8px currentColor';
+      });
+      badge.addEventListener('mouseleave', () => {
+        badge.style.transform = 'scale(1)';
+        badge.style.textShadow = 'none';
+      });
+    });
+  });
+</script>
+
+</div></body>
+</html>

@@ -1,0 +1,1203 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Guide to Writing Good Reports</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700&family=Source+Serif+4:ital,wght@0,300;0,400;0,600;1,300;1,400&family=JetBrains+Mono:wght@400;500&display=swap');
+
+  :root {
+    --bg:        #faf8f4;
+    --surface:   #ffffff;
+    --border:    #ddd8ce;
+    --accent:    #7c4a1e;
+    --accent-lt: #b5763c;
+    --accent-bg: #f5ede3;
+    --heading:   #2c1a0e;
+    --body:      #3d2e22;
+    --muted:     #7a6a5a;
+    --good:      #2e6b3e;
+    --good-bg:   #eaf4ec;
+    --bad:       #8b2020;
+    --bad-bg:    #fbeaea;
+    --code-bg:   #1e1814;
+    --code-fg:   #e8d9c0;
+    --tag-bg:    #ede3d8;
+    --tag-fg:    #6b3a18;
+    --shadow:    0 2px 12px rgba(44,26,14,0.09);
+    --radius:    10px;
+  }
+
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    background: var(--bg);
+    color: var(--body);
+    font-family: 'Source Serif 4', Georgia, serif;
+    font-size: 1.05rem;
+    line-height: 1.75;
+    min-height: 100vh;
+  }
+
+  /* ── Header ── */
+  header {
+    background: linear-gradient(135deg, #2c1a0e 0%, #5c3010 60%, #8b5a2b 100%);
+    color: #fff;
+    padding: 3rem 2rem 2.5rem;
+    text-align: center;
+    position: relative;
+    overflow: hidden;
+  }
+  header::before {
+    content: '';
+    position: absolute; inset: 0;
+    background: repeating-linear-gradient(
+      45deg,
+      transparent,
+      transparent 40px,
+      rgba(255,255,255,0.03) 40px,
+      rgba(255,255,255,0.03) 80px
+    );
+  }
+  .header-badge {
+    display: inline-block;
+    background: rgba(255,255,255,0.12);
+    border: 1px solid rgba(255,255,255,0.25);
+    border-radius: 20px;
+    padding: 0.25rem 1rem;
+    font-size: 0.8rem;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: #f5d9b0;
+    margin-bottom: 1rem;
+    position: relative;
+  }
+  header h1 {
+    font-family: 'Playfair Display', serif;
+    font-size: clamp(1.9rem, 5vw, 3rem);
+    font-weight: 700;
+    color: #fff;
+    position: relative;
+    letter-spacing: -0.01em;
+  }
+  header p.tagline {
+    color: #f0d4ae;
+    margin-top: 0.6rem;
+    font-size: 1.05rem;
+    font-style: italic;
+    font-weight: 300;
+    position: relative;
+  }
+
+  /* ── Layout ── */
+  .container {
+    max-width: 860px;
+    margin: 0 auto;
+    padding: 2.5rem 1.5rem 4rem;
+  }
+
+  /* ── Section cards ── */
+  .section-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    box-shadow: var(--shadow);
+    margin-bottom: 1.25rem;
+    overflow: hidden;
+  }
+
+  .section-card summary,
+  .section-card .card-header {
+    display: flex;
+    align-items: center;
+    gap: 0.9rem;
+    padding: 1.1rem 1.4rem;
+    cursor: pointer;
+    user-select: none;
+    list-style: none;
+    background: var(--surface);
+    transition: background 0.18s;
+  }
+  .section-card summary::-webkit-details-marker { display: none; }
+  .section-card summary:hover { background: #fdf7f0; }
+
+  .step-num {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 2.1rem;
+    height: 2.1rem;
+    border-radius: 50%;
+    background: var(--accent);
+    color: #fff;
+    font-family: 'Playfair Display', serif;
+    font-size: 1rem;
+    font-weight: 700;
+    flex-shrink: 0;
+  }
+  .step-num.opt {
+    background: var(--muted);
+  }
+
+  .summary-title {
+    flex: 1;
+    font-family: 'Playfair Display', serif;
+    font-size: 1.15rem;
+    font-weight: 600;
+    color: var(--heading);
+  }
+  .summary-sub {
+    font-size: 0.82rem;
+    color: var(--muted);
+    font-family: 'Source Serif 4', serif;
+    font-weight: 300;
+    font-style: italic;
+  }
+
+  .chevron {
+    color: var(--accent-lt);
+    font-size: 1rem;
+    transition: transform 0.25s;
+    flex-shrink: 0;
+  }
+  details[open] .chevron { transform: rotate(180deg); }
+
+  .card-body {
+    padding: 0.25rem 1.5rem 1.5rem 1.5rem;
+    border-top: 1px solid var(--border);
+  }
+
+  /* ── Intro banner ── */
+  .intro-banner {
+    background: var(--accent-bg);
+    border-left: 4px solid var(--accent);
+    border-radius: 0 var(--radius) var(--radius) 0;
+    padding: 1.1rem 1.3rem;
+    margin-bottom: 2rem;
+    color: var(--heading);
+    font-size: 1rem;
+  }
+  .intro-banner strong { color: var(--accent); }
+
+  /* ── Section overview cards (top overview) ── */
+  .overview-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+    gap: 0.75rem;
+    margin-bottom: 2rem;
+  }
+  .ov-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 1rem 1.1rem;
+    display: flex;
+    align-items: flex-start;
+    gap: 0.7rem;
+    box-shadow: var(--shadow);
+  }
+  .ov-icon {
+    font-size: 1.4rem;
+    flex-shrink: 0;
+    margin-top: 0.1rem;
+  }
+  .ov-title { font-weight: 600; color: var(--heading); font-size: 0.95rem; }
+  .ov-desc  { font-size: 0.82rem; color: var(--muted); font-style: italic; }
+
+  /* ── Content typography ── */
+  .card-body h3 {
+    font-family: 'Playfair Display', serif;
+    color: var(--accent);
+    font-size: 1.05rem;
+    margin: 1.2rem 0 0.4rem;
+  }
+  .card-body p { margin-bottom: 0.75rem; }
+  .card-body ul, .card-body ol {
+    padding-left: 1.4rem;
+    margin-bottom: 0.75rem;
+  }
+  .card-body li { margin-bottom: 0.3rem; }
+
+  /* ── Tag pills ── */
+  .tag {
+    display: inline-block;
+    background: var(--tag-bg);
+    color: var(--tag-fg);
+    border-radius: 4px;
+    padding: 0.1rem 0.55rem;
+    font-size: 0.78rem;
+    font-family: 'JetBrains Mono', monospace;
+    font-weight: 500;
+    letter-spacing: 0.03em;
+    margin: 0.1rem;
+  }
+
+  /* ── Do / Don't boxes ── */
+  .compare-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 0.9rem;
+    margin: 0.9rem 0;
+  }
+  @media (max-width: 560px) { .compare-grid { grid-template-columns: 1fr; } }
+
+  .do-box, .dont-box {
+    border-radius: var(--radius);
+    padding: 0.9rem 1rem;
+    font-size: 0.93rem;
+  }
+  .do-box {
+    background: var(--good-bg);
+    border: 1px solid #a8d5b4;
+  }
+  .dont-box {
+    background: var(--bad-bg);
+    border: 1px solid #e5a8a8;
+  }
+  .do-box .box-label {
+    color: var(--good);
+    font-weight: 600;
+    font-size: 0.82rem;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    margin-bottom: 0.5rem;
+  }
+  .dont-box .box-label {
+    color: var(--bad);
+    font-weight: 600;
+    font-size: 0.82rem;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    margin-bottom: 0.5rem;
+  }
+  .do-box p, .dont-box p { margin-bottom: 0.3rem; font-size: 0.93rem; }
+
+  /* ── Callout ── */
+  .callout {
+    background: var(--accent-bg);
+    border-left: 3px solid var(--accent-lt);
+    border-radius: 0 8px 8px 0;
+    padding: 0.75rem 1rem;
+    margin: 0.75rem 0;
+    font-size: 0.93rem;
+    color: var(--heading);
+  }
+  .callout-warn {
+    background: #fef9ec;
+    border-left: 3px solid #c9932a;
+    border-radius: 0 8px 8px 0;
+    padding: 0.75rem 1rem;
+    margin: 0.75rem 0;
+    font-size: 0.93rem;
+    color: #4a3209;
+  }
+
+  /* ── Code blocks ── */
+  pre {
+    background: var(--code-bg);
+    color: var(--code-fg);
+    border-radius: 8px;
+    padding: 1.1rem 1.3rem;
+    margin: 0.9rem 0;
+    overflow-x: auto;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.87rem;
+    line-height: 1.65;
+    tab-size: 4;
+    border: 1px solid rgba(255,255,255,0.06);
+  }
+  code {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.87em;
+    background: #ede3d8;
+    color: var(--accent);
+    padding: 0.1em 0.35em;
+    border-radius: 3px;
+  }
+  pre code {
+    background: none;
+    color: inherit;
+    padding: 0;
+    font-size: inherit;
+  }
+  .comment   { color: #8a7a60; font-style: italic; }
+  .kw        { color: #e8a84a; }
+  .str       { color: #9fcc7a; }
+  .num       { color: #a8c4e8; }
+  .fn-name   { color: #d4a0e8; }
+  .type      { color: #7acce8; }
+
+  /* ── Example module ── */
+  .example-header {
+    background: linear-gradient(135deg, #1e3a5f 0%, #2e5c8a 100%);
+    border-radius: var(--radius) var(--radius) 0 0;
+    padding: 1.2rem 1.5rem;
+    color: #fff;
+    margin-bottom: 0;
+  }
+  .example-header h2 {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.3rem;
+    color: #fff;
+  }
+  .example-header p {
+    color: #b8d4f0;
+    font-size: 0.88rem;
+    font-style: italic;
+    margin-top: 0.3rem;
+  }
+
+  .example-section {
+    background: #f0f5fa;
+    border: 1px solid #b8cde0;
+    border-radius: 0 0 var(--radius) var(--radius);
+    margin-bottom: 1.5rem;
+    overflow: hidden;
+  }
+  .ex-part {
+    border-bottom: 1px solid #c8dded;
+    padding: 1rem 1.4rem;
+  }
+  .ex-part:last-child { border-bottom: none; }
+  .ex-part-label {
+    font-size: 0.75rem;
+    font-family: 'JetBrains Mono', monospace;
+    text-transform: uppercase;
+    letter-spacing: 0.12em;
+    color: #2e5c8a;
+    font-weight: 500;
+    margin-bottom: 0.4rem;
+  }
+  .ex-part p, .ex-part li { color: #1d3550; font-size: 0.95rem; }
+  .ex-part ul { padding-left: 1.3rem; }
+
+  /* ── Checklist ── */
+  .checklist { list-style: none; padding-left: 0; }
+  .checklist li {
+    padding: 0.35rem 0 0.35rem 2rem;
+    position: relative;
+    font-size: 0.95rem;
+    border-bottom: 1px solid var(--border);
+  }
+  .checklist li:last-child { border-bottom: none; }
+  .checklist li::before {
+    content: '□';
+    position: absolute;
+    left: 0.3rem;
+    color: var(--accent-lt);
+    font-size: 1.1rem;
+    line-height: 1.5;
+  }
+
+  /* ── Section label ── */
+  .section-label {
+    font-size: 0.78rem;
+    text-transform: uppercase;
+    letter-spacing: 0.13em;
+    color: var(--muted);
+    font-family: 'JetBrains Mono', monospace;
+    margin: 2rem 0 0.7rem;
+    padding-bottom: 0.3rem;
+    border-bottom: 1px solid var(--border);
+  }
+
+  /* ── Footer ── */
+  footer {
+    text-align: center;
+    color: var(--muted);
+    font-size: 0.82rem;
+    padding: 2rem 1rem;
+    border-top: 1px solid var(--border);
+    font-style: italic;
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="header-badge">Academic Writing Guide</div>
+  <h1>Guide to Writing Good Reports</h1>
+  <p class="tagline">A student reference for producing clear, professional homework submissions</p>
+</header>
+
+<div class="container">
+
+  <!-- Intro Banner -->
+  <div class="intro-banner">
+    <strong>Purpose of this guide:</strong> Every assignment submission tells a story — what the problem was, how you approached it, and what you found. A well-structured report demonstrates not just that you got an answer, but that you <em>understood</em> the problem and reasoned through it clearly. This guide walks through each section of a standard report, what belongs in it, and what to avoid.
+  </div>
+
+  <!-- Overview cards -->
+  <p class="section-label">Report Structure at a Glance</p>
+  <div class="overview-grid">
+    <div class="ov-card">
+      <div class="ov-icon">📄</div>
+      <div>
+        <div class="ov-title">1. Cover Page</div>
+        <div class="ov-desc">Identity & context</div>
+      </div>
+    </div>
+    <div class="ov-card">
+      <div class="ov-icon">🎯</div>
+      <div>
+        <div class="ov-title">2. Problem Statement</div>
+        <div class="ov-desc">What you were asked to do</div>
+      </div>
+    </div>
+    <div class="ov-card">
+      <div class="ov-icon">🗺️</div>
+      <div>
+        <div class="ov-title">3. Approach & Methodology</div>
+        <div class="ov-desc">How you planned to solve it</div>
+      </div>
+    </div>
+    <div class="ov-card">
+      <div class="ov-icon">✅</div>
+      <div>
+        <div class="ov-title">4. Solution & Results</div>
+        <div class="ov-desc">The actual answer — well presented</div>
+      </div>
+    </div>
+    <div class="ov-card">
+      <div class="ov-icon">💬</div>
+      <div>
+        <div class="ov-title">5. Conclusion <span style="color:var(--muted);font-weight:400;">(optional)</span></div>
+        <div class="ov-desc">Reflection and takeaways</div>
+      </div>
+    </div>
+    <div class="ov-card">
+      <div class="ov-icon">📎</div>
+      <div>
+        <div class="ov-title">6. Appendices</div>
+        <div class="ov-desc">Code, screenshots, supporting material</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══════════════════════════════════════════════ -->
+  <!-- SECTION 1: Cover Page                          -->
+  <!-- ══════════════════════════════════════════════ -->
+  <details class="section-card" open>
+    <summary>
+      <div class="step-num">1</div>
+      <div>
+        <div class="summary-title">Cover Page</div>
+        <div class="summary-sub">Name · Date · Class · Assignment title</div>
+      </div>
+      <span class="chevron">▼</span>
+    </summary>
+    <div class="card-body">
+      <p>The cover page is a quick identity card for your submission. It must contain — at minimum:</p>
+      <ul>
+        <li><strong>Your full name</strong> (and student ID if required)</li>
+        <li><strong>Date of submission</strong></li>
+        <li><strong>Course name and number</strong> (e.g., <code>COP 3530 – Data Structures</code>)</li>
+        <li><strong>Assignment title</strong> (e.g., <em>Homework 2: Binary Search Trees</em>)</li>
+        <li><strong>Instructor name</strong> (recommended)</li>
+      </ul>
+
+      <h3>Formatting tips</h3>
+      <p>Keep it clean. The cover page is not a place to demonstrate creativity — it is a place to be instantly legible. Use consistent font sizes and align content logically (centered or left-aligned block). Do not combine a cover page with the start of your Problem Statement on the same page.</p>
+
+      <div class="compare-grid">
+        <div class="do-box">
+          <div class="box-label">✔ Do</div>
+          <p>Use the assignment name exactly as it appears in the syllabus or assignment sheet.</p>
+          <p>Include the submission date, not the assignment release date.</p>
+        </div>
+        <div class="dont-box">
+          <div class="box-label">✘ Don't</div>
+          <p>Don't abbreviate your name or skip your course number.</p>
+          <p>Don't use the cover page for decorative graphics or filler text.</p>
+        </div>
+      </div>
+    </div>
+  </details>
+
+  <!-- ══════════════════════════════════════════════ -->
+  <!-- SECTION 2: Problem Statement                   -->
+  <!-- ══════════════════════════════════════════════ -->
+  <details class="section-card">
+    <summary>
+      <div class="step-num">2</div>
+      <div>
+        <div class="summary-title">Problem Statement</div>
+        <div class="summary-sub">Restate the problem clearly in your own words</div>
+      </div>
+      <span class="chevron">▼</span>
+    </summary>
+    <div class="card-body">
+      <p>The Problem Statement section demonstrates that you understood what was being asked. You should restate the problem — either paraphrased or quoted from the assignment — and make it clear what inputs, constraints, and deliverables are expected.</p>
+
+      <div class="callout">
+        <strong>Think of it this way:</strong> A reader who has never seen the assignment sheet should understand exactly what you were asked to do after reading your Problem Statement.
+      </div>
+
+      <h3>What to include</h3>
+      <ul>
+        <li>A clear statement of the task or question being solved</li>
+        <li>Any relevant inputs, data sets, or given conditions</li>
+        <li>What form the answer or output should take</li>
+        <li>Constraints or special conditions mentioned in the assignment</li>
+      </ul>
+
+      <div class="compare-grid">
+        <div class="do-box">
+          <div class="box-label">✔ Do</div>
+          <p>Paraphrase the problem in your own words — it shows you read and understood it.</p>
+          <p>Highlight any ambiguities you noticed and how you resolved them.</p>
+        </div>
+        <div class="dont-box">
+          <div class="box-label">✘ Don't</div>
+          <p>Don't copy-paste the full assignment prompt verbatim without any synthesis.</p>
+          <p>Don't skip this section because "the instructor already knows what the problem is" — this is for <em>your</em> understanding.</p>
+        </div>
+      </div>
+    </div>
+  </details>
+
+  <!-- ══════════════════════════════════════════════ -->
+  <!-- SECTION 3: Approach & Methodology              -->
+  <!-- ══════════════════════════════════════════════ -->
+  <details class="section-card">
+    <summary>
+      <div class="step-num">3</div>
+      <div>
+        <div class="summary-title">Approach &amp; Methodology</div>
+        <div class="summary-sub">Your plan of attack — before showing the solution</div>
+      </div>
+      <span class="chevron">▼</span>
+    </summary>
+    <div class="card-body">
+      <p>This section describes <em>how</em> you chose to approach the problem. It should be written before presenting the solution and should explain your reasoning, not just list the steps you took.</p>
+
+      <h3>What to include</h3>
+      <ul>
+        <li>The algorithm, technique, or design pattern you chose and <strong>why</strong></li>
+        <li>Any alternatives you considered and why you ruled them out</li>
+        <li>Assumptions you made about the problem</li>
+        <li>A high-level description of your process (flowchart, pseudocode, or prose)</li>
+        <li>Tools, languages, or libraries you used and why</li>
+      </ul>
+
+      <div class="callout">
+        <strong>This is where critical thinking lives.</strong> A strong Approach section shows the instructor you didn't just stumble onto an answer — you made informed decisions. Even if your chosen approach has limitations, discussing them here demonstrates maturity as a problem-solver.
+      </div>
+
+      <h3>When code is part of your methodology</h3>
+      <p>Sometimes the assignment asks you to <em>compute</em> or <em>analyze</em> something, and you write code as a tool to do that work — the code is not the answer, it is how you obtained the answer. In these cases, mention in the Methodology section that you wrote a program to perform the computation, describe what it does at a high level, and note the language and any relevant libraries used. The full code goes in the Appendix (not the Solution section), since it is a tool, not a deliverable.</p>
+      <p>Compare this to assignments where the deliverable <em>is</em> the code itself (such as "implement this data structure"). In that case, the code belongs in the Solution section because it <em>is</em> the answer.</p>
+
+      <div class="callout" style="border-color:#7c4a1e;background:#f5ede3;">
+        <strong>Ask yourself:</strong> "Is the code what the instructor is grading, or is it just how I found the answer?" If you would turn in the same result if you had calculated it by hand, the code is methodology — put it in the Appendix.
+      </div>
+
+      <div class="compare-grid">
+        <div class="do-box">
+          <div class="box-label">✔ Do</div>
+          <p>Explain the <em>why</em>, not just the <em>what</em>. "I used a hash map for O(1) lookups because the data set was large and sorted order wasn't required."</p>
+          <p>If code was a tool, describe what it computed and why you chose that approach.</p>
+        </div>
+        <div class="dont-box">
+          <div class="box-label">✘ Don't</div>
+          <p>Don't write "I just wrote the code." That is not a methodology.</p>
+          <p>Don't paste full source code into Methodology — a brief description and pseudocode is enough here.</p>
+        </div>
+      </div>
+    </div>
+  </details>
+
+  <!-- ══════════════════════════════════════════════ -->
+  <!-- SECTION 4: Solution & Results                  -->
+  <!-- ══════════════════════════════════════════════ -->
+  <details class="section-card">
+    <summary>
+      <div class="step-num">4</div>
+      <div>
+        <div class="summary-title">Solution &amp; Results</div>
+        <div class="summary-sub">The answer — presented clearly, NOT as screenshots</div>
+      </div>
+      <span class="chevron">▼</span>
+    </summary>
+    <div class="card-body">
+
+      <div class="callout-warn">
+        ⚠️ <strong>Critical rule:</strong> Your solution should <strong>never</strong> be a screen capture as a substitute for a written solution. Screen captures belong in the Appendix as supplemental evidence. The Solution section must present your work in a clear, readable, typeset form.
+      </div>
+
+      <p>This is the core of your report. Depending on the assignment type, your solution may take different forms — but in all cases it must be <em>self-contained</em> and <em>legible</em>.</p>
+
+      <h3>Code as the solution vs. code as a tool</h3>
+      <p>This is one of the most important distinctions in technical report writing. Before writing this section, ask yourself: <em>what is the deliverable?</em></p>
+
+      <div class="compare-grid">
+        <div class="do-box">
+          <div class="box-label">💻 Code IS the Solution</div>
+          <p>The assignment asks you to <strong>implement</strong> something — a function, data structure, algorithm, or program. The code itself is what you are turning in. In this case, include the formatted, commented source code directly in the Solution section and explain how it works.</p>
+          <p><em>Example: "Implement a binary search function in C."</em></p>
+        </div>
+        <div class="dont-box" style="background:#f0f6ff;border-color:#9ab8db;">
+          <div class="box-label" style="color:#1e4a7a;">📊 Code IS a Tool</div>
+          <p>The assignment asks you to <strong>find, compute, or analyze</strong> something, and you wrote code to do the work. The code is how you found the answer, not the answer itself. Present only the <strong>results</strong> in this section — the code goes in the Appendix.</p>
+          <p><em>Example: "Analyze this dataset and report the mean, median, and standard deviation."</em></p>
+        </div>
+      </div>
+
+      <div class="callout">
+        <strong>A useful test:</strong> Could you have arrived at the same answer by hand calculation or another method? If yes, the code is a tool — its job ends when it produces the result. Only the result belongs in Section 4.
+      </div>
+
+      <h3>For programming assignments (code IS the solution)</h3>
+      <p>Present your code using formatted, syntax-highlighted code blocks. Walk through the key functions and explain what they do. Show sample input/output in a clean table or formatted block — not a screenshot. Include any complexity analysis requested.</p>
+
+      <pre><code><span class="comment">// Example: Clean, readable code presentation</span>
+<span class="comment">// Always include comments explaining non-obvious logic</span>
+
+<span class="type">int</span> <span class="fn-name">binarySearch</span>(<span class="type">int</span> arr[], <span class="type">int</span> n, <span class="type">int</span> target) {
+    <span class="type">int</span> left  = 0;
+    <span class="type">int</span> right = n - 1;
+
+    <span class="kw">while</span> (left &lt;= right) {
+        <span class="type">int</span> mid = left + (right - left) / 2;   <span class="comment">// avoids integer overflow</span>
+
+        <span class="kw">if</span> (arr[mid] == target) <span class="kw">return</span> mid;     <span class="comment">// found</span>
+        <span class="kw">if</span> (arr[mid] &lt;  target) left  = mid + 1; <span class="comment">// search right half</span>
+        <span class="kw">else</span>                    right = mid - 1; <span class="comment">// search left half</span>
+    }
+
+    <span class="kw">return</span> <span class="num">-1</span>;  <span class="comment">// target not found</span>
+}</code></pre>
+
+      <h3>For mathematical or analytical assignments</h3>
+      <p>Show your work step by step. Label each step. A grader should be able to follow your reasoning from the given data to the final answer without guessing. Use tables where results are comparative.</p>
+
+      <h3>For design or written assignments</h3>
+      <p>Use headings, diagrams (embedded as images or described clearly), and concise prose. If you created a design, describe it explicitly — don't rely on the reader seeing what you saw.</p>
+
+      <h3>Presenting results</h3>
+      <p>After the solution, summarize your results in plain language. What answer did you get? Does it make sense? Did you verify it? A brief results narrative ties the section together.</p>
+
+      <div class="compare-grid">
+        <div class="do-box">
+          <div class="box-label">✔ Do</div>
+          <p>Format code with consistent indentation and meaningful variable names.</p>
+          <p>Present data in tables, not prose lists, when comparing multiple values.</p>
+          <p>State the answer explicitly: "The algorithm runs in O(n log n) time."</p>
+        </div>
+        <div class="dont-box">
+          <div class="box-label">✘ Don't</div>
+          <p>Don't paste raw, unformatted output or terminal dumps.</p>
+          <p>Don't use screenshots of your IDE as the solution itself.</p>
+          <p>Don't leave results unexplained — always say what your answer means.</p>
+        </div>
+      </div>
+    </div>
+  </details>
+
+  <!-- ══════════════════════════════════════════════ -->
+  <!-- SECTION 5: Conclusion (optional)               -->
+  <!-- ══════════════════════════════════════════════ -->
+  <details class="section-card">
+    <summary>
+      <div class="step-num opt">5</div>
+      <div>
+        <div class="summary-title">Conclusion <span style="font-weight:400;font-size:0.9rem;color:var(--muted);"> — optional</span></div>
+        <div class="summary-sub">Reflections, limitations, and takeaways</div>
+      </div>
+      <span class="chevron">▼</span>
+    </summary>
+    <div class="card-body">
+      <p>The Conclusion is optional for short homework assignments, but it adds real value when:</p>
+      <ul>
+        <li>Your solution has known limitations you want to acknowledge</li>
+        <li>You encountered unexpected difficulties that affected your result</li>
+        <li>You want to reflect on what you learned from the assignment</li>
+        <li>There are extensions or improvements you would explore with more time</li>
+      </ul>
+
+      <div class="callout">
+        A good conclusion is <strong>2–4 sentences to a short paragraph</strong>. It does not re-summarize the entire report. It looks <em>forward</em> or <em>inward</em> — lessons learned, caveats, or next steps.
+      </div>
+
+      <h3>Example of a strong conclusion (programming assignment)</h3>
+      <p style="font-style:italic; background:var(--accent-bg); border-radius:8px; padding:0.8rem 1rem; font-size:0.95rem; color:var(--heading);">
+        "This implementation correctly solves the stated problem for all tested inputs. The current approach uses O(n) auxiliary space for the stack; a future improvement could explore an iterative solution to reduce space overhead. The assignment reinforced the relationship between recursion and explicit stack-based iteration, which I found clarifying."
+      </p>
+
+      <div class="compare-grid">
+        <div class="do-box">
+          <div class="box-label">✔ Do</div>
+          <p>Be honest about limitations — it shows maturity, not weakness.</p>
+          <p>Keep it brief and substantive.</p>
+        </div>
+        <div class="dont-box">
+          <div class="box-label">✘ Don't</div>
+          <p>Don't write "In conclusion, I completed the assignment." That adds nothing.</p>
+          <p>Don't use the conclusion to apologize for errors — fix them instead.</p>
+        </div>
+      </div>
+    </div>
+  </details>
+
+  <!-- ══════════════════════════════════════════════ -->
+  <!-- SECTION 6: Appendices                          -->
+  <!-- ══════════════════════════════════════════════ -->
+  <details class="section-card">
+    <summary>
+      <div class="step-num">6</div>
+      <div>
+        <div class="summary-title">Appendices</div>
+        <div class="summary-sub">Code, screenshots, and all supporting material</div>
+      </div>
+      <span class="chevron">▼</span>
+    </summary>
+    <div class="card-body">
+      <p>The Appendices are where supporting materials live. Everything that would interrupt the flow of your Solution section — but that a grader might want to verify — belongs here.</p>
+
+      <h3>Common appendix contents</h3>
+      <ul>
+        <li><strong>Full source code</strong> — especially if only excerpts were shown in the Solution section, or if code was written as a <em>tool</em> to compute the solution rather than as the solution itself</li>
+        <li><strong>Screen captures</strong> — program output, test runs, IDE windows, terminal sessions</li>
+        <li><strong>Test data</strong> — input files, data sets, or sample test cases</li>
+        <li><strong>Reference materials</strong> — any cited sources, algorithm references, or external documentation</li>
+        <li><strong>Additional diagrams or UML</strong> — supporting design artifacts</li>
+      </ul>
+
+      <div class="callout">
+        Label each appendix clearly: <strong>Appendix A: Full Source Code</strong>, <strong>Appendix B: Sample Output Screenshots</strong>, etc. Reference them from the body of the report: <em>"(see Appendix A)"</em>.
+      </div>
+
+      <h3>When code belongs in the Appendix (not Section 4)</h3>
+      <p>If the assignment asked you to compute or analyze something and you wrote a script or program to do it, that code is a methodology tool. Place the full source code in the Appendix with a label like <em>Appendix A: Python script used to compute descriptive statistics</em>. Your Solution section (Section 4) should contain only the results the code produced — presented in a table or formatted clearly — not the code itself.</p>
+
+      <div class="compare-grid">
+        <div class="do-box">
+          <div class="box-label">✔ Do</div>
+          <p>Include screen captures here as evidence that your program ran correctly.</p>
+          <p>Put methodology code here when the result — not the code — is the deliverable.</p>
+          <p>Label every appendix and reference it from the main body.</p>
+        </div>
+        <div class="dont-box">
+          <div class="box-label">✘ Don't</div>
+          <p>Don't substitute appendix screenshots for a written solution in Section 4.</p>
+          <p>Don't dump unorganized files — label and order everything logically.</p>
+          <p>Don't put solution code in the Appendix when the implementation is what was asked for.</p>
+        </div>
+      </div>
+    </div>
+  </details>
+
+
+  <!-- ══════════════════════════════════════════════ -->
+  <!-- WORKED EXAMPLE                                 -->
+  <!-- ══════════════════════════════════════════════ -->
+  <p class="section-label" style="margin-top:2.5rem;">Worked Examples</p>
+
+  <div class="intro-banner" style="margin-bottom:1.5rem;">
+    Two examples are provided below — one where the code <strong>is</strong> the solution, and one where code is a <strong>tool</strong> used to compute the solution. Notice the difference in where code appears in each report.
+  </div>
+
+  <!-- Example 1 label -->
+  <p style="font-size:0.82rem;font-family:'JetBrains Mono',monospace;letter-spacing:0.1em;text-transform:uppercase;color:var(--accent);margin-bottom:0.5rem;">Example 1 of 2 — Code IS the Solution</p>
+
+  <div class="example-header">
+    <h2>📘 Example Report: Binary Search Implementation</h2>
+    <p>COP 3530 – Data Structures &nbsp;|&nbsp; Homework 3 &nbsp;|&nbsp; Illustrative example for student reference</p>
+  </div>
+  <div class="example-section">
+
+    <details>
+      <summary style="display:flex;align-items:center;gap:0.7rem;padding:0.85rem 1.4rem;cursor:pointer;user-select:none;list-style:none;background:#e8f0f8;border-bottom:1px solid #b8cde0;transition:background 0.15s;">
+        <span style="font-size:0.8rem;font-family:'JetBrains Mono',monospace;text-transform:uppercase;letter-spacing:0.1em;color:#2e5c8a;font-weight:600;flex:1;">Section 1 — Cover Page</span>
+        <span style="color:#4a7aaa;font-size:0.9rem;">▼</span>
+      </summary>
+      <div class="ex-part">
+        <div class="ex-part-label">Cover Page Contents</div>
+        <table style="font-size:0.93rem;color:#1d3550;border-collapse:collapse;width:100%">
+          <tr><td style="padding:0.3rem 0.6rem;font-weight:600;width:180px;">Name</td><td style="padding:0.3rem 0.6rem;">Alex Rivera</td></tr>
+          <tr style="background:#dde9f5;"><td style="padding:0.3rem 0.6rem;font-weight:600;">Date</td><td style="padding:0.3rem 0.6rem;">September 20, 2024</td></tr>
+          <tr><td style="padding:0.3rem 0.6rem;font-weight:600;">Course</td><td style="padding:0.3rem 0.6rem;">COP 3530 – Data Structures and Algorithms</td></tr>
+          <tr style="background:#dde9f5;"><td style="padding:0.3rem 0.6rem;font-weight:600;">Instructor</td><td style="padding:0.3rem 0.6rem;">Prof. Martinez</td></tr>
+          <tr><td style="padding:0.3rem 0.6rem;font-weight:600;">Assignment</td><td style="padding:0.3rem 0.6rem;">Homework 3: Implementing Binary Search in C</td></tr>
+        </table>
+      </div>
+    </details>
+
+    <details>
+      <summary style="display:flex;align-items:center;gap:0.7rem;padding:0.85rem 1.4rem;cursor:pointer;user-select:none;list-style:none;background:#e8f0f8;border-bottom:1px solid #b8cde0;transition:background 0.15s;">
+        <span style="font-size:0.8rem;font-family:'JetBrains Mono',monospace;text-transform:uppercase;letter-spacing:0.1em;color:#2e5c8a;font-weight:600;flex:1;">Section 2 — Problem Statement</span>
+        <span style="color:#4a7aaa;font-size:0.9rem;">▼</span>
+      </summary>
+      <div class="ex-part">
+        <div class="ex-part-label">Problem Statement</div>
+        <p>This assignment requires implementing the binary search algorithm in C. Given a sorted integer array of arbitrary size and a target value, the program must return the index of the target if found, or <code>-1</code> if the target is not present. The implementation must run in O(log n) time and must be tested on at least three cases: target found in the middle, at an endpoint, and not present in the array.</p>
+      </div>
+    </details>
+
+    <details>
+      <summary style="display:flex;align-items:center;gap:0.7rem;padding:0.85rem 1.4rem;cursor:pointer;user-select:none;list-style:none;background:#e8f0f8;border-bottom:1px solid #b8cde0;transition:background 0.15s;">
+        <span style="font-size:0.8rem;font-family:'JetBrains Mono',monospace;text-transform:uppercase;letter-spacing:0.1em;color:#2e5c8a;font-weight:600;flex:1;">Section 3 — Approach &amp; Methodology</span>
+        <span style="color:#4a7aaa;font-size:0.9rem;">▼</span>
+      </summary>
+      <div class="ex-part">
+        <div class="ex-part-label">Approach &amp; Methodology</div>
+        <p>Binary search works on the divide-and-conquer principle: by maintaining left and right boundary pointers on a sorted array, each iteration eliminates half the remaining search space. This guarantees O(log n) time complexity, which is the requirement.</p>
+        <p>I chose the iterative approach over a recursive one for two reasons: (1) it avoids function call overhead and stack growth on large inputs, and (2) the iterative version is simpler to reason about for index boundary conditions, which are the most common source of off-by-one errors in binary search.</p>
+        <p>The key design decision was the midpoint calculation: using <code>mid = left + (right - left) / 2</code> instead of <code>(left + right) / 2</code> to prevent integer overflow when indices are large.</p>
+      </div>
+    </details>
+
+    <details>
+      <summary style="display:flex;align-items:center;gap:0.7rem;padding:0.85rem 1.4rem;cursor:pointer;user-select:none;list-style:none;background:#e8f0f8;border-bottom:1px solid #b8cde0;transition:background 0.15s;">
+        <span style="font-size:0.8rem;font-family:'JetBrains Mono',monospace;text-transform:uppercase;letter-spacing:0.1em;color:#2e5c8a;font-weight:600;flex:1;">Section 4 — Solution &amp; Results</span>
+        <span style="color:#4a7aaa;font-size:0.9rem;">▼</span>
+      </summary>
+      <div class="ex-part">
+        <div class="ex-part-label">Implementation</div>
+
+        <pre style="background:#0d1b2a;color:#cce3f5;border:1px solid #2e5c8a;border-radius:8px;padding:1.1rem 1.3rem;font-family:'JetBrains Mono',monospace;font-size:0.86rem;line-height:1.65;overflow-x:auto;margin:0.5rem 0 1rem;"><span style="color:#7aa8cc;font-style:italic;">// binary_search.c  –  COP 3530 Homework 3
+// Author: Alex Rivera  |  Date: Sept 20, 2024</span>
+
+<span style="color:#7acce8;">#include</span> <span style="color:#9fcc7a;">&lt;stdio.h&gt;</span>
+
+<span style="color:#7acce8;">int</span> <span style="color:#d4a0e8;">binarySearch</span>(<span style="color:#7acce8;">int</span> arr[], <span style="color:#7acce8;">int</span> n, <span style="color:#7acce8;">int</span> target) {
+    <span style="color:#7acce8;">int</span> left  = 0;
+    <span style="color:#7acce8;">int</span> right = n - 1;
+
+    <span style="color:#e8a84a;">while</span> (left &lt;= right) {
+        <span style="color:#7acce8;">int</span> mid = left + (right - left) / 2;
+
+        <span style="color:#e8a84a;">if</span>      (arr[mid] == target) <span style="color:#e8a84a;">return</span> mid;
+        <span style="color:#e8a84a;">else if</span> (arr[mid] &lt;  target) left  = mid + 1;
+        <span style="color:#e8a84a;">else</span>                         right = mid - 1;
+    }
+    <span style="color:#e8a84a;">return</span> <span style="color:#a8c4e8;">-1</span>;   <span style="color:#7aa8cc;font-style:italic;">// not found</span>
+}
+
+<span style="color:#7acce8;">int</span> <span style="color:#d4a0e8;">main</span>() {
+    <span style="color:#7acce8;">int</span> data[] = {2, 5, 8, 12, 16, 23, 38, 42, 55, 72};
+    <span style="color:#7acce8;">int</span> n = <span style="color:#a8c4e8;">10</span>;
+
+    <span style="color:#d4a0e8;">printf</span>(<span style="color:#9fcc7a;">"Search 23:  index %d\n"</span>, <span style="color:#d4a0e8;">binarySearch</span>(data, n, <span style="color:#a8c4e8;">23</span>));
+    <span style="color:#d4a0e8;">printf</span>(<span style="color:#9fcc7a;">"Search 2:   index %d\n"</span>, <span style="color:#d4a0e8;">binarySearch</span>(data, n,  <span style="color:#a8c4e8;">2</span>));
+    <span style="color:#d4a0e8;">printf</span>(<span style="color:#9fcc7a;">"Search 99:  index %d\n"</span>, <span style="color:#d4a0e8;">binarySearch</span>(data, n, <span style="color:#a8c4e8;">99</span>));
+
+    <span style="color:#e8a84a;">return</span> <span style="color:#a8c4e8;">0</span>;
+}</span></pre>
+      </div>
+
+      <div class="ex-part">
+        <div class="ex-part-label">Test Results</div>
+        <table style="font-size:0.92rem;color:#1d3550;border-collapse:collapse;width:100%;border:1px solid #b8cde0;border-radius:8px;overflow:hidden;">
+          <thead>
+            <tr style="background:#2e5c8a;color:#fff;">
+              <th style="padding:0.5rem 0.9rem;text-align:left;">Test Case</th>
+              <th style="padding:0.5rem 0.9rem;text-align:center;">Target</th>
+              <th style="padding:0.5rem 0.9rem;text-align:center;">Expected Index</th>
+              <th style="padding:0.5rem 0.9rem;text-align:center;">Actual Index</th>
+              <th style="padding:0.5rem 0.9rem;text-align:center;">Pass?</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr style="background:#f0f6fc;">
+              <td style="padding:0.45rem 0.9rem;">Middle element</td>
+              <td style="padding:0.45rem 0.9rem;text-align:center;font-family:monospace;">23</td>
+              <td style="padding:0.45rem 0.9rem;text-align:center;font-family:monospace;">5</td>
+              <td style="padding:0.45rem 0.9rem;text-align:center;font-family:monospace;">5</td>
+              <td style="padding:0.45rem 0.9rem;text-align:center;color:#2e6b3e;font-weight:700;">✓</td>
+            </tr>
+            <tr>
+              <td style="padding:0.45rem 0.9rem;">First element</td>
+              <td style="padding:0.45rem 0.9rem;text-align:center;font-family:monospace;">2</td>
+              <td style="padding:0.45rem 0.9rem;text-align:center;font-family:monospace;">0</td>
+              <td style="padding:0.45rem 0.9rem;text-align:center;font-family:monospace;">0</td>
+              <td style="padding:0.45rem 0.9rem;text-align:center;color:#2e6b3e;font-weight:700;">✓</td>
+            </tr>
+            <tr style="background:#f0f6fc;">
+              <td style="padding:0.45rem 0.9rem;">Not present</td>
+              <td style="padding:0.45rem 0.9rem;text-align:center;font-family:monospace;">99</td>
+              <td style="padding:0.45rem 0.9rem;text-align:center;font-family:monospace;">−1</td>
+              <td style="padding:0.45rem 0.9rem;text-align:center;font-family:monospace;">−1</td>
+              <td style="padding:0.45rem 0.9rem;text-align:center;color:#2e6b3e;font-weight:700;">✓</td>
+            </tr>
+          </tbody>
+        </table>
+        <p style="margin-top:0.8rem;font-size:0.93rem;color:#1d3550;">All three test cases produced the expected results. The function correctly handles elements at the boundary (index 0) and correctly returns −1 for values outside the array.</p>
+      </div>
+    </details>
+
+    <details>
+      <summary style="display:flex;align-items:center;gap:0.7rem;padding:0.85rem 1.4rem;cursor:pointer;user-select:none;list-style:none;background:#e8f0f8;border-bottom:1px solid #b8cde0;transition:background 0.15s;">
+        <span style="font-size:0.8rem;font-family:'JetBrains Mono',monospace;text-transform:uppercase;letter-spacing:0.1em;color:#2e5c8a;font-weight:600;flex:1;">Section 5 — Conclusion</span>
+        <span style="color:#4a7aaa;font-size:0.9rem;">▼</span>
+      </summary>
+      <div class="ex-part">
+        <div class="ex-part-label">Conclusion</div>
+        <p>The implementation meets all stated requirements and passes all three required test cases. The iterative approach avoided recursion-related edge cases and produces a compact, readable solution. One area for future improvement would be extending the function to work with generic types using function pointers, or adding a version that returns all matching indices for duplicate values in the array.</p>
+      </div>
+    </details>
+
+    <details>
+      <summary style="display:flex;align-items:center;gap:0.7rem;padding:0.85rem 1.4rem;cursor:pointer;user-select:none;list-style:none;background:#e8f0f8;transition:background 0.15s;">
+        <span style="font-size:0.8rem;font-family:'JetBrains Mono',monospace;text-transform:uppercase;letter-spacing:0.1em;color:#2e5c8a;font-weight:600;flex:1;">Appendix A — Sample Program Output (Screenshot)</span>
+        <span style="color:#4a7aaa;font-size:0.9rem;">▼</span>
+      </summary>
+      <div class="ex-part">
+        <div class="ex-part-label">Appendix A</div>
+        <p style="font-size:0.9rem;color:#3a5570;font-style:italic;margin-bottom:0.6rem;">[In a real submission, a terminal screenshot confirming program output would appear here. The screenshot supplements — but does not replace — the Solution section above.]</p>
+        <pre style="background:#0d1b2a;color:#9fcc7a;border:1px solid #2e5c8a;border-radius:6px;padding:0.85rem 1.1rem;font-size:0.85rem;line-height:1.6;">$ gcc binary_search.c -o binary_search && ./binary_search
+Search 23:  index 5
+Search 2:   index 0
+Search 99:  index -1</pre>
+      </div>
+    </details>
+
+  </div>
+
+
+  <!-- ══════════════════════════════════════════════ -->
+  <!-- EXAMPLE 2: Code as Tool                        -->
+  <!-- ══════════════════════════════════════════════ -->
+  <p style="font-size:0.82rem;font-family:'JetBrains Mono',monospace;letter-spacing:0.1em;text-transform:uppercase;color:#2e5c8a;margin-bottom:0.5rem;margin-top:2rem;">Example 2 of 2 — Code is a Tool (Not the Solution)</p>
+
+  <div class="example-header" style="background:linear-gradient(135deg,#1e4d2b 0%,#2e7a47 100%);">
+    <h2>📊 Example Report: Analyzing Student Grade Distribution</h2>
+    <p>COP 3530 – Data Structures and Algorithms &nbsp;|&nbsp; Homework 5 &nbsp;|&nbsp; Illustrative example for student reference</p>
+  </div>
+  <div class="example-section" style="background:#f0f8f2;border-color:#a8d5b4;">
+
+    <details>
+      <summary style="display:flex;align-items:center;gap:0.7rem;padding:0.85rem 1.4rem;cursor:pointer;user-select:none;list-style:none;background:#e4f2e9;border-bottom:1px solid #a8d5b4;transition:background 0.15s;">
+        <span style="font-size:0.8rem;font-family:'JetBrains Mono',monospace;text-transform:uppercase;letter-spacing:0.1em;color:#1e4d2b;font-weight:600;flex:1;">Section 1 — Cover Page</span>
+        <span style="color:#2e7a47;font-size:0.9rem;">▼</span>
+      </summary>
+      <div class="ex-part" style="background:#f0f8f2;">
+        <div class="ex-part-label" style="color:#1e4d2b;">Cover Page Contents</div>
+        <table style="font-size:0.93rem;color:#1d3a25;border-collapse:collapse;width:100%">
+          <tr><td style="padding:0.3rem 0.6rem;font-weight:600;width:180px;">Name</td><td style="padding:0.3rem 0.6rem;">Jordan Kim</td></tr>
+          <tr style="background:#daf0e0;"><td style="padding:0.3rem 0.6rem;font-weight:600;">Date</td><td style="padding:0.3rem 0.6rem;">October 11, 2024</td></tr>
+          <tr><td style="padding:0.3rem 0.6rem;font-weight:600;">Course</td><td style="padding:0.3rem 0.6rem;">COP 3530 – Data Structures and Algorithms</td></tr>
+          <tr style="background:#daf0e0;"><td style="padding:0.3rem 0.6rem;font-weight:600;">Instructor</td><td style="padding:0.3rem 0.6rem;">Prof. Martinez</td></tr>
+          <tr><td style="padding:0.3rem 0.6rem;font-weight:600;">Assignment</td><td style="padding:0.3rem 0.6rem;">Homework 5: Grade Distribution Analysis</td></tr>
+        </table>
+      </div>
+    </details>
+
+    <details>
+      <summary style="display:flex;align-items:center;gap:0.7rem;padding:0.85rem 1.4rem;cursor:pointer;user-select:none;list-style:none;background:#e4f2e9;border-bottom:1px solid #a8d5b4;transition:background 0.15s;">
+        <span style="font-size:0.8rem;font-family:'JetBrains Mono',monospace;text-transform:uppercase;letter-spacing:0.1em;color:#1e4d2b;font-weight:600;flex:1;">Section 2 — Problem Statement</span>
+        <span style="color:#2e7a47;font-size:0.9rem;">▼</span>
+      </summary>
+      <div class="ex-part" style="background:#f0f8f2;">
+        <div class="ex-part-label" style="color:#1e4d2b;">Problem Statement</div>
+        <p>Given a file containing the exam scores of 50 students (provided as <code>scores.txt</code>), compute the following descriptive statistics for the dataset: mean, median, mode, standard deviation, minimum, and maximum. Identify how many students scored in each letter-grade band (A: 90–100, B: 80–89, C: 70–79, D: 60–69, F: below 60). Present the results in a clearly formatted summary.</p>
+        <p>The deliverable is the statistical summary and grade distribution table — not the program used to compute them.</p>
+      </div>
+    </details>
+
+    <details>
+      <summary style="display:flex;align-items:center;gap:0.7rem;padding:0.85rem 1.4rem;cursor:pointer;user-select:none;list-style:none;background:#e4f2e9;border-bottom:1px solid #a8d5b4;transition:background 0.15s;">
+        <span style="font-size:0.8rem;font-family:'JetBrains Mono',monospace;text-transform:uppercase;letter-spacing:0.1em;color:#1e4d2b;font-weight:600;flex:1;">Section 3 — Approach &amp; Methodology</span>
+        <span style="color:#2e7a47;font-size:0.9rem;">▼</span>
+      </summary>
+      <div class="ex-part" style="background:#f0f8f2;">
+        <div class="ex-part-label" style="color:#1e4d2b;">Approach &amp; Methodology</div>
+        <p>I wrote a Python script to load the scores from <code>scores.txt</code>, compute all required statistics, and classify each score into its letter-grade band. Python was chosen for its built-in <code>statistics</code> module and list comprehension capabilities, which make this type of data processing concise and readable.</p>
+        <p>The script reads the file line by line into a list, sorts the values (necessary for median and grade-band counting), then applies the standard formulas for each statistic. The full source code is included in Appendix A.</p>
+        <p>No manual calculation was performed; all values were computed programmatically and verified by cross-checking the mean against a spot calculation on a subset of the data.</p>
+      </div>
+    </details>
+
+    <details open>
+      <summary style="display:flex;align-items:center;gap:0.7rem;padding:0.85rem 1.4rem;cursor:pointer;user-select:none;list-style:none;background:#e4f2e9;border-bottom:1px solid #a8d5b4;transition:background 0.15s;">
+        <span style="font-size:0.8rem;font-family:'JetBrains Mono',monospace;text-transform:uppercase;letter-spacing:0.1em;color:#1e4d2b;font-weight:600;flex:1;">Section 4 — Solution &amp; Results</span>
+        <span style="color:#2e7a47;font-size:0.9rem;">▼</span>
+      </summary>
+
+      <div class="ex-part" style="background:#f0f8f2;">
+        <div class="ex-part-label" style="color:#1e4d2b;">Note on this section</div>
+        <div style="background:#fff8e6;border-left:3px solid #c9932a;border-radius:0 8px 8px 0;padding:0.75rem 1rem;font-size:0.92rem;color:#4a3209;">
+          ⚠️ <strong>Observe:</strong> No code appears in this Solution section. The Python script that produced these results lives in Appendix A. This section presents only the findings — because the findings are the deliverable.
+        </div>
+      </div>
+
+      <div class="ex-part" style="background:#f0f8f2;">
+        <div class="ex-part-label" style="color:#1e4d2b;">Descriptive Statistics Summary</div>
+        <table style="font-size:0.93rem;color:#1d3a25;border-collapse:collapse;width:100%;border:1px solid #a8d5b4;border-radius:8px;overflow:hidden;">
+          <thead>
+            <tr style="background:#2e7a47;color:#fff;">
+              <th style="padding:0.5rem 1rem;text-align:left;">Statistic</th>
+              <th style="padding:0.5rem 1rem;text-align:center;">Value</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr style="background:#eaf4ec;"><td style="padding:0.42rem 1rem;">Mean</td><td style="padding:0.42rem 1rem;text-align:center;font-family:monospace;font-weight:600;">74.3</td></tr>
+            <tr><td style="padding:0.42rem 1rem;">Median</td><td style="padding:0.42rem 1rem;text-align:center;font-family:monospace;font-weight:600;">76.0</td></tr>
+            <tr style="background:#eaf4ec;"><td style="padding:0.42rem 1rem;">Mode</td><td style="padding:0.42rem 1rem;text-align:center;font-family:monospace;font-weight:600;">82</td></tr>
+            <tr><td style="padding:0.42rem 1rem;">Standard Deviation</td><td style="padding:0.42rem 1rem;text-align:center;font-family:monospace;font-weight:600;">12.7</td></tr>
+            <tr style="background:#eaf4ec;"><td style="padding:0.42rem 1rem;">Minimum</td><td style="padding:0.42rem 1rem;text-align:center;font-family:monospace;font-weight:600;">41</td></tr>
+            <tr><td style="padding:0.42rem 1rem;">Maximum</td><td style="padding:0.42rem 1rem;text-align:center;font-family:monospace;font-weight:600;">98</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="ex-part" style="background:#f0f8f2;">
+        <div class="ex-part-label" style="color:#1e4d2b;">Grade Distribution</div>
+        <table style="font-size:0.93rem;color:#1d3a25;border-collapse:collapse;width:100%;border:1px solid #a8d5b4;border-radius:8px;overflow:hidden;">
+          <thead>
+            <tr style="background:#2e7a47;color:#fff;">
+              <th style="padding:0.5rem 1rem;text-align:center;">Grade</th>
+              <th style="padding:0.5rem 1rem;text-align:center;">Score Range</th>
+              <th style="padding:0.5rem 1rem;text-align:center;">Count</th>
+              <th style="padding:0.5rem 1rem;text-align:center;">Percentage</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr style="background:#eaf4ec;"><td style="padding:0.42rem 1rem;text-align:center;font-weight:700;color:#2e7a47;">A</td><td style="padding:0.42rem 1rem;text-align:center;">90–100</td><td style="padding:0.42rem 1rem;text-align:center;font-family:monospace;">8</td><td style="padding:0.42rem 1rem;text-align:center;">16%</td></tr>
+            <tr><td style="padding:0.42rem 1rem;text-align:center;font-weight:700;color:#2e5c8a;">B</td><td style="padding:0.42rem 1rem;text-align:center;">80–89</td><td style="padding:0.42rem 1rem;text-align:center;font-family:monospace;">14</td><td style="padding:0.42rem 1rem;text-align:center;">28%</td></tr>
+            <tr style="background:#eaf4ec;"><td style="padding:0.42rem 1rem;text-align:center;font-weight:700;color:#c9932a;">C</td><td style="padding:0.42rem 1rem;text-align:center;">70–79</td><td style="padding:0.42rem 1rem;text-align:center;font-family:monospace;">16</td><td style="padding:0.42rem 1rem;text-align:center;">32%</td></tr>
+            <tr><td style="padding:0.42rem 1rem;text-align:center;font-weight:700;color:#c97a2a;">D</td><td style="padding:0.42rem 1rem;text-align:center;">60–69</td><td style="padding:0.42rem 1rem;text-align:center;font-family:monospace;">7</td><td style="padding:0.42rem 1rem;text-align:center;">14%</td></tr>
+            <tr style="background:#eaf4ec;"><td style="padding:0.42rem 1rem;text-align:center;font-weight:700;color:#8b2020;">F</td><td style="padding:0.42rem 1rem;text-align:center;">Below 60</td><td style="padding:0.42rem 1rem;text-align:center;font-family:monospace;">5</td><td style="padding:0.42rem 1rem;text-align:center;">10%</td></tr>
+          </tbody>
+        </table>
+        <p style="margin-top:0.85rem;font-size:0.93rem;color:#1d3a25;">The class performed near the low-C average (mean 74.3), with the majority of students (60%) scoring in the B–C range. The standard deviation of 12.7 indicates moderate spread. Five students (10%) did not pass. The full dataset and program run are included in the Appendices.</p>
+      </div>
+    </details>
+
+    <details>
+      <summary style="display:flex;align-items:center;gap:0.7rem;padding:0.85rem 1.4rem;cursor:pointer;user-select:none;list-style:none;background:#e4f2e9;border-bottom:1px solid #a8d5b4;transition:background 0.15s;">
+        <span style="font-size:0.8rem;font-family:'JetBrains Mono',monospace;text-transform:uppercase;letter-spacing:0.1em;color:#1e4d2b;font-weight:600;flex:1;">Section 5 — Conclusion</span>
+        <span style="color:#2e7a47;font-size:0.9rem;">▼</span>
+      </summary>
+      <div class="ex-part" style="background:#f0f8f2;">
+        <div class="ex-part-label" style="color:#1e4d2b;">Conclusion</div>
+        <p>The grade distribution reflects a class with moderate overall performance and notable variance. The five failing students represent a meaningful portion of the class (10%), and the gap between the minimum (41) and mean (74.3) suggests a small group struggling significantly. If the goal of the analysis were extended, further breakdown by quartile or an outlier analysis could provide more actionable insight.</p>
+      </div>
+    </details>
+
+    <details>
+      <summary style="display:flex;align-items:center;gap:0.7rem;padding:0.85rem 1.4rem;cursor:pointer;user-select:none;list-style:none;background:#e4f2e9;border-bottom:1px solid #a8d5b4;transition:background 0.15s;">
+        <span style="font-size:0.8rem;font-family:'JetBrains Mono',monospace;text-transform:uppercase;letter-spacing:0.1em;color:#1e4d2b;font-weight:600;flex:1;">Appendix A — Python Script Used for Analysis</span>
+        <span style="color:#2e7a47;font-size:0.9rem;">▼</span>
+      </summary>
+      <div class="ex-part" style="background:#f0f8f2;">
+        <div class="ex-part-label" style="color:#1e4d2b;">Appendix A</div>
+        <p style="font-size:0.9rem;color:#2a4a30;margin-bottom:0.7rem;font-style:italic;">This script was written to compute the statistics reported in Section 4. It is supporting methodology, not the solution itself.</p>
+        <pre style="background:#0d1f14;color:#c5e8c5;border:1px solid #2e7a47;border-radius:8px;padding:1.1rem 1.3rem;font-family:'JetBrains Mono',monospace;font-size:0.86rem;line-height:1.65;overflow-x:auto;margin:0;"><span style="color:#7acc8a;font-style:italic;"># grade_analysis.py  –  COP 3530 Homework 5
+# Author: Jordan Kim  |  Date: Oct 11, 2024
+# PURPOSE: Compute descriptive stats and grade bands for scores.txt
+# NOTE: This script is methodology. The results it produces are the solution.</span>
+
+<span style="color:#a8e8b8;">import</span> statistics
+
+<span style="color:#7acc8a;font-style:italic;"># ── Load scores ──────────────────────────────────────</span>
+<span style="color:#e8f0a0;">with</span> open(<span style="color:#9fcc7a;">"scores.txt"</span>) <span style="color:#e8f0a0;">as</span> f:
+    scores = [<span style="color:#a8c4e8;">int</span>(line.strip()) <span style="color:#e8f0a0;">for</span> line <span style="color:#e8f0a0;">in</span> f <span style="color:#e8f0a0;">if</span> line.strip()]
+
+<span style="color:#7acc8a;font-style:italic;"># ── Descriptive statistics ───────────────────────────</span>
+mean   = statistics.mean(scores)
+median = statistics.median(scores)
+mode   = statistics.mode(scores)
+stdev  = statistics.stdev(scores)
+lo     = min(scores)
+hi     = max(scores)
+
+<span style="color:#7acc8a;font-style:italic;"># ── Grade band counts ────────────────────────────────</span>
+bands = {<span style="color:#9fcc7a;">"A"</span>: 0, <span style="color:#9fcc7a;">"B"</span>: 0, <span style="color:#9fcc7a;">"C"</span>: 0, <span style="color:#9fcc7a;">"D"</span>: 0, <span style="color:#9fcc7a;">"F"</span>: 0}
+<span style="color:#e8f0a0;">for</span> s <span style="color:#e8f0a0;">in</span> scores:
+    <span style="color:#e8f0a0;">if</span>   s >= <span style="color:#a8c4e8;">90</span>: bands[<span style="color:#9fcc7a;">"A"</span>] += <span style="color:#a8c4e8;">1</span>
+    <span style="color:#e8f0a0;">elif</span> s >= <span style="color:#a8c4e8;">80</span>: bands[<span style="color:#9fcc7a;">"B"</span>] += <span style="color:#a8c4e8;">1</span>
+    <span style="color:#e8f0a0;">elif</span> s >= <span style="color:#a8c4e8;">70</span>: bands[<span style="color:#9fcc7a;">"C"</span>] += <span style="color:#a8c4e8;">1</span>
+    <span style="color:#e8f0a0;">elif</span> s >= <span style="color:#a8c4e8;">60</span>: bands[<span style="color:#9fcc7a;">"D"</span>] += <span style="color:#a8c4e8;">1</span>
+    <span style="color:#e8f0a0;">else</span>:         bands[<span style="color:#9fcc7a;">"F"</span>] += <span style="color:#a8c4e8;">1</span>
+
+<span style="color:#7acc8a;font-style:italic;"># ── Print results (used to verify output) ────────────</span>
+n = len(scores)
+print(<span style="color:#9fcc7a;">f"Mean:   {mean:.1f}  |  Median: {median}  |  Mode: {mode}"</span>)
+print(<span style="color:#9fcc7a;">f"StDev:  {stdev:.1f}  |  Min: {lo}  |  Max: {hi}"</span>)
+<span style="color:#e8f0a0;">for</span> grade, count <span style="color:#e8f0a0;">in</span> bands.items():
+    print(<span style="color:#9fcc7a;">f"  {grade}: {count} students ({count/n*100:.0f}%)"</span>)</pre>
+      </div>
+    </details>
+
+    <details>
+      <summary style="display:flex;align-items:center;gap:0.7rem;padding:0.85rem 1.4rem;cursor:pointer;user-select:none;list-style:none;background:#e4f2e9;transition:background 0.15s;">
+        <span style="font-size:0.8rem;font-family:'JetBrains Mono',monospace;text-transform:uppercase;letter-spacing:0.1em;color:#1e4d2b;font-weight:600;flex:1;">Appendix B — Terminal Output Screenshot</span>
+        <span style="color:#2e7a47;font-size:0.9rem;">▼</span>
+      </summary>
+      <div class="ex-part" style="background:#f0f8f2;">
+        <div class="ex-part-label" style="color:#1e4d2b;">Appendix B</div>
+        <p style="font-size:0.9rem;color:#2a4a30;margin-bottom:0.7rem;font-style:italic;">[In a real submission, a terminal screenshot confirming program output would appear here.]</p>
+        <pre style="background:#0d1f14;color:#c5e8c5;border:1px solid #2e7a47;border-radius:6px;padding:0.85rem 1.1rem;font-size:0.85rem;line-height:1.6;">$ python grade_analysis.py
+Mean:   74.3  |  Median: 76.0  |  Mode: 82
+StDev:  12.7  |  Min: 41  |  Max: 98
+  A: 8 students (16%)
+  B: 14 students (28%)
+  C: 16 students (32%)
+  D: 7 students (14%)
+  F: 5 students (10%)</pre>
+      </div>
+    </details>
+
+  </div>
+  <p class="section-label" style="margin-top:2.5rem;">Pre-Submission Checklist</p>
+
+  <details class="section-card">
+    <summary>
+      <div class="step-num" style="background:#2e6b3e;">✓</div>
+      <div>
+        <div class="summary-title">Before You Submit — Checklist</div>
+        <div class="summary-sub">Use this to review your report before turning it in</div>
+      </div>
+      <span class="chevron">▼</span>
+    </summary>
+    <div class="card-body">
+      <h3>Cover Page</h3>
+      <ul class="checklist">
+        <li>Full name, date, course name and number, and assignment title are present</li>
+        <li>Cover page is on its own page, not merged with Section 2</li>
+      </ul>
+      <h3>Problem Statement</h3>
+      <ul class="checklist">
+        <li>The problem is described clearly enough that someone unfamiliar with the assignment understands what was asked</li>
+        <li>Inputs, outputs, and constraints are identified</li>
+      </ul>
+      <h3>Approach &amp; Methodology</h3>
+      <ul class="checklist">
+        <li>Explains <em>why</em> this approach was chosen, not just <em>what</em> was done</li>
+        <li>Any assumptions made about the problem are stated</li>
+      </ul>
+      <h3>Solution &amp; Results</h3>
+      <ul class="checklist">
+        <li>No screen captures used as a substitute for a written solution</li>
+        <li>If code <strong>is</strong> the solution (you were asked to implement something): formatted code with explanation is present in this section</li>
+        <li>If code was a <strong>tool</strong> used to reach the solution: only results and findings appear here — the code is in the Appendix</li>
+        <li>Code is properly formatted and indented</li>
+        <li>Results are presented in a table or structured format, not as a paragraph of numbers</li>
+        <li>The final answer is explicitly stated</li>
+      </ul>
+      <h3>Appendices</h3>
+      <ul class="checklist">
+        <li>All appendices are labeled (Appendix A, B, …)</li>
+        <li>Appendices are referenced from the body of the report</li>
+        <li>Screen captures (if any) are in the appendix, not the solution section</li>
+      </ul>
+      <h3>General</h3>
+      <ul class="checklist">
+        <li>Spell-checked and proofread</li>
+        <li>Sections are in the correct order</li>
+        <li>Document is submitted in the required format (PDF, Word, etc.)</li>
+        <li>File is named according to the course naming convention</li>
+      </ul>
+    </div>
+  </details>
+
+</div>
+
+<footer>
+  Academic Writing Guide &nbsp;·&nbsp; For student reference &nbsp;·&nbsp; Good writing is clear thinking made visible.
+</footer>
+
+</body>
+</html>

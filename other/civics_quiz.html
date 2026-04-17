@@ -1,0 +1,1505 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Florida Civics Literacy – Practice Quiz</title>
+<style>
+/* ─── GOOGLE FONTS via @import ─────────────────────────── */
+@import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;900&family=Source+Serif+4:ital,wght@0,300;0,400;0,600;1,400&family=JetBrains+Mono:wght@400;500;600&display=swap');
+
+/* ─── VARIABLES ─────────────────────────────────────────── */
+:root {
+  --navy:        #0d1b35;
+  --navy-mid:    #162444;
+  --navy-light:  #1e3060;
+  --navy-hover:  #243878;
+  --gold:        #c9952a;
+  --gold-light:  #e4b84a;
+  --gold-pale:   #f5e6c8;
+  --crimson:     #8b1a2e;
+  --crimson-lt:  #b52040;
+  --cream:       #faf7f0;
+  --cream-dark:  #f0ead8;
+  --text-dark:   #1a1208;
+  --text-mid:    #3d3220;
+  --text-light:  #6b5a3e;
+  --green:       #1a6b3c;
+  --green-bg:    #eaf5ee;
+  --green-bd:    #4caf7a;
+  --red-bg:      #fdf0f0;
+  --red-bd:      #e07070;
+  --white:       #ffffff;
+}
+
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+body {
+  font-family: 'Source Serif 4', Georgia, serif;
+  background: var(--cream);
+  color: var(--text-dark);
+  min-height: 100vh;
+}
+
+/* ─── HEADER ────────────────────────────────────────────── */
+.site-header {
+  background: var(--navy);
+  border-bottom: 4px solid var(--gold);
+  padding: 0;
+}
+.stripe-top {
+  height: 6px;
+  background: repeating-linear-gradient(90deg,
+    var(--crimson) 0, var(--crimson) 60px,
+    #fff 60px, #fff 120px);
+}
+.header-inner {
+  max-width: 860px;
+  margin: 0 auto;
+  padding: 22px 24px 18px;
+  display: flex;
+  align-items: center;
+  gap: 18px;
+}
+.header-icon {
+  font-size: 2rem;
+  background: rgba(201,149,42,.15);
+  border: 1px solid var(--gold);
+  border-radius: 8px;
+  width: 52px; height: 52px;
+  display: flex; align-items: center; justify-content: center;
+  flex-shrink: 0;
+}
+.header-text h1 {
+  font-family: 'Playfair Display', serif;
+  font-size: 1.5rem;
+  font-weight: 900;
+  color: var(--white);
+  line-height: 1.2;
+}
+.header-text h1 span { color: var(--gold-light); }
+.header-text p {
+  font-size: 0.83rem;
+  color: rgba(255,255,255,.62);
+  font-style: italic;
+  margin-top: 3px;
+}
+
+/* ─── MAIN WRAPPER ──────────────────────────────────────── */
+main {
+  max-width: 860px;
+  margin: 0 auto;
+  padding: 32px 20px 60px;
+}
+
+/* ─── SCREENS ───────────────────────────────────────────── */
+.screen { display: none; }
+.screen.active { display: block; }
+
+/* ─── START SCREEN ──────────────────────────────────────── */
+.start-card {
+  background: var(--white);
+  border-radius: 12px;
+  box-shadow: 0 4px 24px rgba(13,27,53,.12);
+  overflow: hidden;
+}
+.start-hero {
+  background: linear-gradient(135deg, var(--navy) 0%, var(--navy-light) 100%);
+  padding: 48px 40px 40px;
+  text-align: center;
+  position: relative;
+}
+.start-hero::after {
+  content: '';
+  position: absolute;
+  bottom: 0; left: 0; right: 0;
+  height: 4px;
+  background: linear-gradient(90deg, var(--gold) 0%, var(--gold-light) 50%, var(--gold) 100%);
+}
+.start-hero .big-icon { font-size: 4rem; margin-bottom: 16px; }
+.start-hero h2 {
+  font-family: 'Playfair Display', serif;
+  font-size: 2rem;
+  font-weight: 900;
+  color: var(--white);
+  margin-bottom: 10px;
+}
+.start-hero h2 em { color: var(--gold-light); font-style: normal; }
+.start-hero p {
+  color: rgba(255,255,255,.72);
+  font-size: 1rem;
+  line-height: 1.65;
+  max-width: 520px;
+  margin: 0 auto;
+}
+.start-body { padding: 36px 40px; }
+.info-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+  gap: 14px;
+  margin-bottom: 32px;
+}
+.info-tile {
+  background: var(--cream);
+  border: 1px solid var(--cream-dark);
+  border-radius: 8px;
+  padding: 16px;
+  text-align: center;
+}
+.info-tile .i-icon { font-size: 1.6rem; margin-bottom: 6px; }
+.info-tile .i-num {
+  font-family: 'Playfair Display', serif;
+  font-size: 1.7rem;
+  font-weight: 900;
+  color: var(--navy);
+  line-height: 1;
+}
+.info-tile .i-label {
+  font-size: 0.78rem;
+  color: var(--text-light);
+  margin-top: 4px;
+  letter-spacing: 0.03em;
+}
+.topic-pills {
+  display: flex; flex-wrap: wrap; gap: 8px;
+  margin-bottom: 32px;
+}
+.topic-pill {
+  background: var(--navy);
+  color: rgba(255,255,255,.82);
+  font-size: 0.77rem;
+  font-family: 'JetBrains Mono', monospace;
+  padding: 4px 10px;
+  border-radius: 100px;
+  letter-spacing: 0.04em;
+}
+.start-btn {
+  display: block;
+  width: 100%;
+  background: var(--navy);
+  color: var(--gold-light);
+  border: 2px solid var(--gold);
+  padding: 16px;
+  border-radius: 8px;
+  font-family: 'Playfair Display', serif;
+  font-size: 1.15rem;
+  font-weight: 700;
+  cursor: pointer;
+  letter-spacing: 0.03em;
+  transition: background 0.2s, transform 0.1s;
+}
+.start-btn:hover { background: var(--navy-light); }
+.start-btn:active { transform: scale(0.99); }
+
+/* ─── QUIZ SCREEN ───────────────────────────────────────── */
+.quiz-meta {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 20px;
+  gap: 16px;
+}
+.q-counter {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.82rem;
+  color: var(--text-light);
+  white-space: nowrap;
+}
+.q-counter strong {
+  font-size: 1rem;
+  color: var(--navy);
+}
+.progress-bar-wrap {
+  flex: 1;
+  height: 8px;
+  background: var(--cream-dark);
+  border-radius: 100px;
+  overflow: hidden;
+}
+.progress-bar-fill {
+  height: 100%;
+  background: linear-gradient(90deg, var(--navy) 0%, var(--gold) 100%);
+  border-radius: 100px;
+  transition: width 0.4s ease;
+}
+.score-running {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.82rem;
+  color: var(--text-light);
+  white-space: nowrap;
+}
+.score-running strong { color: var(--green); }
+
+/* ─── QUESTION CARD ─────────────────────────────────────── */
+.q-card {
+  background: var(--white);
+  border-radius: 12px;
+  box-shadow: 0 3px 18px rgba(13,27,53,.1);
+  overflow: hidden;
+  margin-bottom: 16px;
+}
+.q-card-header {
+  background: var(--navy);
+  padding: 18px 24px;
+  display: flex;
+  align-items: flex-start;
+  gap: 14px;
+}
+.q-num-badge {
+  background: rgba(201,149,42,.2);
+  border: 1px solid var(--gold);
+  color: var(--gold-light);
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.72rem;
+  padding: 3px 9px;
+  border-radius: 4px;
+  letter-spacing: 0.07em;
+  flex-shrink: 0;
+  margin-top: 2px;
+}
+.q-topic-tag {
+  color: rgba(255,255,255,.5);
+  font-size: 0.75rem;
+  font-family: 'JetBrains Mono', monospace;
+  letter-spacing: 0.05em;
+  flex-shrink: 0;
+  margin-top: 4px;
+}
+.q-text-wrap { flex: 1; }
+.q-text {
+  font-size: 1.08rem;
+  color: var(--white);
+  font-weight: 600;
+  line-height: 1.55;
+}
+.q-card-body { padding: 22px 24px; }
+
+/* ─── ANSWER OPTIONS ────────────────────────────────────── */
+.options-list {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+.option-btn {
+  display: flex;
+  align-items: flex-start;
+  gap: 14px;
+  background: var(--cream);
+  border: 2px solid var(--cream-dark);
+  border-radius: 8px;
+  padding: 14px 16px;
+  cursor: pointer;
+  text-align: left;
+  font-family: 'Source Serif 4', serif;
+  font-size: 0.96rem;
+  color: var(--text-dark);
+  line-height: 1.55;
+  transition: border-color 0.15s, background 0.15s, transform 0.1s;
+  width: 100%;
+}
+.option-btn:hover:not(:disabled) {
+  border-color: var(--navy);
+  background: var(--white);
+}
+.option-btn:active:not(:disabled) { transform: scale(0.99); }
+.option-btn:disabled { cursor: default; }
+
+.opt-letter {
+  flex-shrink: 0;
+  width: 30px; height: 30px;
+  background: var(--navy);
+  color: var(--gold-light);
+  border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.78rem;
+  font-weight: 600;
+  margin-top: 1px;
+  transition: background 0.15s;
+}
+.option-btn:hover:not(:disabled) .opt-letter {
+  background: var(--navy-light);
+}
+
+/* ─── ANSWER STATES ─────────────────────────────────────── */
+.option-btn.correct {
+  border-color: var(--green-bd);
+  background: var(--green-bg);
+}
+.option-btn.correct .opt-letter {
+  background: var(--green);
+  color: var(--white);
+}
+.option-btn.incorrect {
+  border-color: var(--red-bd);
+  background: var(--red-bg);
+}
+.option-btn.incorrect .opt-letter {
+  background: var(--crimson);
+  color: var(--white);
+}
+.option-btn.dimmed {
+  opacity: 0.45;
+}
+
+/* ─── EXPLANATION BOX ───────────────────────────────────── */
+.explanation-box {
+  margin-top: 18px;
+  border-radius: 8px;
+  padding: 16px 20px;
+  font-size: 0.93rem;
+  line-height: 1.65;
+  display: none;
+  animation: slideIn 0.25s ease;
+}
+.explanation-box.show { display: block; }
+.explanation-box.correct-exp {
+  background: var(--green-bg);
+  border-left: 4px solid var(--green-bd);
+  color: #1a4a2c;
+}
+.explanation-box.incorrect-exp {
+  background: var(--red-bg);
+  border-left: 4px solid var(--red-bd);
+  color: #5a1a1a;
+}
+.exp-header {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.72rem;
+  letter-spacing: 0.09em;
+  text-transform: uppercase;
+  margin-bottom: 6px;
+  font-weight: 600;
+}
+.explanation-box.correct-exp .exp-header { color: var(--green); }
+.explanation-box.incorrect-exp .exp-header { color: var(--crimson); }
+.exp-correct-note {
+  font-weight: 600;
+  margin-bottom: 4px;
+}
+
+@keyframes slideIn {
+  from { opacity: 0; transform: translateY(-6px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+/* ─── NEXT BUTTON ───────────────────────────────────────── */
+.next-btn-wrap { text-align: right; margin-top: 0; }
+.next-btn {
+  background: var(--navy);
+  color: var(--gold-light);
+  border: 2px solid var(--gold);
+  padding: 11px 28px;
+  border-radius: 6px;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.85rem;
+  font-weight: 600;
+  letter-spacing: 0.05em;
+  cursor: pointer;
+  transition: background 0.2s;
+  display: none;
+}
+.next-btn.show { display: inline-block; }
+.next-btn:hover { background: var(--navy-light); }
+
+/* ─── RESULTS SCREEN ────────────────────────────────────── */
+.results-card {
+  background: var(--white);
+  border-radius: 12px;
+  box-shadow: 0 4px 24px rgba(13,27,53,.12);
+  overflow: hidden;
+}
+.results-hero {
+  background: linear-gradient(135deg, var(--navy) 0%, var(--navy-light) 100%);
+  padding: 44px 40px;
+  text-align: center;
+  position: relative;
+}
+.results-hero::after {
+  content:''; position:absolute; bottom:0; left:0; right:0; height:4px;
+  background: linear-gradient(90deg, var(--gold) 0%, var(--gold-light) 50%, var(--gold) 100%);
+}
+.score-ring-wrap {
+  margin: 0 auto 20px;
+  width: 120px; height: 120px;
+  position: relative;
+}
+.score-ring-wrap svg { width: 120px; height: 120px; transform: rotate(-90deg); }
+.score-ring-bg { fill: none; stroke: rgba(255,255,255,.12); stroke-width: 8; }
+.score-ring-fill { fill: none; stroke-width: 8; stroke-linecap: round; transition: stroke-dashoffset 1.2s ease; }
+.score-center-text {
+  position: absolute;
+  top: 50%; left: 50%;
+  transform: translate(-50%,-50%);
+  text-align: center;
+}
+.score-frac {
+  font-family: 'Playfair Display', serif;
+  font-size: 1.8rem;
+  font-weight: 900;
+  color: var(--white);
+  line-height: 1;
+}
+.score-pct {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.72rem;
+  color: var(--gold-light);
+  margin-top: 2px;
+}
+.results-hero h2 {
+  font-family: 'Playfair Display', serif;
+  font-size: 1.7rem;
+  font-weight: 900;
+  color: var(--white);
+  margin-bottom: 8px;
+}
+.results-hero h2 em { color: var(--gold-light); font-style: normal; }
+.results-hero .grade-comment {
+  color: rgba(255,255,255,.72);
+  font-size: 0.97rem;
+  font-style: italic;
+}
+
+.results-body { padding: 32px 36px; }
+.results-body h3 {
+  font-family: 'Playfair Display', serif;
+  font-size: 1.1rem;
+  color: var(--navy);
+  margin-bottom: 16px;
+  padding-bottom: 6px;
+  border-bottom: 2px solid var(--cream-dark);
+}
+
+/* ─── REVIEW LIST ───────────────────────────────────────── */
+.review-list { display: flex; flex-direction: column; gap: 12px; margin-bottom: 28px; }
+.review-item {
+  border-radius: 8px;
+  overflow: hidden;
+  border: 1px solid var(--cream-dark);
+}
+.review-item-header {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  padding: 12px 16px;
+  cursor: pointer;
+  background: var(--cream);
+  user-select: none;
+}
+.review-item-header:hover { background: var(--cream-dark); }
+.review-status-icon { font-size: 1.1rem; flex-shrink: 0; margin-top: 1px; }
+.review-q-text { font-size: 0.9rem; color: var(--text-dark); flex: 1; line-height: 1.5; }
+.review-toggle { color: var(--text-light); font-size: 0.85rem; flex-shrink: 0; transition: transform 0.2s; }
+.review-item.open .review-toggle { transform: rotate(180deg); }
+.review-item-body {
+  display: none;
+  padding: 12px 16px 14px;
+  background: var(--white);
+  border-top: 1px solid var(--cream-dark);
+}
+.review-item.open .review-item-body { display: block; }
+.review-your-answer, .review-correct-answer {
+  font-size: 0.88rem;
+  margin-bottom: 6px;
+  line-height: 1.5;
+}
+.review-your-answer span.wrong { color: var(--crimson); font-weight: 600; }
+.review-your-answer span.right { color: var(--green); font-weight: 600; }
+.review-correct-answer span { color: var(--green); font-weight: 600; }
+.review-explanation {
+  font-size: 0.87rem;
+  color: var(--text-mid);
+  margin-top: 8px;
+  padding-top: 8px;
+  border-top: 1px solid var(--cream-dark);
+  font-style: italic;
+  line-height: 1.6;
+}
+
+/* ─── ACTION BUTTONS ────────────────────────────────────── */
+.action-row {
+  display: flex;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+.action-btn {
+  padding: 12px 24px;
+  border-radius: 6px;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.84rem;
+  font-weight: 600;
+  letter-spacing: 0.05em;
+  cursor: pointer;
+  border: 2px solid var(--gold);
+  transition: background 0.2s;
+}
+.action-btn.primary {
+  background: var(--navy);
+  color: var(--gold-light);
+}
+.action-btn.primary:hover { background: var(--navy-light); }
+.action-btn.secondary {
+  background: transparent;
+  color: var(--navy);
+  border-color: var(--navy);
+}
+.action-btn.secondary:hover { background: var(--cream); }
+
+/* ─── TOPIC PERFORMANCE ─────────────────────────────────── */
+.topic-perf { margin-bottom: 28px; }
+.topic-perf-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 8px;
+}
+.tp-name {
+  font-size: 0.84rem;
+  color: var(--text-mid);
+  width: 180px;
+  flex-shrink: 0;
+}
+.tp-bar-wrap {
+  flex: 1;
+  height: 10px;
+  background: var(--cream-dark);
+  border-radius: 100px;
+  overflow: hidden;
+}
+.tp-bar-fill {
+  height: 100%;
+  border-radius: 100px;
+  transition: width 0.8s ease;
+}
+.tp-score {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.75rem;
+  color: var(--text-light);
+  width: 42px;
+  text-align: right;
+  flex-shrink: 0;
+}
+
+/* ─── RESPONSIVE ────────────────────────────────────────── */
+@media (max-width: 580px) {
+  .header-inner { padding: 16px; }
+  .header-text h1 { font-size: 1.2rem; }
+  .start-body { padding: 24px 20px; }
+  .start-hero { padding: 32px 20px; }
+  .results-body { padding: 24px 20px; }
+  .q-card-header { flex-wrap: wrap; }
+}
+</style>
+</head>
+<body>
+
+<!-- ═══ HEADER ═══════════════════════════════════════════ -->
+<header class="site-header">
+  <div class="stripe-top"></div>
+  <div class="header-inner">
+    <div class="header-icon">🏛️</div>
+    <div class="header-text">
+      <h1>Florida <span>Civics Literacy</span> Practice Quiz</h1>
+      <p>Aligned with the Florida Civic Literacy Act (SB 1108) — random 20-question sessions</p>
+    </div>
+  </div>
+</header>
+
+<main>
+
+  <!-- ─── START SCREEN ──────────────────────────────────── -->
+  <div id="screen-start" class="screen active">
+    <div class="start-card">
+      <div class="start-hero">
+        <div class="big-icon">📋</div>
+        <h2>Civics <em>Knowledge</em> Check</h2>
+        <p>Each session draws 20 questions at random from a bank of 56 questions spanning all major civics topics. Select an answer to see immediate feedback and a full explanation.</p>
+      </div>
+      <div class="start-body">
+        <div class="info-grid">
+          <div class="info-tile">
+            <div class="i-icon">❓</div>
+            <div class="i-num">20</div>
+            <div class="i-label">Questions per session</div>
+          </div>
+          <div class="info-tile">
+            <div class="i-icon">🗄️</div>
+            <div class="i-num">56</div>
+            <div class="i-label">Total questions in bank</div>
+          </div>
+          <div class="info-tile">
+            <div class="i-icon">🔀</div>
+            <div class="i-num">∞</div>
+            <div class="i-label">Unique random sessions</div>
+          </div>
+          <div class="info-tile">
+            <div class="i-icon">📖</div>
+            <div class="i-num">12</div>
+            <div class="i-label">Topic areas covered</div>
+          </div>
+        </div>
+        <div class="topic-pills">
+          <span class="topic-pill">Founding Principles</span>
+          <span class="topic-pill">U.S. Constitution</span>
+          <span class="topic-pill">Bill of Rights</span>
+          <span class="topic-pill">Three Branches</span>
+          <span class="topic-pill">Federalism</span>
+          <span class="topic-pill">Legislative Process</span>
+          <span class="topic-pill">Elections &amp; Voting</span>
+          <span class="topic-pill">Civil Rights</span>
+          <span class="topic-pill">Florida Government</span>
+          <span class="topic-pill">Foreign Policy</span>
+          <span class="topic-pill">Free Enterprise</span>
+          <span class="topic-pill">Historical Documents</span>
+        </div>
+        <button class="start-btn" onclick="startQuiz()">▶ Begin Quiz — 20 Random Questions</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ─── QUIZ SCREEN ────────────────────────────────────── -->
+  <div id="screen-quiz" class="screen">
+    <div class="quiz-meta">
+      <div class="q-counter">Question <strong id="q-current">1</strong> of <strong>20</strong></div>
+      <div class="progress-bar-wrap">
+        <div class="progress-bar-fill" id="progress-fill" style="width:0%"></div>
+      </div>
+      <div class="score-running">Score: <strong id="running-score">0</strong>/20</div>
+    </div>
+
+    <div class="q-card" id="question-card">
+      <div class="q-card-header">
+        <div class="q-num-badge" id="q-badge">Q01</div>
+        <div class="q-topic-tag" id="q-topic-tag">TOPIC</div>
+        <div class="q-text-wrap">
+          <div class="q-text" id="q-text">Question text loads here</div>
+        </div>
+      </div>
+      <div class="q-card-body">
+        <div class="options-list" id="options-list"></div>
+        <div class="explanation-box" id="explanation-box">
+          <div class="exp-header" id="exp-header">✓ Correct!</div>
+          <div class="exp-correct-note" id="exp-correct-note"></div>
+          <div id="exp-body">Explanation text</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="next-btn-wrap">
+      <button class="next-btn" id="next-btn" onclick="nextQuestion()">Next Question →</button>
+    </div>
+  </div>
+
+  <!-- ─── RESULTS SCREEN ────────────────────────────────── -->
+  <div id="screen-results" class="screen">
+    <div class="results-card">
+      <div class="results-hero">
+        <div class="score-ring-wrap">
+          <svg viewBox="0 0 120 120">
+            <circle class="score-ring-bg" cx="60" cy="60" r="52"/>
+            <circle class="score-ring-fill" id="score-ring" cx="60" cy="60" r="52"
+              stroke-dasharray="326.7" stroke-dashoffset="326.7"/>
+          </svg>
+          <div class="score-center-text">
+            <div class="score-frac" id="score-frac">—</div>
+            <div class="score-pct" id="score-pct">—%</div>
+          </div>
+        </div>
+        <h2 id="results-heading">Quiz Complete!</h2>
+        <p class="grade-comment" id="grade-comment"></p>
+      </div>
+
+      <div class="results-body">
+        <!-- Topic breakdown -->
+        <h3>📊 Performance by Topic</h3>
+        <div class="topic-perf" id="topic-perf"></div>
+
+        <!-- Review answers -->
+        <h3>📋 Question Review</h3>
+        <div class="review-list" id="review-list"></div>
+
+        <div class="action-row">
+          <button class="action-btn primary" onclick="startQuiz()">🔀 New Random Quiz</button>
+          <button class="action-btn secondary" onclick="showStart()">← Back to Start</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</main>
+
+
+<script>
+// ═══════════════════════════════════════════════════════════
+// QUESTION BANK — 56 questions across 12 topic areas
+// Each question: { topic, text, options[4], correct(0-3), explanation }
+// ═══════════════════════════════════════════════════════════
+const QUESTION_BANK = [
+
+// ── FOUNDING PRINCIPLES ───────────────────────────────────
+{
+  topic: "Founding Principles",
+  text: "Which document first declared that all men are created equal and possess unalienable rights to life, liberty, and the pursuit of happiness?",
+  options: ["The U.S. Constitution","The Articles of Confederation","The Declaration of Independence","The Mayflower Compact"],
+  correct: 2,
+  explanation: "The Declaration of Independence (1776), primarily written by Thomas Jefferson, proclaimed these natural rights as the philosophical basis for American independence from Britain."
+},
+{
+  topic: "Founding Principles",
+  text: "Which Enlightenment philosopher most directly influenced Thomas Jefferson's concept of natural rights in the Declaration of Independence?",
+  options: ["Montesquieu","Jean-Jacques Rousseau","John Locke","Thomas Hobbes"],
+  correct: 2,
+  explanation: "John Locke's Second Treatise of Government (1689) described natural rights of life, liberty, and property. Jefferson adapted 'property' to 'pursuit of happiness' in the Declaration."
+},
+{
+  topic: "Founding Principles",
+  text: "The principle that government authority comes from the approval of the citizens is called what?",
+  options: ["Federalism","Separation of powers","Judicial review","Popular sovereignty"],
+  correct: 3,
+  explanation: "Popular sovereignty holds that the people are the ultimate source of political authority. The Declaration states that governments derive 'their just powers from the consent of the governed.'"
+},
+{
+  topic: "Founding Principles",
+  text: "The document that established the FIRST frame of government for the United States after independence was:",
+  options: ["The Constitution","The Federalist Papers","The Mayflower Compact","The Articles of Confederation"],
+  correct: 3,
+  explanation: "The Articles of Confederation, ratified in 1781, was the first national constitution. It was later replaced in 1789 by the current U.S. Constitution because it created a government too weak to function effectively."
+},
+{
+  topic: "Founding Principles",
+  text: "The idea of dividing government into separate branches to prevent any one group from holding too much power is called:",
+  options: ["Federalism","Separation of powers","Popular sovereignty","Republicanism"],
+  correct: 1,
+  explanation: "Separation of powers, drawn from Montesquieu's 'The Spirit of the Laws' (1748), distributes governmental authority among the legislative, executive, and judicial branches."
+},
+
+// ── U.S. CONSTITUTION ─────────────────────────────────────
+{
+  topic: "U.S. Constitution",
+  text: "Which article of the U.S. Constitution establishes the legislative branch?",
+  options: ["Article I","Article II","Article III","Article IV"],
+  correct: 0,
+  explanation: "Article I creates Congress — the bicameral legislature consisting of the Senate and House of Representatives — and lists its enumerated powers in Section 8."
+},
+{
+  topic: "U.S. Constitution",
+  text: "The Supremacy Clause, which declares the Constitution to be the 'supreme Law of the Land,' is found in:",
+  options: ["Article I, Section 8","Article IV","Article VI","The 10th Amendment"],
+  correct: 2,
+  explanation: "Article VI contains the Supremacy Clause. It means that federal law takes precedence over conflicting state laws, and state judges are bound by the Constitution even if it conflicts with state law."
+},
+{
+  topic: "U.S. Constitution",
+  text: "How many states were required to ratify the Constitution before it could take effect?",
+  options: ["All 13 states","10 of 13 states","9 of 13 states","A simple majority of states"],
+  correct: 2,
+  explanation: "Article VII required that 9 of the 13 original states ratify the Constitution. New Hampshire became the ninth state to ratify on June 21, 1788, putting the Constitution into effect."
+},
+{
+  topic: "U.S. Constitution",
+  text: "The 'Necessary and Proper Clause' (also called the Elastic Clause) gives Congress the power to:",
+  options: ["Override any presidential veto","Make laws needed to carry out its enumerated powers","Declare war without the President's approval","Amend the Constitution by a simple majority"],
+  correct: 1,
+  explanation: "Found in Article I, Section 8, Clause 18, the Necessary and Proper Clause allows Congress to make all laws 'necessary and proper' to carry out its listed (enumerated) powers, stretching congressional authority."
+},
+{
+  topic: "U.S. Constitution",
+  text: "The Federalist Papers were primarily written to:",
+  options: ["Propose amendments to the Constitution","Argue against ratification of the Constitution","Persuade New York to ratify the Constitution","Establish the Supreme Court's power of judicial review"],
+  correct: 2,
+  explanation: "Hamilton, Madison, and Jay wrote the 85 Federalist essays under the name 'Publius' to build support for ratifying the Constitution, particularly in New York, which was skeptical."
+},
+{
+  topic: "U.S. Constitution",
+  text: "Which Federalist Paper argues that a large republic is BETTER at controlling factions (special interest groups) than a small one?",
+  options: ["Federalist No. 51","Federalist No. 78","Federalist No. 10","Federalist No. 1"],
+  correct: 2,
+  explanation: "Federalist No. 10, written by James Madison, argues that a large republic contains so many competing factions that no single group can dominate, making majority tyranny less likely than in small democracies."
+},
+
+// ── BILL OF RIGHTS ────────────────────────────────────────
+{
+  topic: "Bill of Rights",
+  text: "The First Amendment protects which of the following freedoms?",
+  options: ["Right to bear arms and quartering of soldiers","Freedom of speech, religion, press, assembly, and petition","Right to a jury trial and protection from unreasonable searches","Protection from self-incrimination and double jeopardy"],
+  correct: 1,
+  explanation: "The First Amendment (1791) prohibits Congress from establishing a religion or restricting its free exercise, and protects freedom of speech, press, peaceful assembly, and the right to petition the government."
+},
+{
+  topic: "Bill of Rights",
+  text: "Which amendment protects citizens from unreasonable searches and seizures and requires warrants based on probable cause?",
+  options: ["3rd Amendment","4th Amendment","5th Amendment","6th Amendment"],
+  correct: 1,
+  explanation: "The 4th Amendment protects against unreasonable searches and seizures. Police generally need a warrant supported by probable cause, though there are several established exceptions."
+},
+{
+  topic: "Bill of Rights",
+  text: "The 5th Amendment right that allows a person to refuse to testify against themselves is commonly called:",
+  options: ["Double jeopardy protection","Habeas corpus","Taking the Fifth / self-incrimination protection","Due process"],
+  correct: 2,
+  explanation: "The 5th Amendment states no person 'shall be compelled in any criminal case to be a witness against himself.' Miranda rights are built on this protection. People who exercise this right are said to be 'pleading the Fifth.'"
+},
+{
+  topic: "Bill of Rights",
+  text: "Which amendment reserves powers not delegated to the federal government to the states or the people?",
+  options: ["8th Amendment","9th Amendment","10th Amendment","11th Amendment"],
+  correct: 2,
+  explanation: "The 10th Amendment is the foundation of states' rights arguments. It states that powers not granted to the federal government by the Constitution, nor prohibited to the states, are reserved to the states or the people."
+},
+{
+  topic: "Bill of Rights",
+  text: "Which constitutional amendment extended citizenship and equal protection of the laws to all persons born or naturalized in the United States?",
+  options: ["13th Amendment","14th Amendment","15th Amendment","19th Amendment"],
+  correct: 1,
+  explanation: "The 14th Amendment (1868) granted citizenship to all born or naturalized in the U.S., overturning the Dred Scott decision. Its Due Process and Equal Protection Clauses have been central to many civil rights advances."
+},
+{
+  topic: "Bill of Rights",
+  text: "Which pair of amendments abolished slavery and then gave formerly enslaved men the right to vote?",
+  options: ["12th and 13th Amendments","13th and 15th Amendments","14th and 15th Amendments","13th and 14th Amendments"],
+  correct: 1,
+  explanation: "The 13th Amendment (1865) abolished slavery. The 15th Amendment (1870) prohibited denying the right to vote based on race, color, or previous condition of servitude — giving Black men the right to vote."
+},
+
+// ── THREE BRANCHES ────────────────────────────────────────
+{
+  topic: "Three Branches",
+  text: "How many members are in the U.S. House of Representatives?",
+  options: ["100","270","435","538"],
+  correct: 2,
+  explanation: "The House has 435 members, apportioned among states by population following each census. Each member serves a 2-year term. California has the most representatives; states like Wyoming have just one."
+},
+{
+  topic: "Three Branches",
+  text: "What are the minimum qualifications to serve as President of the United States?",
+  options: ["At least 30 years old, citizen for 9 years, U.S. resident for 7 years","At least 35 years old, natural-born citizen, U.S. resident for 14 years","At least 25 years old, citizen for 7 years, U.S. resident for 10 years","At least 40 years old, natural-born citizen, U.S. resident for 20 years"],
+  correct: 1,
+  explanation: "Article II, Section 1 sets these three requirements for the presidency: must be at least 35 years old; must be a natural-born citizen; and must have been a U.S. resident for at least 14 years."
+},
+{
+  topic: "Three Branches",
+  text: "If a president is impeached by the House, what happens next?",
+  options: ["The president is automatically removed from office","The Supreme Court decides whether to remove the president","The Senate holds a trial; a 2/3 vote is needed to convict and remove","The vice president takes over for 30 days pending investigation"],
+  correct: 2,
+  explanation: "Impeachment by the House is like an indictment — it charges but does not remove. The Senate then conducts a trial presided over by the Chief Justice. A two-thirds Senate vote is required to convict and remove the president."
+},
+{
+  topic: "Three Branches",
+  text: "Which branch of government has the exclusive power to DECLARE war?",
+  options: ["The President, as Commander-in-Chief","Congress","The National Security Council","The Supreme Court"],
+  correct: 1,
+  explanation: "Article I, Section 8 grants Congress the power to declare war. The President is Commander-in-Chief but cannot formally declare war. The War Powers Act (1973) limits presidential military deployments to 60 days without congressional approval."
+},
+{
+  topic: "Three Branches",
+  text: "U.S. Supreme Court justices are appointed by the President and confirmed by the Senate. How long do they serve?",
+  options: ["10-year terms, renewable once","20-year terms","Life terms (during good behavior)","6-year terms, staggered like senators"],
+  correct: 2,
+  explanation: "Article III states that federal judges, including Supreme Court justices, 'shall hold their Offices during good Behaviour' — effectively a lifetime appointment. This is designed to ensure judicial independence from political pressure."
+},
+{
+  topic: "Three Branches",
+  text: "The power of courts to declare laws unconstitutional — known as judicial review — was established in which Supreme Court case?",
+  options: ["McCulloch v. Maryland (1819)","Plessy v. Ferguson (1896)","Marbury v. Madison (1803)","Gibbons v. Ogden (1824)"],
+  correct: 2,
+  explanation: "Chief Justice John Marshall established judicial review in Marbury v. Madison (1803). He wrote that 'a legislative act contrary to the Constitution is not law,' giving courts the power to strike down unconstitutional legislation."
+},
+
+// ── FEDERALISM ────────────────────────────────────────────
+{
+  topic: "Federalism",
+  text: "Under the U.S. federal system, which of the following is an example of a CONCURRENT power shared by both federal and state governments?",
+  options: ["Coining money","Conducting foreign policy","Collecting taxes","Granting patents"],
+  correct: 2,
+  explanation: "Concurrent powers are held by both federal and state governments. Both levels can collect taxes (though only the federal government can levy income taxes on all citizens under the 16th Amendment), build roads, borrow money, and establish courts."
+},
+{
+  topic: "Federalism",
+  text: "The Full Faith and Credit Clause (Article IV) requires states to do what?",
+  options: ["Pay federal taxes before state taxes","Honor the public acts and court decisions of other states","Allow citizens of other states to vote in local elections","Provide equal funding to all public schools"],
+  correct: 1,
+  explanation: "The Full Faith and Credit Clause requires that states recognize and respect the official records, acts, and judicial proceedings of other states. This means a valid contract, court judgment, or driver's license from one state must be honored in all other states."
+},
+{
+  topic: "Federalism",
+  text: "A 'block grant' differs from a 'categorical grant' in that block grants:",
+  options: ["Must be repaid to the federal government with interest","Give states more flexibility in how the money is spent","Come with stricter federal requirements","Are only available to large states"],
+  correct: 1,
+  explanation: "Block grants provide states with money for a broad policy area (like community development) with relatively few strings attached. Categorical grants are for specific, narrowly-defined purposes with strict conditions — giving states less flexibility."
+},
+
+// ── LEGISLATIVE PROCESS ───────────────────────────────────
+{
+  topic: "Legislative Process",
+  text: "All revenue (tax) bills must originate in which chamber of Congress?",
+  options: ["The Senate","The House of Representatives","Either chamber, by tradition","The Senate Finance Committee"],
+  correct: 1,
+  explanation: "Article I, Section 7 requires that all bills for raising revenue originate in the House of Representatives. The Senate may amend them. This was intended to ensure that the most directly elected body controls taxation."
+},
+{
+  topic: "Legislative Process",
+  text: "What is a 'filibuster' in the U.S. Senate?",
+  options: ["A procedure to speed up debate on urgent bills","A senator's tactic of extended debate to delay or block a vote","A committee's power to kill a bill without a vote","The President's power to delay signing legislation"],
+  correct: 1,
+  explanation: "A filibuster is when a senator (or group of senators) speaks at length to prevent a bill from coming to a vote. It can be ended by cloture — a procedure requiring 60 senators to vote to close debate."
+},
+{
+  topic: "Legislative Process",
+  text: "A 'pocket veto' occurs when:",
+  options: ["The President signs a bill in private without public announcement","Congress passes a bill with less than a two-thirds majority","The President takes no action and Congress adjourns within 10 days","The Supreme Court blocks a bill before it reaches the President"],
+  correct: 2,
+  explanation: "If the President neither signs nor vetoes a bill and Congress adjourns within 10 days of sending it, the bill dies — a pocket veto. Since Congress has adjourned, it cannot override. If Congress remains in session, the bill automatically becomes law after 10 days."
+},
+{
+  topic: "Legislative Process",
+  text: "To override a presidential veto, Congress needs:",
+  options: ["A simple majority in both chambers","A 3/5 majority in both chambers","A 2/3 majority in both chambers","A unanimous vote in the Senate only"],
+  correct: 2,
+  explanation: "To override a presidential veto, both the House and the Senate must each vote by a two-thirds supermajority to pass the bill over the President's objection. This is deliberately difficult to achieve."
+},
+
+// ── ELECTIONS & VOTING ────────────────────────────────────
+{
+  topic: "Elections & Voting",
+  text: "How many electoral votes are needed to win the presidency?",
+  options: ["A plurality of the popular vote","A majority of the popular vote (50%+1)","270 out of 538 electoral votes","300 out of 538 electoral votes"],
+  correct: 2,
+  explanation: "The Electoral College has 538 total electors. A candidate must win a majority — 270 or more — to become president. If no candidate reaches 270, the House of Representatives chooses the president (one vote per state delegation)."
+},
+{
+  topic: "Elections & Voting",
+  text: "The 26th Amendment, ratified in 1971, established which voting right?",
+  options: ["Women's right to vote","The right to vote regardless of race","The right to vote at age 18","The elimination of poll taxes in federal elections"],
+  correct: 2,
+  explanation: "The 26th Amendment lowered the voting age from 21 to 18. It was largely driven by the argument that if 18-year-olds could be drafted to fight in Vietnam, they should also have the right to vote."
+},
+{
+  topic: "Elections & Voting",
+  text: "Which amendment prohibited the use of poll taxes in federal elections?",
+  options: ["19th Amendment","22nd Amendment","24th Amendment","26th Amendment"],
+  correct: 2,
+  explanation: "The 24th Amendment (1964) abolished poll taxes in federal elections. Poll taxes were used primarily in Southern states to disenfranchise Black voters and poor white voters. The Supreme Court extended this prohibition to state elections in 1966."
+},
+{
+  topic: "Elections & Voting",
+  text: "What is gerrymandering?",
+  options: ["The process of counting electoral votes in Congress","Drawing legislative district boundaries to favor a political party","A Senate procedure for ending a filibuster","The practice of requiring photo ID at polling places"],
+  correct: 1,
+  explanation: "Gerrymandering is the manipulation of district boundaries to give one party an electoral advantage. It was named after Massachusetts Governor Elbridge Gerry, whose 1812 redistricting created a salamander-shaped district. Both parties practice it."
+},
+
+// ── CIVIL RIGHTS ──────────────────────────────────────────
+{
+  topic: "Civil Rights",
+  text: "The Supreme Court case that declared racially segregated public schools unconstitutional was:",
+  options: ["Plessy v. Ferguson (1896)","Brown v. Board of Education (1954)","Miranda v. Arizona (1966)","Tinker v. Des Moines (1969)"],
+  correct: 1,
+  explanation: "Brown v. Board of Education (1954) unanimously overturned the 'separate but equal' doctrine from Plessy v. Ferguson. Chief Justice Warren wrote that 'separate educational facilities are inherently unequal,' violating the Equal Protection Clause of the 14th Amendment."
+},
+{
+  topic: "Civil Rights",
+  text: "In Miranda v. Arizona (1966), the Supreme Court ruled that police must inform suspects of which rights before interrogation?",
+  options: ["The right to a speedy trial and an impartial jury","The right to remain silent and the right to an attorney","The right to confront witnesses and appeal a conviction","The right to bail and protection from double jeopardy"],
+  correct: 1,
+  explanation: "Miranda rights, derived from the 5th and 6th Amendments, require police to inform suspects: (1) you have the right to remain silent; (2) anything you say can be used against you; (3) you have the right to an attorney; (4) if you can't afford one, one will be appointed."
+},
+{
+  topic: "Civil Rights",
+  text: "The Civil Rights Act of 1964 primarily accomplished which of the following?",
+  options: ["Granted women the right to vote","Abolished poll taxes in federal elections","Banned discrimination based on race, color, religion, sex, or national origin in employment and public accommodations","Established affirmative action programs in federal contracting"],
+  correct: 2,
+  explanation: "The Civil Rights Act of 1964, signed by President Lyndon B. Johnson, was landmark legislation that prohibited discrimination in public places and employment. It also created the Equal Employment Opportunity Commission (EEOC) to enforce the law."
+},
+{
+  topic: "Civil Rights",
+  text: "What is the difference between civil liberties and civil rights?",
+  options: ["Civil liberties are federal protections; civil rights are state protections","Civil liberties protect individuals FROM government power; civil rights guarantee EQUAL treatment BY government","Civil liberties apply to citizens only; civil rights apply to all residents","Civil rights are found in the Constitution; civil liberties are established by statute"],
+  correct: 1,
+  explanation: "Civil liberties (Bill of Rights) protect individuals from government overreach — what the government CANNOT do. Civil rights (rooted in the 14th Amendment) guarantee equal treatment and prohibit discrimination — what the government MUST do."
+},
+{
+  topic: "Civil Rights",
+  text: "In Tinker v. Des Moines (1969), the Supreme Court ruled that:",
+  options: ["Schools may search student lockers without a warrant","Students retain First Amendment rights at school; symbolic speech is protected","Prayer in public schools is unconstitutional","The legal drinking age cannot be set higher than 18"],
+  correct: 1,
+  explanation: "In Tinker v. Des Moines, students wore black armbands to protest the Vietnam War and were suspended. The Court ruled 7-2 that students don't 'shed their constitutional rights at the schoolhouse gate,' establishing that symbolic, non-disruptive speech is protected."
+},
+
+// ── FLORIDA GOVERNMENT ────────────────────────────────────
+{
+  topic: "Florida Government",
+  text: "How many members are in the Florida State Senate?",
+  options: ["20","40","60","100"],
+  correct: 1,
+  explanation: "The Florida Senate has 40 members, each serving 4-year terms with an 8-year consecutive term limit. Florida's House of Representatives has 120 members serving 2-year terms."
+},
+{
+  topic: "Florida Government",
+  text: "What percentage of voter approval is needed to pass a constitutional amendment in Florida?",
+  options: ["50%+ (simple majority)","55%","60%","Two-thirds (about 67%)"],
+  correct: 2,
+  explanation: "Florida requires 60% approval from voters to amend the state constitution. This higher threshold was established to prevent narrow majorities from making frequent changes to the state's fundamental law."
+},
+{
+  topic: "Florida Government",
+  text: "Florida was admitted to the United States as the _____ state on March 3, 1845.",
+  options: ["23rd","25th","27th","29th"],
+  correct: 2,
+  explanation: "Florida became the 27th state admitted to the Union on March 3, 1845. It had been a U.S. territory since 1821, when Spain ceded it to the United States through the Adams-Onís Treaty."
+},
+{
+  topic: "Florida Government",
+  text: "The oldest continuously inhabited European settlement in the United States is located in Florida. What is it?",
+  options: ["Tampa, founded in 1580","Pensacola, founded in 1559 (though abandoned and resettled)","St. Augustine, founded in 1565","Jacksonville, founded in 1562"],
+  correct: 2,
+  explanation: "St. Augustine, founded on September 8, 1565, by Spanish Admiral Pedro Menéndez de Avilés, is the oldest continuously occupied European settlement in the contiguous United States. It is over 450 years old."
+},
+{
+  topic: "Florida Government",
+  text: "Florida's state motto is:",
+  options: ["Sunshine and Liberty","In God We Trust","Forward","Freedom and Unity"],
+  correct: 1,
+  explanation: "Florida's official state motto is 'In God We Trust,' adopted in 2006 — the same as the U.S. national motto. Florida is nicknamed 'The Sunshine State.' Its state seal features a Sabal palm, a Seminole woman, a steamboat, and a rising sun."
+},
+{
+  topic: "Florida Government",
+  text: "Which of the following is a member of Florida's elected cabinet?",
+  options: ["Secretary of Education","Lieutenant Governor","Attorney General","Secretary of State"],
+  correct: 2,
+  explanation: "Florida's Cabinet consists of the Attorney General, Chief Financial Officer, and Commissioner of Agriculture — all independently elected statewide. The Lieutenant Governor and Secretary of State are appointed. Florida eliminated the elected Cabinet Secretary of State position in 1998."
+},
+
+// ── FOREIGN POLICY ────────────────────────────────────────
+{
+  topic: "Foreign Policy",
+  text: "The Monroe Doctrine (1823) stated that the Western Hemisphere was:",
+  options: ["Open to free trade by all nations","Closed to any new European colonization or interference","Under joint protection of the U.S. and Britain","Subject to international arbitration for any disputes"],
+  correct: 1,
+  explanation: "President Monroe's doctrine declared that the Western Hemisphere was no longer open to European colonization and that any attempt by European powers to extend their influence in the Americas would be viewed as a threat to U.S. security."
+},
+{
+  topic: "Foreign Policy",
+  text: "NATO's Article 5 is significant because it states that:",
+  options: ["All member nations must maintain a minimum military budget","An armed attack on one NATO member is considered an attack on all members","NATO forces can intervene in any nation where democracy is threatened","Member nations must not engage in trade with non-democratic countries"],
+  correct: 1,
+  explanation: "Article 5 is NATO's collective defense clause. It obligates all 32 member nations to consider an attack on any one of them an attack against the whole alliance, requiring a collective response. It has only been formally invoked once — after the September 11, 2001 attacks."
+},
+{
+  topic: "Foreign Policy",
+  text: "The War Powers Act (1973) limits the President's ability to deploy U.S. military forces without congressional approval to how many days?",
+  options: ["30 days","60 days","90 days","180 days"],
+  correct: 1,
+  explanation: "The War Powers Resolution (1973), passed over Nixon's veto after Vietnam, requires the President to notify Congress within 48 hours of deploying troops and limits such deployment to 60 days (plus 30 days for withdrawal) without congressional authorization."
+},
+{
+  topic: "Foreign Policy",
+  text: "Which body within the U.S. government has the power to ratify international treaties negotiated by the President?",
+  options: ["The full Congress by simple majority","The Senate by a two-thirds vote","The Supreme Court","The House Foreign Affairs Committee"],
+  correct: 1,
+  explanation: "Under Article II, Section 2, the President has the power to make treaties 'by and with the Advice and Consent of the Senate' — requiring a two-thirds supermajority vote. This is why presidents sometimes use 'executive agreements' instead, which don't require Senate approval."
+},
+
+// ── FREE ENTERPRISE ───────────────────────────────────────
+{
+  topic: "Free Enterprise",
+  text: "The Federal Reserve is responsible for which of the following?",
+  options: ["Setting federal income tax rates","Controlling U.S. monetary policy by managing interest rates and money supply","Approving the federal budget submitted by the President","Regulating interstate commerce and antitrust enforcement"],
+  correct: 1,
+  explanation: "The Federal Reserve (established 1913) is the central bank of the U.S. It conducts monetary policy — controlling the money supply and interest rates — to promote maximum employment, stable prices, and moderate long-term interest rates. It operates independently from the executive branch."
+},
+{
+  topic: "Free Enterprise",
+  text: "The primary measure of a country's economic output — the total value of all goods and services produced in one year — is called:",
+  options: ["Consumer Price Index (CPI)","Gross Domestic Product (GDP)","National Debt","Trade Deficit"],
+  correct: 1,
+  explanation: "Gross Domestic Product (GDP) is the broadest measure of economic activity. It includes consumption, investment, government spending, and net exports. A recession is technically defined as two consecutive quarters of negative GDP growth."
+},
+{
+  topic: "Free Enterprise",
+  text: "What is the difference between 'mandatory spending' and 'discretionary spending' in the federal budget?",
+  options: ["Mandatory spending is for national security; discretionary is for social programs","Mandatory spending is required by existing law (e.g., Social Security, Medicare); discretionary is set annually by Congress","Mandatory spending is approved by the courts; discretionary is approved by the executive","Mandatory spending goes to states; discretionary stays at the federal level"],
+  correct: 1,
+  explanation: "Mandatory spending (~70% of the federal budget) is required by law and includes programs like Social Security, Medicare, Medicaid, and interest on the national debt. Discretionary spending (~30%) is set each year through appropriations bills and covers defense, education, transportation, and other programs."
+},
+
+// ── HISTORICAL DOCUMENTS ──────────────────────────────────
+{
+  topic: "Historical Documents",
+  text: "The Emancipation Proclamation (1863) freed enslaved people in which states?",
+  options: ["All states where slavery was practiced","Only states that had already rejoined the Union","Confederate states still in rebellion against the United States","All territories but not the states"],
+  correct: 2,
+  explanation: "President Lincoln's Emancipation Proclamation, effective January 1, 1863, declared enslaved people free only in Confederate states still in rebellion. It did not apply to border states (like Kentucky and Missouri) that remained in the Union. Slavery was fully abolished by the 13th Amendment (1865)."
+},
+{
+  topic: "Historical Documents",
+  text: "Thomas Paine's pamphlet 'Common Sense' (1776) argued for:",
+  options: ["A confederation of independent states rather than a central government","American independence from Britain and a republican form of government","A peaceful negotiation with Britain to achieve self-governance","Keeping the British monarchy but establishing a separate colonial parliament"],
+  correct: 1,
+  explanation: "Common Sense (January 1776) argued in plain language that it was nonsensical ('common sense') for a large continent to be ruled by a small island. Paine called for independence and a republican government. It was widely read and helped shift colonial opinion toward revolution."
+},
+{
+  topic: "Historical Documents",
+  text: "In his Farewell Address (1796), President Washington most strongly warned against which two things?",
+  options: ["A standing army and high taxes","Permanent foreign alliances and political factions (parties)","Westward expansion and conflicts with Native Americans","Free trade agreements and a national bank"],
+  correct: 1,
+  explanation: "Washington's Farewell Address cautioned against the dangers of political parties, which he called 'factions' that could divide the nation, and against permanent alliances with foreign nations that could drag the U.S. into European conflicts. Both warnings shaped early American policy."
+},
+{
+  topic: "Historical Documents",
+  text: "The Gettysburg Address (1863) famously concluded with a vision of government:",
+  options: ["'With liberty and justice for all'","'Of the people, by the people, for the people'","'All men are created equal under God'","'A nation indivisible, now and forever'"],
+  correct: 1,
+  explanation: "Lincoln's Gettysburg Address (November 19, 1863) ended with the commitment 'that government of the people, by the people, for the people, shall not perish from the earth.' It redefined the Civil War as a fight for democratic self-government and human equality."
+},
+{
+  topic: "Historical Documents",
+  text: "The Magna Carta (1215) is considered a foundational document for American democracy primarily because it:",
+  options: ["Established the separation of powers into three branches","Granted voting rights to common people in England","Established the principle that even the king is subject to the rule of law","Created the first democratic parliament in Europe"],
+  correct: 2,
+  explanation: "The Magna Carta (Great Charter) was a feudal agreement between King John of England and his barons, but it established the crucial principle that the ruler is not above the law. Its protections of due process and limitations on arbitrary power directly influenced the U.S. Constitution and Bill of Rights."
+},
+
+// ── ADDITIONAL MIXED QUESTIONS ────────────────────────────
+{
+  topic: "U.S. Constitution",
+  text: "The process for amending the U.S. Constitution requires the proposed amendment to be ratified by how many states?",
+  options: ["Two-thirds of states (34 of 50)","Three-quarters of states (38 of 50)","All 50 states","Simple majority of states (26 of 50)"],
+  correct: 1,
+  explanation: "An amendment must be ratified by three-quarters (38 of 50) of the states. It can be proposed by a two-thirds vote of both houses of Congress, or by a constitutional convention called by two-thirds of state legislatures (though the convention method has never been used)."
+},
+{
+  topic: "Three Branches",
+  text: "The President's line of succession — the order in which officials would take over if the President is unable to serve — begins with:",
+  options: ["The Attorney General","The Speaker of the House","The Vice President","The Secretary of State"],
+  correct: 2,
+  explanation: "Presidential succession under the 25th Amendment and Presidential Succession Act begins: (1) Vice President, (2) Speaker of the House, (3) President Pro Tempore of the Senate, (4) Secretary of State, then other Cabinet members in the order their departments were established."
+},
+{
+  topic: "Founding Principles",
+  text: "The Mayflower Compact (1620) is historically important because it was:",
+  options: ["The first colonial document to call for independence from Britain","The first written framework for self-government in English North America","A peace treaty between Pilgrims and the Wampanoag nation","The legal basis for establishing religious freedom in the colonies"],
+  correct: 1,
+  explanation: "Signed before the Pilgrims left the Mayflower, the Mayflower Compact established the principle of self-governance by consent — signers agreed to create 'just and equal laws' for the general good. It is considered the first written framework for democratic self-government in America."
+},
+{
+  topic: "Civil Rights",
+  text: "The phrase 'separate but equal' — which was used to justify racial segregation for nearly 60 years — came from which Supreme Court case?",
+  options: ["Dred Scott v. Sandford (1857)","Plessy v. Ferguson (1896)","Brown v. Board of Education (1954)","McCulloch v. Maryland (1819)"],
+  correct: 1,
+  explanation: "Plessy v. Ferguson (1896) arose from Homer Plessy's challenge to Louisiana's Separate Car Act. The Court ruled 7-1 that 'separate but equal' facilities were constitutional. This precedent stood until Brown v. Board of Education (1954) overturned it."
+},
+{
+  topic: "Elections & Voting",
+  text: "The 19th Amendment, ratified in 1920, guaranteed which right?",
+  options: ["The right to vote regardless of race","The right to vote for citizens 18 and older","Women's right to vote","The right to vote without paying a poll tax"],
+  correct: 2,
+  explanation: "The 19th Amendment (1920) guaranteed women the right to vote, ending decades of the suffrage movement led by figures like Susan B. Anthony and Elizabeth Cady Stanton. It states that voting rights cannot be denied based on sex."
+},
+{
+  topic: "Foreign Policy",
+  text: "The United Nations was founded after World War II primarily to:",
+  options: ["Enforce international trade agreements","Promote international peace, security, and human rights","Create a world government","Administer territories taken from defeated nations"],
+  correct: 1,
+  explanation: "The UN was founded in 1945 with 51 original member nations (now 193) to prevent another world war, maintain international peace and security, develop friendly relations among nations, and promote human rights and social progress."
+},
+{
+  topic: "Free Enterprise",
+  text: "A budget deficit occurs when:",
+  options: ["The trade balance with foreign countries is negative","A government's annual spending exceeds its annual revenue","The stock market loses more than 20% of its value","Inflation rises above 5% for two consecutive years"],
+  correct: 1,
+  explanation: "A budget deficit is when a government spends more money in a fiscal year than it collects in revenue (taxes and fees). The accumulated sum of all annual deficits over time is the national debt. The U.S. has run budget deficits in most years since the 1970s."
+},
+{
+  topic: "Legislative Process",
+  text: "Most bills introduced in Congress never become law because they:",
+  options: ["Are vetoed by the President","Are blocked by the Supreme Court","Die in committee — are never voted on by the full chamber","Fail to get 60 votes in the Senate"],
+  correct: 2,
+  explanation: "The vast majority of the tens of thousands of bills introduced in each Congress die in committee. Standing committees are the workhorses of Congress — they hold hearings, mark up bills, and decide what advances. Most bills are simply never scheduled for committee action."
+},
+{
+  topic: "Florida Government",
+  text: "Florida's capital city is:",
+  options: ["Miami","Orlando","Jacksonville","Tallahassee"],
+  correct: 3,
+  explanation: "Tallahassee has been Florida's capital since 1824, when it was chosen as a compromise location between the state's two major settlements at the time — Pensacola in the west and St. Augustine in the east. Despite not being the largest city, it remains the seat of Florida's state government."
+},
+{
+  topic: "Historical Documents",
+  text: "Which of the following BEST describes the significance of McCulloch v. Maryland (1819)?",
+  options: ["It established that the federal government could not tax state banks","It confirmed that Congress has implied powers beyond those listed in the Constitution, and that federal law is supreme over state law","It ruled that the Bill of Rights applied to state governments","It established that the President could unilaterally nullify state laws"],
+  correct: 1,
+  explanation: "In McCulloch v. Maryland, the Court upheld Congress's power to create a national bank (an implied power under the Elastic Clause) and ruled that Maryland could not tax the federal bank. Chief Justice Marshall's ruling established that the Constitution grants the federal government broad implied powers and that federal law supersedes state law."
+}
+
+]; // END OF QUESTION_BANK
+
+
+// ═══════════════════════════════════════════════════════════
+// QUIZ ENGINE
+// ═══════════════════════════════════════════════════════════
+
+const QUIZ_LENGTH = 20;
+let quizQuestions = [];   // selected random subset
+let currentIndex  = 0;
+let score         = 0;
+let answered      = false;
+let results       = [];   // { question, chosenIndex, correct }
+
+// ── UTILITY: Fisher-Yates shuffle ──────────────────────────
+function shuffle(arr) {
+  const a = [...arr];
+  for (let i = a.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [a[i], a[j]] = [a[j], a[i]];
+  }
+  return a;
+}
+
+// ── SCREEN MANAGER ─────────────────────────────────────────
+function showScreen(id) {
+  document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+function showStart() { showScreen('screen-start'); }
+
+// ── START QUIZ ─────────────────────────────────────────────
+function startQuiz() {
+  quizQuestions = shuffle(QUESTION_BANK).slice(0, QUIZ_LENGTH);
+  currentIndex  = 0;
+  score         = 0;
+  answered      = false;
+  results       = [];
+  showScreen('screen-quiz');
+  renderQuestion();
+}
+
+// ── RENDER QUESTION ────────────────────────────────────────
+function renderQuestion() {
+  answered = false;
+  const q   = quizQuestions[currentIndex];
+  const num = currentIndex + 1;
+
+  // Meta bar
+  document.getElementById('q-current').textContent  = num;
+  document.getElementById('running-score').textContent = score;
+  document.getElementById('progress-fill').style.width = ((num - 1) / QUIZ_LENGTH * 100) + '%';
+
+  // Question header
+  document.getElementById('q-badge').textContent    = 'Q' + String(num).padStart(2, '0');
+  document.getElementById('q-topic-tag').textContent = q.topic.toUpperCase();
+  document.getElementById('q-text').textContent     = q.text;
+
+  // Options
+  const letters = ['A', 'B', 'C', 'D'];
+  const opts    = document.getElementById('options-list');
+  opts.innerHTML = '';
+
+  q.options.forEach((optText, idx) => {
+    const btn = document.createElement('button');
+    btn.className = 'option-btn';
+    btn.setAttribute('data-idx', idx);
+    btn.innerHTML =
+      `<span class="opt-letter">${letters[idx]}</span>` +
+      `<span class="opt-text">${optText}</span>`;
+    btn.addEventListener('click', () => handleAnswer(idx));
+    opts.appendChild(btn);
+  });
+
+  // Hide explanation and next button
+  const expBox = document.getElementById('explanation-box');
+  expBox.className = 'explanation-box';
+  document.getElementById('next-btn').className = 'next-btn';
+}
+
+// ── HANDLE ANSWER ──────────────────────────────────────────
+function handleAnswer(chosenIdx) {
+  if (answered) return;
+  answered = true;
+
+  const q        = quizQuestions[currentIndex];
+  const isRight  = chosenIdx === q.correct;
+  const letters  = ['A', 'B', 'C', 'D'];
+
+  if (isRight) score++;
+
+  // Update running score display
+  document.getElementById('running-score').textContent = score;
+
+  // Style buttons
+  const btns = document.querySelectorAll('.option-btn');
+  btns.forEach((btn, idx) => {
+    btn.disabled = true;
+    if (idx === q.correct) {
+      btn.classList.add('correct');
+    } else if (idx === chosenIdx && !isRight) {
+      btn.classList.add('incorrect');
+    } else {
+      btn.classList.add('dimmed');
+    }
+  });
+
+  // Build explanation
+  const expBox = document.getElementById('explanation-box');
+  const expHeader = document.getElementById('exp-header');
+  const expCorrectNote = document.getElementById('exp-correct-note');
+  const expBody = document.getElementById('exp-body');
+
+  if (isRight) {
+    expBox.className = 'explanation-box correct-exp show';
+    expHeader.textContent = '✓ Correct!';
+    expCorrectNote.textContent = '';
+  } else {
+    expBox.className = 'explanation-box incorrect-exp show';
+    expHeader.textContent = '✗ Not quite.';
+    expCorrectNote.textContent =
+      `The correct answer is: ${letters[q.correct]}. ${q.options[q.correct]}`;
+  }
+  expBody.textContent = q.explanation;
+
+  // Show next button
+  const nextBtn = document.getElementById('next-btn');
+  if (currentIndex < QUIZ_LENGTH - 1) {
+    nextBtn.textContent = 'Next Question →';
+  } else {
+    nextBtn.textContent = 'See My Results →';
+  }
+  nextBtn.className = 'next-btn show';
+
+  // Record result
+  results.push({
+    question:    q,
+    chosenIdx:   chosenIdx,
+    correct:     isRight
+  });
+
+  // Scroll explanation into view on mobile
+  setTimeout(() => {
+    expBox.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+  }, 100);
+}
+
+// ── NEXT QUESTION ──────────────────────────────────────────
+function nextQuestion() {
+  currentIndex++;
+  if (currentIndex >= QUIZ_LENGTH) {
+    showResults();
+  } else {
+    renderQuestion();
+    document.getElementById('question-card').scrollIntoView({ behavior: 'smooth', block: 'start' });
+  }
+}
+
+// ── SHOW RESULTS ───────────────────────────────────────────
+function showResults() {
+  showScreen('screen-results');
+
+  const pct = Math.round((score / QUIZ_LENGTH) * 100);
+
+  // Score ring animation
+  const ring = document.getElementById('score-ring');
+  const circ = 2 * Math.PI * 52; // r=52
+  const ringColor =
+    pct >= 80 ? '#4caf7a'
+    : pct >= 60 ? '#e4b84a'
+    : '#e07070';
+  ring.style.stroke = ringColor;
+
+  setTimeout(() => {
+    ring.style.strokeDashoffset = circ * (1 - pct / 100);
+  }, 200);
+
+  document.getElementById('score-frac').textContent = `${score}/20`;
+  document.getElementById('score-pct').textContent  = pct + '%';
+
+  // Grade comment
+  let heading, comment;
+  if      (pct >= 90) { heading = '🌟 Outstanding!';       comment = 'Excellent command of civics — you are well prepared for the exam.'; }
+  else if (pct >= 80) { heading = '🎉 Great Work!';         comment = 'Strong performance. Review any missed questions to solidify your knowledge.'; }
+  else if (pct >= 70) { heading = '👍 Good Effort!';        comment = 'Solid understanding with some gaps. Focus on the topics you missed.'; }
+  else if (pct >= 60) { heading = '📚 Keep Studying';       comment = 'You know the basics but need more practice. Revisit the Study Guide for weak areas.'; }
+  else                { heading = '📖 More Review Needed';  comment = 'Don\'t get discouraged — review the Study Guide and retake the quiz to improve.'; }
+
+  document.getElementById('results-heading').textContent = heading;
+  document.getElementById('grade-comment').textContent   = comment;
+
+  // ── Topic performance breakdown ──────────────────────────
+  const topicMap = {};
+  results.forEach(r => {
+    const t = r.question.topic;
+    if (!topicMap[t]) topicMap[t] = { correct: 0, total: 0 };
+    topicMap[t].total++;
+    if (r.correct) topicMap[t].correct++;
+  });
+
+  const perfDiv = document.getElementById('topic-perf');
+  perfDiv.innerHTML = '';
+  Object.entries(topicMap)
+    .sort((a, b) => (b[1].correct / b[1].total) - (a[1].correct / a[1].total))
+    .forEach(([topic, data]) => {
+      const tpct = Math.round((data.correct / data.total) * 100);
+      const color = tpct >= 80 ? '#4caf7a' : tpct >= 60 ? '#e4b84a' : '#e07070';
+      const row = document.createElement('div');
+      row.className = 'topic-perf-row';
+      row.innerHTML = `
+        <div class="tp-name">${topic}</div>
+        <div class="tp-bar-wrap">
+          <div class="tp-bar-fill" style="width:0%;background:${color}" data-pct="${tpct}"></div>
+        </div>
+        <div class="tp-score">${data.correct}/${data.total}</div>
+      `;
+      perfDiv.appendChild(row);
+    });
+
+  // Animate bars after a short delay
+  setTimeout(() => {
+    document.querySelectorAll('.tp-bar-fill').forEach(bar => {
+      bar.style.transition = 'width 0.9s ease';
+      bar.style.width = bar.dataset.pct + '%';
+    });
+  }, 300);
+
+  // ── Review list ──────────────────────────────────────────
+  const reviewDiv = document.getElementById('review-list');
+  reviewDiv.innerHTML = '';
+  const letters = ['A', 'B', 'C', 'D'];
+
+  results.forEach((r, i) => {
+    const q   = r.question;
+    const icon = r.correct ? '✅' : '❌';
+    const item = document.createElement('div');
+    item.className = 'review-item';
+    item.id = `ri-${i}`;
+
+    const chosenLabel = letters[r.chosenIdx] + '. ' + q.options[r.chosenIdx];
+    const correctLabel = letters[q.correct] + '. ' + q.options[q.correct];
+    const yourClass = r.correct ? 'right' : 'wrong';
+
+    item.innerHTML = `
+      <div class="review-item-header" onclick="toggleReview('ri-${i}')">
+        <span class="review-status-icon">${icon}</span>
+        <span class="review-q-text">${i + 1}. ${q.text}</span>
+        <span class="review-toggle">▼</span>
+      </div>
+      <div class="review-item-body">
+        <div class="review-your-answer">Your answer: <span class="${yourClass}">${chosenLabel}</span></div>
+        ${!r.correct ? `<div class="review-correct-answer">Correct answer: <span>${correctLabel}</span></div>` : ''}
+        <div class="review-explanation">${q.explanation}</div>
+      </div>
+    `;
+    reviewDiv.appendChild(item);
+  });
+}
+
+// ── TOGGLE REVIEW ITEM ─────────────────────────────────────
+function toggleReview(id) {
+  document.getElementById(id).classList.toggle('open');
+}
+
+// ── INIT ───────────────────────────────────────────────────
+showScreen('screen-start');
+
+</script>
+</body>
+</html>

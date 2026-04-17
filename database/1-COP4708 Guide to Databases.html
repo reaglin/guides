@@ -1,0 +1,1572 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>COP4709 - What You Need to Know in Databases</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.6;
+            color: #0f1f2e;
+            background: linear-gradient(135deg, #0a1628 0%, #1a3a5c 50%, #1e5f8a 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1050px;
+            margin: 0 auto;
+            background: #fff;
+            border-radius: 15px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.45);
+            overflow: hidden;
+        }
+
+        header {
+            background: linear-gradient(135deg, #0a1628 0%, #1e5f8a 100%);
+            color: white;
+            padding: 40px;
+            text-align: center;
+            border-bottom: 4px solid #38bdf8;
+        }
+
+        header h1 { font-size: 2.4em; margin-bottom: 10px; text-shadow: 2px 2px 6px rgba(0,0,0,0.4); }
+        header p  { font-size: 1.15em; opacity: 0.9; }
+
+        .content { padding: 40px; }
+
+        /* Intro */
+        .intro {
+            background: linear-gradient(135deg, #e0f2fe 0%, #bae6fd 100%);
+            padding: 25px;
+            border-radius: 10px;
+            margin-bottom: 30px;
+            border-left: 5px solid #0284c7;
+        }
+        .intro h2 { color: #0c4a6e; margin-bottom: 12px; }
+
+        /* Collapsible */
+        .section { margin-bottom: 22px; }
+
+        .collapsible {
+            background: #fafafa;
+            border: 2px solid #e0f2fe;
+            border-radius: 10px;
+            overflow: hidden;
+            transition: all 0.3s ease;
+        }
+
+        .collapsible:hover {
+            border-color: #0284c7;
+            box-shadow: 0 4px 12px rgba(2,132,199,0.18);
+        }
+
+        .collapsible-header {
+            background: linear-gradient(135deg, #0a1628 0%, #1e5f8a 100%);
+            color: white;
+            padding: 18px 22px;
+            cursor: pointer;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-weight: 600;
+            font-size: 1.12em;
+            user-select: none;
+        }
+
+        .collapsible-header:hover { background: linear-gradient(135deg, #112240 0%, #2472a4 100%); }
+        .collapsible-header::after { content: '▼'; font-size: 0.8em; transition: transform 0.3s ease; }
+
+        .collapsible-content {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.4s ease;
+            padding: 0 22px;
+        }
+
+        .collapsible.active .collapsible-content { max-height: 18000px; padding: 22px; }
+        .collapsible.active .collapsible-header::after { transform: rotate(180deg); }
+
+        /* Info boxes */
+        .info-box     { background: #e0f2fe; border-left: 5px solid #0284c7; padding: 15px; margin: 15px 0; border-radius: 5px; }
+        .highlight-box{ background: #fef9c3; border-left: 5px solid #ca8a04; padding: 15px; margin: 15px 0; border-radius: 5px; }
+        .success-box  { background: #dcfce7; border-left: 5px solid #16a34a; padding: 15px; margin: 15px 0; border-radius: 5px; }
+        .steel-box    { background: #f0f9ff; border-left: 5px solid #1e5f8a; padding: 15px; margin: 15px 0; border-radius: 5px; }
+
+        /* ── SKILL LEVEL BADGES ── */
+        .lvl {
+            display: inline-block;
+            padding: 2px 11px;
+            border-radius: 12px;
+            font-size: 0.72em;
+            font-weight: 800;
+            letter-spacing: 0.06em;
+            text-transform: uppercase;
+            white-space: nowrap;
+            margin-left: 6px;
+        }
+
+        .lvl-1 { background: #16a34a; color: white; }           /* Foundational – green */
+        .lvl-2 { background: #0284c7; color: white; }           /* Intermediate – blue */
+        .lvl-3 { background: #7c3aed; color: white; }           /* Advanced – purple */
+        .lvl-4 { background: #b45309; color: white; }           /* Expert – amber-brown */
+
+        /* ── TOPIC GRID ── */
+        .topic-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
+            margin: 14px 0;
+        }
+
+        .topic-item {
+            display: flex;
+            align-items: flex-start;
+            gap: 10px;
+            background: #f8fbff;
+            border: 1px solid #dbeafe;
+            border-radius: 8px;
+            padding: 12px 14px;
+            transition: border-color 0.2s;
+        }
+
+        .topic-item:hover { border-color: #0284c7; background: #f0f9ff; }
+
+        .topic-item .ti-icon {
+            font-size: 1.3em;
+            flex-shrink: 0;
+            margin-top: 1px;
+        }
+
+        .topic-item .ti-body { flex: 1; }
+        .topic-item .ti-title { font-weight: 700; color: #0c4a6e; font-size: 0.95em; }
+        .topic-item .ti-desc  { font-size: 0.83em; color: #374151; margin-top: 2px; line-height: 1.45; }
+
+        /* ── ROLE CARDS ── */
+        .role-card {
+            border-radius: 10px;
+            overflow: hidden;
+            box-shadow: 0 4px 14px rgba(0,0,0,0.10);
+            margin-bottom: 22px;
+        }
+
+        .role-header {
+            padding: 16px 20px;
+            color: white;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .role-header .role-icon { font-size: 1.8em; }
+        .role-header .role-title { font-size: 1.18em; font-weight: 700; }
+        .role-header .role-subtitle { font-size: 0.85em; opacity: 0.88; }
+
+        .role-body {
+            background: white;
+            padding: 18px 20px;
+            border: 2px solid transparent;
+            border-top: none;
+            border-radius: 0 0 10px 10px;
+        }
+
+        /* Role color themes */
+        .role-dba    .role-header { background: linear-gradient(135deg, #0a1628, #1e5f8a); }
+        .role-dba    .role-body   { border-color: #1e5f8a; }
+
+        .role-dev    .role-header { background: linear-gradient(135deg, #1a0533, #5e27a0); }
+        .role-dev    .role-body   { border-color: #5e27a0; }
+
+        .role-analyst .role-header { background: linear-gradient(135deg, #052e16, #166534); }
+        .role-analyst .role-body   { border-color: #166534; }
+
+        .role-eng    .role-header { background: linear-gradient(135deg, #2d1b00, #7c4a00); }
+        .role-eng    .role-body   { border-color: #7c4a00; }
+
+        .role-arch   .role-header { background: linear-gradient(135deg, #1a0010, #7c0033); }
+        .role-arch   .role-body   { border-color: #7c0033; }
+
+        .role-bi     .role-header { background: linear-gradient(135deg, #003333, #007766); }
+        .role-bi     .role-body   { border-color: #007766; }
+
+        .role-ds     .role-header { background: linear-gradient(135deg, #0c0a40, #3730a3); }
+        .role-ds     .role-body   { border-color: #3730a3; }
+
+        /* Skill columns inside role cards */
+        .skill-cols {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 16px;
+            margin-top: 12px;
+        }
+
+        .skill-col h5 {
+            font-size: 0.82em;
+            text-transform: uppercase;
+            letter-spacing: 0.06em;
+            color: #6b7280;
+            margin-bottom: 8px;
+            border-bottom: 1px solid #e5e7eb;
+            padding-bottom: 4px;
+        }
+
+        .skill-col ul { margin: 0; padding-left: 18px; }
+        .skill-col li { font-size: 0.88em; margin: 4px 0; color: #1f2937; }
+
+        .role-tag {
+            display: inline-block;
+            padding: 2px 9px;
+            border-radius: 10px;
+            font-size: 0.75em;
+            font-weight: 600;
+            margin: 2px;
+            background: #e0f2fe;
+            color: #0c4a6e;
+        }
+
+        .sal-range {
+            font-size: 0.82em;
+            color: #374151;
+            margin-top: 8px;
+            padding: 6px 10px;
+            background: #f8fbff;
+            border-radius: 6px;
+            border: 1px solid #dbeafe;
+        }
+
+        /* Level legend row */
+        .legend {
+            display: flex;
+            gap: 12px;
+            flex-wrap: wrap;
+            margin: 18px 0;
+            align-items: center;
+        }
+
+        .legend-item {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 0.88em;
+        }
+
+        /* Tables */
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            background: white;
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+            margin: 14px 0;
+        }
+
+        th {
+            background: linear-gradient(135deg, #0a1628, #1e5f8a);
+            color: white;
+            padding: 11px 14px;
+            text-align: left;
+            font-weight: 600;
+            font-size: 0.88em;
+        }
+
+        td { padding: 9px 14px; border-bottom: 1px solid #e0f2fe; font-size: 0.9em; vertical-align: top; }
+        tr:last-child td { border-bottom: none; }
+        tr:nth-child(even) { background: #f0f9ff; }
+        tr:hover { background: #e0f2fe; }
+
+        /* Grids */
+        .two-col   { display: grid; grid-template-columns: 1fr 1fr; gap: 18px; margin: 16px 0; }
+        .three-col { display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px; margin: 16px 0; }
+
+        .card { padding: 16px; border-radius: 10px; box-shadow: 0 3px 10px rgba(0,0,0,0.07); }
+        .card.blue   { background: linear-gradient(135deg, #e0f2fe, #bae6fd); border: 2px solid #0284c7; }
+        .card.green  { background: linear-gradient(135deg, #dcfce7, #bbf7d0); border: 2px solid #16a34a; }
+        .card.amber  { background: linear-gradient(135deg, #fef9c3, #fde68a); border: 2px solid #ca8a04; }
+        .card.purple { background: linear-gradient(135deg, #f5f0ff, #e9d5ff); border: 2px solid #7c3aed; }
+        .card.dark   { background: linear-gradient(135deg, #0a1628, #1e5f8a); color: #bae6fd; border: 2px solid #38bdf8; }
+        .card.dark h4 { color: #7dd3fc; }
+        .card.red    { background: linear-gradient(135deg, #fff1f2, #fecdd3); border: 2px solid #e11d48; }
+
+        /* Path line visual */
+        .path-container { margin: 20px 0; }
+
+        .path-stage {
+            display: flex;
+            align-items: flex-start;
+            margin-bottom: 0;
+            position: relative;
+        }
+
+        .path-stage::before {
+            content: '';
+            position: absolute;
+            left: 20px;
+            top: 46px;
+            bottom: -16px;
+            width: 3px;
+            background: linear-gradient(180deg, #38bdf8, #0284c7);
+            z-index: 0;
+        }
+
+        .path-stage:last-child::before { display: none; }
+
+        .path-dot {
+            width: 42px;
+            height: 42px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 800;
+            font-size: 0.9em;
+            color: white;
+            flex-shrink: 0;
+            z-index: 1;
+            margin-right: 16px;
+            margin-top: 0;
+            box-shadow: 0 3px 8px rgba(0,0,0,0.2);
+        }
+
+        .dot-1 { background: #16a34a; }
+        .dot-2 { background: #0284c7; }
+        .dot-3 { background: #7c3aed; }
+        .dot-4 { background: #b45309; }
+
+        .path-content {
+            flex: 1;
+            background: #f8fbff;
+            border: 2px solid #dbeafe;
+            border-radius: 10px;
+            padding: 16px 18px;
+            margin-bottom: 16px;
+        }
+
+        .path-content h4 { color: #0c4a6e; font-size: 1.05em; margin-bottom: 4px; }
+        .path-content p  { font-size: 0.87em; color: #374151; }
+
+        /* Typography */
+        h3 {
+            color: #0c4a6e;
+            margin: 20px 0 10px;
+            font-size: 1.3em;
+            border-bottom: 2px solid #bae6fd;
+            padding-bottom: 5px;
+        }
+
+        h4 { color: #0a1628; margin: 14px 0 7px; font-size: 1.02em; }
+        strong { color: #1e5f8a; }
+
+        code {
+            background: #e0f2fe;
+            color: #0c4a6e;
+            padding: 2px 6px;
+            border-radius: 4px;
+            font-family: 'Courier New', monospace;
+            font-size: 0.88em;
+        }
+
+        ul, ol { margin: 10px 0 10px 26px; }
+        li { margin: 5px 0; }
+
+        footer {
+            background: #0a1628;
+            color: #7dd3fc;
+            text-align: center;
+            padding: 20px;
+            border-top: 4px solid #38bdf8;
+        }
+    </style>
+</head>
+<body>
+<div class="container">
+
+    <header>
+        <h1>🗄️ What You Need to Know in Databases</h1>
+        <p>COP4709 — The Complete Knowledge & Career Roadmap</p>
+    </header>
+
+    <div class="content">
+
+        <div class="intro">
+            <h2>📋 About This Guide</h2>
+            <p>This guide maps the full landscape of database knowledge — from the foundational concepts covered in <strong>Applied Databases I (COP4708)</strong>, through the intermediate topics of <strong>Database Management (COP4709)</strong>, and onward to the advanced and expert-level skills required of seasoned database professionals. Each topic is tagged with a skill level, and the final section profiles the major roles in the database profession along with the skills each requires.</p>
+            <p style="margin-top:10px;">Use this guide as a <strong>self-assessment checklist</strong>, a <strong>study roadmap</strong>, or a <strong>career planning tool</strong>. The goal is not to know everything at once — it's to know where you are now and where to go next.</p>
+        </div>
+
+        <!-- ══════════════════════════════════════════ -->
+        <!-- SECTION 1 — SKILL LEVEL FRAMEWORK          -->
+        <!-- ══════════════════════════════════════════ -->
+        <div class="section">
+            <div class="collapsible active">
+                <div class="collapsible-header">1. Skill Level Framework</div>
+                <div class="collapsible-content">
+
+                    <p>Every topic in this guide is tagged with one of four skill levels. These levels describe the depth of knowledge expected and the experience needed to reach that level.</p>
+
+                    <div class="path-container">
+                        <div class="path-stage">
+                            <div class="path-dot dot-1">L1</div>
+                            <div class="path-content">
+                                <h4>Foundational <span class="lvl lvl-1">Foundational</span></h4>
+                                <p>Core concepts that every person who works with databases must know. Covered in <strong>Applied Databases I (COP4708)</strong>. This is the baseline — without these you cannot perform any meaningful database work. Expected of entry-level analysts, developers, and junior DBAs within their first year.</p>
+                            </div>
+                        </div>
+                        <div class="path-stage">
+                            <div class="path-dot dot-2">L2</div>
+                            <div class="path-content">
+                                <h4>Intermediate <span class="lvl lvl-2">Intermediate</span></h4>
+                                <p>Topics covered in <strong>Database Management (COP4709)</strong>. These skills are expected of a working database professional after 1–3 years of hands-on experience. You can design and maintain real systems, write complex queries, and understand performance trade-offs.</p>
+                            </div>
+                        </div>
+                        <div class="path-stage">
+                            <div class="path-dot dot-3">L3</div>
+                            <div class="path-content">
+                                <h4>Advanced <span class="lvl lvl-3">Advanced</span></h4>
+                                <p>Professional-level skills typically developed through 3–6 years of experience or dedicated specialised study. These topics require deeper system knowledge, architectural thinking, and the ability to make design decisions that affect production systems at scale.</p>
+                            </div>
+                        </div>
+                        <div class="path-stage">
+                            <div class="path-dot dot-4">L4</div>
+                            <div class="path-content">
+                                <h4>Expert / Architect <span class="lvl lvl-4">Expert</span></h4>
+                                <p>Skills of a senior DBA, database architect, or principal engineer — typically 6+ years of experience. These professionals design entire data ecosystems, evaluate technology choices at the organisational level, and guide teams on best practices and long-term strategy.</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="legend">
+                        <strong style="font-size:0.9em;">Legend:</strong>
+                        <div class="legend-item"><span class="lvl lvl-1">Foundational</span> COP4708 / Entry Level</div>
+                        <div class="legend-item"><span class="lvl lvl-2">Intermediate</span> COP4709 / 1–3 Years</div>
+                        <div class="legend-item"><span class="lvl lvl-3">Advanced</span> Professional / 3–6 Years</div>
+                        <div class="legend-item"><span class="lvl lvl-4">Expert</span> Senior / Architect / 6+ Years</div>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+
+        <!-- ══════════════════════════════════════════ -->
+        <!-- SECTION 2 — FOUNDATIONAL TOPICS            -->
+        <!-- ══════════════════════════════════════════ -->
+        <div class="section">
+            <div class="collapsible">
+                <div class="collapsible-header">2. Foundational Topics &nbsp;<span class="lvl lvl-1">Foundational — COP4708</span></div>
+                <div class="collapsible-content">
+
+                    <div class="info-box">
+                        These are the bedrock concepts of relational database work. If you cannot do all of these confidently, master them first before moving on. These topics are covered in <strong>Applied Databases I (COP4708)</strong>.
+                    </div>
+
+                    <h3>The Relational Model</h3>
+                    <div class="topic-grid">
+                        <div class="topic-item">
+                            <div class="ti-icon">📐</div>
+                            <div class="ti-body">
+                                <div class="ti-title">Relational Model Concepts <span class="lvl lvl-1">L1</span></div>
+                                <div class="ti-desc">Tables (relations), rows (tuples), columns (attributes), domains. Understanding that a relational database enforces structure through schema constraints before data is inserted.</div>
+                            </div>
+                        </div>
+                        <div class="topic-item">
+                            <div class="ti-icon">🔑</div>
+                            <div class="ti-body">
+                                <div class="ti-title">Keys &amp; Constraints <span class="lvl lvl-1">L1</span></div>
+                                <div class="ti-desc">Primary keys, foreign keys, unique constraints, NOT NULL, check constraints, default values. Understanding how constraints enforce data integrity at the database level.</div>
+                            </div>
+                        </div>
+                        <div class="topic-item">
+                            <div class="ti-icon">🗺️</div>
+                            <div class="ti-body">
+                                <div class="ti-title">Entity-Relationship Diagrams (ERD) <span class="lvl lvl-1">L1</span></div>
+                                <div class="ti-desc">Drawing and reading ERDs to model business data. Entities, attributes, and relationships. Cardinality notation (one-to-one, one-to-many, many-to-many) and how diagrams translate to tables.</div>
+                            </div>
+                        </div>
+                        <div class="topic-item">
+                            <div class="ti-icon">📊</div>
+                            <div class="ti-body">
+                                <div class="ti-title">Normalization (1NF – 3NF / BCNF) <span class="lvl lvl-1">L1</span></div>
+                                <div class="ti-desc">First, second, and third normal forms. Identifying and removing partial dependencies, transitive dependencies, and repeating groups. Boyce-Codd Normal Form. Understanding why over-normalization can hurt performance.</div>
+                            </div>
+                        </div>
+                        <div class="topic-item">
+                            <div class="ti-icon">🏗️</div>
+                            <div class="ti-body">
+                                <div class="ti-title">DDL — Data Definition Language <span class="lvl lvl-1">L1</span></div>
+                                <div class="ti-desc">CREATE TABLE, ALTER TABLE, DROP TABLE, TRUNCATE. Defining schemas, modifying them, and understanding the difference between dropping and truncating a table.</div>
+                            </div>
+                        </div>
+                        <div class="topic-item">
+                            <div class="ti-icon">✏️</div>
+                            <div class="ti-body">
+                                <div class="ti-title">DML — Data Manipulation Language <span class="lvl lvl-1">L1</span></div>
+                                <div class="ti-desc">SELECT, INSERT, UPDATE, DELETE. Writing queries that read and modify data correctly. Understanding the difference between DDL and DML and when each is appropriate.</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <h3>SQL Fundamentals</h3>
+                    <div class="topic-grid">
+                        <div class="topic-item">
+                            <div class="ti-icon">🔍</div>
+                            <div class="ti-body">
+                                <div class="ti-title">SELECT Queries <span class="lvl lvl-1">L1</span></div>
+                                <div class="ti-desc">Writing SELECT statements with WHERE, ORDER BY, DISTINCT. Filtering with comparison and logical operators (AND, OR, NOT, IN, BETWEEN, LIKE, IS NULL). Column aliases and calculated columns.</div>
+                            </div>
+                        </div>
+                        <div class="topic-item">
+                            <div class="ti-icon">🔗</div>
+                            <div class="ti-body">
+                                <div class="ti-title">JOINs <span class="lvl lvl-1">L1</span></div>
+                                <div class="ti-desc">INNER JOIN, LEFT OUTER JOIN, RIGHT OUTER JOIN, FULL OUTER JOIN, CROSS JOIN. Understanding what each join type returns, including NULLs in outer join results, and how to combine three or more tables.</div>
+                            </div>
+                        </div>
+                        <div class="topic-item">
+                            <div class="ti-icon">➕</div>
+                            <div class="ti-body">
+                                <div class="ti-title">Aggregate Functions &amp; GROUP BY <span class="lvl lvl-1">L1</span></div>
+                                <div class="ti-desc">COUNT, SUM, AVG, MIN, MAX. Grouping results with GROUP BY. Filtering grouped results with HAVING. Understanding the difference between WHERE (filters rows) and HAVING (filters groups).</div>
+                            </div>
+                        </div>
+                        <div class="topic-item">
+                            <div class="ti-icon">📦</div>
+                            <div class="ti-body">
+                                <div class="ti-title">Subqueries <span class="lvl lvl-1">L1</span></div>
+                                <div class="ti-desc">Correlated and non-correlated subqueries in SELECT, WHERE, and FROM clauses. EXISTS and NOT EXISTS. When subqueries are appropriate vs. when a JOIN or CTE would be cleaner.</div>
+                            </div>
+                        </div>
+                        <div class="topic-item">
+                            <div class="ti-icon">🏛️</div>
+                            <div class="ti-body">
+                                <div class="ti-title">Views <span class="lvl lvl-1">L1</span></div>
+                                <div class="ti-desc">Creating and querying views as saved SELECT statements. Benefits of views for security (column/row filtering), simplification, and abstraction. Updatable vs non-updatable views.</div>
+                            </div>
+                        </div>
+                        <div class="topic-item">
+                            <div class="ti-icon">⚙️</div>
+                            <div class="ti-body">
+                                <div class="ti-title">Stored Procedures &amp; Functions (Basic) <span class="lvl lvl-1">L1</span></div>
+                                <div class="ti-desc">Creating and executing simple stored procedures with input/output parameters. Scalar user-defined functions. The difference between a procedure (performs actions) and a function (returns a value).</div>
+                            </div>
+                        </div>
+                        <div class="topic-item">
+                            <div class="ti-icon">🔄</div>
+                            <div class="ti-body">
+                                <div class="ti-title">Transactions &amp; ACID Properties <span class="lvl lvl-1">L1</span></div>
+                                <div class="ti-desc">BEGIN TRANSACTION, COMMIT, ROLLBACK. Understanding Atomicity, Consistency, Isolation, Durability. Why transactions are essential for data integrity in multi-step operations.</div>
+                            </div>
+                        </div>
+                        <div class="topic-item">
+                            <div class="ti-icon">🔢</div>
+                            <div class="ti-body">
+                                <div class="ti-title">Data Types <span class="lvl lvl-1">L1</span></div>
+                                <div class="ti-desc">INT, BIGINT, DECIMAL/NUMERIC, VARCHAR/NVARCHAR, CHAR, DATE, DATETIME, BIT, UNIQUEIDENTIFIER. Choosing the right type and size. NULL semantics and the three-valued logic of NULL comparisons.</div>
+                            </div>
+                        </div>
+                        <div class="topic-item">
+                            <div class="ti-icon">📇</div>
+                            <div class="ti-body">
+                                <div class="ti-title">Basic Indexing Concepts <span class="lvl lvl-1">L1</span></div>
+                                <div class="ti-desc">What an index is and why it speeds up queries. Clustered vs non-clustered indexes — the key distinction. Creating simple single-column indexes. Understanding that indexes have a write cost.</div>
+                            </div>
+                        </div>
+                        <div class="topic-item">
+                            <div class="ti-icon">🔒</div>
+                            <div class="ti-body">
+                                <div class="ti-title">Basic Security &amp; Permissions <span class="lvl lvl-1">L1</span></div>
+                                <div class="ti-desc">GRANT, REVOKE, DENY. Creating logins and users. Understanding the difference between a server login and a database user. Basic role membership. Never store passwords in plain text.</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="steel-box">
+                        <strong>Self-assessment for L1:</strong> Can you design a normalised schema from a business description, write a multi-table JOIN query that groups and filters results, wrap it in a stored procedure, and execute it within a transaction? If yes, you have a solid Foundational level.
+                    </div>
+
+                </div>
+            </div>
+        </div>
+
+        <!-- ══════════════════════════════════════════ -->
+        <!-- SECTION 3 — INTERMEDIATE TOPICS            -->
+        <!-- ══════════════════════════════════════════ -->
+        <div class="section">
+            <div class="collapsible">
+                <div class="collapsible-header">3. Intermediate Topics &nbsp;<span class="lvl lvl-2">Intermediate — COP4709</span></div>
+                <div class="collapsible-content">
+
+                    <div class="info-box">
+                        These are the topics covered in <strong>Database Management (COP4709)</strong>. They build on the foundation to give you the skills to work with real production systems — optimising queries, securing data, handling complex analysis, and working beyond the relational model.
+                    </div>
+
+                    <h3>Advanced SQL</h3>
+                    <div class="topic-grid">
+                        <div class="topic-item">
+                            <div class="ti-icon">🪟</div>
+                            <div class="ti-body">
+                                <div class="ti-title">Window Functions <span class="lvl lvl-2">L2</span></div>
+                                <div class="ti-desc">ROW_NUMBER, RANK, DENSE_RANK, NTILE, LAG, LEAD, SUM OVER, AVG OVER with PARTITION BY and ORDER BY. Running totals, moving averages, and period-over-period comparisons without subqueries.</div>
+                            </div>
+                        </div>
+                        <div class="topic-item">
+                            <div class="ti-icon">📎</div>
+                            <div class="ti-body">
+                                <div class="ti-title">Common Table Expressions (CTEs) <span class="lvl lvl-2">L2</span></div>
+                                <div class="ti-desc">Writing WITH clauses for readable, reusable query logic. Chaining multiple CTEs. Recursive CTEs for hierarchical data (org charts, bill of materials). CTEs vs temp tables vs subqueries.</div>
+                            </div>
+                        </div>
+                        <div class="topic-item">
+                            <div class="ti-icon">🔀</div>
+                            <div class="ti-body">
+                                <div class="ti-title">MERGE Statement <span class="lvl lvl-2">L2</span></div>
+                                <div class="ti-desc">Upsert logic using MERGE: insert new rows, update changed rows, and optionally delete missing rows in a single operation. Common in ETL and synchronisation jobs.</div>
+                            </div>
+                        </div>
+                        <div class="topic-item">
+                            <div class="ti-icon">📋</div>
+                            <div class="ti-body">
+                                <div class="ti-title">Temporary Tables &amp; Table Variables <span class="lvl lvl-2">L2</span></div>
+                                <div class="ti-desc">Local (#temp) and global (##temp) temporary tables, @table variables, and CTEs. When to use each. Impact on query plan reuse and statistics. Temp tables vs CTEs for performance.</div>
+                            </div>
+                        </div>
+                        <div class="topic-item">
+                            <div class="ti-icon">⚡</div>
+                            <div class="ti-body">
+                                <div class="ti-title">Advanced Stored Procedures <span class="lvl lvl-2">L2</span></div>
+                                <div class="ti-desc">Error handling with TRY/CATCH, dynamic SQL with sp_executesql, OUTPUT parameters, EXEC with string parameters. Writing procedures that are safe from SQL injection.</div>
+                            </div>
+                        </div>
+                        <div class="topic-item">
+                            <div class="ti-icon">🔔</div>
+                            <div class="ti-body">
+                                <div class="ti-title">Triggers <span class="lvl lvl-2">L2</span></div>
+                                <div class="ti-desc">AFTER and INSTEAD OF triggers for INSERT, UPDATE, DELETE. Using the inserted and deleted pseudo-tables. Audit triggers, cascading updates via trigger. When triggers help vs when they create hidden complexity.</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <h3>Performance &amp; Indexing</h3>
+                    <div class="topic-grid">
+                        <div class="topic-item">
+                            <div class="ti-icon">🗂️</div>
+                            <div class="ti-body">
+                                <div class="ti-title">Index Design &amp; Strategy <span class="lvl lvl-2">L2</span></div>
+                                <div class="ti-desc">Composite indexes and column order. Covering indexes that include non-key columns. Filtered indexes for partial data. Index fragmentation and rebuilding. Understanding the cost of over-indexing on write-heavy tables.</div>
+                            </div>
+                        </div>
+                        <div class="topic-item">
+                            <div class="ti-icon">📈</div>
+                            <div class="ti-body">
+                                <div class="ti-title">Execution Plan Reading <span class="lvl lvl-2">L2</span></div>
+                                <div class="ti-desc">Interpreting graphical and text execution plans. Identifying costly operators: table scans, key lookups, hash joins, nested loops. Using estimated vs actual plans. SET STATISTICS IO and TIME for profiling queries.</div>
+                            </div>
+                        </div>
+                        <div class="topic-item">
+                            <div class="ti-icon">🔎</div>
+                            <div class="ti-body">
+                                <div class="ti-title">Full-Text Indexing <span class="lvl lvl-2">L2</span></div>
+                                <div class="ti-desc">Creating catalogs and full-text indexes. Using CONTAINS, FREETEXT, CONTAINSTABLE, and FREETEXTTABLE. Stemming, stopwords, thesaurus, proximity search. When to use full-text vs LIKE vs a dedicated search service.</div>
+                            </div>
+                        </div>
+                        <div class="topic-item">
+                            <div class="ti-icon">📉</div>
+                            <div class="ti-body">
+                                <div class="ti-title">Query Store &amp; DMVs <span class="lvl lvl-2">L2</span></div>
+                                <div class="ti-desc">Enabling and using Query Store to identify regressed queries. Key Dynamic Management Views: sys.dm_exec_requests, sys.dm_exec_query_stats, sys.dm_index_usage_stats. Finding expensive and blocking queries.</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <h3>Data Design &amp; Analysis</h3>
+                    <div class="topic-grid">
+                        <div class="topic-item">
+                            <div class="ti-icon">📚</div>
+                            <div class="ti-body">
+                                <div class="ti-title">Lookup &amp; Reference Tables <span class="lvl lvl-2">L2</span></div>
+                                <div class="ti-desc">Designing and using lookup/reference tables to normalise categorical data. Avoiding magic numbers and hardcoded strings in application logic. Type tables, status tables, and code tables.</div>
+                            </div>
+                        </div>
+                        <div class="topic-item">
+                            <div class="ti-icon">🔗</div>
+                            <div class="ti-body">
+                                <div class="ti-title">Advanced Aggregation Patterns <span class="lvl lvl-2">L2</span></div>
+                                <div class="ti-desc">ROLLUP, CUBE, and GROUPING SETS for multi-dimensional aggregation. GROUPING() function to distinguish subtotal rows. Pivoting and unpivoting data with PIVOT/UNPIVOT and CASE WHEN patterns.</div>
+                            </div>
+                        </div>
+                        <div class="topic-item">
+                            <div class="ti-icon">📊</div>
+                            <div class="ti-body">
+                                <div class="ti-title">Data Analysis with SQL <span class="lvl lvl-2">L2</span></div>
+                                <div class="ti-desc">Descriptive reporting, period-over-period comparisons, trend analysis, segmentation, and KPI calculation. Writing parameterised cyclic report queries and wrapping them in scheduled stored procedures.</div>
+                            </div>
+                        </div>
+                        <div class="topic-item">
+                            <div class="ti-icon">🍃</div>
+                            <div class="ti-body">
+                                <div class="ti-title">NoSQL Concepts &amp; MongoDB <span class="lvl lvl-2">L2</span></div>
+                                <div class="ti-desc">Document, key-value, column-family, and graph database types. MongoDB CRUD operations, the aggregation pipeline, embedding vs referencing, and index creation. When NoSQL is the right tool vs relational.</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <h3>Security</h3>
+                    <div class="topic-grid">
+                        <div class="topic-item">
+                            <div class="ti-icon">🛡️</div>
+                            <div class="ti-body">
+                                <div class="ti-title">Authentication &amp; Authorization <span class="lvl lvl-2">L2</span></div>
+                                <div class="ti-desc">Windows vs SQL Server authentication. Role-based access control, schema ownership, least-privilege design. Row-Level Security (RLS) to restrict data access by user. Dynamic Data Masking for PII protection.</div>
+                            </div>
+                        </div>
+                        <div class="topic-item">
+                            <div class="ti-icon">🔐</div>
+                            <div class="ti-body">
+                                <div class="ti-title">Encryption <span class="lvl lvl-2">L2</span></div>
+                                <div class="ti-desc">Transparent Data Encryption (TDE) for encryption at rest. Always Encrypted for column-level encryption. Forcing TLS/SSL for encryption in transit. Certificate management and backup of encryption keys.</div>
+                            </div>
+                        </div>
+                        <div class="topic-item">
+                            <div class="ti-icon">📋</div>
+                            <div class="ti-body">
+                                <div class="ti-title">Auditing &amp; Monitoring <span class="lvl lvl-2">L2</span></div>
+                                <div class="ti-desc">SQL Server Audit specifications for logging logins, DDL, and DML on sensitive tables. Querying the audit log with fn_get_audit_file. Using DMVs to monitor active sessions and blocked queries.</div>
+                            </div>
+                        </div>
+                        <div class="topic-item">
+                            <div class="ti-icon">💉</div>
+                            <div class="ti-body">
+                                <div class="ti-title">SQL Injection Prevention <span class="lvl lvl-2">L2</span></div>
+                                <div class="ti-desc">Understanding how SQL injection works through string concatenation. Mandatory use of parameterised queries and stored procedures. Input validation. Never building dynamic SQL from unsanitised user input.</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="steel-box">
+                        <strong>Self-assessment for L2:</strong> Can you tune a slow query by reading its execution plan, design a security model with RLS and encryption, write a window function report with period-over-period comparisons, and explain when you'd use MongoDB instead of SQL Server? If yes, you are operating at the Intermediate level.
+                    </div>
+
+                </div>
+            </div>
+        </div>
+
+        <!-- ══════════════════════════════════════════ -->
+        <!-- SECTION 4 — ADVANCED TOPICS               -->
+        <!-- ══════════════════════════════════════════ -->
+        <div class="section">
+            <div class="collapsible">
+                <div class="collapsible-header">4. Advanced Topics &nbsp;<span class="lvl lvl-3">Advanced — Professional Level</span></div>
+                <div class="collapsible-content">
+
+                    <div class="info-box">
+                        These topics go beyond coursework and are developed through hands-on professional experience. They are expected of senior database developers, experienced DBAs, and those moving into specialist or lead roles. Typical development timeline: 3–6 years.
+                    </div>
+
+                    <h3>Performance at Scale</h3>
+                    <div class="topic-grid">
+                        <div class="topic-item">
+                            <div class="ti-icon">🧩</div>
+                            <div class="ti-body">
+                                <div class="ti-title">Table Partitioning <span class="lvl lvl-3">L3</span></div>
+                                <div class="ti-desc">Horizontal partitioning of large tables by date range, customer ID, or region. Partition functions and schemes. Partition switching for efficient bulk loads and archival. Performance trade-offs of partitioned tables.</div>
+                            </div>
+                        </div>
+                        <div class="topic-item">
+                            <div class="ti-icon">🗃️</div>
+                            <div class="ti-body">
+                                <div class="ti-title">Columnstore Indexes <span class="lvl lvl-3">L3</span></div>
+                                <div class="ti-desc">Clustered and non-clustered columnstore indexes for analytical (OLAP) workloads. Batch mode execution. Delta stores and tuple movers. When columnstore dramatically outperforms rowstore for aggregate queries.</div>
+                            </div>
+                        </div>
+                        <div class="topic-item">
+                            <div class="ti-icon">🔄</div>
+                            <div class="ti-body">
+                                <div class="ti-title">In-Memory OLTP (Hekaton) <span class="lvl lvl-3">L3</span></div>
+                                <div class="ti-desc">Memory-optimised tables and natively compiled stored procedures for ultra-high-throughput transactional workloads. Durability options, concurrency model (optimistic), and the workloads where In-Memory OLTP provides significant gains.</div>
+                            </div>
+                        </div>
+                        <div class="topic-item">
+                            <div class="ti-icon">⏱️</div>
+                            <div class="ti-body">
+                                <div class="ti-title">Wait Statistics Analysis <span class="lvl lvl-3">L3</span></div>
+                                <div class="ti-desc">Using sys.dm_os_wait_stats to identify the dominant bottleneck type: CPU (CXPACKET, SOS_SCHEDULER_YIELD), I/O (PAGEIOLATCH), memory (RESOURCE_SEMAPHORE), blocking (LCK_M_*), or network (ASYNC_NETWORK_IO). Targeting the correct fix.</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <h3>High Availability &amp; Disaster Recovery</h3>
+                    <div class="topic-grid">
+                        <div class="topic-item">
+                            <div class="ti-icon">🔁</div>
+                            <div class="ti-body">
+                                <div class="ti-title">Always On Availability Groups <span class="lvl lvl-3">L3</span></div>
+                                <div class="ti-desc">Primary/secondary replica architecture, synchronous and asynchronous commit modes, automatic failover, readable secondaries for offloading reporting. Listener configuration and connection routing.</div>
+                            </div>
+                        </div>
+                        <div class="topic-item">
+                            <div class="ti-icon">💾</div>
+                            <div class="ti-body">
+                                <div class="ti-title">Backup &amp; Recovery Strategy <span class="lvl lvl-3">L3</span></div>
+                                <div class="ti-desc">Full, differential, and transaction log backup chains. Recovery models (SIMPLE, BULK-LOGGED, FULL). RTO and RPO calculations. Point-in-time restore procedures. Backup verification and restore testing cadence.</div>
+                            </div>
+                        </div>
+                        <div class="topic-item">
+                            <div class="ti-icon">📤</div>
+                            <div class="ti-body">
+                                <div class="ti-title">Replication <span class="lvl lvl-3">L3</span></div>
+                                <div class="ti-desc">Transactional, snapshot, and merge replication types. Publisher/distributor/subscriber architecture. Use cases: reporting replicas, geographic distribution, data consolidation. Latency and conflict resolution.</div>
+                            </div>
+                        </div>
+                        <div class="topic-item">
+                            <div class="ti-icon">☁️</div>
+                            <div class="ti-body">
+                                <div class="ti-title">Cloud Databases <span class="lvl lvl-3">L3</span></div>
+                                <div class="ti-desc">Azure SQL Database and Managed Instance, AWS RDS and Aurora. PaaS vs IaaS database hosting trade-offs. Elastic pools, serverless tiers, auto-scaling. Managed backup, patching, and HA in cloud services. Migration strategies (lift-and-shift vs cloud-native).</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <h3>Data Warehousing &amp; Integration</h3>
+                    <div class="topic-grid">
+                        <div class="topic-item">
+                            <div class="ti-icon">🏭</div>
+                            <div class="ti-body">
+                                <div class="ti-title">Data Warehouse Design <span class="lvl lvl-3">L3</span></div>
+                                <div class="ti-desc">Star and snowflake schemas. Fact and dimension tables. Slowly changing dimensions (SCD Type 1, 2, 3). Conformed dimensions for cross-functional reporting. Kimball vs Inmon methodologies.</div>
+                            </div>
+                        </div>
+                        <div class="topic-item">
+                            <div class="ti-icon">🔄</div>
+                            <div class="ti-body">
+                                <div class="ti-title">ETL / ELT Processes <span class="lvl lvl-3">L3</span></div>
+                                <div class="ti-desc">Extract, transform, load pipelines. SQL Server Integration Services (SSIS), Azure Data Factory, dbt. Incremental loads vs full loads. Data quality gates and error handling in pipelines. Staging tables and transformation patterns.</div>
+                            </div>
+                        </div>
+                        <div class="topic-item">
+                            <div class="ti-icon">📡</div>
+                            <div class="ti-body">
+                                <div class="ti-title">Change Data Capture (CDC) <span class="lvl lvl-3">L3</span></div>
+                                <div class="ti-desc">Capturing row-level changes from the transaction log without triggers. CDC vs Change Tracking vs temporal tables. Using CDC to feed downstream systems with only changed records for efficient incremental processing.</div>
+                            </div>
+                        </div>
+                        <div class="topic-item">
+                            <div class="ti-icon">🕰️</div>
+                            <div class="ti-body">
+                                <div class="ti-title">Temporal Tables (System-Versioned) <span class="lvl lvl-3">L3</span></div>
+                                <div class="ti-desc">Creating system-versioned temporal tables that automatically track full row history. Querying historical states with FOR SYSTEM_TIME AS OF, BETWEEN, and CONTAINED IN. Audit trails, point-in-time recovery of data state, and compliance use cases.</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <h3>Advanced Security &amp; Compliance</h3>
+                    <div class="topic-grid">
+                        <div class="topic-item">
+                            <div class="ti-icon">📋</div>
+                            <div class="ti-body">
+                                <div class="ti-title">Regulatory Compliance <span class="lvl lvl-3">L3</span></div>
+                                <div class="ti-desc">Mapping database controls to PCI DSS, HIPAA, GDPR, SOX, and FERPA requirements. Data residency obligations. Data classification schemas. What each regulation actually requires at the database layer and how to demonstrate compliance.</div>
+                            </div>
+                        </div>
+                        <div class="topic-item">
+                            <div class="ti-icon">🕵️</div>
+                            <div class="ti-body">
+                                <div class="ti-title">Database Forensics <span class="lvl lvl-3">L3</span></div>
+                                <div class="ti-desc">Preserving database state as evidence, reconstructing timelines from transaction logs and audit files, identifying exfiltration patterns, detecting persistence mechanisms. Chain-of-custody documentation for database investigations.</div>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+
+        <!-- ══════════════════════════════════════════ -->
+        <!-- SECTION 5 — EXPERT TOPICS                  -->
+        <!-- ══════════════════════════════════════════ -->
+        <div class="section">
+            <div class="collapsible">
+                <div class="collapsible-header">5. Expert &amp; Architect Topics &nbsp;<span class="lvl lvl-4">Expert — 6+ Years</span></div>
+                <div class="collapsible-content">
+
+                    <div class="info-box">
+                        Expert-level knowledge is developed through years of working on complex, large-scale production systems. These topics involve system design, cross-functional architecture decisions, and deep internals knowledge. Database architects, principal engineers, and senior DBAs operate at this level.
+                    </div>
+
+                    <div class="topic-grid">
+                        <div class="topic-item">
+                            <div class="ti-icon">🏛️</div>
+                            <div class="ti-body">
+                                <div class="ti-title">Database Architecture Patterns <span class="lvl lvl-4">L4</span></div>
+                                <div class="ti-desc">Designing entire data platforms — OLTP + OLAP separation, read replicas, caching layers, message queues, data lakes. Evaluating build vs buy decisions. Designing for multi-tenancy, multi-region, and disaster recovery at the architecture level.</div>
+                            </div>
+                        </div>
+                        <div class="topic-item">
+                            <div class="ti-icon">🌐</div>
+                            <div class="ti-body">
+                                <div class="ti-title">Distributed Database Systems <span class="lvl lvl-4">L4</span></div>
+                                <div class="ti-desc">CAP theorem (Consistency, Availability, Partition Tolerance) and its real-world implications. Eventual consistency patterns. Distributed transactions (two-phase commit). Consensus algorithms (Paxos, Raft) at a conceptual level. CockroachDB, Cassandra, and Spanner architecture.</div>
+                            </div>
+                        </div>
+                        <div class="topic-item">
+                            <div class="ti-icon">✂️</div>
+                            <div class="ti-body">
+                                <div class="ti-title">Sharding Strategies <span class="lvl lvl-4">L4</span></div>
+                                <div class="ti-desc">Horizontal partitioning across database nodes. Range-based, hash-based, and directory-based sharding. Re-sharding strategies and the challenges of cross-shard queries. When to shard (and why to avoid it as long as possible).</div>
+                            </div>
+                        </div>
+                        <div class="topic-item">
+                            <div class="ti-icon">🗄️</div>
+                            <div class="ti-body">
+                                <div class="ti-title">Storage Engine Internals <span class="lvl lvl-4">L4</span></div>
+                                <div class="ti-desc">SQL Server page structure (8KB pages, extents, IAM pages). B-tree index internals: leaf vs non-leaf pages, page splits, fill factor. Buffer pool management, checkpoint process, lazy writer, and write-ahead logging (WAL). How this knowledge drives tuning decisions.</div>
+                            </div>
+                        </div>
+                        <div class="topic-item">
+                            <div class="ti-icon">📐</div>
+                            <div class="ti-body">
+                                <div class="ti-title">Advanced Data Modelling <span class="lvl lvl-4">L4</span></div>
+                                <div class="ti-desc">Sixth Normal Form (6NF). Anchor modelling for flexible schemas. Event sourcing and CQRS patterns. Graph data modelling. Choosing between normalised OLTP, denormalised OLAP, and document models for the same business domain.</div>
+                            </div>
+                        </div>
+                        <div class="topic-item">
+                            <div class="ti-icon">🔄</div>
+                            <div class="ti-body">
+                                <div class="ti-title">Schema Migration Management <span class="lvl lvl-4">L4</span></div>
+                                <div class="ti-desc">Zero-downtime schema changes in production. Expand-contract (parallel change) pattern. Schema versioning with tools like Flyway, Liquibase, or SSDT. Backwards-compatible migrations for rolling deployments. Managing schema changes across microservices.</div>
+                            </div>
+                        </div>
+                        <div class="topic-item">
+                            <div class="ti-icon">🌊</div>
+                            <div class="ti-body">
+                                <div class="ti-title">Data Lake &amp; Lakehouse Architecture <span class="lvl lvl-4">L4</span></div>
+                                <div class="ti-desc">Medallion architecture (Bronze/Silver/Gold layers). Parquet, Delta Lake, Apache Iceberg file formats. Separating storage from compute (Azure Synapse, Databricks, Snowflake). When a data warehouse ends and a data lake begins.</div>
+                            </div>
+                        </div>
+                        <div class="topic-item">
+                            <div class="ti-icon">🏢</div>
+                            <div class="ti-body">
+                                <div class="ti-title">Data Governance &amp; Lineage <span class="lvl lvl-4">L4</span></div>
+                                <div class="ti-desc">Data catalogues (Microsoft Purview, Apache Atlas). Column-level lineage tracking. Data stewardship roles and ownership. Master Data Management (MDM). Establishing data quality SLAs and monitoring them at scale.</div>
+                            </div>
+                        </div>
+                        <div class="topic-item">
+                            <div class="ti-icon">📦</div>
+                            <div class="ti-body">
+                                <div class="ti-title">Polyglot Persistence Design <span class="lvl lvl-4">L4</span></div>
+                                <div class="ti-desc">Designing systems that intentionally use multiple database technologies together — relational for transactions, document for flexible content, key-value for caching, graph for relationships, search engine for text. Managing consistency across heterogeneous stores.</div>
+                            </div>
+                        </div>
+                        <div class="topic-item">
+                            <div class="ti-icon">📊</div>
+                            <div class="ti-body">
+                                <div class="ti-title">Capacity Planning &amp; Forecasting <span class="lvl lvl-4">L4</span></div>
+                                <div class="ti-desc">Analysing growth trends in data volume, transaction rate, and query concurrency. Modelling future hardware requirements. Knowing when to scale up (bigger server) vs scale out (more servers). Cost modelling for cloud vs on-premises.</div>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+
+        <!-- ══════════════════════════════════════════ -->
+        <!-- SECTION 6 — DATABASE JOB ROLES             -->
+        <!-- ══════════════════════════════════════════ -->
+        <div class="section">
+            <div class="collapsible">
+                <div class="collapsible-header">6. Database Career Roles — Who Does What</div>
+                <div class="collapsible-content">
+
+                    <div class="info-box">
+                        Database professionals work under several different titles, each with a distinct focus area. The same person may wear multiple hats at a smaller organisation. Understanding these roles helps you target your learning toward your career goals.
+                    </div>
+
+                    <!-- DBA -->
+                    <div class="role-card role-dba">
+                        <div class="role-header">
+                            <div class="role-icon">🛠️</div>
+                            <div>
+                                <div class="role-title">Database Administrator (DBA)</div>
+                                <div class="role-subtitle">Keeps the database engine running, healthy, and secure</div>
+                            </div>
+                        </div>
+                        <div class="role-body">
+                            <p style="font-size:0.9em; color:#374151;">The DBA is responsible for the database server itself — not the data or the application, but the engine and infrastructure that stores the data. DBAs are on call, manage incidents, and own reliability.</p>
+                            <div class="skill-cols">
+                                <div class="skill-col">
+                                    <h5>Core Responsibilities</h5>
+                                    <ul>
+                                        <li>Install, configure, and patch SQL Server instances</li>
+                                        <li>Design and maintain backup and recovery procedures</li>
+                                        <li>Monitor performance and respond to degradation</li>
+                                        <li>Manage storage, filegroups, and disk utilisation</li>
+                                        <li>Configure high availability (Always On, mirroring)</li>
+                                        <li>Control user access — logins, roles, permissions</li>
+                                        <li>Run index maintenance, statistics updates, integrity checks</li>
+                                        <li>Manage jobs (SQL Server Agent)</li>
+                                        <li>Capacity planning and hardware sizing</li>
+                                    </ul>
+                                </div>
+                                <div class="skill-col">
+                                    <h5>Key Skills Required</h5>
+                                    <ul>
+                                        <li>Deep T-SQL knowledge (L1–L2 minimum)</li>
+                                        <li>Query tuning and execution plan reading (L2–L3)</li>
+                                        <li>Backup/restore and recovery models (L3)</li>
+                                        <li>High availability and replication (L3)</li>
+                                        <li>Wait statistics and server-level monitoring (L3)</li>
+                                        <li>Security hardening and auditing (L2–L3)</li>
+                                        <li>Windows Server / Linux administration basics</li>
+                                        <li>PowerShell scripting for automation</li>
+                                        <li>SSMS, Azure Data Studio, Redgate tools</li>
+                                    </ul>
+                                </div>
+                            </div>
+                            <div class="sal-range">📍 Typical roles: Junior DBA → DBA → Senior DBA → Lead DBA / Principal DBA &nbsp;|&nbsp; Focus level: L2–L4</div>
+                        </div>
+                    </div>
+
+                    <!-- Database Developer -->
+                    <div class="role-card role-dev">
+                        <div class="role-header">
+                            <div class="role-icon">💻</div>
+                            <div>
+                                <div class="role-title">Database Developer / SQL Developer</div>
+                                <div class="role-subtitle">Builds the data layer that applications run on</div>
+                            </div>
+                        </div>
+                        <div class="role-body">
+                            <p style="font-size:0.9em; color:#374151;">Database developers design and write the SQL code that powers applications — stored procedures, views, triggers, schema designs, and data migration scripts. They work closely with application developers and often own the database project in a software team.</p>
+                            <div class="skill-cols">
+                                <div class="skill-col">
+                                    <h5>Core Responsibilities</h5>
+                                    <ul>
+                                        <li>Design normalised schemas for application data</li>
+                                        <li>Write stored procedures, functions, and triggers</li>
+                                        <li>Optimise application queries using execution plans</li>
+                                        <li>Write and maintain schema migration scripts</li>
+                                        <li>Design and implement ETL processes</li>
+                                        <li>Build data models using ER diagrams</li>
+                                        <li>Code review SQL in application PRs</li>
+                                        <li>Collaborate with app developers on ORM usage</li>
+                                    </ul>
+                                </div>
+                                <div class="skill-col">
+                                    <h5>Key Skills Required</h5>
+                                    <ul>
+                                        <li>Advanced T-SQL (L1–L2 essential)</li>
+                                        <li>Stored procedures, CTEs, window functions (L2)</li>
+                                        <li>Schema design and normalisation (L1–L2)</li>
+                                        <li>Query tuning and index design (L2–L3)</li>
+                                        <li>Version control for database code (Git, SSDT)</li>
+                                        <li>Schema migration tools (Flyway, Liquibase)</li>
+                                        <li>Application programming basics (C#, Python, etc.)</li>
+                                        <li>ORM awareness (Entity Framework, SQLAlchemy)</li>
+                                    </ul>
+                                </div>
+                            </div>
+                            <div class="sal-range">📍 Typical roles: Junior SQL Developer → SQL Developer → Senior Database Developer &nbsp;|&nbsp; Focus level: L1–L3</div>
+                        </div>
+                    </div>
+
+                    <!-- Database / Data Analyst -->
+                    <div class="role-card role-analyst">
+                        <div class="role-header">
+                            <div class="role-icon">📊</div>
+                            <div>
+                                <div class="role-title">Database Analyst / Data Analyst</div>
+                                <div class="role-subtitle">Turns data into insights that drive decisions</div>
+                            </div>
+                        </div>
+                        <div class="role-body">
+                            <p style="font-size:0.9em; color:#374151;">Data analysts extract, clean, and analyse data to answer business questions. They produce reports, dashboards, and ad-hoc analyses that support management decisions. They are heavy SQL users who also use visualisation tools.</p>
+                            <div class="skill-cols">
+                                <div class="skill-col">
+                                    <h5>Core Responsibilities</h5>
+                                    <ul>
+                                        <li>Write complex queries to extract business data</li>
+                                        <li>Build and maintain recurring reports and dashboards</li>
+                                        <li>Clean and prepare data for analysis</li>
+                                        <li>Define KPIs and report on performance vs targets</li>
+                                        <li>Perform ad-hoc analysis to answer business questions</li>
+                                        <li>Document data definitions and business logic</li>
+                                        <li>Communicate findings to non-technical stakeholders</li>
+                                    </ul>
+                                </div>
+                                <div class="skill-col">
+                                    <h5>Key Skills Required</h5>
+                                    <ul>
+                                        <li>Intermediate SQL — JOINs, GROUP BY, window functions (L1–L2)</li>
+                                        <li>Data analysis patterns — KPIs, trends, segmentation (L2)</li>
+                                        <li>Data cleaning and profiling (NULL handling, deduplication) (L2)</li>
+                                        <li>Power BI, Tableau, or Looker (visualisation)</li>
+                                        <li>Excel and pivot tables (data exploration)</li>
+                                        <li>Python or R basics (optional but increasingly expected)</li>
+                                        <li>Business acumen — understanding what the data means</li>
+                                    </ul>
+                                </div>
+                            </div>
+                            <div class="sal-range">📍 Typical roles: Junior Analyst → Data Analyst → Senior Analyst → Analytics Manager &nbsp;|&nbsp; Focus level: L1–L2</div>
+                        </div>
+                    </div>
+
+                    <!-- Data Engineer -->
+                    <div class="role-card role-eng">
+                        <div class="role-header">
+                            <div class="role-icon">⚙️</div>
+                            <div>
+                                <div class="role-title">Data Engineer</div>
+                                <div class="role-subtitle">Builds the pipelines that move and transform data at scale</div>
+                            </div>
+                        </div>
+                        <div class="role-body">
+                            <p style="font-size:0.9em; color:#374151;">Data engineers build and maintain the infrastructure that makes data available for analysis and ML. They design ETL/ELT pipelines, data warehouses, and data lake architectures. They sit at the intersection of database work and software engineering.</p>
+                            <div class="skill-cols">
+                                <div class="skill-col">
+                                    <h5>Core Responsibilities</h5>
+                                    <ul>
+                                        <li>Design and build ETL/ELT data pipelines</li>
+                                        <li>Build and maintain data warehouses and data lakes</li>
+                                        <li>Ensure data quality, lineage, and freshness</li>
+                                        <li>Integrate data from multiple source systems</li>
+                                        <li>Optimise pipeline performance and cost</li>
+                                        <li>Manage data platform infrastructure (cloud/on-prem)</li>
+                                        <li>Enable data scientists and analysts with clean datasets</li>
+                                    </ul>
+                                </div>
+                                <div class="skill-col">
+                                    <h5>Key Skills Required</h5>
+                                    <ul>
+                                        <li>Advanced SQL including ETL patterns (L2–L3)</li>
+                                        <li>Data warehouse design (star/snowflake schema) (L3)</li>
+                                        <li>ETL tools: dbt, SSIS, ADF, Airflow, Spark</li>
+                                        <li>Python or Scala for pipeline scripting</li>
+                                        <li>Cloud data platforms (Snowflake, Databricks, Synapse)</li>
+                                        <li>NoSQL databases (L2)</li>
+                                        <li>CI/CD for data pipelines and version control</li>
+                                        <li>Change Data Capture and incremental loads (L3)</li>
+                                    </ul>
+                                </div>
+                            </div>
+                            <div class="sal-range">📍 Typical roles: Data Engineer → Senior Data Engineer → Staff Engineer / Data Platform Lead &nbsp;|&nbsp; Focus level: L2–L4</div>
+                        </div>
+                    </div>
+
+                    <!-- Database Architect -->
+                    <div class="role-card role-arch">
+                        <div class="role-header">
+                            <div class="role-icon">🏛️</div>
+                            <div>
+                                <div class="role-title">Database Architect</div>
+                                <div class="role-subtitle">Designs the data ecosystem for entire organisations</div>
+                            </div>
+                        </div>
+                        <div class="role-body">
+                            <p style="font-size:0.9em; color:#374151;">Database architects design the overall data strategy and system architecture. They make technology selection decisions, define standards, and ensure that data systems can scale to meet the organisation's future needs. This is typically a senior role reached after substantial DBA or developer experience.</p>
+                            <div class="skill-cols">
+                                <div class="skill-col">
+                                    <h5>Core Responsibilities</h5>
+                                    <ul>
+                                        <li>Design enterprise data architectures</li>
+                                        <li>Select database technologies for new systems</li>
+                                        <li>Define data modelling standards and best practices</li>
+                                        <li>Review and approve major schema changes</li>
+                                        <li>Plan for scalability, HA, and disaster recovery</li>
+                                        <li>Guide teams on data governance and security</li>
+                                        <li>Evaluate emerging technologies and platforms</li>
+                                    </ul>
+                                </div>
+                                <div class="skill-col">
+                                    <h5>Key Skills Required</h5>
+                                    <ul>
+                                        <li>Expert-level SQL and data modelling (L3–L4)</li>
+                                        <li>Relational, NoSQL, and cloud databases (L3–L4)</li>
+                                        <li>Distributed systems and CAP theorem (L4)</li>
+                                        <li>Data governance and compliance (L3–L4)</li>
+                                        <li>Architecture design patterns (L4)</li>
+                                        <li>Strong communication and stakeholder management</li>
+                                        <li>Cost modelling and capacity planning (L4)</li>
+                                    </ul>
+                                </div>
+                            </div>
+                            <div class="sal-range">📍 Typical roles: Senior DBA/Developer → Solutions Architect → Data Architect / Principal Architect &nbsp;|&nbsp; Focus level: L3–L4</div>
+                        </div>
+                    </div>
+
+                    <!-- BI Developer -->
+                    <div class="role-card role-bi">
+                        <div class="role-header">
+                            <div class="role-icon">📈</div>
+                            <div>
+                                <div class="role-title">Business Intelligence (BI) Developer</div>
+                                <div class="role-subtitle">Builds reporting platforms and analytical data models</div>
+                            </div>
+                        </div>
+                        <div class="role-body">
+                            <p style="font-size:0.9em; color:#374151;">BI Developers build the reporting layer — data warehouses, semantic models, dashboards, and reports — that business users interact with. They translate raw database data into the business metrics and visualisations that drive decisions.</p>
+                            <div class="skill-cols">
+                                <div class="skill-col">
+                                    <h5>Core Responsibilities</h5>
+                                    <ul>
+                                        <li>Design and build data warehouse schemas</li>
+                                        <li>Build ETL pipelines to load the warehouse</li>
+                                        <li>Create Power BI / SSAS semantic models</li>
+                                        <li>Design and publish reports and dashboards</li>
+                                        <li>Define and document business metric calculations</li>
+                                        <li>Maintain report refresh schedules and gateways</li>
+                                        <li>Train business users on self-service analytics</li>
+                                    </ul>
+                                </div>
+                                <div class="skill-col">
+                                    <h5>Key Skills Required</h5>
+                                    <ul>
+                                        <li>Strong SQL for reporting queries (L1–L2)</li>
+                                        <li>Data warehouse design (star schema, SCD) (L3)</li>
+                                        <li>Power BI, Tableau, or SSRS (visualisation)</li>
+                                        <li>DAX (Data Analysis Expressions) for Power BI models</li>
+                                        <li>MDX for SSAS cubes (older environments)</li>
+                                        <li>ETL tools — SSIS, ADF, dbt</li>
+                                        <li>Data analysis patterns (L2)</li>
+                                    </ul>
+                                </div>
+                            </div>
+                            <div class="sal-range">📍 Typical roles: BI Analyst → BI Developer → Senior BI Developer → BI Architect &nbsp;|&nbsp; Focus level: L2–L3</div>
+                        </div>
+                    </div>
+
+                    <!-- Data Scientist -->
+                    <div class="role-card role-ds">
+                        <div class="role-header">
+                            <div class="role-icon">🔬</div>
+                            <div>
+                                <div class="role-title">Data Scientist</div>
+                                <div class="role-subtitle">Applies statistical and ML models to data — starting from the database</div>
+                            </div>
+                        </div>
+                        <div class="role-body">
+                            <p style="font-size:0.9em; color:#374151;">Data Scientists build predictive models, run experiments, and discover patterns that descriptive analysis alone cannot find. They are heavy consumers of data — SQL proficiency is essential for data extraction and preparation even if their primary language is Python or R.</p>
+                            <div class="skill-cols">
+                                <div class="skill-col">
+                                    <h5>Core Responsibilities</h5>
+                                    <ul>
+                                        <li>Extract and prepare data from databases for modelling</li>
+                                        <li>Build statistical and machine learning models</li>
+                                        <li>Design and run A/B tests and experiments</li>
+                                        <li>Communicate findings and model outcomes to business</li>
+                                        <li>Deploy models to production (with engineering support)</li>
+                                        <li>Evaluate and monitor model performance over time</li>
+                                    </ul>
+                                </div>
+                                <div class="skill-col">
+                                    <h5>Database Skills Required</h5>
+                                    <ul>
+                                        <li>Intermediate SQL — joins, aggregation, window functions (L1–L2)</li>
+                                        <li>Data cleaning and preparation concepts (L2)</li>
+                                        <li>Understanding of database types — relational, NoSQL (L1–L2)</li>
+                                        <li>Enough performance awareness to write efficient extraction queries</li>
+                                        <li>Python (pandas, SQLAlchemy) or R for database connection</li>
+                                        <li>Knowledge of data warehouse and lakehouse concepts (L3)</li>
+                                    </ul>
+                                </div>
+                            </div>
+                            <div class="sal-range">📍 Typical roles: Data Analyst → Data Scientist → Senior Data Scientist → Principal Scientist / Research Lead &nbsp;|&nbsp; Database focus: L1–L2</div>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+
+        <!-- ══════════════════════════════════════════ -->
+        <!-- SECTION 7 — SKILLS BY ROLE MATRIX          -->
+        <!-- ══════════════════════════════════════════ -->
+        <div class="section">
+            <div class="collapsible">
+                <div class="collapsible-header">7. Skills-by-Role Matrix</div>
+                <div class="collapsible-content">
+
+                    <div class="info-box">
+                        This matrix shows which skill level is expected for each major topic across the seven primary database roles. Use it to identify which skills are required for the role you are targeting and where your current gaps are.
+                    </div>
+
+                    <table>
+                        <tr>
+                            <th>Skill Area</th>
+                            <th>DBA</th>
+                            <th>DB Dev</th>
+                            <th>Analyst</th>
+                            <th>Data Eng</th>
+                            <th>Architect</th>
+                            <th>BI Dev</th>
+                            <th>Data Sci</th>
+                        </tr>
+                        <tr>
+                            <td><strong>SQL Fundamentals (DDL/DML)</strong></td>
+                            <td><span class="lvl lvl-2">L2</span></td>
+                            <td><span class="lvl lvl-2">L2</span></td>
+                            <td><span class="lvl lvl-2">L2</span></td>
+                            <td><span class="lvl lvl-2">L2</span></td>
+                            <td><span class="lvl lvl-3">L3</span></td>
+                            <td><span class="lvl lvl-2">L2</span></td>
+                            <td><span class="lvl lvl-1">L1</span></td>
+                        </tr>
+                        <tr>
+                            <td><strong>JOINs &amp; Subqueries</strong></td>
+                            <td><span class="lvl lvl-2">L2</span></td>
+                            <td><span class="lvl lvl-2">L2</span></td>
+                            <td><span class="lvl lvl-2">L2</span></td>
+                            <td><span class="lvl lvl-2">L2</span></td>
+                            <td><span class="lvl lvl-3">L3</span></td>
+                            <td><span class="lvl lvl-2">L2</span></td>
+                            <td><span class="lvl lvl-2">L2</span></td>
+                        </tr>
+                        <tr>
+                            <td><strong>Stored Procedures &amp; Triggers</strong></td>
+                            <td><span class="lvl lvl-2">L2</span></td>
+                            <td><span class="lvl lvl-3">L3</span></td>
+                            <td><span class="lvl lvl-1">L1</span></td>
+                            <td><span class="lvl lvl-2">L2</span></td>
+                            <td><span class="lvl lvl-3">L3</span></td>
+                            <td><span class="lvl lvl-1">L1</span></td>
+                            <td>—</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Window Functions &amp; CTEs</strong></td>
+                            <td><span class="lvl lvl-2">L2</span></td>
+                            <td><span class="lvl lvl-2">L2</span></td>
+                            <td><span class="lvl lvl-2">L2</span></td>
+                            <td><span class="lvl lvl-2">L2</span></td>
+                            <td><span class="lvl lvl-3">L3</span></td>
+                            <td><span class="lvl lvl-2">L2</span></td>
+                            <td><span class="lvl lvl-2">L2</span></td>
+                        </tr>
+                        <tr>
+                            <td><strong>Index Design &amp; Tuning</strong></td>
+                            <td><span class="lvl lvl-3">L3</span></td>
+                            <td><span class="lvl lvl-2">L2</span></td>
+                            <td>—</td>
+                            <td><span class="lvl lvl-2">L2</span></td>
+                            <td><span class="lvl lvl-4">L4</span></td>
+                            <td><span class="lvl lvl-1">L1</span></td>
+                            <td>—</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Execution Plans</strong></td>
+                            <td><span class="lvl lvl-3">L3</span></td>
+                            <td><span class="lvl lvl-2">L2</span></td>
+                            <td>—</td>
+                            <td><span class="lvl lvl-2">L2</span></td>
+                            <td><span class="lvl lvl-4">L4</span></td>
+                            <td>—</td>
+                            <td>—</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Security (Auth, Encryption, Audit)</strong></td>
+                            <td><span class="lvl lvl-3">L3</span></td>
+                            <td><span class="lvl lvl-2">L2</span></td>
+                            <td><span class="lvl lvl-1">L1</span></td>
+                            <td><span class="lvl lvl-2">L2</span></td>
+                            <td><span class="lvl lvl-4">L4</span></td>
+                            <td><span class="lvl lvl-1">L1</span></td>
+                            <td><span class="lvl lvl-1">L1</span></td>
+                        </tr>
+                        <tr>
+                            <td><strong>Backup &amp; High Availability</strong></td>
+                            <td><span class="lvl lvl-4">L4</span></td>
+                            <td><span class="lvl lvl-1">L1</span></td>
+                            <td>—</td>
+                            <td><span class="lvl lvl-2">L2</span></td>
+                            <td><span class="lvl lvl-4">L4</span></td>
+                            <td>—</td>
+                            <td>—</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Data Warehouse Design</strong></td>
+                            <td><span class="lvl lvl-1">L1</span></td>
+                            <td><span class="lvl lvl-2">L2</span></td>
+                            <td><span class="lvl lvl-2">L2</span></td>
+                            <td><span class="lvl lvl-3">L3</span></td>
+                            <td><span class="lvl lvl-4">L4</span></td>
+                            <td><span class="lvl lvl-3">L3</span></td>
+                            <td><span class="lvl lvl-2">L2</span></td>
+                        </tr>
+                        <tr>
+                            <td><strong>ETL / Pipeline Development</strong></td>
+                            <td><span class="lvl lvl-1">L1</span></td>
+                            <td><span class="lvl lvl-2">L2</span></td>
+                            <td><span class="lvl lvl-1">L1</span></td>
+                            <td><span class="lvl lvl-4">L4</span></td>
+                            <td><span class="lvl lvl-4">L4</span></td>
+                            <td><span class="lvl lvl-3">L3</span></td>
+                            <td><span class="lvl lvl-2">L2</span></td>
+                        </tr>
+                        <tr>
+                            <td><strong>NoSQL Concepts</strong></td>
+                            <td><span class="lvl lvl-2">L2</span></td>
+                            <td><span class="lvl lvl-2">L2</span></td>
+                            <td><span class="lvl lvl-1">L1</span></td>
+                            <td><span class="lvl lvl-3">L3</span></td>
+                            <td><span class="lvl lvl-4">L4</span></td>
+                            <td><span class="lvl lvl-1">L1</span></td>
+                            <td><span class="lvl lvl-2">L2</span></td>
+                        </tr>
+                        <tr>
+                            <td><strong>Cloud Databases</strong></td>
+                            <td><span class="lvl lvl-3">L3</span></td>
+                            <td><span class="lvl lvl-2">L2</span></td>
+                            <td><span class="lvl lvl-1">L1</span></td>
+                            <td><span class="lvl lvl-3">L3</span></td>
+                            <td><span class="lvl lvl-4">L4</span></td>
+                            <td><span class="lvl lvl-2">L2</span></td>
+                            <td><span class="lvl lvl-2">L2</span></td>
+                        </tr>
+                        <tr>
+                            <td><strong>Data Analysis &amp; KPI Reporting</strong></td>
+                            <td>—</td>
+                            <td><span class="lvl lvl-1">L1</span></td>
+                            <td><span class="lvl lvl-3">L3</span></td>
+                            <td><span class="lvl lvl-2">L2</span></td>
+                            <td><span class="lvl lvl-2">L2</span></td>
+                            <td><span class="lvl lvl-3">L3</span></td>
+                            <td><span class="lvl lvl-3">L3</span></td>
+                        </tr>
+                        <tr>
+                            <td><strong>Distributed Systems / Architecture</strong></td>
+                            <td><span class="lvl lvl-2">L2</span></td>
+                            <td><span class="lvl lvl-1">L1</span></td>
+                            <td>—</td>
+                            <td><span class="lvl lvl-3">L3</span></td>
+                            <td><span class="lvl lvl-4">L4</span></td>
+                            <td><span class="lvl lvl-1">L1</span></td>
+                            <td><span class="lvl lvl-1">L1</span></td>
+                        </tr>
+                    </table>
+
+                    <div class="legend" style="margin-top:16px;">
+                        <strong style="font-size:0.88em;">Key:</strong>
+                        <div class="legend-item"><span class="lvl lvl-1">L1</span> Foundational awareness</div>
+                        <div class="legend-item"><span class="lvl lvl-2">L2</span> Intermediate / working skill</div>
+                        <div class="legend-item"><span class="lvl lvl-3">L3</span> Advanced / expert use</div>
+                        <div class="legend-item"><span class="lvl lvl-4">L4</span> Expert / architect-level mastery</div>
+                        <div class="legend-item" style="color:#6b7280; font-size:0.85em;">— = Not typically required for this role</div>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+
+        <!-- ══════════════════════════════════════════ -->
+        <!-- SECTION 8 — LEARNING RESOURCES & CERTS    -->
+        <!-- ══════════════════════════════════════════ -->
+        <div class="section">
+            <div class="collapsible">
+                <div class="collapsible-header">8. Certifications &amp; Continuing Education</div>
+                <div class="collapsible-content">
+
+                    <div class="info-box">
+                        Certifications validate your skills to employers and clients. They are not a replacement for hands-on experience, but they accelerate credibility — especially early in your career. The most respected credentials vary by role and technology stack.
+                    </div>
+
+                    <h3>Microsoft SQL Server / Azure</h3>
+                    <table>
+                        <tr><th>Certification</th><th>Level</th><th>Best For</th></tr>
+                        <tr>
+                            <td><strong>DP-900: Azure Data Fundamentals</strong></td>
+                            <td><span class="lvl lvl-1">L1</span></td>
+                            <td>Students, career changers — baseline cloud data knowledge</td>
+                        </tr>
+                        <tr>
+                            <td><strong>DP-300: Azure Database Administrator Associate</strong></td>
+                            <td><span class="lvl lvl-2">L2–L3</span></td>
+                            <td>DBAs managing Azure SQL Database and Managed Instance</td>
+                        </tr>
+                        <tr>
+                            <td><strong>DP-203: Azure Data Engineer Associate</strong></td>
+                            <td><span class="lvl lvl-3">L3</span></td>
+                            <td>Data engineers building Azure-based pipelines and data warehouses</td>
+                        </tr>
+                        <tr>
+                            <td><strong>PL-300: Power BI Data Analyst Associate</strong></td>
+                            <td><span class="lvl lvl-2">L2</span></td>
+                            <td>BI developers and data analysts using Power BI</td>
+                        </tr>
+                    </table>
+
+                    <h3>Vendor-Neutral &amp; Other Platforms</h3>
+                    <table>
+                        <tr><th>Certification</th><th>Level</th><th>Best For</th></tr>
+                        <tr>
+                            <td><strong>AWS Certified Database Specialty</strong></td>
+                            <td><span class="lvl lvl-3">L3</span></td>
+                            <td>DBAs and engineers working on AWS RDS, Aurora, DynamoDB</td>
+                        </tr>
+                        <tr>
+                            <td><strong>MongoDB Associate Developer / DBA</strong></td>
+                            <td><span class="lvl lvl-2">L2</span></td>
+                            <td>Developers and DBAs working with MongoDB</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Databricks Certified Data Engineer</strong></td>
+                            <td><span class="lvl lvl-3">L3</span></td>
+                            <td>Data engineers using Databricks, Spark, and Delta Lake</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Oracle OCP — Database Administrator</strong></td>
+                            <td><span class="lvl lvl-3">L3</span></td>
+                            <td>DBAs in organisations running Oracle Database</td>
+                        </tr>
+                        <tr>
+                            <td><strong>PostgreSQL — PGCE (Credly) or EDB courses</strong></td>
+                            <td><span class="lvl lvl-2">L2–L3</span></td>
+                            <td>Developers and DBAs using PostgreSQL in open-source or cloud environments</td>
+                        </tr>
+                    </table>
+
+                    <h3>How to Build Real Skills Beyond Coursework</h3>
+                    <div class="three-col">
+                        <div class="card blue">
+                            <h4>🛠️ Build Something Real</h4>
+                            <p>Design and build a complete database project end-to-end — schema, stored procedures, sample data, indexes, security, and a report. Portfolio projects demonstrate skills better than any certificate.</p>
+                        </div>
+                        <div class="card green">
+                            <h4>🎯 Practice on Real Data</h4>
+                            <p>Use free datasets (Stack Overflow data dump, AdventureWorks, Northwind, NYC Open Data, Kaggle) to practice query writing, indexing, and analysis on data at realistic scale.</p>
+                        </div>
+                        <div class="card amber">
+                            <h4>📖 Read the Internals</h4>
+                            <p><em>SQL Server Internals</em> (Kalen Delaney), Brent Ozar's blog, the official Microsoft documentation, and <em>Use The Index, Luke</em> (markus-winand.com) are essential reading for moving from intermediate to advanced.</p>
+                        </div>
+                    </div>
+
+                    <div class="success-box" style="margin-top:16px;">
+                        <strong>📌 The Most Important Career Advice:</strong> No database professional became expert from coursework alone. The skills in the L3–L4 range come from diagnosing production incidents at 2am, explaining a plan regression to a team lead, or staying late to figure out why a query suddenly got 10x slower after a statistics update. Get into production environments as early in your career as possible — real problems teach faster than any textbook.
+                    </div>
+
+                </div>
+            </div>
+        </div>
+
+    </div><!-- /content -->
+
+    <footer>
+        <p>COP4709 — Database Management Systems</p>
+        <p>&copy; 2025 Course Materials &nbsp;|&nbsp; Last Updated: February 2025</p>
+    </footer>
+
+</div><!-- /container -->
+
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        const headers = document.querySelectorAll('.collapsible-header');
+        headers.forEach(header => {
+            header.addEventListener('click', function () {
+                this.parentElement.classList.toggle('active');
+            });
+        });
+        document.querySelector('.collapsible').classList.add('active');
+    });
+</script>
+</body>
+</html>

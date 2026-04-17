@@ -1,0 +1,1348 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>COP 3530 – Sorting Algorithms: Ordering the Chaos</title>
+<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --steel-dark:   #1a1f2e;
+    --steel-mid:    #2a3441;
+    --steel-light:  #3d4a5c;
+    --silver:       #8b9dc3;
+    --silver-lt:    #a8b7d1;
+    --blue:         #4a90e2;
+    --blue-lt:      #6ba3e8;
+    --cyan:         #5dade2;
+    --slate:        #34495e;
+    --accent:       #e74c3c;
+    --green:        #27ae60;
+    --orange:       #f39c12;
+    --text:         #ecf0f1;
+    --text-dim:     #bdc3c7;
+    --card-bg:      #34495e;
+    --border:       #4a6278;
+    --white:        #ffffff;
+  }
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: 'Inter', sans-serif;
+    background: linear-gradient(135deg, var(--steel-dark) 0%, var(--steel-mid) 100%);
+    color: var(--text);
+    line-height: 1.6;
+    font-size: 15px;
+    min-height: 100vh;
+  }
+
+  /* ── GEOMETRIC BACKGROUND EFFECTS ── */
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background: 
+      linear-gradient(90deg, transparent 0%, rgba(75,144,226,0.03) 50%, transparent 100%),
+      linear-gradient(0deg, transparent 0%, rgba(139,157,195,0.02) 50%, transparent 100%);
+    pointer-events: none;
+    z-index: -1;
+  }
+
+  /* ── HERO HEADER ── */
+  .hero {
+    background: linear-gradient(135deg, #1a1f2e 0%, #2a3441 50%, #1e2a3a 100%);
+    border-bottom: 3px solid var(--blue);
+    padding: 48px 40px 42px;
+    position: relative;
+    overflow: hidden;
+  }
+  .hero::after {
+    content: '';
+    position: absolute; inset: 0;
+    background: 
+      linear-gradient(45deg, transparent 0%, rgba(75,144,226,0.05) 50%, transparent 100%),
+      repeating-linear-gradient(
+        90deg,
+        transparent,
+        transparent 100px,
+        rgba(139,157,195,0.02) 100px,
+        rgba(139,157,195,0.02) 102px
+      );
+    pointer-events: none;
+  }
+  .hero-badge {
+    display: inline-block;
+    background: linear-gradient(90deg, var(--blue), var(--cyan));
+    color: var(--white);
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+    padding: 4px 16px;
+    border-radius: 2px;
+    margin-bottom: 18px;
+    box-shadow: 0 2px 10px rgba(75,144,226,0.3);
+  }
+  .hero h1 {
+    font-family: 'Outfit', sans-serif;
+    font-size: clamp(32px, 5.2vw, 52px);
+    font-weight: 800;
+    color: var(--white);
+    line-height: 1.1;
+    letter-spacing: -0.5px;
+  }
+  .hero h1 .accent { 
+    color: var(--blue); 
+  }
+  .hero-sub {
+    font-family: 'Outfit', sans-serif;
+    font-size: 17px;
+    color: var(--silver-lt);
+    margin-top: 12px;
+    font-weight: 400;
+    letter-spacing: 0.3px;
+  }
+  .hero-meta {
+    display: flex;
+    gap: 32px;
+    margin-top: 28px;
+    flex-wrap: wrap;
+  }
+  .hero-meta span {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 13px;
+    color: var(--text-dim);
+    font-family: 'JetBrains Mono', monospace;
+  }
+  .hero-meta span b { 
+    color: var(--blue-lt); 
+  }
+
+  /* ── MAIN CONTENT ── */
+  .container { max-width: 1200px; margin: 0 auto; padding: 40px 30px 70px; }
+
+  /* ── SECTION TITLES ── */
+  .section-title {
+    font-family: 'Outfit', sans-serif;
+    font-size: 26px;
+    font-weight: 700;
+    color: var(--blue-lt);
+    border-left: 4px solid var(--cyan);
+    padding-left: 18px;
+    margin: 50px 0 24px;
+    letter-spacing: 0.1px;
+  }
+  .section-title.first { margin-top: 16px; }
+
+  /* ── INTRO CARD ── */
+  .intro-card {
+    background: var(--card-bg);
+    border: 1px solid var(--border);
+    border-left: 4px solid var(--blue);
+    border-radius: 8px;
+    padding: 26px 30px;
+    margin-bottom: 16px;
+    font-size: 15px;
+    color: var(--text);
+    line-height: 1.7;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+  }
+  .intro-card p + p { margin-top: 16px; }
+  .intro-card strong { color: var(--blue-lt); }
+  .intro-card em { color: var(--cyan); font-style: normal; }
+
+  /* ── COLLAPSIBLE DETAILS ── */
+  details {
+    background: var(--card-bg);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    margin-bottom: 16px;
+    overflow: hidden;
+    transition: box-shadow 0.3s, border-color 0.3s;
+  }
+  details[open] { 
+    box-shadow: 0 6px 30px rgba(75,144,226,0.1); 
+    border-color: var(--blue);
+  }
+  details[open] summary { 
+    border-bottom: 1px solid var(--border);
+    background: rgba(75,144,226,0.05);
+  }
+
+  summary {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    padding: 20px 24px;
+    cursor: pointer;
+    list-style: none;
+    font-family: 'Outfit', sans-serif;
+    font-size: 16px;
+    font-weight: 600;
+    color: var(--text);
+    user-select: none;
+    transition: background 0.2s;
+  }
+  summary::-webkit-details-marker { display: none; }
+  summary::after {
+    content: '▶';
+    margin-left: auto;
+    color: var(--blue);
+    font-size: 14px;
+    transition: transform 0.3s;
+  }
+  details[open] summary::after { transform: rotate(90deg); }
+  summary:hover { background: rgba(75,144,226,0.06); }
+
+  .summary-icon {
+    width: 40px; height: 40px;
+    border-radius: 6px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 18px;
+    flex-shrink: 0;
+    border: 2px solid;
+  }
+
+  .details-body { padding: 24px 28px 32px; }
+
+  /* ── ALGORITHM CARDS ── */
+  .algo-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+    gap: 18px;
+    margin-top: 8px;
+  }
+  .algo-card {
+    background: var(--steel-light);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 22px 26px;
+    transition: transform 0.2s, box-shadow 0.2s;
+    position: relative;
+  }
+  .algo-card:hover { 
+    transform: translateY(-3px); 
+    box-shadow: 0 8px 32px rgba(75,144,226,0.08);
+  }
+  .algo-card::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0; height: 3px;
+    border-radius: 8px 8px 0 0;
+  }
+  .algo-card.simple::before { background: var(--green); }
+  .algo-card.efficient::before { background: var(--blue); }
+  .algo-card.specialized::before { background: var(--orange); }
+
+  .algo-card-header {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 12px;
+    margin-bottom: 14px;
+  }
+  .algo-card-name {
+    font-family: 'Outfit', sans-serif;
+    font-weight: 700;
+    font-size: 17px;
+    color: var(--white);
+  }
+  .algo-card p {
+    font-size: 14px;
+    color: var(--text-dim);
+    line-height: 1.65;
+    margin-bottom: 12px;
+  }
+
+  /* ── COMPLEXITY BADGES ── */
+  .complexity-row {
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+    margin-top: 14px;
+  }
+  .comp-badge {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    font-weight: 500;
+    padding: 3px 10px;
+    border-radius: 4px;
+    text-align: center;
+    border: 1px solid;
+  }
+  .comp-time   { background: rgba(75,144,226,0.15); color: var(--blue-lt); border-color: var(--blue); }
+  .comp-space  { background: rgba(93,173,226,0.15); color: var(--cyan); border-color: var(--cyan); }
+  .comp-stable { background: rgba(39,174,96,0.15);  color: var(--green); border-color: var(--green); }
+  .comp-unstable { background: rgba(231,76,60,0.15); color: var(--accent); border-color: var(--accent); }
+
+  /* ── PROS/CONS LISTS ── */
+  .pros-cons {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 18px;
+    margin-top: 16px;
+  }
+  .pros, .cons {
+    background: var(--steel-light);
+    border-radius: 6px;
+    padding: 16px 18px;
+    border: 1px solid var(--border);
+  }
+  .pros h4, .cons h4 {
+    font-family: 'Outfit', sans-serif;
+    font-size: 13px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.8px;
+    margin-bottom: 10px;
+  }
+  .pros h4 { color: var(--green); }
+  .cons h4 { color: var(--accent); }
+  .pros ul, .cons ul { font-size: 13px; line-height: 1.6; }
+  .pros li, .cons li {
+    margin-bottom: 5px;
+    color: var(--text-dim);
+    list-style: none;
+    padding-left: 16px;
+    position: relative;
+  }
+  .pros li::before { content: '✓'; position: absolute; left: 0; color: var(--green); }
+  .cons li::before { content: '✗'; position: absolute; left: 0; color: var(--accent); }
+
+  /* ── APPLICATIONS BOX ── */
+  .apps-box {
+    background: var(--steel-mid);
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    padding: 16px 20px;
+    margin-top: 16px;
+  }
+  .apps-box h4 {
+    font-family: 'Outfit', sans-serif;
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--silver-lt);
+    text-transform: uppercase;
+    letter-spacing: 0.8px;
+    margin-bottom: 10px;
+  }
+  .apps-box ul {
+    font-size: 13px;
+    color: var(--text-dim);
+    line-height: 1.6;
+  }
+  .apps-box li {
+    margin-bottom: 6px;
+    padding-left: 16px;
+    position: relative;
+    list-style: none;
+  }
+  .apps-box li::before {
+    content: '→';
+    position: absolute;
+    left: 0;
+    color: var(--cyan);
+  }
+
+  /* ── COMPARISON TABLE ── */
+  .comparison-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 14px;
+    margin-top: 10px;
+    background: var(--steel-light);
+    border-radius: 8px;
+    overflow: hidden;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+  }
+  .comparison-table thead tr {
+    background: var(--steel-mid);
+    font-family: 'Outfit', sans-serif;
+    font-weight: 600;
+    font-size: 13px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    color: var(--silver-lt);
+  }
+  .comparison-table th, .comparison-table td {
+    padding: 14px 16px;
+    text-align: left;
+    border-bottom: 1px solid var(--border);
+  }
+  .comparison-table tbody tr:hover { 
+    background: rgba(75,144,226,0.06); 
+  }
+  .comparison-table .mono { 
+    font-family: 'JetBrains Mono', monospace; 
+    color: var(--blue-lt);
+  }
+
+  /* ── CALLOUTS ── */
+  .callout {
+    border-radius: 8px;
+    padding: 18px 22px;
+    margin: 16px 0;
+    font-size: 14px;
+    line-height: 1.7;
+    display: flex;
+    gap: 16px;
+    align-items: flex-start;
+    border: 2px solid;
+  }
+  .callout-info { 
+    background: rgba(75,144,226,0.08); 
+    border-color: var(--blue);
+  }
+  .callout-tip { 
+    background: rgba(93,173,226,0.08); 
+    border-color: var(--cyan);
+  }
+  .callout-warn { 
+    background: rgba(243,156,18,0.08); 
+    border-color: var(--orange);
+  }
+  .callout-icon { 
+    font-size: 20px; 
+    flex-shrink: 0; 
+    margin-top: 1px;
+  }
+  .callout-content { flex: 1; }
+  .callout-content strong { 
+    display: block; 
+    margin-bottom: 8px; 
+    font-family: 'Outfit', sans-serif; 
+    font-size: 14px; 
+    letter-spacing: 0.3px; 
+    color: var(--white);
+  }
+
+  /* ── STRATEGY SECTION ── */
+  .strategy {
+    background: var(--steel-mid);
+    border-left: 4px solid var(--cyan);
+    border-radius: 6px;
+    padding: 18px 20px;
+    margin: 16px 0;
+    font-size: 14px;
+  }
+  .strategy h4 {
+    font-family: 'Outfit', sans-serif;
+    font-weight: 600;
+    color: var(--cyan);
+    margin-bottom: 10px;
+    font-size: 14px;
+    text-transform: uppercase;
+    letter-spacing: 0.8px;
+  }
+
+  /* ── FOOTER ── */
+  footer {
+    text-align: center;
+    padding: 36px 20px;
+    border-top: 2px solid var(--border);
+    font-size: 12px;
+    font-family: 'JetBrains Mono', monospace;
+    color: var(--text-dim);
+    margin-top: 32px;
+    background: var(--steel-mid);
+  }
+  footer span { 
+    color: var(--blue-lt); 
+  }
+
+  /* ── RESPONSIVE ── */
+  @media (max-width: 768px) {
+    .hero-meta { flex-direction: column; gap: 16px; }
+    .algo-grid { grid-template-columns: 1fr; }
+    .pros-cons { grid-template-columns: 1fr; }
+  }
+</style>
+</head>
+<body>
+
+<!-- ═══════════════════════════════════ HERO ═══════════════════════════════════ -->
+<header class="hero">
+  <div class="hero-badge">COP 3530 · Data Structures</div>
+  <h1><span class="accent">Sorting</span> Algorithms</h1>
+  <div class="hero-sub">Strategies for Ordering the Chaos</div>
+  <div class="hero-meta">
+    <span>📊 <b>Categories:</b> Simple, Efficient, Specialized</span>
+    <span>⚡ <b>Analysis:</b> Strategy, Trade-offs, Applications</span>
+    <span>🎯 <b>Focus:</b> When to use each algorithm</span>
+    <span>📈 <b>Complexity:</b> Time & Space analysis</span>
+  </div>
+</header>
+
+<div class="container">
+
+  <!-- ═══════════════════ SECTION 1: INTRODUCTION ═══════════════════ -->
+  <div class="section-title first">Introduction to Sorting</div>
+
+  <div class="intro-card">
+    <p><strong>Sorting</strong> is the process of arranging elements in a specific order — typically ascending or descending. It's one of the most fundamental operations in computer science, forming the foundation for efficient searching, data analysis, and many other algorithms.</p>
+    <p>Every sorting algorithm represents a different strategy for organizing data, each with distinct <em>advantages</em>, <em>disadvantages</em>, and optimal <em>use cases</em>. Understanding these trade-offs allows you to choose the right algorithm for your specific problem constraints: dataset size, memory limitations, stability requirements, and performance needs.</p>
+    <p>This guide focuses on the core strategies, trade-offs, and real-world applications of major sorting algorithms rather than implementation details. By the end, you'll know when to reach for merge sort vs. quicksort vs. counting sort, and why that choice matters.</p>
+  </div>
+
+  <div class="callout callout-info">
+    <span class="callout-icon" style="color:var(--blue);">🧠</span>
+    <div class="callout-content">
+      <strong>Key Evaluation Criteria</strong>
+      <strong>Time Complexity:</strong> How runtime scales with input size<br>
+      <strong>Space Complexity:</strong> Extra memory required<br>
+      <strong>Stability:</strong> Preserves relative order of equal elements<br>
+      <strong>Adaptability:</strong> Performs better on nearly-sorted data<br>
+      <strong>Use Cases:</strong> Where the algorithm excels in practice
+    </div>
+  </div>
+
+  <!-- ═══════════════════ SECTION 2: SIMPLE SORTING ALGORITHMS ═══════════════════ -->
+  <div class="section-title">Simple Sorting Algorithms</div>
+
+  <details open>
+    <summary>
+      <div class="summary-icon" style="background:rgba(39,174,96,0.15); color:var(--green); border-color:var(--green);">📝</div>
+      O(n²) Algorithms — Easy to Understand &amp; Implement
+    </summary>
+    <div class="details-body">
+      <p style="color:var(--text-dim); margin-bottom:18px; font-size:14px;">These algorithms are simple to understand and implement but generally inefficient for large datasets. They're excellent for educational purposes, small datasets, or as subroutines in more complex algorithms.</p>
+
+      <div class="algo-grid">
+        <div class="algo-card simple">
+          <div class="algo-card-header">
+            <div class="algo-card-name">Bubble Sort</div>
+          </div>
+          
+          <div class="strategy">
+            <h4>Strategy</h4>
+            <p>Repeatedly step through the list, compare adjacent elements, and swap them if they're in wrong order. "Bubbles" larger elements toward the end with each pass.</p>
+          </div>
+          
+          <div class="pros-cons">
+            <div class="pros">
+              <h4>Advantages</h4>
+              <ul>
+                <li>Simple to understand and implement</li>
+                <li>In-place sorting (O(1) space)</li>
+                <li>Stable algorithm</li>
+                <li>Adaptive (performs better on nearly sorted data)</li>
+                <li>Can detect if list becomes sorted early</li>
+              </ul>
+            </div>
+            <div class="cons">
+              <h4>Disadvantages</h4>
+              <ul>
+                <li>O(n²) time complexity in average and worst case</li>
+                <li>Inefficient for large datasets</li>
+                <li>Makes many unnecessary comparisons</li>
+                <li>Generally outperformed by other O(n²) algorithms</li>
+                <li>Not practical for production use</li>
+              </ul>
+            </div>
+          </div>
+          
+          <div class="apps-box">
+            <h4>Real-World Applications</h4>
+            <ul>
+              <li>Educational purposes - teaching sorting concepts</li>
+              <li>Graphics algorithms for sorting pixels by color</li>
+              <li>Embedded systems with severe memory constraints</li>
+              <li>Small datasets where simplicity matters more than efficiency</li>
+            </ul>
+          </div>
+          
+          <div class="complexity-row">
+            <span class="comp-badge comp-time">O(n²) time</span>
+            <span class="comp-badge comp-space">O(1) space</span>
+            <span class="comp-badge comp-stable">Stable</span>
+          </div>
+        </div>
+
+        <div class="algo-card simple">
+          <div class="algo-card-header">
+            <div class="algo-card-name">Selection Sort</div>
+          </div>
+          
+          <div class="strategy">
+            <h4>Strategy</h4>
+            <p>Find the minimum element and swap it with the first element. Then find the second minimum and swap with second element. Continue until array is sorted.</p>
+          </div>
+          
+          <div class="pros-cons">
+            <div class="pros">
+              <h4>Advantages</h4>
+              <ul>
+                <li>Simple to understand and implement</li>
+                <li>In-place sorting (O(1) space)</li>
+                <li>Minimizes number of swaps (at most n swaps)</li>
+                <li>Good when write operations are expensive</li>
+                <li>Consistent O(n²) performance regardless of input</li>
+              </ul>
+            </div>
+            <div class="cons">
+              <h4>Disadvantages</h4>
+              <ul>
+                <li>O(n²) time complexity in all cases</li>
+                <li>Not stable (changes relative order of equal elements)</li>
+                <li>Not adaptive (no benefit from partial sorting)</li>
+                <li>Inefficient for large datasets</li>
+                <li>Makes n² comparisons even on sorted data</li>
+              </ul>
+            </div>
+          </div>
+          
+          <div class="apps-box">
+            <h4>Real-World Applications</h4>
+            <ul>
+              <li>Systems where memory writes are expensive</li>
+              <li>Small datasets in embedded systems</li>
+              <li>Selection of top-k elements (partial sorting)</li>
+              <li>Situations where simplicity is prioritized over efficiency</li>
+            </ul>
+          </div>
+          
+          <div class="complexity-row">
+            <span class="comp-badge comp-time">O(n²) time</span>
+            <span class="comp-badge comp-space">O(1) space</span>
+            <span class="comp-badge comp-unstable">Unstable</span>
+          </div>
+        </div>
+
+        <div class="algo-card simple">
+          <div class="algo-card-header">
+            <div class="algo-card-name">Insertion Sort</div>
+          </div>
+          
+          <div class="strategy">
+            <h4>Strategy</h4>
+            <p>Build sorted array one element at a time by taking elements from unsorted portion and inserting them in correct position in sorted portion, like sorting playing cards.</p>
+          </div>
+          
+          <div class="pros-cons">
+            <div class="pros">
+              <h4>Advantages</h4>
+              <ul>
+                <li>Simple implementation</li>
+                <li>Efficient for small datasets</li>
+                <li>Adaptive (O(n) on nearly sorted data)</li>
+                <li>Stable algorithm</li>
+                <li>In-place sorting</li>
+                <li>Online (can sort as data arrives)</li>
+              </ul>
+            </div>
+            <div class="cons">
+              <h4>Disadvantages</h4>
+              <ul>
+                <li>O(n²) time complexity in average/worst case</li>
+                <li>Inefficient for large datasets</li>
+                <li>More writes than selection sort</li>
+                <li>Performance degrades quickly with size</li>
+              </ul>
+            </div>
+          </div>
+          
+          <div class="apps-box">
+            <h4>Real-World Applications</h4>
+            <ul>
+              <li>Subroutine in hybrid algorithms (Timsort, Introsort)</li>
+              <li>Small subarrays in quicksort implementations</li>
+              <li>Online algorithms (sorting data as it arrives)</li>
+              <li>Nearly sorted data in real-time systems</li>
+              <li>Simple sort in libraries for arrays ≤ 10 elements</li>
+            </ul>
+          </div>
+          
+          <div class="complexity-row">
+            <span class="comp-badge comp-time">O(n²) time</span>
+            <span class="comp-badge comp-space">O(1) space</span>
+            <span class="comp-badge comp-stable">Stable</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="callout callout-tip">
+        <span class="callout-icon" style="color:var(--cyan);">💡</span>
+        <div class="callout-content">
+          <strong>When Simple Sorts Shine</strong>
+          Despite their O(n²) complexity, these algorithms are still used in production systems: insertion sort for small arrays in quicksort, selection sort when memory writes are expensive, and bubble sort in educational contexts where understanding matters more than performance.
+        </div>
+      </div>
+    </div>
+  </details>
+
+
+  <!-- ═══════════════════ SECTION 3: EFFICIENT SORTING ALGORITHMS ═══════════════════ -->
+  <div class="section-title">Efficient Sorting Algorithms</div>
+
+  <details open>
+    <summary>
+      <div class="summary-icon" style="background:rgba(75,144,226,0.15); color:var(--blue); border-color:var(--blue);">⚡</div>
+      O(n log n) Algorithms — Production-Grade Performance
+    </summary>
+    <div class="details-body">
+      <p style="color:var(--text-dim); margin-bottom:18px; font-size:14px;">These algorithms achieve O(n log n) time complexity and are the workhorses of production systems. Each represents a different strategic approach to the divide-and-conquer paradigm.</p>
+
+      <div class="algo-grid">
+        <div class="algo-card efficient">
+          <div class="algo-card-header">
+            <div class="algo-card-name">Merge Sort</div>
+          </div>
+          
+          <div class="strategy">
+            <h4>Strategy</h4>
+            <p>Divide array recursively into halves until single elements remain. Then merge the halves back together in sorted order. Classic divide-and-conquer algorithm with guaranteed O(n log n) performance.</p>
+          </div>
+          
+          <div class="pros-cons">
+            <div class="pros">
+              <h4>Advantages</h4>
+              <ul>
+                <li>Guaranteed O(n log n) time complexity</li>
+                <li>Stable algorithm</li>
+                <li>Predictable performance (no worst-case degradation)</li>
+                <li>Excellent for large datasets</li>
+                <li>Parallelizable</li>
+                <li>Works well with external sorting</li>
+              </ul>
+            </div>
+            <div class="cons">
+              <h4>Disadvantages</h4>
+              <ul>
+                <li>O(n) extra space required</li>
+                <li>Not in-place</li>
+                <li>Constant factor overhead</li>
+                <li>Not adaptive (no benefit from partial sorting)</li>
+                <li>Overkill for small datasets</li>
+              </ul>
+            </div>
+          </div>
+          
+          <div class="apps-box">
+            <h4>Real-World Applications</h4>
+            <ul>
+              <li>Database systems (external sorting of large files)</li>
+              <li>Python's Timsort is based on merge sort</li>
+              <li>Distributed systems (Map-Reduce sorting)</li>
+              <li>Graphics applications (sorting polygons by depth)</li>
+              <li>Scientific computing with large datasets</li>
+              <li>When stability is required</li>
+            </ul>
+          </div>
+          
+          <div class="complexity-row">
+            <span class="comp-badge comp-time">O(n log n) time</span>
+            <span class="comp-badge comp-space">O(n) space</span>
+            <span class="comp-badge comp-stable">Stable</span>
+          </div>
+        </div>
+
+        <div class="algo-card efficient">
+          <div class="algo-card-header">
+            <div class="algo-card-name">Quick Sort</div>
+          </div>
+          
+          <div class="strategy">
+            <h4>Strategy</h4>
+            <p>Choose a pivot element, partition array so elements smaller than pivot are on left and larger are on right. Recursively sort the partitions. Different pivot selection strategies affect performance.</p>
+          </div>
+          
+          <div class="pros-cons">
+            <div class="pros">
+              <h4>Advantages</h4>
+              <ul>
+                <li>Average O(n log n) performance</li>
+                <li>In-place sorting (O(log n) space)</li>
+                <li>Cache-efficient</li>
+                <li>Fast in practice due to small constants</li>
+                <li>Parallelizable</li>
+                <li>Widely implemented in standard libraries</li>
+              </ul>
+            </div>
+            <div class="cons">
+              <h4>Disadvantages</h4>
+              <ul>
+                <li>O(n²) worst-case time complexity</li>
+                <li>Unstable (changes order of equal elements)</li>
+                <li>Performance depends on pivot selection</li>
+                <li>Not adaptive</li>
+                <li>Can suffer from poor performance on sorted data</li>
+                <li>Vulnerable to adversarial input</li>
+              </ul>
+            </div>
+          </div>
+          
+          <div class="apps-box">
+            <h4>Real-World Applications</h4>
+            <ul>
+              <li>C standard library qsort() implementation</li>
+              <li>Java Arrays.sort() for primitive types</li>
+              <li>Most general-purpose sorting in systems programming</li>
+              <li>Embedded systems (low memory overhead)</li>
+              <li>Hybrid algorithms (Introsort combines quicksort + heapsort)</li>
+              <li>High-performance computing</li>
+            </ul>
+          </div>
+          
+          <div class="complexity-row">
+            <span class="comp-badge comp-time">O(n log n) avg</span>
+            <span class="comp-badge comp-space">O(log n) space</span>
+            <span class="comp-badge comp-unstable">Unstable</span>
+          </div>
+        </div>
+
+        <div class="algo-card efficient">
+          <div class="algo-card-header">
+            <div class="algo-card-name">Heap Sort</div>
+          </div>
+          
+          <div class="strategy">
+            <h4>Strategy</h4>
+            <p>Build a max heap from the array, then repeatedly extract the maximum element (root) and place it at the end. Uses heap property to maintain partial ordering efficiently.</p>
+          </div>
+          
+          <div class="pros-cons">
+            <div class="pros">
+              <h4>Advantages</h4>
+              <ul>
+                <li>Guaranteed O(n log n) time complexity</li>
+                <li>In-place sorting (O(1) space)</li>
+                <li>Not vulnerable to worst-case inputs</li>
+                <li>Consistent performance</li>
+                <li>Good for systems with memory constraints</li>
+                <li>Deterministic performance bounds</li>
+              </ul>
+            </div>
+            <div class="cons">
+              <h4>Disadvantages</h4>
+              <ul>
+                <li>Unstable algorithm</li>
+                <li>Not adaptive</li>
+                <li>Poor cache locality</li>
+                <li>Higher constant factors than quicksort</li>
+                <li>More complex implementation</li>
+                <li>Generally slower than quicksort in practice</li>
+              </ul>
+            </div>
+          </div>
+          
+          <div class="apps-box">
+            <h4>Real-World Applications</h4>
+            <ul>
+              <li>Real-time systems (guaranteed O(n log n) bound)</li>
+              <li>Embedded systems with strict memory limits</li>
+              <li>Part of Introsort hybrid algorithm</li>
+              <li>Selection algorithms (find k largest elements)</li>
+              <li>Systems requiring worst-case guarantees</li>
+              <li>Operating system schedulers</li>
+            </ul>
+          </div>
+          
+          <div class="complexity-row">
+            <span class="comp-badge comp-time">O(n log n) time</span>
+            <span class="comp-badge comp-space">O(1) space</span>
+            <span class="comp-badge comp-unstable">Unstable</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="callout callout-warn">
+        <span class="callout-icon" style="color:var(--orange);">⚠️</span>
+        <div class="callout-content">
+          <strong>Performance in Practice</strong>
+          While all three algorithms are O(n log n), their practical performance varies significantly. Quicksort is typically fastest due to good cache behavior and low constants. Merge sort provides stability and predictable performance. Heap sort offers guaranteed bounds with minimal memory usage.
+        </div>
+      </div>
+    </div>
+  </details>
+
+  <!-- ═══════════════════ SECTION 4: SPECIALIZED SORTING ALGORITHMS ═══════════════════ -->
+  <div class="section-title">Specialized Sorting Algorithms</div>
+
+  <details>
+    <summary>
+      <div class="summary-icon" style="background:rgba(243,156,18,0.15); color:var(--orange); border-color:var(--orange);">🎯</div>
+      Non-Comparison Sorts — Breaking the O(n log n) Barrier
+    </summary>
+    <div class="details-body">
+      <p style="color:var(--text-dim); margin-bottom:18px; font-size:14px;">These algorithms achieve linear or near-linear time complexity by exploiting specific properties of the data. They don't use comparisons and can surpass the O(n log n) lower bound of comparison-based sorts.</p>
+
+      <div class="algo-grid">
+        <div class="algo-card specialized">
+          <div class="algo-card-header">
+            <div class="algo-card-name">Counting Sort</div>
+          </div>
+          
+          <div class="strategy">
+            <h4>Strategy</h4>
+            <p>Count occurrences of each distinct element, then use these counts to determine final positions. Works only when the range of input values is small and known beforehand.</p>
+          </div>
+          
+          <div class="pros-cons">
+            <div class="pros">
+              <h4>Advantages</h4>
+              <ul>
+                <li>O(n + k) time complexity where k is range</li>
+                <li>Stable algorithm</li>
+                <li>Linear time when k = O(n)</li>
+                <li>Simple implementation</li>
+                <li>Predictable performance</li>
+              </ul>
+            </div>
+            <div class="cons">
+              <h4>Disadvantages</h4>
+              <ul>
+                <li>Only works with integer keys in small range</li>
+                <li>O(k) extra space required</li>
+                <li>Impractical when k is very large</li>
+                <li>Cannot handle arbitrary comparison functions</li>
+                <li>Limited applicability</li>
+              </ul>
+            </div>
+          </div>
+          
+          <div class="apps-box">
+            <h4>Real-World Applications</h4>
+            <ul>
+              <li>Sorting ages, grades, or small integer ranges</li>
+              <li>Histogram computation</li>
+              <li>Subroutine in radix sort</li>
+              <li>Image processing (sorting pixel values)</li>
+              <li>Character frequency analysis</li>
+            </ul>
+          </div>
+          
+          <div class="complexity-row">
+            <span class="comp-badge comp-time">O(n + k) time</span>
+            <span class="comp-badge comp-space">O(k) space</span>
+            <span class="comp-badge comp-stable">Stable</span>
+          </div>
+        </div>
+
+        <div class="algo-card specialized">
+          <div class="algo-card-header">
+            <div class="algo-card-name">Radix Sort</div>
+          </div>
+          
+          <div class="strategy">
+            <h4>Strategy</h4>
+            <p>Sort by individual digits or characters, starting from least significant to most significant. Uses counting sort as subroutine for each digit position.</p>
+          </div>
+          
+          <div class="pros-cons">
+            <div class="pros">
+              <h4>Advantages</h4>
+              <ul>
+                <li>O(d × n) time where d is number of digits</li>
+                <li>Stable algorithm</li>
+                <li>Can sort strings and multi-digit numbers</li>
+                <li>Linear time when d is constant</li>
+                <li>Good for fixed-width data</li>
+              </ul>
+            </div>
+            <div class="cons">
+              <h4>Disadvantages</h4>
+              <ul>
+                <li>Only works with fixed-width keys</li>
+                <li>Extra space required</li>
+                <li>Performance degrades with large digit ranges</li>
+                <li>Not suitable for arbitrary data types</li>
+                <li>Cache performance can be poor</li>
+              </ul>
+            </div>
+          </div>
+          
+          <div class="apps-box">
+            <h4>Real-World Applications</h4>
+            <ul>
+              <li>Sorting integers, IP addresses, timestamps</li>
+              <li>String sorting (suffix arrays)</li>
+              <li>Database systems for fixed-width columns</li>
+              <li>Parallel sorting algorithms</li>
+              <li>Graphics applications (sorting by RGB values)</li>
+            </ul>
+          </div>
+          
+          <div class="complexity-row">
+            <span class="comp-badge comp-time">O(d × n) time</span>
+            <span class="comp-badge comp-space">O(n + k) space</span>
+            <span class="comp-badge comp-stable">Stable</span>
+          </div>
+        </div>
+
+        <div class="algo-card specialized">
+          <div class="algo-card-header">
+            <div class="algo-card-name">Bucket Sort</div>
+          </div>
+          
+          <div class="strategy">
+            <h4>Strategy</h4>
+            <p>Divide elements into buckets based on their values, sort each bucket individually (often with insertion sort), then concatenate buckets. Assumes uniform distribution of input.</p>
+          </div>
+          
+          <div class="pros-cons">
+            <div class="pros">
+              <h4>Advantages</h4>
+              <ul>
+                <li>O(n) average time with uniform input</li>
+                <li>Can be stable (depends on implementation)</li>
+                <li>Easily parallelizable</li>
+                <li>Good for distributed sorting</li>
+                <li>Works well with floating-point numbers</li>
+              </ul>
+            </div>
+            <div class="cons">
+              <h4>Disadvantages</h4>
+              <ul>
+                <li>O(n²) worst case if distribution is skewed</li>
+                <li>Requires knowledge of input distribution</li>
+                <li>Extra space for buckets</li>
+                <li>Performance sensitive to bucket choice</li>
+                <li>Not suitable for arbitrary data</li>
+              </ul>
+            </div>
+          </div>
+          
+          <div class="apps-box">
+            <h4>Real-World Applications</h4>
+            <ul>
+              <li>Sorting uniformly distributed floating-point numbers</li>
+              <li>External sorting of large datasets</li>
+              <li>Distributed sorting across multiple machines</li>
+              <li>Graphics algorithms (sorting by continuous values)</li>
+              <li>Approximate sorting when exact order isn't critical</li>
+            </ul>
+          </div>
+          
+          <div class="complexity-row">
+            <span class="comp-badge comp-time">O(n) avg</span>
+            <span class="comp-badge comp-space">O(n + k) space</span>
+            <span class="comp-badge comp-stable">Can be stable</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="callout callout-info">
+        <span class="callout-icon" style="color:var(--blue);">🚀</span>
+        <div class="callout-content">
+          <strong>When to Use Specialized Sorts</strong>
+          These algorithms can be dramatically faster than O(n log n) comparison sorts, but only under specific conditions. Use counting sort for small integer ranges, radix sort for fixed-width data like IP addresses, and bucket sort for uniformly distributed continuous values like probabilities or normalized scores.
+        </div>
+      </div>
+    </div>
+  </details>
+
+
+  <!-- ═══════════════════ SECTION 5: ALGORITHM COMPARISON & DECISION GUIDE ═══════════════════ -->
+  <div class="section-title">Algorithm Comparison &amp; Decision Guide</div>
+
+  <details open>
+    <summary>
+      <div class="summary-icon" style="background:rgba(139,157,195,0.15); color:var(--silver); border-color:var(--silver);">⚖️</div>
+      Choosing the Right Algorithm for Your Use Case
+    </summary>
+    <div class="details-body">
+      <p style="color:var(--text-dim); margin-bottom:18px; font-size:14px;">The "best" sorting algorithm depends entirely on your constraints: dataset size, memory limitations, stability requirements, and performance needs. Use this guide to make informed decisions.</p>
+
+      <table class="comparison-table">
+        <thead>
+          <tr>
+            <th>Algorithm</th>
+            <th>Best Case</th>
+            <th>Average Case</th>
+            <th>Worst Case</th>
+            <th>Space</th>
+            <th>Stable?</th>
+            <th>Best Use Case</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><strong>Bubble Sort</strong></td>
+            <td><span class="mono">O(n)</span></td>
+            <td><span class="mono">O(n²)</span></td>
+            <td><span class="mono">O(n²)</span></td>
+            <td><span class="mono">O(1)</span></td>
+            <td>✅ Yes</td>
+            <td>Education, tiny datasets</td>
+          </tr>
+          <tr>
+            <td><strong>Selection Sort</strong></td>
+            <td><span class="mono">O(n²)</span></td>
+            <td><span class="mono">O(n²)</span></td>
+            <td><span class="mono">O(n²)</span></td>
+            <td><span class="mono">O(1)</span></td>
+            <td>❌ No</td>
+            <td>Minimizing memory writes</td>
+          </tr>
+          <tr>
+            <td><strong>Insertion Sort</strong></td>
+            <td><span class="mono">O(n)</span></td>
+            <td><span class="mono">O(n²)</span></td>
+            <td><span class="mono">O(n²)</span></td>
+            <td><span class="mono">O(1)</span></td>
+            <td>✅ Yes</td>
+            <td>Small/nearly sorted data</td>
+          </tr>
+          <tr>
+            <td><strong>Merge Sort</strong></td>
+            <td><span class="mono">O(n log n)</span></td>
+            <td><span class="mono">O(n log n)</span></td>
+            <td><span class="mono">O(n log n)</span></td>
+            <td><span class="mono">O(n)</span></td>
+            <td>✅ Yes</td>
+            <td>Stability required, large data</td>
+          </tr>
+          <tr>
+            <td><strong>Quick Sort</strong></td>
+            <td><span class="mono">O(n log n)</span></td>
+            <td><span class="mono">O(n log n)</span></td>
+            <td><span class="mono">O(n²)</span></td>
+            <td><span class="mono">O(log n)</span></td>
+            <td>❌ No</td>
+            <td>General purpose, fast average</td>
+          </tr>
+          <tr>
+            <td><strong>Heap Sort</strong></td>
+            <td><span class="mono">O(n log n)</span></td>
+            <td><span class="mono">O(n log n)</span></td>
+            <td><span class="mono">O(n log n)</span></td>
+            <td><span class="mono">O(1)</span></td>
+            <td>❌ No</td>
+            <td>Guaranteed bounds, low memory</td>
+          </tr>
+          <tr>
+            <td><strong>Counting Sort</strong></td>
+            <td><span class="mono">O(n + k)</span></td>
+            <td><span class="mono">O(n + k)</span></td>
+            <td><span class="mono">O(n + k)</span></td>
+            <td><span class="mono">O(k)</span></td>
+            <td>✅ Yes</td>
+            <td>Small integer range</td>
+          </tr>
+          <tr>
+            <td><strong>Radix Sort</strong></td>
+            <td><span class="mono">O(nk)</span></td>
+            <td><span class="mono">O(nk)</span></td>
+            <td><span class="mono">O(nk)</span></td>
+            <td><span class="mono">O(n + k)</span></td>
+            <td>✅ Yes</td>
+            <td>Fixed-width integers/strings</td>
+          </tr>
+          <tr>
+            <td><strong>Bucket Sort</strong></td>
+            <td><span class="mono">O(n)</span></td>
+            <td><span class="mono">O(n)</span></td>
+            <td><span class="mono">O(n²)</span></td>
+            <td><span class="mono">O(n)</span></td>
+            <td>✅ Can be</td>
+            <td>Uniform distribution</td>
+          </tr>
+        </tbody>
+      </table>
+
+      <div class="algo-grid" style="margin-top:24px;">
+        <div class="algo-card">
+          <div class="algo-card-header">
+            <div class="algo-card-name">🏎️ Need Maximum Speed?</div>
+          </div>
+          <p><strong>Small Data (&lt; 50 elements):</strong> Insertion Sort</p>
+          <p><strong>General Purpose:</strong> Quick Sort (most standard libraries)</p>
+          <p><strong>Known Integer Range:</strong> Counting Sort</p>
+          <p><strong>Uniformly Distributed:</strong> Bucket Sort</p>
+        </div>
+
+        <div class="algo-card">
+          <div class="algo-card-header">
+            <div class="algo-card-name">🔒 Need Guaranteed Performance?</div>
+          </div>
+          <p><strong>Predictable Bounds:</strong> Merge Sort or Heap Sort</p>
+          <p><strong>Real-Time Systems:</strong> Heap Sort</p>
+          <p><strong>External Sorting:</strong> Merge Sort</p>
+          <p><strong>Avoiding Worst-Case:</strong> Introsort (Quick + Heap hybrid)</p>
+        </div>
+
+        <div class="algo-card">
+          <div class="algo-card-header">
+            <div class="algo-card-name">💾 Memory Constrained?</div>
+          </div>
+          <p><strong>Minimal Memory:</strong> Heap Sort, Selection Sort</p>
+          <p><strong>In-Place Required:</strong> Quick Sort, Heap Sort</p>
+          <p><strong>Large Datasets:</strong> External Merge Sort</p>
+          <p><strong>Cache-Friendly:</strong> Quick Sort</p>
+        </div>
+
+        <div class="algo-card">
+          <div class="algo-card-header">
+            <div class="algo-card-name">⚖️ Need Stability?</div>
+          </div>
+          <p><strong>Stable + Fast:</strong> Merge Sort, Timsort</p>
+          <p><strong>Stable + Simple:</strong> Insertion Sort</p>
+          <p><strong>Stable + Specialized:</strong> Counting Sort, Radix Sort</p>
+          <p><strong>Note:</strong> Quick Sort and Heap Sort are unstable</p>
+        </div>
+      </div>
+
+      <div class="callout callout-tip">
+        <span class="callout-icon" style="color:var(--cyan);">🎯</span>
+        <div class="callout-content">
+          <strong>Real-World Decision Framework</strong>
+          <p><strong>1. Data Size:</strong> &lt;10 elements → Insertion Sort, &lt;1000 → Quick Sort, &gt;1000 → consider data properties</p>
+          <p><strong>2. Data Properties:</strong> Nearly sorted → Insertion Sort, Random → Quick Sort, Known range → Counting Sort</p>
+          <p><strong>3. Requirements:</strong> Stability needed → Merge Sort, Memory limited → Heap Sort, Predictable → Merge Sort</p>
+          <p><strong>4. Default Choice:</strong> When in doubt, use your language's standard library sort (usually a hybrid algorithm)</p>
+        </div>
+      </div>
+    </div>
+  </details>
+
+  <!-- ═══════════════════ SECTION 6: MASTERY SUMMARY ═══════════════════ -->
+  <div class="section-title">Sorting Mastery Summary</div>
+
+  <details open>
+    <summary>
+      <div class="summary-icon" style="background:rgba(75,144,226,0.15); color:var(--blue); border-color:var(--blue);">🎯</div>
+      Understanding the Complete Sorting Landscape
+    </summary>
+    <div class="details-body">
+      <div class="callout callout-info">
+        <span class="callout-icon" style="color:var(--blue);">✅</span>
+        <div class="callout-content">
+          <strong>Core Understanding Achieved</strong>
+          ✅ Know the strategy behind each major sorting algorithm<br>
+          ✅ Understand when each algorithm excels and when it struggles<br>
+          ✅ Can choose appropriate algorithm based on constraints<br>
+          ✅ Recognize the trade-offs between time, space, and stability<br>
+          ✅ Appreciate why different algorithms are used in different contexts
+        </div>
+      </div>
+
+      <div class="algo-grid">
+        <div class="algo-card">
+          <div class="algo-card-header">
+            <div class="algo-card-name">Key Insights Gained</div>
+          </div>
+          <p><strong>No Universal Best:</strong> Algorithm choice depends on data size, properties, and constraints<br>
+          <strong>Hybrid Approaches:</strong> Production systems combine multiple algorithms (Introsort, Timsort)<br>
+          <strong>Specialized Wins:</strong> Non-comparison sorts can be dramatically faster for specific data types<br>
+          <strong>Trade-offs Matter:</strong> Time, space, stability, and simplicity all factor into real decisions</p>
+        </div>
+
+        <div class="algo-card">
+          <div class="algo-card-header">
+            <div class="algo-card-name">Production Algorithm Choices</div>
+          </div>
+          <p><strong>C++ std::sort:</strong> Introsort (Quick + Heap + Insertion)<br>
+          <strong>Python:</strong> Timsort (Merge + Insertion, optimized for real data)<br>
+          <strong>Java:</strong> Dual-Pivot Quicksort for primitives, Timsort for objects<br>
+          <strong>JavaScript:</strong> Usually merge sort or hybrid approach<br>
+          These prove that combining strategies often beats single algorithms</p>
+        </div>
+
+        <div class="algo-card">
+          <div class="algo-card-header">
+            <div class="algo-card-name">When You'll Apply This Knowledge</div>
+          </div>
+          <p><strong>System Design:</strong> Choosing sort algorithms for databases, search engines<br>
+          <strong>Performance Optimization:</strong> Identifying bottlenecks and selecting better algorithms<br>
+          <strong>Interviews:</strong> Discussing trade-offs and optimal choices<br>
+          <strong>Data Processing:</strong> Handling large datasets efficiently<br>
+          <strong>Algorithm Design:</strong> Using sorting as subroutine in complex algorithms</p>
+        </div>
+      </div>
+
+      <div class="callout callout-warn">
+        <span class="callout-icon" style="color:var(--orange);">🚀</span>
+        <div class="callout-content">
+          <strong>Beyond Basic Sorting</strong>
+          This foundation prepares you for advanced topics: external sorting for datasets larger than memory, parallel sorting algorithms for multi-core systems, string sorting algorithms like suffix arrays, and the role of sorting in database query optimization. Every major system you'll work with relies on the principles you've learned here.
+        </div>
+      </div>
+    </div>
+  </details>
+
+  <!-- Quick Reference -->
+  <div class="callout callout-info" style="margin-top:28px;">
+    <span class="callout-icon" style="color:var(--blue);">📚</span>
+    <div class="callout-content">
+      <strong>Quick Reference for Decision Making</strong>
+      <p><strong>Default Choice:</strong> Quick Sort (or language built-in)</p>
+      <p><strong>Need Stability:</strong> Merge Sort</p>
+      <p><strong>Memory Limited:</strong> Heap Sort</p>
+      <p><strong>Small Data:</strong> Insertion Sort</p>
+      <p><strong>Integer Range:</strong> Counting Sort</p>
+      <p><strong>Fixed-Width Data:</strong> Radix Sort</p>
+      <p><strong>External Data:</strong> Merge Sort</p>
+      <p><strong>Real-Time:</strong> Heap Sort</p>
+    </div>
+  </div>
+
+  <!-- Footer -->
+  <footer>
+    <span>COP 3530</span> · Data Structures · Sorting Algorithms: Complete Strategy Guide
+    &nbsp;|&nbsp; Understanding trade-offs and optimal choices
+    &nbsp;|&nbsp; <span>Foundation for efficient computing</span>
+  </footer>
+
+</div><!-- end .container -->
+
+<script>
+  // Clean, precise interactions for the geometric aesthetic
+  document.addEventListener('DOMContentLoaded', () => {
+    // Smooth section opening with precise animations
+    document.querySelectorAll('summary').forEach(summary => {
+      summary.addEventListener('click', (e) => {
+        const details = summary.parentElement;
+        if (!details.open) {
+          setTimeout(() => {
+            details.scrollIntoView({ 
+              behavior: 'smooth', 
+              block: 'start' 
+            });
+          }, 150);
+        }
+      });
+    });
+
+    // Subtle geometric hover effects for algorithm cards
+    document.querySelectorAll('.algo-card').forEach(card => {
+      card.addEventListener('mouseenter', () => {
+        card.style.boxShadow = '0 12px 40px rgba(75,144,226,0.12)';
+        card.style.borderColor = 'var(--blue)';
+      });
+      card.addEventListener('mouseleave', () => {
+        card.style.boxShadow = '';
+        card.style.borderColor = 'var(--border)';
+      });
+    });
+
+    // Clean badge interactions
+    const badges = document.querySelectorAll('.comp-badge');
+    badges.forEach(badge => {
+      badge.style.transition = 'all 0.2s ease';
+      badge.addEventListener('mouseenter', () => {
+        badge.style.transform = 'scale(1.05)';
+        badge.style.boxShadow = '0 2px 8px rgba(75,144,226,0.15)';
+      });
+      badge.addEventListener('mouseleave', () => {
+        badge.style.transform = 'scale(1)';
+        badge.style.boxShadow = 'none';
+      });
+    });
+
+    // Table row highlighting
+    document.querySelectorAll('.comparison-table tbody tr').forEach(row => {
+      row.addEventListener('mouseenter', () => {
+        row.style.backgroundColor = 'rgba(75,144,226,0.08)';
+      });
+      row.addEventListener('mouseleave', () => {
+        row.style.backgroundColor = '';
+      });
+    });
+  });
+</script>
+
+</div></body>
+</html>

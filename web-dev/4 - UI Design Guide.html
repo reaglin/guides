@@ -1,0 +1,2331 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>COP4834 - UI Design Basics</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            padding: 20px;
+            line-height: 1.6;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            overflow: hidden;
+        }
+
+        .header {
+            background: linear-gradient(135deg, #11998e 0%, #38ef7d 100%);
+            color: white;
+            padding: 40px;
+            text-align: center;
+        }
+
+        .header h1 {
+            font-size: 2.5em;
+            margin-bottom: 10px;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+        }
+
+        .header p {
+            font-size: 1.2em;
+            opacity: 0.9;
+        }
+
+        .content {
+            padding: 40px;
+        }
+
+        .intro-box {
+            background: linear-gradient(135deg, #11998e 0%, #38ef7d 100%);
+            color: white;
+            padding: 30px;
+            border-radius: 10px;
+            margin-bottom: 30px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+        }
+
+        .intro-box h2 {
+            margin-bottom: 15px;
+            font-size: 1.8em;
+        }
+
+        .collapsible {
+            background-color: #16a085;
+            color: white;
+            cursor: pointer;
+            padding: 18px;
+            width: 100%;
+            border: none;
+            text-align: left;
+            outline: none;
+            font-size: 1.2em;
+            font-weight: bold;
+            border-radius: 8px;
+            margin-bottom: 10px;
+            transition: all 0.3s ease;
+            box-shadow: 0 3px 10px rgba(0,0,0,0.2);
+        }
+
+        .collapsible:hover {
+            background-color: #138d75;
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+        }
+
+        .collapsible.active {
+            background-color: #27ae60;
+        }
+
+        .collapsible:after {
+            content: '\002B';
+            color: white;
+            font-weight: bold;
+            float: right;
+            margin-left: 5px;
+            font-size: 1.3em;
+        }
+
+        .collapsible.active:after {
+            content: "\2212";
+        }
+
+        .collapsible-content {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.3s ease-out;
+            background-color: #f8f9fa;
+            border-radius: 0 0 8px 8px;
+            margin-bottom: 20px;
+        }
+
+        .collapsible-inner {
+            padding: 25px;
+        }
+
+        .info-box {
+            background: #e8f8f5;
+            border-left: 5px solid #16a085;
+            padding: 20px;
+            margin: 20px 0;
+            border-radius: 5px;
+        }
+
+        .warning-box {
+            background: #fef5e7;
+            border-left: 5px solid #f39c12;
+            padding: 20px;
+            margin: 20px 0;
+            border-radius: 5px;
+        }
+
+        .success-box {
+            background: #d5f4e6;
+            border-left: 5px solid #27ae60;
+            padding: 20px;
+            margin: 20px 0;
+            border-radius: 5px;
+        }
+
+        .tip-box {
+            background: #ebf5fb;
+            border-left: 5px solid #3498db;
+            padding: 20px;
+            margin: 20px 0;
+            border-radius: 5px;
+        }
+
+        .danger-box {
+            background: #fadbd8;
+            border-left: 5px solid #e74c3c;
+            padding: 20px;
+            margin: 20px 0;
+            border-radius: 5px;
+        }
+
+        .step-container {
+            background: white;
+            border: 2px solid #16a085;
+            border-radius: 8px;
+            padding: 20px;
+            margin: 15px 0;
+        }
+
+        .step-number {
+            display: inline-block;
+            background: #16a085;
+            color: white;
+            width: 35px;
+            height: 35px;
+            border-radius: 50%;
+            text-align: center;
+            line-height: 35px;
+            font-weight: bold;
+            margin-right: 10px;
+        }
+
+        .step-title {
+            display: inline-block;
+            font-size: 1.3em;
+            color: #2c3e50;
+            font-weight: bold;
+            vertical-align: middle;
+        }
+
+        .step-content {
+            margin-top: 15px;
+            padding-left: 45px;
+        }
+
+        code {
+            background: #2c3e50;
+            color: #f8f8f2;
+            padding: 3px 8px;
+            border-radius: 4px;
+            font-family: 'Courier New', monospace;
+            font-size: 0.9em;
+        }
+
+        .code-block {
+            background: #2c3e50;
+            color: #f8f8f2;
+            padding: 20px;
+            border-radius: 8px;
+            margin: 15px 0;
+            overflow-x: auto;
+            font-family: 'Courier New', monospace;
+            font-size: 0.9em;
+            line-height: 1.5;
+            white-space: pre-wrap;
+        }
+
+        .wireframe-box {
+            background: #f8f9fa;
+            border: 2px dashed #16a085;
+            padding: 30px;
+            text-align: center;
+            border-radius: 8px;
+            margin: 15px 0;
+            min-height: 200px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-direction: column;
+        }
+
+        .wireframe-box h4 {
+            color: #16a085;
+            margin-bottom: 10px;
+        }
+
+        ul, ol {
+            margin-left: 25px;
+            margin-top: 10px;
+        }
+
+        li {
+            margin: 10px 0;
+        }
+
+        h3 {
+            color: #2c3e50;
+            margin: 20px 0 10px 0;
+            font-size: 1.5em;
+        }
+
+        h4 {
+            color: #34495e;
+            margin: 15px 0 10px 0;
+            font-size: 1.2em;
+        }
+
+        .tool-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+            margin: 20px 0;
+        }
+
+        .tool-card {
+            background: white;
+            border: 2px solid #16a085;
+            border-radius: 10px;
+            padding: 20px;
+            text-align: center;
+            transition: transform 0.3s ease;
+        }
+
+        .tool-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 20px rgba(0,0,0,0.2);
+        }
+
+        .tool-card h4 {
+            color: #16a085;
+            margin-bottom: 10px;
+            font-size: 1.3em;
+        }
+
+        .tool-icon {
+            font-size: 3em;
+            margin-bottom: 10px;
+        }
+
+        .comparison-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 20px 0;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        }
+
+        .comparison-table th {
+            background: #16a085;
+            color: white;
+            padding: 15px;
+            text-align: left;
+            font-weight: bold;
+        }
+
+        .comparison-table td {
+            padding: 12px 15px;
+            border-bottom: 1px solid #ddd;
+        }
+
+        .comparison-table tr:hover {
+            background: #f5f5f5;
+        }
+
+        .principle-card {
+            background: white;
+            border-left: 5px solid #27ae60;
+            border-radius: 5px;
+            padding: 20px;
+            margin: 15px 0;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        }
+
+        .principle-card h4 {
+            color: #27ae60;
+            margin-bottom: 10px;
+        }
+
+        .checklist {
+            background: #f8f9fa;
+            border: 2px solid #16a085;
+            border-radius: 8px;
+            padding: 20px;
+            margin: 15px 0;
+        }
+
+        .checklist h4 {
+            color: #16a085;
+            margin-bottom: 15px;
+        }
+
+        .checklist ul {
+            list-style: none;
+            margin-left: 0;
+        }
+
+        .checklist li:before {
+            content: "✓ ";
+            color: #27ae60;
+            font-weight: bold;
+            margin-right: 10px;
+        }
+
+        .process-flow {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin: 20px 0;
+            flex-wrap: wrap;
+        }
+
+        .process-step {
+            flex: 1;
+            min-width: 150px;
+            background: white;
+            border: 2px solid #16a085;
+            border-radius: 8px;
+            padding: 15px;
+            text-align: center;
+            margin: 10px;
+        }
+
+        .process-arrow {
+            font-size: 2em;
+            color: #16a085;
+        }
+
+        .footer {
+            background: linear-gradient(135deg, #11998e 0%, #38ef7d 100%);
+            color: white;
+            padding: 20px;
+            text-align: center;
+        }
+
+        strong {
+            color: #2c3e50;
+        }
+
+        .highlight {
+            background: #fef5e7;
+            padding: 2px 5px;
+            border-radius: 3px;
+        }
+
+        .example-form {
+            background: white;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            padding: 20px;
+            margin: 15px 0;
+        }
+
+        .example-form label {
+            display: block;
+            margin: 10px 0 5px 0;
+            font-weight: bold;
+            color: #2c3e50;
+        }
+
+        .example-form input,
+        .example-form select,
+        .example-form textarea {
+            width: 100%;
+            padding: 8px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            margin-bottom: 10px;
+        }
+
+        .example-button {
+            background: #16a085;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+            margin: 5px;
+        }
+
+        .example-button:hover {
+            background: #138d75;
+        }
+
+        .do-dont-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+            margin: 20px 0;
+        }
+
+        .do-box {
+            background: #d5f4e6;
+            border: 2px solid #27ae60;
+            border-radius: 8px;
+            padding: 20px;
+        }
+
+        .do-box h4 {
+            color: #27ae60;
+        }
+
+        .dont-box {
+            background: #fadbd8;
+            border: 2px solid #e74c3c;
+            border-radius: 8px;
+            padding: 20px;
+        }
+
+        .dont-box h4 {
+            color: #e74c3c;
+        }
+
+        @media (max-width: 768px) {
+            .do-dont-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🎨 COP4834 Web Systems II</h1>
+            <p>UI Design Basics: From Idea to Code-Ready Forms</p>
+        </div>
+
+        <div class="content">
+            <div class="intro-box">
+                <h2>📚 Module Overview</h2>
+                <p>Before writing a single line of code, you need a clear plan for your user interface. This module guides you through the complete UI design process—from initial concept to developer-ready specifications. You'll learn how to transform ideas into wireframes, make critical CRUD design decisions, and create documentation that enables developers to build exactly what users need.</p>
+            </div>
+
+            <!-- Section 1: The UI Design Process -->
+            <button class="collapsible">1. The Complete UI Design Process</button>
+            <div class="collapsible-content">
+                <div class="collapsible-inner">
+                    <h3>The Journey from Idea to Code</h3>
+                    
+                    <div class="process-flow">
+                        <div class="process-step">
+                            <h4>1. Discovery</h4>
+                            <p>Understand requirements</p>
+                        </div>
+                        <div class="process-arrow">→</div>
+                        <div class="process-step">
+                            <h4>2. Information Architecture</h4>
+                            <p>Organize content</p>
+                        </div>
+                        <div class="process-arrow">→</div>
+                        <div class="process-step">
+                            <h4>3. Wireframing</h4>
+                            <p>Sketch layouts</p>
+                        </div>
+                        <div class="process-arrow">→</div>
+                        <div class="process-step">
+                            <h4>4. Design</h4>
+                            <p>Create mockups</p>
+                        </div>
+                        <div class="process-arrow">→</div>
+                        <div class="process-step">
+                            <h4>5. Specification</h4>
+                            <p>Document details</p>
+                        </div>
+                        <div class="process-arrow">→</div>
+                        <div class="process-step">
+                            <h4>6. Handoff</h4>
+                            <p>Developer ready!</p>
+                        </div>
+                    </div>
+
+                    <div class="info-box">
+                        <h4>Why This Process Matters</h4>
+                        <p>Jumping straight into coding without design leads to:</p>
+                        <ul>
+                            <li>❌ Constant rework as requirements become clear</li>
+                            <li>❌ Poor user experience due to lack of planning</li>
+                            <li>❌ Inconsistent interfaces across pages</li>
+                            <li>❌ Missed requirements and features</li>
+                            <li>❌ Higher development costs and longer timelines</li>
+                        </ul>
+                        <p><strong>Good design upfront saves 10x the time later!</strong></p>
+                    </div>
+
+                    <h3>Phase 1: Discovery & Requirements</h3>
+                    
+                    <div class="step-container">
+                        <span class="step-number">1</span>
+                        <span class="step-title">Understand Your Users</span>
+                        <div class="step-content">
+                            <p><strong>Key Questions:</strong></p>
+                            <ul>
+                                <li>Who will use this application? (students, administrators, customers, etc.)</li>
+                                <li>What is their technical proficiency?</li>
+                                <li>What devices will they use? (desktop, mobile, tablet)</li>
+                                <li>What are their goals and pain points?</li>
+                                <li>What is their workflow/process?</li>
+                            </ul>
+                            
+                            <div class="example-form">
+                                <h4>Example: User Profile</h4>
+                                <p><strong>Name:</strong> Sarah, College Student</p>
+                                <p><strong>Goal:</strong> Register for courses quickly during busy registration period</p>
+                                <p><strong>Technical Level:</strong> Moderate - uses smartphone daily, familiar with web apps</p>
+                                <p><strong>Pain Points:</strong> Current system is slow, confusing navigation, hard to see availability</p>
+                                <p><strong>Device:</strong> Primarily laptop, sometimes mobile phone</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="step-container">
+                        <span class="step-number">2</span>
+                        <span class="step-title">Define Core Features</span>
+                        <div class="step-content">
+                            <p>List out what the application must do:</p>
+                            <ul>
+                                <li><strong>Must Have:</strong> Critical features (MVP - Minimum Viable Product)</li>
+                                <li><strong>Should Have:</strong> Important but not critical</li>
+                                <li><strong>Nice to Have:</strong> Future enhancements</li>
+                            </ul>
+                            
+                            <table class="comparison-table">
+                                <thead>
+                                    <tr>
+                                        <th>Priority</th>
+                                        <th>Feature</th>
+                                        <th>User Story</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <td><strong>Must Have</strong></td>
+                                        <td>Add Product</td>
+                                        <td>As an admin, I need to add new products to the catalog</td>
+                                    </tr>
+                                    <tr>
+                                        <td><strong>Must Have</strong></td>
+                                        <td>Edit Product</td>
+                                        <td>As an admin, I need to update product information</td>
+                                    </tr>
+                                    <tr>
+                                        <td><strong>Should Have</strong></td>
+                                        <td>Bulk Upload</td>
+                                        <td>As an admin, I want to import products from CSV</td>
+                                    </tr>
+                                    <tr>
+                                        <td><strong>Nice to Have</strong></td>
+                                        <td>Image Gallery</td>
+                                        <td>As an admin, I want to add multiple product images</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+
+                    <div class="step-container">
+                        <span class="step-number">3</span>
+                        <span class="step-title">Identify Data Requirements</span>
+                        <div class="step-content">
+                            <p>For each feature, determine what data is needed:</p>
+                            
+                            <div class="code-block">
+<strong>Product Entity:</strong>
+- ID (auto-generated)
+- Name (required, max 100 chars)
+- Description (optional, max 500 chars)
+- Price (required, decimal, > 0)
+- Category (required, dropdown)
+- SKU (required, unique, alphanumeric)
+- Stock Quantity (required, integer, >= 0)
+- Image URL (optional)
+- Created Date (auto-generated)
+- Modified Date (auto-generated)
+- Status (Active/Inactive, default: Active)
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="step-container">
+                        <span class="step-number">4</span>
+                        <span class="step-title">Choose CRUD Patterns</span>
+                        <div class="step-content">
+                            <p>Decide how users will interact with data (refer to CRUD guide for detailed patterns):</p>
+                            
+                            <table class="comparison-table">
+                                <thead>
+                                    <tr>
+                                        <th>Operation</th>
+                                        <th>UI Pattern</th>
+                                        <th>Rationale</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <td><strong>List/Read</strong></td>
+                                        <td>Data table with search/filter</td>
+                                        <td>Many products to browse</td>
+                                    </tr>
+                                    <tr>
+                                        <td><strong>Create</strong></td>
+                                        <td>Modal dialog</td>
+                                        <td>Simple form, keeps user in context</td>
+                                    </tr>
+                                    <tr>
+                                        <td><strong>Edit</strong></td>
+                                        <td>Same modal as Create</td>
+                                        <td>Consistent UX, reuse components</td>
+                                    </tr>
+                                    <tr>
+                                        <td><strong>Delete</strong></td>
+                                        <td>Confirmation dialog</td>
+                                        <td>Prevent accidental deletion</td>
+                                    </tr>
+                                    <tr>
+                                        <td><strong>Quick Edit</strong></td>
+                                        <td>Inline editing for price</td>
+                                        <td>Common task, needs speed</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+
+                    <div class="tip-box">
+                        <h4>💡 Pro Tip: Create a Feature Matrix</h4>
+                        <p>Document your decisions in a simple table before designing:</p>
+                        <ul>
+                            <li><strong>Feature:</strong> What functionality</li>
+                            <li><strong>UI Pattern:</strong> How user interacts</li>
+                            <li><strong>Data Fields:</strong> What information is needed</li>
+                            <li><strong>Validation Rules:</strong> What constraints apply</li>
+                            <li><strong>User Role:</strong> Who can access</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Section 2: Information Architecture -->
+            <button class="collapsible">2. Information Architecture & User Flows</button>
+            <div class="collapsible-content">
+                <div class="collapsible-inner">
+                    <h3>Organizing Your Application</h3>
+                    
+                    <div class="info-box">
+                        <h4>📋 What is Information Architecture?</h4>
+                        <p>Information Architecture (IA) is the practice of organizing and structuring content in a way that helps users find information and complete tasks efficiently.</p>
+                    </div>
+
+                    <div class="step-container">
+                        <span class="step-number">1</span>
+                        <span class="step-title">Create a Site Map</span>
+                        <div class="step-content">
+                            <p>Map out all pages and their relationships:</p>
+                            
+                            <div class="code-block">
+<strong>E-Commerce Admin Panel - Site Map</strong>
+
+Home (Dashboard)
+├── Products
+│   ├── Product List
+│   ├── Add Product (Modal)
+│   ├── Edit Product (Modal)
+│   ├── Product Categories
+│   └── Bulk Import
+├── Orders
+│   ├── Order List
+│   ├── Order Details
+│   └── Order Status Management
+├── Customers
+│   ├── Customer List
+│   └── Customer Details
+├── Reports
+│   ├── Sales Report
+│   ├── Inventory Report
+│   └── Customer Analytics
+└── Settings
+    ├── User Profile
+    ├── Store Settings
+    └── Payment Configuration
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="step-container">
+                        <span class="step-number">2</span>
+                        <span class="step-title">Define Navigation Structure</span>
+                        <div class="step-content">
+                            <p><strong>Primary Navigation:</strong> Main sections (always visible)</p>
+                            <ul>
+                                <li>Dashboard</li>
+                                <li>Products</li>
+                                <li>Orders</li>
+                                <li>Customers</li>
+                                <li>Reports</li>
+                            </ul>
+                            
+                            <p><strong>Secondary Navigation:</strong> Sub-sections within a page</p>
+                            <ul>
+                                <li>Tabs for different views (All Products, Active, Archived)</li>
+                                <li>Breadcrumbs to show location</li>
+                                <li>Contextual menus for actions</li>
+                            </ul>
+
+                            <div class="warning-box">
+                                <strong>⚠️ Navigation Rules:</strong>
+                                <ul>
+                                    <li>Keep primary navigation to 5-7 items max</li>
+                                    <li>Use clear, action-oriented labels</li>
+                                    <li>Highlight current page/section</li>
+                                    <li>Keep navigation consistent across all pages</li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+
+                    <h3>User Flows</h3>
+                    <p>Map out how users accomplish key tasks:</p>
+
+                    <div class="step-container">
+                        <span class="step-number">3</span>
+                        <span class="step-title">Document User Flows</span>
+                        <div class="step-content">
+                            <h4>Example: Adding a New Product</h4>
+                            
+                            <div class="code-block">
+<strong>Flow: Admin adds a new product</strong>
+
+1. User clicks "Products" in main navigation
+   └─→ Products list page loads
+
+2. User clicks "+ Add Product" button
+   └─→ Modal dialog opens with empty form
+
+3. User fills in required fields:
+   - Product Name: "Wireless Mouse"
+   - Price: "29.99"
+   - Category: "Electronics" (dropdown)
+   - SKU: "MOUSE-001"
+   - Stock: "50"
+
+4. User clicks "Upload Image" (optional)
+   └─→ File picker opens
+   └─→ User selects image
+   └─→ Preview shows in form
+
+5. User clicks "Save Product"
+   └─→ Validation runs
+   
+   ✓ If valid:
+     └─→ Product saved to database
+     └─→ Success message shows
+     └─→ Modal closes
+     └─→ Product appears in list
+   
+   ✗ If invalid:
+     └─→ Error messages show next to fields
+     └─→ User corrects errors
+     └─→ User clicks "Save Product" again
+                            </div>
+
+                            <h4>Alternative Flow: Cancel Action</h4>
+                            <div class="code-block">
+At step 5, user clicks "Cancel" instead:
+   └─→ "Are you sure?" confirmation appears
+   
+   If "Yes":
+     └─→ Modal closes
+     └─→ No data saved
+     └─→ User returns to product list
+   
+   If "No":
+     └─→ User stays in form
+     └─→ Can continue editing
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="tip-box">
+                        <h4>💡 User Flow Best Practices:</h4>
+                        <ul>
+                            <li>Keep flows as short as possible (3-5 steps ideal)</li>
+                            <li>Document all decision points (if/else scenarios)</li>
+                            <li>Include error states and recovery paths</li>
+                            <li>Show what happens on success and failure</li>
+                            <li>Consider edge cases (empty states, max limits, etc.)</li>
+                        </ul>
+                    </div>
+
+                    <div class="step-container">
+                        <span class="step-number">4</span>
+                        <span class="step-title">Define Page States</span>
+                        <div class="step-content">
+                            <p>Every page can have multiple states. Plan for all of them:</p>
+                            
+                            <table class="comparison-table">
+                                <thead>
+                                    <tr>
+                                        <th>State</th>
+                                        <th>Description</th>
+                                        <th>UI Treatment</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <td><strong>Loading</strong></td>
+                                        <td>Data is being fetched</td>
+                                        <td>Show spinner or skeleton screen</td>
+                                    </tr>
+                                    <tr>
+                                        <td><strong>Empty</strong></td>
+                                        <td>No data exists yet</td>
+                                        <td>Show helpful message + "Add" button</td>
+                                    </tr>
+                                    <tr>
+                                        <td><strong>Data</strong></td>
+                                        <td>Normal state with content</td>
+                                        <td>Display list/table with data</td>
+                                    </tr>
+                                    <tr>
+                                        <td><strong>Error</strong></td>
+                                        <td>Something went wrong</td>
+                                        <td>Show error message + retry option</td>
+                                    </tr>
+                                    <tr>
+                                        <td><strong>No Results</strong></td>
+                                        <td>Search/filter returned nothing</td>
+                                        <td>Show "No matches" + clear filters button</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Section 3: Wireframing -->
+            <button class="collapsible">3. Wireframing Your Interface</button>
+            <div class="collapsible-content">
+                <div class="collapsible-inner">
+                    <h3>What Are Wireframes?</h3>
+                    
+                    <div class="info-box">
+                        <p><strong>Wireframes</strong> are low-fidelity sketches or diagrams that show the structure and layout of a page without visual design details (colors, fonts, images).</p>
+                        
+                        <p><strong>Purpose:</strong></p>
+                        <ul>
+                            <li>Focus on layout and functionality, not aesthetics</li>
+                            <li>Quick to create and modify</li>
+                            <li>Easy to get feedback and iterate</li>
+                            <li>Help developers understand structure</li>
+                            <li>Prevent costly changes later in development</li>
+                        </ul>
+                    </div>
+
+                    <h3>Wireframing Levels</h3>
+
+                    <div class="principle-card">
+                        <h4>Low-Fidelity (Lo-Fi) Wireframes</h4>
+                        <p><strong>What:</strong> Simple sketches, boxes and lines</p>
+                        <p><strong>When:</strong> Early stages, brainstorming, quick iterations</p>
+                        <p><strong>Tools:</strong> Paper and pencil, whiteboard, simple drawing tools</p>
+                        
+                        <div class="wireframe-box">
+                            <h4>Example: Lo-Fi Product List</h4>
+                            <div style="text-align: left; font-family: monospace; line-height: 1.8;">
+                                ┌─────────────────────────────────────────┐<br>
+                                │ [Logo]  Dashboard  Products  Orders   │<br>
+                                ├─────────────────────────────────────────┤<br>
+                                │ Products                   [+ Add]      │<br>
+                                ├─────────────────────────────────────────┤<br>
+                                │ [Search...]          [Filter ▼]         │<br>
+                                ├─────────────────────────────────────────┤<br>
+                                │ Name        Price    Stock    Actions   │<br>
+                                ├─────────────────────────────────────────┤<br>
+                                │ □ Product 1  $10     50      [Edit] [×] │<br>
+                                │ □ Product 2  $20     30      [Edit] [×] │<br>
+                                │ □ Product 3  $15     0       [Edit] [×] │<br>
+                                ├─────────────────────────────────────────┤<br>
+                                │          [← Prev]  1 2 3  [Next →]      │<br>
+                                └─────────────────────────────────────────┘
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="principle-card">
+                        <h4>High-Fidelity (Hi-Fi) Wireframes</h4>
+                        <p><strong>What:</strong> Detailed layouts with actual content, spacing, alignment</p>
+                        <p><strong>When:</strong> After concept approval, before visual design</p>
+                        <p><strong>Tools:</strong> Figma, Adobe XD, Sketch, Balsamiq</p>
+                        <p>Shows exact placement of elements, real content, proper proportions</p>
+                    </div>
+
+                    <h3>Key Wireframe Components</h3>
+
+                    <div class="step-container">
+                        <span class="step-number">1</span>
+                        <span class="step-title">Layout Structure</span>
+                        <div class="step-content">
+                            <p>Define the basic page structure:</p>
+                            <ul>
+                                <li><strong>Header:</strong> Logo, navigation, user menu</li>
+                                <li><strong>Sidebar:</strong> Secondary navigation (if needed)</li>
+                                <li><strong>Main Content Area:</strong> Primary content</li>
+                                <li><strong>Footer:</strong> Links, copyright, etc.</li>
+                            </ul>
+                        </div>
+                    </div>
+
+                    <div class="step-container">
+                        <span class="step-number">2</span>
+                        <span class="step-title">Form Elements</span>
+                        <div class="step-content">
+                            <p>Plan all form components:</p>
+                            
+                            <div class="wireframe-box">
+                                <div style="text-align: left; width: 100%; max-width: 400px;">
+                                    <h4>Product Form Wireframe</h4>
+                                    <div style="font-family: monospace; line-height: 2;">
+                                        Product Name * _______________<br>
+                                        <br>
+                                        Price *         _______________<br>
+                                        <br>
+                                        Category *      [Dropdown  ▼]<br>
+                                        <br>
+                                        Description     _______________<br>
+                                        (optional)      _______________<br>
+                                                        _______________<br>
+                                        <br>
+                                        Image           [Upload File]<br>
+                                        <br>
+                                        Stock Quantity  _______________<br>
+                                        <br>
+                                        Status          ( ) Active  ( ) Inactive<br>
+                                        <br>
+                                        [Cancel]  [Save Product]
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="step-container">
+                        <span class="step-number">3</span>
+                        <span class="step-title">Data Display</span>
+                        <div class="step-content">
+                            <p>Show how information will be presented:</p>
+                            <ul>
+                                <li><strong>Tables:</strong> For lists of similar items</li>
+                                <li><strong>Cards:</strong> For product grids, summaries</li>
+                                <li><strong>Lists:</strong> For ordered/bulleted information</li>
+                                <li><strong>Details View:</strong> For single item display</li>
+                            </ul>
+                        </div>
+                    </div>
+
+                    <h3>Wireframing Best Practices</h3>
+
+                    <div class="do-dont-grid">
+                        <div class="do-box">
+                            <h4>✅ DO</h4>
+                            <ul>
+                                <li>Start with pen and paper for speed</li>
+                                <li>Focus on layout and structure</li>
+                                <li>Use real content when possible</li>
+                                <li>Show all interactive elements</li>
+                                <li>Label everything clearly</li>
+                                <li>Include annotations and notes</li>
+                                <li>Design mobile and desktop views</li>
+                                <li>Show different states (loading, error, empty)</li>
+                            </ul>
+                        </div>
+                        
+                        <div class="dont-box">
+                            <h4>❌ DON'T</h4>
+                            <ul>
+                                <li>Add colors, images, or fonts yet</li>
+                                <li>Spend time on visual polish</li>
+                                <li>Use "Lorem ipsum" if you know real content</li>
+                                <li>Skip error states and edge cases</li>
+                                <li>Wireframe every single page (focus on unique layouts)</li>
+                                <li>Get attached to your first version</li>
+                                <li>Forget to consider mobile users</li>
+                                <li>Design in isolation - get feedback!</li>
+                            </ul>
+                        </div>
+                    </div>
+
+                    <div class="tip-box">
+                        <h4>💡 Quick Wireframing Exercise:</h4>
+                        <ol>
+                            <li>Grab paper and pencil</li>
+                            <li>Draw a rectangle (your screen)</li>
+                            <li>Sketch header with navigation</li>
+                            <li>Add main content area with boxes for content</li>
+                            <li>Label each element</li>
+                            <li>Add notes about interactions</li>
+                            <li>Take a photo and share with team</li>
+                        </ol>
+                        <p><strong>Time: 5-10 minutes per screen!</strong></p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Section 4: Design Tools -->
+            <button class="collapsible">4. Design Tools & Resources</button>
+            <div class="collapsible-content">
+                <div class="collapsible-inner">
+                    <h3>Essential Design Tools</h3>
+
+                    <div class="tool-grid">
+                        <div class="tool-card">
+                            <div class="tool-icon">🎨</div>
+                            <h4>Figma</h4>
+                            <p><strong>Best for:</strong> Complete design workflow</p>
+                            <ul style="text-align: left;">
+                                <li>Free for students</li>
+                                <li>Browser-based (no install)</li>
+                                <li>Real-time collaboration</li>
+                                <li>Wireframes to high-fidelity</li>
+                                <li>Component libraries</li>
+                                <li>Prototyping features</li>
+                            </ul>
+                            <p><strong>URL:</strong> figma.com</p>
+                        </div>
+
+                        <div class="tool-card">
+                            <div class="tool-icon">✏️</div>
+                            <h4>Balsamiq</h4>
+                            <p><strong>Best for:</strong> Quick wireframes</p>
+                            <ul style="text-align: left;">
+                                <li>Sketchy, low-fi style</li>
+                                <li>Fast to learn</li>
+                                <li>Pre-built UI components</li>
+                                <li>Great for brainstorming</li>
+                                <li>Cloud or desktop</li>
+                            </ul>
+                            <p><strong>URL:</strong> balsamiq.com</p>
+                        </div>
+
+                        <div class="tool-card">
+                            <div class="tool-icon">📐</div>
+                            <h4>Adobe XD</h4>
+                            <p><strong>Best for:</strong> Adobe ecosystem users</p>
+                            <ul style="text-align: left;">
+                                <li>Free starter plan</li>
+                                <li>Wireframes and prototypes</li>
+                                <li>Auto-animate features</li>
+                                <li>Voice prototyping</li>
+                                <li>Integrates with Adobe CC</li>
+                            </ul>
+                            <p><strong>URL:</strong> adobe.com/xd</p>
+                        </div>
+
+                        <div class="tool-card">
+                            <div class="tool-icon">📱</div>
+                            <h4>Excalidraw</h4>
+                            <p><strong>Best for:</strong> Super fast sketches</p>
+                            <ul style="text-align: left;">
+                                <li>100% free</li>
+                                <li>Hand-drawn style</li>
+                                <li>Browser-based</li>
+                                <li>No account needed</li>
+                                <li>Perfect for quick ideas</li>
+                            </ul>
+                            <p><strong>URL:</strong> excalidraw.com</p>
+                        </div>
+
+                        <div class="tool-card">
+                            <div class="tool-icon">🖼️</div>
+                            <h4>Miro / Mural</h4>
+                            <p><strong>Best for:</strong> Team collaboration</p>
+                            <ul style="text-align: left;">
+                                <li>Digital whiteboard</li>
+                                <li>Real-time collaboration</li>
+                                <li>User flow diagrams</li>
+                                <li>Brainstorming sessions</li>
+                                <li>Free for education</li>
+                            </ul>
+                            <p><strong>URL:</strong> miro.com</p>
+                        </div>
+
+                        <div class="tool-card">
+                            <div class="tool-icon">📝</div>
+                            <h4>Pen & Paper</h4>
+                            <p><strong>Best for:</strong> Initial concepts</p>
+                            <ul style="text-align: left;">
+                                <li>Zero cost</li>
+                                <li>Fastest method</li>
+                                <li>No learning curve</li>
+                                <li>Great for meetings</li>
+                                <li>Easy to iterate</li>
+                            </ul>
+                            <p><strong>Seriously!</strong> Start here</p>
+                        </div>
+                    </div>
+
+                    <h3>UI Component Libraries</h3>
+                    <p>Don't reinvent the wheel - use pre-built component libraries:</p>
+
+                    <table class="comparison-table">
+                        <thead>
+                            <tr>
+                                <th>Library</th>
+                                <th>Type</th>
+                                <th>Use For</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td><strong>Bootstrap</strong></td>
+                                <td>CSS Framework</td>
+                                <td>Rapid prototyping, responsive grids</td>
+                            </tr>
+                            <tr>
+                                <td><strong>Tailwind CSS</strong></td>
+                                <td>Utility CSS</td>
+                                <td>Custom designs with utility classes</td>
+                            </tr>
+                            <tr>
+                                <td><strong>Material UI</strong></td>
+                                <td>React Components</td>
+                                <td>Google Material Design aesthetic</td>
+                            </tr>
+                            <tr>
+                                <td><strong>Ant Design</strong></td>
+                                <td>React Components</td>
+                                <td>Enterprise admin interfaces</td>
+                            </tr>
+                            <tr>
+                                <td><strong>Chakra UI</strong></td>
+                                <td>React Components</td>
+                                <td>Accessible, customizable components</td>
+                            </tr>
+                            <tr>
+                                <td><strong>Shadcn/ui</strong></td>
+                                <td>React Components</td>
+                                <td>Copy-paste components, highly customizable</td>
+                            </tr>
+                        </tbody>
+                    </table>
+
+                    <div class="success-box">
+                        <h4>✅ Recommended Workflow for This Course:</h4>
+                        <ol>
+                            <li><strong>Sketching (5-10 min):</strong> Pen & paper for initial ideas</li>
+                            <li><strong>Lo-Fi Wireframes (30-60 min):</strong> Excalidraw or Balsamiq</li>
+                            <li><strong>Hi-Fi Design (2-4 hours):</strong> Figma with component library</li>
+                            <li><strong>Prototype (30 min):</strong> Link screens in Figma</li>
+                            <li><strong>Feedback (ongoing):</strong> Share with team/instructor</li>
+                        </ol>
+                    </div>
+
+                    <h3>Design Resources</h3>
+
+                    <div class="tip-box">
+                        <h4>💡 Free Resources to Jumpstart Your Designs:</h4>
+                        <ul>
+                            <li><strong>UI Kits:</strong> Search "Figma UI kit free" for templates</li>
+                            <li><strong>Icons:</strong> Heroicons, Font Awesome, Material Icons</li>
+                            <li><strong>Colors:</strong> Coolors.co, Adobe Color</li>
+                            <li><strong>Fonts:</strong> Google Fonts (free, web-safe)</li>
+                            <li><strong>Inspiration:</strong> Dribbble, Behance, UI Movement</li>
+                            <li><strong>Patterns:</strong> UI Patterns, Pttrns (mobile)</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Section 5: UI Design Principles -->
+            <button class="collapsible">5. Essential UI Design Principles</button>
+            <div class="collapsible-content">
+                <div class="collapsible-inner">
+                    <h3>Core Principles for Effective UIs</h3>
+
+                    <div class="principle-card">
+                        <h4>1. Clarity</h4>
+                        <p><strong>Users should immediately understand what they can do</strong></p>
+                        <ul>
+                            <li>Use clear, descriptive labels (not "Submit", use "Create Product")</li>
+                            <li>Make clickable elements obvious (buttons look like buttons)</li>
+                            <li>Provide context for actions (show what will happen)</li>
+                            <li>Use familiar patterns (don't reinvent navigation)</li>
+                        </ul>
+                        
+                        <div class="do-dont-grid">
+                            <div class="do-box">
+                                <strong>✅ Clear:</strong> "Delete Product" button in red with trash icon
+                            </div>
+                            <div class="dont-box">
+                                <strong>❌ Unclear:</strong> "Remove" link in tiny gray text
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="principle-card">
+                        <h4>2. Consistency</h4>
+                        <p><strong>Similar elements should look and behave the same way</strong></p>
+                        <ul>
+                            <li>Use same button styles for similar actions</li>
+                            <li>Keep navigation in same place on every page</li>
+                            <li>Use consistent terminology (don't mix "Remove" and "Delete")</li>
+                            <li>Match platform conventions (e.g., iOS vs Android patterns)</li>
+                        </ul>
+                        
+                        <div class="example-form">
+                            <h4>Example: Consistent Button Styles</h4>
+                            <button class="example-button" style="background: #27ae60;">Primary Action (Save, Submit)</button>
+                            <button class="example-button" style="background: #95a5a6;">Secondary Action (Cancel)</button>
+                            <button class="example-button" style="background: #e74c3c;">Destructive Action (Delete)</button>
+                        </div>
+                    </div>
+
+                    <div class="principle-card">
+                        <h4>3. Feedback</h4>
+                        <p><strong>Always acknowledge user actions</strong></p>
+                        <ul>
+                            <li>Show loading indicators during waits</li>
+                            <li>Display success messages after actions complete</li>
+                            <li>Highlight active/selected items</li>
+                            <li>Show errors clearly with guidance to fix</li>
+                            <li>Disable buttons during processing to prevent double-clicks</li>
+                        </ul>
+                        
+                        <div class="success-box">
+                            <strong>✅ Good Feedback Examples:</strong>
+                            <ul>
+                                <li>"Product saved successfully!"</li>
+                                <li>"Saving..." (with spinner)</li>
+                                <li>Form field turns green when valid</li>
+                                <li>"5 items selected" when bulk selecting</li>
+                            </ul>
+                        </div>
+                    </div>
+
+                    <div class="principle-card">
+                        <h4>4. Forgiveness</h4>
+                        <p><strong>Help users recover from mistakes</strong></p>
+                        <ul>
+                            <li>Confirm destructive actions (deletes, overwrites)</li>
+                            <li>Allow undo when possible</li>
+                            <li>Save drafts automatically</li>
+                            <li>Warn before navigating away from unsaved changes</li>
+                            <li>Make it easy to go back and correct errors</li>
+                        </ul>
+                    </div>
+
+                    <div class="principle-card">
+                        <h4>5. Efficiency</h4>
+                        <p><strong>Help users accomplish tasks quickly</strong></p>
+                        <ul>
+                            <li>Minimize required clicks/steps</li>
+                            <li>Provide keyboard shortcuts for power users</li>
+                            <li>Remember user preferences</li>
+                            <li>Auto-fill when possible</li>
+                            <li>Support bulk operations for repeated tasks</li>
+                        </ul>
+                    </div>
+
+                    <div class="principle-card">
+                        <h4>6. Accessibility</h4>
+                        <p><strong>Everyone should be able to use your application</strong></p>
+                        <ul>
+                            <li>Sufficient color contrast (4.5:1 minimum for text)</li>
+                            <li>Don't rely on color alone to convey meaning</li>
+                            <li>Provide text alternatives for images</li>
+                            <li>Support keyboard navigation</li>
+                            <li>Use semantic HTML elements</li>
+                            <li>Label form fields properly</li>
+                        </ul>
+                        
+                        <div class="warning-box">
+                            <strong>⚠️ Common Accessibility Mistakes:</strong>
+                            <ul>
+                                <li>Low contrast text (light gray on white)</li>
+                                <li>Clickable elements too small (minimum 44x44 pixels)</li>
+                                <li>Missing alt text on images</li>
+                                <li>Forms without proper labels</li>
+                                <li>Color as only indicator (red/green for status)</li>
+                            </ul>
+                        </div>
+                    </div>
+
+                    <h3>Visual Hierarchy</h3>
+                    
+                    <div class="info-box">
+                        <h4>📐 Guide Users' Eyes:</h4>
+                        <p>Use size, color, spacing, and position to show importance:</p>
+                        <ul>
+                            <li><strong>Size:</strong> Larger = more important</li>
+                            <li><strong>Color:</strong> Bright colors attract attention</li>
+                            <li><strong>Position:</strong> Top-left gets noticed first (in Western cultures)</li>
+                            <li><strong>Contrast:</strong> High contrast stands out</li>
+                            <li><strong>White Space:</strong> Breathing room around important elements</li>
+                            <li><strong>Alignment:</strong> Creates clean, organized appearance</li>
+                        </ul>
+                    </div>
+
+                    <h3>The F-Pattern and Z-Pattern</h3>
+
+                    <div class="tip-box">
+                        <h4>💡 How Users Scan Pages:</h4>
+                        <p><strong>F-Pattern:</strong> For text-heavy content</p>
+                        <ul>
+                            <li>Users scan horizontally across the top</li>
+                            <li>Then move down and scan another horizontal line (shorter)</li>
+                            <li>Then scan vertically down the left side</li>
+                        </ul>
+                        
+                        <p><strong>Z-Pattern:</strong> For simple layouts</p>
+                        <ul>
+                            <li>Eyes start top-left (logo)</li>
+                            <li>Move to top-right (navigation/CTA)</li>
+                            <li>Diagonal down to bottom-left</li>
+                            <li>Across to bottom-right (call-to-action)</li>
+                        </ul>
+                        
+                        <p><strong>Design Implication:</strong> Place important elements along these paths!</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Section 6: Forms Design -->
+            <button class="collapsible">6. Designing Effective Forms</button>
+            <div class="collapsible-content">
+                <div class="collapsible-inner">
+                    <h3>Form Design Fundamentals</h3>
+                    
+                    <div class="info-box">
+                        <p>Forms are the primary way users interact with CRUD applications. Good form design makes data entry fast, accurate, and painless.</p>
+                    </div>
+
+                    <h3>Form Layout Best Practices</h3>
+
+                    <div class="step-container">
+                        <span class="step-number">1</span>
+                        <span class="step-title">Single Column Layouts</span>
+                        <div class="step-content">
+                            <p><strong>Always prefer single column forms</strong></p>
+                            <ul>
+                                <li>Natural top-to-bottom flow</li>
+                                <li>Works on mobile without changes</li>
+                                <li>Users complete forms 15-20% faster</li>
+                                <li>Exception: Short, related fields (First Name | Last Name)</li>
+                            </ul>
+                            
+                            <div class="do-dont-grid">
+                                <div class="do-box">
+                                    <h4>✅ DO: Single Column</h4>
+                                    <pre style="text-align: left;">
+Name          [___________]
+Email         [___________]
+Phone         [___________]
+Address       [___________]
+City          [___________]
+State         [___________]
+                                    </pre>
+                                </div>
+                                <div class="dont-box">
+                                    <h4>❌ DON'T: Multi-Column</h4>
+                                    <pre style="text-align: left;">
+Name  [_____]  Email [_____]
+Phone [_____]  City  [_____]
+Addr  [_____]  State [_____]
+(confusing flow!)
+                                    </pre>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="step-container">
+                        <span class="step-number">2</span>
+                        <span class="step-title">Label Placement</span>
+                        <div class="step-content">
+                            <p><strong>Labels above fields (not to the left)</strong></p>
+                            <ul>
+                                <li>Easier to scan</li>
+                                <li>Works better on mobile</li>
+                                <li>Allows longer labels</li>
+                                <li>Creates clear visual grouping</li>
+                            </ul>
+                        </div>
+                    </div>
+
+                    <div class="step-container">
+                        <span class="step-number">3</span>
+                        <span class="step-title">Field Sizing</span>
+                        <div class="step-content">
+                            <p><strong>Input width should match expected content</strong></p>
+                            <ul>
+                                <li>Short fields for short data (ZIP code: 5 chars wide)</li>
+                                <li>Long fields for long data (email: full width)</li>
+                                <li>This gives users a hint about expected length</li>
+                            </ul>
+                        </div>
+                    </div>
+
+                    <h3>Field Types Selection</h3>
+
+                    <table class="comparison-table">
+                        <thead>
+                            <tr>
+                                <th>Data Type</th>
+                                <th>Best Field Type</th>
+                                <th>Why</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>Short text (name, title)</td>
+                                <td>Text input</td>
+                                <td>Simple and familiar</td>
+                            </tr>
+                            <tr>
+                                <td>Long text (description)</td>
+                                <td>Textarea</td>
+                                <td>Shows user they can write more</td>
+                            </tr>
+                            <tr>
+                                <td>Email</td>
+                                <td>Email input</td>
+                                <td>Triggers email keyboard on mobile</td>
+                            </tr>
+                            <tr>
+                                <td>Number</td>
+                                <td>Number input</td>
+                                <td>Shows +/- buttons, prevents letters</td>
+                            </tr>
+                            <tr>
+                                <td>Date</td>
+                                <td>Date picker</td>
+                                <td>Prevents format errors</td>
+                            </tr>
+                            <tr>
+                                <td>2-5 choices</td>
+                                <td>Radio buttons</td>
+                                <td>All options visible at once</td>
+                            </tr>
+                            <tr>
+                                <td>6+ choices</td>
+                                <td>Dropdown/Select</td>
+                                <td>Saves space</td>
+                            </tr>
+                            <tr>
+                                <td>Multiple selections</td>
+                                <td>Checkboxes</td>
+                                <td>Clear that multiple allowed</td>
+                            </tr>
+                            <tr>
+                                <td>True/False</td>
+                                <td>Checkbox or Toggle</td>
+                                <td>Visual on/off state</td>
+                            </tr>
+                        </tbody>
+                    </table>
+
+                    <h3>Form Validation Design</h3>
+
+                    <div class="step-container">
+                        <span class="step-number">4</span>
+                        <span class="step-title">When to Validate</span>
+                        <div class="step-content">
+                            <p><strong>Inline Validation (Real-time)</strong></p>
+                            <ul>
+                                <li>Validate as user types or on blur (leaving field)</li>
+                                <li>Show success indicators (green checkmark)</li>
+                                <li>Show errors immediately when field is invalid</li>
+                                <li>Don't show errors while user is still typing</li>
+                            </ul>
+                            
+                            <p><strong>Submit Validation</strong></p>
+                            <ul>
+                                <li>Catch any missed errors on submit</li>
+                                <li>Scroll to first error</li>
+                                <li>Highlight all error fields</li>
+                                <li>Keep valid data (don't make user re-enter)</li>
+                            </ul>
+                        </div>
+                    </div>
+
+                    <div class="step-container">
+                        <span class="step-number">5</span>
+                        <span class="step-title">Error Message Design</span>
+                        <div class="step-content">
+                            <div class="example-form">
+                                <h4>Good Error Messages</h4>
+                                
+                                <label>Email Address *</label>
+                                <input type="text" value="john@" style="border: 2px solid #e74c3c;">
+                                <div style="color: #e74c3c; font-size: 0.9em; margin-top: 5px;">
+                                    ✗ Please enter a valid email address (e.g., <a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="ed87828583ad88958c809d8188c38e8280">[email&#160;protected]</a>)
+                                </div>
+                                
+                                <label style="margin-top: 20px;">Password *</label>
+                                <input type="password" value="123" style="border: 2px solid #e74c3c;">
+                                <div style="color: #e74c3c; font-size: 0.9em; margin-top: 5px;">
+                                    ✗ Password must be at least 8 characters long
+                                </div>
+                                
+                                <label style="margin-top: 20px;">Product Name *</label>
+                                <input type="text" value="Wireless Mouse" style="border: 2px solid #27ae60;">
+                                <div style="color: #27ae60; font-size: 0.9em; margin-top: 5px;">
+                                    ✓ Looks good!
+                                </div>
+                            </div>
+                            
+                            <div class="success-box">
+                                <strong>✅ Good Error Messages:</strong>
+                                <ul>
+                                    <li>Specific: Say exactly what's wrong</li>
+                                    <li>Helpful: Suggest how to fix it</li>
+                                    <li>Positive tone: "Please enter" not "You forgot"</li>
+                                    <li>Next to field: Not just at top of form</li>
+                                    <li>Include example: Show correct format</li>
+                                </ul>
+                            </div>
+                            
+                            <div class="danger-box">
+                                <strong>❌ Bad Error Messages:</strong>
+                                <ul>
+                                    <li>"Invalid input" (which field? what's wrong?)</li>
+                                    <li>"Error 402" (meaningless to users)</li>
+                                    <li>"This field is required" (why? what goes here?)</li>
+                                    <li>Errors only at top of long form</li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+
+                    <h3>Helper Text & Placeholders</h3>
+
+                    <div class="tip-box">
+                        <h4>💡 When to Use Each:</h4>
+                        
+                        <p><strong>Helper Text (below field):</strong></p>
+                        <ul>
+                            <li>Always visible instructions</li>
+                            <li>Format requirements: "Use format: MM/DD/YYYY"</li>
+                            <li>Character limits: "Maximum 500 characters"</li>
+                            <li>Important context: "This will be visible to customers"</li>
+                        </ul>
+                        
+                        <p><strong>Placeholder Text (inside empty field):</strong></p>
+                        <ul>
+                            <li>Examples: "e.g., <a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="03696c6b6d43667b626e736f662d606c6e">[email&#160;protected]</a>"</li>
+                            <li>Optional hints (disappears when typing)</li>
+                            <li>DON'T use for critical instructions (might be missed)</li>
+                            <li>DON'T use as labels (accessibility issue)</li>
+                        </ul>
+                    </div>
+
+                    <h3>Form Design Checklist</h3>
+
+                    <div class="checklist">
+                        <h4>Before Developer Handoff:</h4>
+                        <ul>
+                            <li>All required fields marked with * or "required"</li>
+                            <li>Field types specified (text, email, number, etc.)</li>
+                            <li>Validation rules documented for each field</li>
+                            <li>Error messages written for each validation</li>
+                            <li>Success state designed and documented</li>
+                            <li>Loading state shown (disabled buttons, spinners)</li>
+                            <li>Mobile layout considered and designed</li>
+                            <li>Tab order makes logical sense</li>
+                            <li>Helper text provided where needed</li>
+                            <li>Button labels are action-oriented</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Section 7: Responsive Design -->
+            <button class="collapsible">7. Responsive Design Considerations</button>
+            <div class="collapsible-content">
+                <div class="collapsible-inner">
+                    <h3>Designing for Multiple Devices</h3>
+                    
+                    <div class="info-box">
+                        <p><strong>Responsive Design</strong> means your interface adapts to different screen sizes—from large desktop monitors to small mobile phones.</p>
+                    </div>
+
+                    <h3>Common Breakpoints</h3>
+
+                    <table class="comparison-table">
+                        <thead>
+                            <tr>
+                                <th>Device</th>
+                                <th>Width Range</th>
+                                <th>Design Considerations</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td><strong>Mobile</strong></td>
+                                <td>320px - 767px</td>
+                                <td>Single column, larger touch targets, hamburger menu</td>
+                            </tr>
+                            <tr>
+                                <td><strong>Tablet</strong></td>
+                                <td>768px - 1023px</td>
+                                <td>2 columns possible, some sidebar content</td>
+                            </tr>
+                            <tr>
+                                <td><strong>Desktop</strong></td>
+                                <td>1024px+</td>
+                                <td>Full layout, sidebars, multi-column content</td>
+                            </tr>
+                            <tr>
+                                <td><strong>Large Desktop</strong></td>
+                                <td>1440px+</td>
+                                <td>Max width containers, extra white space</td>
+                            </tr>
+                        </tbody>
+                    </table>
+
+                    <h3>Mobile-First Design Approach</h3>
+
+                    <div class="step-container">
+                        <span class="step-number">1</span>
+                        <span class="step-title">Start with Mobile</span>
+                        <div class="step-content">
+                            <p><strong>Design for smallest screen first, then scale up</strong></p>
+                            <ul>
+                                <li>Forces you to prioritize content</li>
+                                <li>Ensures core functionality works everywhere</li>
+                                <li>Easier to add features than remove them</li>
+                                <li>Most users now browse on mobile devices</li>
+                            </ul>
+                        </div>
+                    </div>
+
+                    <h3>Responsive Pattern Examples</h3>
+
+                    <div class="principle-card">
+                        <h4>Navigation Patterns</h4>
+                        
+                        <p><strong>Desktop:</strong> Full horizontal navigation bar</p>
+                        <div class="wireframe-box" style="min-height: 60px;">
+                            <pre style="text-align: left;">
+┌────────────────────────────────────────────────┐
+│ [Logo]  Dashboard  Products  Orders  Reports  │
+└────────────────────────────────────────────────┘
+                            </pre>
+                        </div>
+                        
+                        <p><strong>Mobile:</strong> Hamburger menu with drawer</p>
+                        <div class="wireframe-box" style="min-height: 80px;">
+                            <pre style="text-align: left;">
+┌─────────────────────┐
+│ [☰]  Logo           │
+└─────────────────────┘
+
+Tap ☰ to open menu drawer
+                            </pre>
+                        </div>
+                    </div>
+
+                    <div class="principle-card">
+                        <h4>Data Table Patterns</h4>
+                        
+                        <p><strong>Desktop:</strong> Full table with all columns</p>
+                        <p><strong>Tablet:</strong> Hide less important columns</p>
+                        <p><strong>Mobile:</strong> Card-based layout instead of table</p>
+                        
+                        <div class="code-block">
+<strong>Mobile Card Example:</strong>
+
+┌─────────────────────────┐
+│ Wireless Mouse          │
+│ Price: $29.99           │
+│ Stock: 50 units         │
+│ [Edit] [Delete]         │
+└─────────────────────────┘
+
+┌─────────────────────────┐
+│ USB Cable               │
+│ Price: $9.99            │
+│ Stock: 120 units        │
+│ [Edit] [Delete]         │
+└─────────────────────────┘
+                        </div>
+                    </div>
+
+                    <h3>Touch-Friendly Design</h3>
+
+                    <div class="warning-box">
+                        <h4>⚠️ Critical Mobile Requirements:</h4>
+                        <ul>
+                            <li><strong>Touch Targets:</strong> Minimum 44x44 pixels (48x48 better)</li>
+                            <li><strong>Spacing:</strong> 8px minimum between clickable elements</li>
+                            <li><strong>Font Size:</strong> Minimum 16px (prevents zoom on iOS)</li>
+                            <li><strong>Forms:</strong> Use appropriate input types for mobile keyboards</li>
+                            <li><strong>Scrolling:</strong> Avoid horizontal scroll, enable vertical scroll</li>
+                        </ul>
+                    </div>
+
+                    <h3>Responsive Form Design</h3>
+
+                    <div class="tip-box">
+                        <h4>💡 Mobile Form Best Practices:</h4>
+                        <ul>
+                            <li>Stack all fields vertically (no side-by-side)</li>
+                            <li>Make buttons full-width on mobile</li>
+                            <li>Use large, tappable form controls</li>
+                            <li>Minimize typing with dropdowns and pickers</li>
+                            <li>Auto-capitalize where appropriate</li>
+                            <li>Use appropriate input modes (email, tel, number)</li>
+                            <li>Place labels above fields (not floating or inline)</li>
+                        </ul>
+                    </div>
+
+                    <h3>Testing Responsive Design</h3>
+
+                    <div class="checklist">
+                        <h4>Responsive Testing Checklist:</h4>
+                        <ul>
+                            <li>Test on actual devices (not just browser resize)</li>
+                            <li>Check all breakpoints (mobile, tablet, desktop)</li>
+                            <li>Test in portrait and landscape orientations</li>
+                            <li>Verify touch targets are large enough</li>
+                            <li>Ensure text is readable without zooming</li>
+                            <li>Check that all content is accessible</li>
+                            <li>Test forms on mobile keyboards</li>
+                            <li>Verify images scale properly</li>
+                            <li>Check navigation works on all sizes</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Section 8: Developer Handoff -->
+            <button class="collapsible">8. Preparing for Developer Handoff</button>
+            <div class="collapsible-content">
+                <div class="collapsible-inner">
+                    <h3>Creating Developer-Ready Specifications</h3>
+                    
+                    <div class="info-box">
+                        <p>The goal is to provide developers with everything they need to build your design accurately and efficiently, without constant back-and-forth questions.</p>
+                    </div>
+
+                    <h3>What Developers Need</h3>
+
+                    <div class="step-container">
+                        <span class="step-number">1</span>
+                        <span class="step-title">Design Files</span>
+                        <div class="step-content">
+                            <p><strong>Provide:</strong></p>
+                            <ul>
+                                <li>High-fidelity mockups (Figma, XD, Sketch)</li>
+                                <li>All screen states (loading, error, empty, success)</li>
+                                <li>Mobile and desktop versions</li>
+                                <li>Interactive prototypes showing flows</li>
+                                <li>Component library if available</li>
+                            </ul>
+                        </div>
+                    </div>
+
+                    <div class="step-container">
+                        <span class="step-number">2</span>
+                        <span class="step-title">Specifications Document</span>
+                        <div class="step-content">
+                            <p><strong>Include:</strong></p>
+                            
+                            <h4>A. Component Specifications</h4>
+                            <div class="code-block">
+<strong>Product Form Component</strong>
+
+FIELDS:
+1. Product Name
+   - Type: Text input
+   - Required: Yes
+   - Max length: 100 characters
+   - Validation: Required, alphanumeric + spaces/hyphens
+   - Error: "Product name is required (max 100 characters)"
+
+2. Price
+   - Type: Number input
+   - Required: Yes
+   - Min: 0.01
+   - Max: 999999.99
+   - Decimal places: 2
+   - Validation: Required, must be > 0
+   - Error: "Price must be greater than $0.00"
+
+3. Category
+   - Type: Dropdown
+   - Required: Yes
+   - Options: Load from /api/categories endpoint
+   - Default: First option
+   - Error: "Please select a category"
+
+4. Description
+   - Type: Textarea
+   - Required: No
+   - Max length: 500 characters
+   - Rows: 4
+   - Helper text: "Optional: Describe product features"
+
+5. Image
+   - Type: File upload
+   - Required: No
+   - Accept: .jpg, .png, .gif
+   - Max size: 5MB
+   - Preview: Show thumbnail after upload
+                            </div>
+
+                            <h4>B. Behavior Specifications</h4>
+                            <div class="code-block">
+<strong>Product Form Behavior</strong>
+
+VALIDATION:
+- Real-time validation on blur (leaving field)
+- Show error messages inline below each field
+- Submit button disabled until all required fields valid
+- Success checkmark appears when field validates
+
+LOADING STATES:
+- Show "Saving..." on submit button
+- Disable all form fields during save
+- Show spinner next to button
+
+SUCCESS STATE:
+- Show toast notification: "Product saved successfully!"
+- Close modal after 1 second
+- Refresh product list
+- Clear form if creating new product
+
+ERROR STATE:
+- If server error, show message at top of form
+- Keep form open with data intact
+- Re-enable submit button
+- Highlight any server-side validation errors
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="step-container">
+                        <span class="step-number">3</span>
+                        <span class="step-title">API Integration Points</span>
+                        <div class="step-content">
+                            <div class="code-block">
+<strong>API Endpoints Needed</strong>
+
+GET /api/products
+- Purpose: Fetch product list
+- Response: Array of product objects
+- Pagination: page, pageSize parameters
+- Sorting: sortBy, sortOrder parameters
+
+GET /api/products/:id
+- Purpose: Fetch single product for editing
+- Response: Product object
+
+POST /api/products
+- Purpose: Create new product
+- Body: Product object (JSON)
+- Response: Created product with ID
+
+PUT /api/products/:id
+- Purpose: Update existing product
+- Body: Updated product object (JSON)
+- Response: Updated product
+
+DELETE /api/products/:id
+- Purpose: Delete product
+- Response: Success message
+
+GET /api/categories
+- Purpose: Fetch categories for dropdown
+- Response: Array of category objects
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="step-container">
+                        <span class="step-number">4</span>
+                        <span class="step-title">Design Tokens</span>
+                        <div class="step-content">
+                            <p>If using a design system, provide:</p>
+                            
+                            <div class="code-block">
+<strong>Colors</strong>
+Primary: #16a085
+Primary Hover: #138d75
+Secondary: #95a5a6
+Success: #27ae60
+Error: #e74c3c
+Warning: #f39c12
+Text: #2c3e50
+Text Light: #7f8c8d
+Background: #ffffff
+Background Light: #f8f9fa
+
+<strong>Typography</strong>
+Font Family: 'Segoe UI', system-ui, sans-serif
+Heading 1: 2.5rem / 600 weight
+Heading 2: 2rem / 600 weight
+Heading 3: 1.5rem / 600 weight
+Body: 1rem / 400 weight
+Small: 0.875rem / 400 weight
+
+<strong>Spacing</strong>
+xs: 4px
+sm: 8px
+md: 16px
+lg: 24px
+xl: 32px
+xxl: 48px
+
+<strong>Border Radius</strong>
+sm: 4px
+md: 8px
+lg: 12px
+
+<strong>Shadows</strong>
+sm: 0 1px 3px rgba(0,0,0,0.1)
+md: 0 4px 6px rgba(0,0,0,0.1)
+lg: 0 10px 20px rgba(0,0,0,0.15)
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="step-container">
+                        <span class="step-number">5</span>
+                        <span class="step-title">Interaction Details</span>
+                        <div class="step-content">
+                            <p>Document all interactive behaviors:</p>
+                            <ul>
+                                <li><strong>Hover states:</strong> Buttons change color, cursor becomes pointer</li>
+                                <li><strong>Focus states:</strong> Outline appears on keyboard navigation</li>
+                                <li><strong>Active states:</strong> Button appears pressed</li>
+                                <li><strong>Disabled states:</strong> Grayed out, not clickable</li>
+                                <li><strong>Animations:</strong> Transitions (300ms ease-in-out)</li>
+                                <li><strong>Modal behavior:</strong> Click outside to close? ESC key closes?</li>
+                            </ul>
+                        </div>
+                    </div>
+
+                    <h3>Handoff Checklist</h3>
+
+                    <div class="checklist">
+                        <h4>Before Handing Off to Development:</h4>
+                        <ul>
+                            <li>All screens designed (including mobile)</li>
+                            <li>All states documented (loading, error, empty, success)</li>
+                            <li>All form fields specified with validation rules</li>
+                            <li>All error messages written</li>
+                            <li>API endpoints documented</li>
+                            <li>Design tokens/style guide provided</li>
+                            <li>User flows documented</li>
+                            <li>Edge cases considered</li>
+                            <li>Accessibility requirements noted</li>
+                            <li>Prototype created for complex interactions</li>
+                            <li>Design review completed with stakeholders</li>
+                        </ul>
+                    </div>
+
+                    <h3>Handoff Tools</h3>
+
+                    <div class="tool-grid">
+                        <div class="tool-card">
+                            <h4>Figma Inspect</h4>
+                            <p>Built-in developer handoff</p>
+                            <ul style="text-align: left;">
+                                <li>Export CSS/code</li>
+                                <li>Measure spacing</li>
+                                <li>Copy colors/fonts</li>
+                                <li>Download assets</li>
+                            </ul>
+                        </div>
+
+                        <div class="tool-card">
+                            <h4>Zeplin</h4>
+                            <p>Design handoff platform</p>
+                            <ul style="text-align: left;">
+                                <li>Style guides</li>
+                                <li>Asset export</li>
+                                <li>Measurements</li>
+                                <li>Code snippets</li>
+                            </ul>
+                        </div>
+
+                        <div class="tool-card">
+                            <h4>Notion/Confluence</h4>
+                            <p>Documentation</p>
+                            <ul style="text-align: left;">
+                                <li>Specifications</li>
+                                <li>User flows</li>
+                                <li>API details</li>
+                                <li>Team collaboration</li>
+                            </ul>
+                        </div>
+                    </div>
+
+                    <div class="success-box">
+                        <h4>✅ Signs of a Good Handoff:</h4>
+                        <ul>
+                            <li>Developer can start coding immediately</li>
+                            <li>Minimal questions about design intent</li>
+                            <li>All edge cases have been considered</li>
+                            <li>Clear acceptance criteria for each feature</li>
+                            <li>Designer available for quick clarifications</li>
+                        </ul>
+                    </div>
+
+                    <div class="tip-box">
+                        <h4>💡 Pro Tip: Handoff Meeting</h4>
+                        <p>Schedule a 30-minute walkthrough with developers:</p>
+                        <ol>
+                            <li>Show the prototype and explain user flows</li>
+                            <li>Walk through specifications document</li>
+                            <li>Answer questions about edge cases</li>
+                            <li>Clarify any ambiguous interactions</li>
+                            <li>Agree on what's in scope vs future enhancements</li>
+                        </ol>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Section 9: Practical Exercise -->
+            <button class="collapsible">9. Practical Exercise: Complete UI Design Workflow</button>
+            <div class="collapsible-content">
+                <div class="collapsible-inner">
+                    <h3>End-to-End Project: Student Grade Management</h3>
+                    
+                    <div class="info-box">
+                        <p>Let's walk through designing a complete CRUD interface for managing student grades, from initial idea to developer-ready specs.</p>
+                    </div>
+
+                    <div class="step-container">
+                        <span class="step-number">1</span>
+                        <span class="step-title">Discovery Phase</span>
+                        <div class="step-content">
+                            <h4>User Profile</h4>
+                            <p><strong>Primary User:</strong> Professor Sarah</p>
+                            <ul>
+                                <li><strong>Goal:</strong> Quickly enter and update student grades</li>
+                                <li><strong>Pain Points:</strong> Current system requires too many clicks, hard to find students, no bulk entry</li>
+                                <li><strong>Frequency:</strong> Uses system weekly during semester, heavily during finals</li>
+                                <li><strong>Device:</strong> Primarily desktop in office, occasionally laptop at home</li>
+                            </ul>
+
+                            <h4>Core Features (MoSCoW)</h4>
+                            <p><strong>Must Have:</strong></p>
+                            <ul>
+                                <li>View list of students in course</li>
+                                <li>Add/edit individual grades</li>
+                                <li>Filter by assignment</li>
+                                <li>Calculate average grades</li>
+                            </ul>
+
+                            <p><strong>Should Have:</strong></p>
+                            <ul>
+                                <li>Bulk grade entry (paste from Excel)</li>
+                                <li>Grade distribution chart</li>
+                                <li>Export grades to CSV</li>
+                            </ul>
+
+                            <p><strong>Could Have:</strong></p>
+                            <ul>
+                                <li>Email students about grades</li>
+                                <li>Curve grade calculation</li>
+                                <li>Historical grade comparison</li>
+                            </ul>
+                        </div>
+                    </div>
+
+                    <div class="step-container">
+                        <span class="step-number">2</span>
+                        <span class="step-title">Data Model</span>
+                        <div class="step-content">
+                            <div class="code-block">
+<strong>Student Grade Entry:</strong>
+- Student ID (auto, hidden)
+- Student Name (read-only, from enrollment)
+- Assignment Name (dropdown)
+- Points Earned (number, 0-100)
+- Points Possible (number, read-only, from assignment)
+- Percentage (calculated)
+- Letter Grade (calculated)
+- Notes (optional text, max 200 chars)
+- Date Submitted (auto)
+- Graded By (auto, current user)
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="step-container">
+                        <span class="step-number">3</span>
+                        <span class="step-title">CRUD Pattern Decisions</span>
+                        <div class="step-content">
+                            <table class="comparison-table">
+                                <thead>
+                                    <tr>
+                                        <th>Operation</th>
+                                        <th>UI Pattern</th>
+                                        <th>Rationale</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <td><strong>List Grades</strong></td>
+                                        <td>Data table with inline editing</td>
+                                        <td>Professor needs to see many grades at once, quick edits common</td>
+                                    </tr>
+                                    <tr>
+                                        <td><strong>Add Grade</strong></td>
+                                        <td>Inline row or modal</td>
+                                        <td>Single grade: inline. Multiple grades: modal with form</td>
+                                    </tr>
+                                    <tr>
+                                        <td><strong>Edit Grade</strong></td>
+                                        <td>Inline editing</td>
+                                        <td>Click score to edit in place, save on blur or Enter</td>
+                                    </tr>
+                                    <tr>
+                                        <td><strong>Delete Grade</strong></td>
+                                        <td>Confirm dialog</td>
+                                        <td>Prevent accidental deletion</td>
+                                    </tr>
+                                    <tr>
+                                        <td><strong>Bulk Entry</strong></td>
+                                        <td>Paste from clipboard</td>
+                                        <td>Common workflow from Excel</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+
+                    <div class="step-container">
+                        <span class="step-number">4</span>
+                        <span class="step-title">Wireframe</span>
+                        <div class="step-content">
+                            <div class="wireframe-box">
+                                <div style="text-align: left; font-family: monospace; line-height: 1.8; font-size: 0.9em;">
+                                    ┌────────────────────────────────────────────────────────────┐<br>
+                                    │ [Logo] COP4834  Grades  Schedule  Settings   [Prof. Sarah] │<br>
+                                    ├────────────────────────────────────────────────────────────┤<br>
+                                    │ Course: Web Systems II - COP4834                           │<br>
+                                    │                                                            │<br>
+                                    │ Assignment: [All ▼]  Student: [Search...]  [+ Add Grade]  │<br>
+                                    ├────────────────────────────────────────────────────────────┤<br>
+                                    │ Student Name    Assignment     Score   %    Grade  Actions │<br>
+                                    ├────────────────────────────────────────────────────────────┤<br>
+                                    │ Anderson, John  Midterm Exam   [85]/100 85%  B     [×]    │<br>
+                                    │ Brown, Sarah    Midterm Exam   [92]/100 92%  A     [×]    │<br>
+                                    │ Chen, David     Midterm Exam   [78]/100 78%  C+    [×]    │<br>
+                                    │ Davis, Emma     Midterm Exam   [__]/100 -    -     [×]    │<br>
+                                    │                                                            │<br>
+                                    │ Course Average: 85%                                        │<br>
+                                    │                                                            │<br>
+                                    │ [Export to CSV]  [Bulk Entry]  [Grade Distribution]       │<br>
+                                    └────────────────────────────────────────────────────────────┘
+                                </div>
+                            </div>
+                            
+                            <p><strong>Key Features in Wireframe:</strong></p>
+                            <ul>
+                                <li>Filters at top (Assignment dropdown, Student search)</li>
+                                <li>Inline editable score fields (click to edit)</li>
+                                <li>Auto-calculated percentage and letter grade</li>
+                                <li>Delete button for each row</li>
+                                <li>Summary statistics (course average)</li>
+                                <li>Bulk action buttons at bottom</li>
+                            </ul>
+                        </div>
+                    </div>
+
+                    <div class="step-container">
+                        <span class="step-number">5</span>
+                        <span class="step-title">Specifications</span>
+                        <div class="step-content">
+                            <div class="code-block">
+<strong>Grade Entry - Inline Editing Specification</strong>
+
+BEHAVIOR:
+1. Click on score field (shows as [85]/100)
+2. Field becomes editable input
+3. User types new score
+4. On blur or Enter key:
+   - Validate: 0 <= score <= points possible
+   - If valid: Save via PUT /api/grades/:id
+   - Auto-calculate percentage and letter grade
+   - Show brief success indicator (green flash)
+   - Field returns to display mode
+5. On Escape key:
+   - Discard changes
+   - Return to display mode
+
+VALIDATION:
+- Required: Yes
+- Type: Number
+- Min: 0
+- Max: Points Possible value
+- Decimals: Up to 2 places
+- Error (inline): "Score must be between 0 and [max]"
+
+LOADING STATE:
+- Show small spinner while saving
+- Disable field during save
+
+ERROR STATE:
+- If save fails: Show error, keep in edit mode
+- Error message: "Could not save grade. Try again."
+- Preserve user's input
+
+KEYBOARD SHORTCUTS:
+- Enter: Save and move to next row
+- Escape: Cancel edit
+- Tab: Save and move to next field
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="step-container">
+                        <span class="step-number">6</span>
+                        <span class="step-title">Developer Handoff Package</span>
+                        <div class="step-content">
+                            <h4>Deliverables:</h4>
+                            <ul>
+                                <li>✅ High-fidelity mockup in Figma</li>
+                                <li>✅ Mobile responsive version</li>
+                                <li>✅ All states designed (empty, loading, error)</li>
+                                <li>✅ Interactive prototype showing inline edit flow</li>
+                                <li>✅ Complete specifications document</li>
+                                <li>✅ API endpoint requirements</li>
+                                <li>✅ Validation rules for all fields</li>
+                                <li>✅ Design tokens (colors, spacing, fonts)</li>
+                            </ul>
+
+                            <div class="success-box">
+                                <h4>✅ Result:</h4>
+                                <p>Developer can now build this feature with:</p>
+                                <ul>
+                                    <li>Clear understanding of user flow</li>
+                                    <li>Exact field requirements</li>
+                                    <li>All edge cases documented</li>
+                                    <li>Visual design to implement</li>
+                                    <li>No ambiguity about behavior</li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="tip-box">
+                        <h4>💡 Your Turn: Practice Exercise</h4>
+                        <p>Choose one of these scenarios and complete the full design process:</p>
+                        <ol>
+                            <li><strong>Library Book Checkout System</strong> - Students can search, reserve, and check out books</li>
+                            <li><strong>Event Registration</strong> - Users can browse events, register, and manage their registrations</li>
+                            <li><strong>Expense Tracker</strong> - Users can add expenses, categorize them, and view reports</li>
+                        </ol>
+                        
+                        <p><strong>Complete Steps 1-6 above:</strong></p>
+                        <ul>
+                            <li>Define users and requirements</li>
+                            <li>Create data model</li>
+                            <li>Choose CRUD patterns</li>
+                            <li>Sketch wireframes</li>
+                            <li>Write specifications</li>
+                            <li>Prepare handoff documents</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+
+        <div class="footer">
+            <p>&copy; 2024 COP4834 Web Systems II | UI Design Basics Module</p>
+            <p>Good design is obvious. Great design is transparent. - Joe Sparano</p>
+        </div>
+    </div>
+
+    <script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script><script>
+        // Make collapsible sections work
+        const collapsibles = document.getElementsByClassName("collapsible");
+        
+        for (let i = 0; i < collapsibles.length; i++) {
+            collapsibles[i].addEventListener("click", function() {
+                this.classList.toggle("active");
+                const content = this.nextElementSibling;
+                
+                if (content.style.maxHeight) {
+         

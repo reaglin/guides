@@ -1,0 +1,1195 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Module 15: BMPFast Analysis for Harvesting</title>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700&family=Source+Serif+4:ital,wght@0,300;0,400;0,600;1,400&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --green-dark: #1e3d2f;
+      --green-mid: #2d5a40;
+      --green-light: #4a7c5e;
+      --green-pale: #e8f0eb;
+      --green-accent: #3a6b4e;
+      --warm-white: #faf8f4;
+      --warm-off: #f2ede6;
+      --text-primary: #1a1a1a;
+      --text-secondary: #3d3d3d;
+      --text-muted: #6b6b6b;
+      --border: #c8d5cc;
+      --callout-bg: #eef4f0;
+      --mono: 'JetBrains Mono', monospace;
+      --serif: 'Source Serif 4', serif;
+      --display: 'Playfair Display', serif;
+    }
+
+    body {
+      font-family: var(--serif);
+      font-size: 17px;
+      line-height: 1.75;
+      color: var(--text-primary);
+      background: var(--warm-white);
+      display: flex;
+    }
+
+    /* ── Sidebar ── */
+    #sidebar {
+      width: 260px;
+      min-width: 260px;
+      background: var(--green-dark);
+      color: #c8dcd0;
+      position: sticky;
+      top: 0;
+      height: 100vh;
+      overflow-y: auto;
+      padding: 2rem 0;
+      flex-shrink: 0;
+    }
+    #sidebar .sidebar-label {
+      font-family: var(--mono);
+      font-size: 0.65rem;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: #7aaa8e;
+      padding: 0 1.5rem 0.5rem;
+    }
+    #sidebar .module-id {
+      font-family: var(--mono);
+      font-size: 0.75rem;
+      color: #7aaa8e;
+      padding: 0 1.5rem 1.5rem;
+      border-bottom: 1px solid rgba(255,255,255,0.1);
+      margin-bottom: 1.5rem;
+    }
+    #sidebar nav a {
+      display: block;
+      padding: 0.45rem 1.5rem;
+      font-family: var(--serif);
+      font-size: 0.82rem;
+      color: #b8cfc0;
+      text-decoration: none;
+      line-height: 1.4;
+      transition: background 0.15s, color 0.15s;
+    }
+    #sidebar nav a:hover { background: rgba(255,255,255,0.07); color: #fff; }
+    #sidebar nav a.section-head {
+      font-family: var(--mono);
+      font-size: 0.68rem;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: #5a8a6e;
+      margin-top: 1rem;
+      padding-top: 0.5rem;
+      cursor: default;
+    }
+    #sidebar nav a.section-head:hover { background: none; color: #5a8a6e; }
+
+    /* ── Main ── */
+    #main { flex: 1; min-width: 0; }
+
+    /* ── Hero ── */
+    .hero {
+      background: linear-gradient(135deg, var(--green-dark) 0%, var(--green-mid) 60%, var(--green-light) 100%);
+      color: white;
+      padding: 4rem 4rem 3rem;
+    }
+    .hero .module-tag {
+      font-family: var(--mono);
+      font-size: 0.72rem;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      color: #8ecaa4;
+      margin-bottom: 0.75rem;
+    }
+    .hero h1 {
+      font-family: var(--display);
+      font-size: 2.6rem;
+      font-weight: 700;
+      line-height: 1.2;
+      margin-bottom: 1rem;
+      color: #fff;
+    }
+    .hero .subtitle {
+      font-size: 1.1rem;
+      color: #b8ddc6;
+      max-width: 640px;
+      line-height: 1.6;
+    }
+    .hero .meta {
+      margin-top: 2rem;
+      font-family: var(--mono);
+      font-size: 0.72rem;
+      letter-spacing: 0.06em;
+      color: #7aaa8e;
+      display: flex;
+      gap: 2rem;
+    }
+
+    /* ── Content area ── */
+    .content { padding: 3rem 4rem; max-width: 900px; }
+
+    /* ── Section ── */
+    .section { margin-bottom: 3.5rem; }
+    .section-anchor { scroll-margin-top: 2rem; }
+
+    h2 {
+      font-family: var(--display);
+      font-size: 1.75rem;
+      font-weight: 600;
+      color: var(--green-dark);
+      margin-bottom: 1rem;
+      padding-bottom: 0.5rem;
+      border-bottom: 2px solid var(--green-pale);
+    }
+    h3 {
+      font-family: var(--display);
+      font-size: 1.25rem;
+      font-weight: 600;
+      color: var(--green-mid);
+      margin: 1.75rem 0 0.6rem;
+    }
+    h4 {
+      font-family: var(--mono);
+      font-size: 0.85rem;
+      font-weight: 500;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: var(--green-accent);
+      margin: 1.5rem 0 0.5rem;
+    }
+
+    p { margin-bottom: 1rem; color: var(--text-secondary); }
+
+    ol, ul {
+      margin: 0.5rem 0 1rem 1.5rem;
+      color: var(--text-secondary);
+    }
+    li { margin-bottom: 0.35rem; }
+
+    /* ── Callout boxes ── */
+    .callout {
+      background: var(--callout-bg);
+      border-left: 4px solid var(--green-light);
+      border-radius: 0 6px 6px 0;
+      padding: 1.25rem 1.5rem;
+      margin: 1.5rem 0;
+    }
+    .callout.key {
+      background: #f0f7f2;
+      border-left-color: var(--green-dark);
+    }
+    .callout.note {
+      background: #fdf8ee;
+      border-left-color: #c9a227;
+    }
+    .callout-label {
+      font-family: var(--mono);
+      font-size: 0.68rem;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--green-accent);
+      margin-bottom: 0.5rem;
+    }
+    .callout p:last-child { margin-bottom: 0; }
+
+    /* ── Learning objectives box ── */
+    .objectives-box {
+      background: var(--green-dark);
+      color: white;
+      border-radius: 8px;
+      padding: 2rem 2.5rem;
+      margin-bottom: 2.5rem;
+    }
+    .objectives-box h3 {
+      color: #8ecaa4;
+      font-family: var(--mono);
+      font-size: 0.75rem;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      margin: 0 0 1rem;
+    }
+    .objectives-box ol {
+      color: #d0e8d8;
+      margin-left: 1.25rem;
+    }
+    .objectives-box li { margin-bottom: 0.5rem; }
+
+    /* ── Table ── */
+    .table-wrap { overflow-x: auto; margin: 1.5rem 0; }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 0.9rem;
+    }
+    thead th {
+      background: var(--green-dark);
+      color: #c8dcd0;
+      font-family: var(--mono);
+      font-size: 0.72rem;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      padding: 0.75rem 1rem;
+      text-align: left;
+    }
+    tbody tr:nth-child(even) { background: var(--warm-off); }
+    tbody td {
+      padding: 0.65rem 1rem;
+      border-bottom: 1px solid var(--border);
+      color: var(--text-secondary);
+      vertical-align: top;
+    }
+
+    /* ── Figure placeholder ── */
+    .figure {
+      width: 100%;
+      background: var(--green-pale);
+      border: 1.5px dashed var(--green-light);
+      border-radius: 6px;
+      padding: 2rem 1.5rem;
+      margin: 2rem 0;
+      text-align: center;
+    }
+    .figure-icon {
+      font-size: 2rem;
+      margin-bottom: 0.5rem;
+      opacity: 0.4;
+    }
+    .figure-title {
+      font-family: var(--mono);
+      font-size: 0.78rem;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--green-accent);
+      margin-bottom: 0.4rem;
+    }
+    .figure-desc {
+      font-size: 0.88rem;
+      color: var(--text-muted);
+      max-width: 600px;
+      margin: 0 auto;
+      line-height: 1.55;
+    }
+
+    /* ── Software screen placeholder ── */
+    .screen-capture {
+      background: #f5f7f6;
+      border: 1.5px solid var(--border);
+      border-radius: 6px;
+      padding: 1.5rem;
+      margin: 1.5rem 0;
+      font-family: var(--mono);
+      font-size: 0.82rem;
+    }
+    .screen-capture .sc-label {
+      font-size: 0.68rem;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--text-muted);
+      margin-bottom: 0.75rem;
+    }
+    .screen-capture table { font-size: 0.82rem; }
+    .screen-capture thead th {
+      background: #dce6df;
+      color: var(--text-secondary);
+      font-size: 0.72rem;
+    }
+
+    /* ── Load diagram ── */
+    .load-diagram {
+      display: flex;
+      align-items: flex-start;
+      gap: 0;
+      margin: 1.5rem 0;
+      font-family: var(--mono);
+      font-size: 0.78rem;
+      flex-wrap: wrap;
+    }
+    .load-box {
+      background: #fff;
+      border: 1.5px solid var(--border);
+      border-radius: 4px;
+      padding: 0.75rem 1rem;
+      min-width: 120px;
+    }
+    .load-box .lb-label {
+      font-size: 0.65rem;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: var(--text-muted);
+      margin-bottom: 0.3rem;
+    }
+    .load-box p { margin: 0; color: var(--text-primary); font-size: 0.82rem; }
+    .load-arrow {
+      align-self: center;
+      padding: 0 0.75rem;
+      color: var(--green-mid);
+      font-size: 1.2rem;
+    }
+    .load-vertical {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 0;
+      padding: 0 0.5rem;
+    }
+    .load-down-arrow {
+      color: var(--green-mid);
+      font-size: 1.2rem;
+    }
+
+    /* ── Data value display ── */
+    .data-row {
+      display: flex;
+      gap: 0.5rem;
+      flex-wrap: wrap;
+      margin: 0.5rem 0;
+    }
+    .data-chip {
+      font-family: var(--mono);
+      font-size: 0.78rem;
+      background: var(--green-pale);
+      border: 1px solid var(--border);
+      border-radius: 4px;
+      padding: 0.25rem 0.6rem;
+      color: var(--green-dark);
+    }
+
+    /* ── Summary report highlight ── */
+    .result-pass {
+      display: inline-block;
+      background: #d4edda;
+      color: #1a5c2a;
+      font-family: var(--mono);
+      font-size: 0.82rem;
+      font-weight: 500;
+      padding: 0.2rem 0.6rem;
+      border-radius: 3px;
+      border: 1px solid #a3d4ae;
+    }
+
+    /* ── Footer ── */
+    footer {
+      background: var(--green-dark);
+      color: #7aaa8e;
+      padding: 2rem 4rem;
+      font-family: var(--mono);
+      font-size: 0.72rem;
+      letter-spacing: 0.06em;
+      display: flex;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 1rem;
+    }
+
+    /* ── Figure reference list at end ── */
+    .figure-refs { margin-top: 3rem; }
+    .figure-ref-item {
+      background: var(--warm-off);
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      padding: 1.25rem 1.5rem;
+      margin-bottom: 1rem;
+    }
+    .figure-ref-item .fr-id {
+      font-family: var(--mono);
+      font-size: 0.72rem;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--green-accent);
+      margin-bottom: 0.3rem;
+    }
+
+    @media (max-width: 900px) {
+      body { flex-direction: column; }
+      #sidebar { width: 100%; height: auto; position: relative; }
+      .content { padding: 2rem 1.5rem; }
+      .hero { padding: 2rem 1.5rem; }
+      footer { padding: 1.5rem; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- ══════════════════ SIDEBAR ══════════════════ -->
+<aside id="sidebar">
+  <div class="sidebar-label">BMPFast Learning System</div>
+  <div class="module-id">MODULE 15 · January 2026</div>
+  <nav>
+    <a href="#objectives" class="section-head">Contents</a>
+    <a href="#objectives">Learning Objectives</a>
+    <a href="#what-why">What Is Harvesting & Why?</a>
+    <a href="#rainwater-vs-stormwater">Rainwater vs. Stormwater Harvesting</a>
+    <a href="#examples">Florida Case Examples</a>
+    <a href="#rev-curves">REV Curves</a>
+    <a href="#example-problem">Example Problem</a>
+    <a href="#software-nav">Software Navigation</a>
+    <a href="#catchment-entry">Catchment Data Entry</a>
+    <a href="#wet-detention">Wet Detention Worksheet</a>
+    <a href="#harvesting-worksheet">Stormwater Harvesting Worksheet</a>
+    <a href="#bmp-series">BMPs in Series</a>
+    <a href="#summary-report">Summary Treatment Report</a>
+    <a href="#cup-wup">CUP / WUP Permit Analysis</a>
+    <a href="#rev-zone2">REV Curve Interpretation</a>
+    <a href="#summary">Module Summary</a>
+    <a href="#figures">Figure References</a>
+  </nav>
+</aside>
+
+<!-- ══════════════════ MAIN ══════════════════ -->
+<div id="main">
+
+  <!-- Hero -->
+  <div class="hero">
+    <div class="module-tag">Module 15 · BMPFast Learning System</div>
+    <h1>BMPFast Analysis<br>for Harvesting</h1>
+    <p class="subtitle">Using BMPFast to design, analyze, and document stormwater and rainwater harvesting systems — from REV curve interpretation to multi-BMP compliance reporting.</p>
+    <div class="meta">
+      <span>AUTHOR: MARTY WANIELISTA</span>
+      <span>REVISED: JANUARY 2026</span>
+      <span>SOURCE: UCF / ERD</span>
+    </div>
+  </div>
+
+  <div class="content">
+
+    <!-- ══ LEARNING OBJECTIVES ══ -->
+    <div class="objectives-box" id="objectives">
+      <h3>Learning Objectives</h3>
+      <ol>
+        <li>Understand what harvesting is and distinguish between rainwater harvesting and stormwater harvesting.</li>
+        <li>Navigate the BMPFast software interface for harvesting analysis.</li>
+        <li>Enter data for annual mass removal analysis and interpret output when harvesting is selected as the BMP.</li>
+        <li>Understand the combined use of wet detention and stormwater harvesting.</li>
+        <li>Demonstrate the use of worksheets and explore REV (Rate–Efficiency–Volume) curves.</li>
+        <li>Work through complete example problems.</li>
+      </ol>
+    </div>
+
+    <!-- ══ WHAT IS HARVESTING ══ -->
+    <div class="section" id="what-why">
+      <h2 class="section-anchor">What Is Harvesting and Why Do It?</h2>
+
+      <h3>Definition</h3>
+      <p><strong>Harvesting</strong> is the collection and reuse of retained stormwater for non-potable purposes. Typical applications include: irrigation, car washing, cooling tower make-up water, toilet flushing, wetland enhancement, and similar non-drinking uses.</p>
+
+      <h3>Reasons to Harvest Stormwater</h3>
+      <ol>
+        <li>Obtain an Environmental Resource Permit (ERP) or estimate Basin Management Action Plan (BMAP) credit.</li>
+        <li>Reduce stormwater pollutant loads discharged to surface waters.</li>
+        <li>Protect and maintain groundwater resources.</li>
+        <li>Lower the cost of potable water supply.</li>
+        <li>Reduce saltwater intrusion in coastal areas.</li>
+        <li>Lower the overall cost of stormwater management (harvested water can be a revenue source).</li>
+        <li>Achieve some or all of the above simultaneously.</li>
+      </ol>
+
+      <div class="callout key">
+        <div class="callout-label">Key Concept</div>
+        <p>The term <em>harvesting</em> is preferred over "reuse" to avoid confusion with treated wastewater reuse programs, which are subject to different regulatory requirements and treatment standards.</p>
+      </div>
+    </div>
+
+    <!-- ══ RAINWATER VS STORMWATER ══ -->
+    <div class="section" id="rainwater-vs-stormwater">
+      <h2 class="section-anchor">Rainwater Harvesting vs. Stormwater Harvesting</h2>
+
+      <h3>Rainwater Harvesting</h3>
+      <p>Rainwater harvesting effectiveness is estimated based on the potential for daily use of the collected water. It is applied to catchment areas where runoff can be fully contained with no significant groundwater interaction. A typical example is a building rooftop draining to a cistern. <strong>No credit is given for pollutant concentration reduction</strong> under this approach.</p>
+
+      <h3>Stormwater Harvesting</h3>
+      <p>Stormwater harvesting effectiveness is estimated based on the potential for use of the collected water approximately <strong>two times per week</strong>. It applies to catchment areas that are influenced by both groundwater and rainfall, such as surface drainage areas discharging to a wet detention pond. When stormwater harvesting is combined with a wet detention pond, <strong>credit for concentration reduction</strong> from the wet detention is included in the analysis.</p>
+
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr>
+              <th>Characteristic</th>
+              <th>Rainwater Harvesting</th>
+              <th>Stormwater Harvesting</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>Typical collection system</td>
+              <td>Rooftop cistern</td>
+              <td>Wet detention pond / surface drainage</td>
+            </tr>
+            <tr>
+              <td>Groundwater interaction</td>
+              <td>None assumed</td>
+              <td>Groundwater and rainfall influence</td>
+            </tr>
+            <tr>
+              <td>Basis for use rate estimation</td>
+              <td>Daily use potential</td>
+              <td>~2 times per week use potential</td>
+            </tr>
+            <tr>
+              <td>Concentration reduction credit</td>
+              <td>No</td>
+              <td>Yes (when combined with wet detention)</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- ══ FLORIDA EXAMPLES ══ -->
+    <div class="section" id="examples">
+      <h2 class="section-anchor">Florida Case Examples</h2>
+      <p>Over 700 stormwater harvesting systems have been documented in Florida. The following examples illustrate the range of applications, scales, and economic benefits achievable.</p>
+
+      <h3>1. South Bay Utilities — Coastal Residential Irrigation</h3>
+      <p>This upscale residential community implemented stormwater harvesting for irrigation demand. Key project characteristics include:</p>
+      <ul>
+        <li>Not subject to FPSC (Florida Public Service Commission) regulation.</li>
+        <li>Delivered water cost of $0.50 per 1,000 gallons (2015 estimate).</li>
+        <li>Customer agreements established with a 900-home Homeowners Association (HOA).</li>
+        <li>Located in a coastal, environmentally fragile resource area — harvesting reduces demand on the local aquifer and reduces saltwater intrusion risk.</li>
+      </ul>
+
+      <div class="figure">
+        <div class="figure-icon">🏘️</div>
+        <div class="figure-title">Figure 15-A</div>
+        <div class="figure-desc">South Bay Utilities stormwater harvesting system — residential streetscape and irrigated common areas served by harvested stormwater. Source: Horizontal Subsurface Systems and www.stormwater.ucf.edu</div>
+      </div>
+
+      <h3>2. Winter Park, Florida — Regional Pond Retrofit</h3>
+      <p>A regional stormwater pond serving both roadway and commercial property was retrofitted for water harvesting. The system collects runoff water, controls pollution through wet detention, and delivers harvested water for lawn irrigation. The community saved both potable water and money, while replacing potable water that previously supplied irrigation.</p>
+
+      <div class="figure">
+        <div class="figure-icon">🌊</div>
+        <div class="figure-title">Figure 15-B</div>
+        <div class="figure-desc">Winter Park Florida retrofit — regional pond collecting runoff water (left), wet detention pond controlling pollution (center), and harvested water used for lawn irrigation (right). Labels: "COLLECTS RUNOFF WATER" and "CONTROLS POLLUTION."</div>
+      </div>
+
+      <h3>3. Southeast Central Florida — Large-Scale Agricultural Irrigation</h3>
+      <p>A large-scale harvesting operation covering approximately 550,000 acres supplies irrigation water through a network of canals, ponds, and wells. Key project data:</p>
+      <ul>
+        <li>Subject to FPSC (Exclusive) regulation.</li>
+        <li>Historical cost: $0.192 per 1,000 gallons (2004); estimated $0.89 per 1,000 gallons in 2024.</li>
+        <li>Infrastructure: canals, ponds, and horizontal subsurface wells.</li>
+        <li>Capacity: 20 MGD (million gallons per day), expandable.</li>
+      </ul>
+
+      <div class="figure">
+        <div class="figure-icon">🍊</div>
+        <div class="figure-title">Figure 15-C</div>
+        <div class="figure-desc">Southeast Central Florida large-scale stormwater harvesting for agricultural irrigation — citrus grove rows (top) and irrigation sprinkler infrastructure (bottom).</div>
+      </div>
+
+      <h3>4. Golf Course and I-4 Stormwater Management Plan</h3>
+      <p>This example demonstrates a multi-stakeholder win-win arrangement involving FDOT, a local high school, and a public golf course:</p>
+      <ul>
+        <li><strong>Plan objective:</strong> Provide irrigation water to a golf course to improve playability and course appearance.</li>
+        <li><strong>FDOT role:</strong> Supplied the harvested stormwater from highway drainage.</li>
+        <li><strong>Result:</strong> FDOT and the high school both meet stormwater regulations; citizens gained a new golf course; all parties benefit from stormwater treatment and conservation of potable water that would otherwise be used for irrigation.</li>
+        <li><strong>Environmental benefit:</strong> The Wekiva River is protected from increased stormwater pollutant loads.</li>
+      </ul>
+
+      <div class="figure">
+        <div class="figure-icon">⛳</div>
+        <div class="figure-title">Figure 15-D</div>
+        <div class="figure-desc">FDOT District Signature Project — aerial map (Google Maps) of the I-4 corridor and Dubsdread Golf Course area in Orlando, Florida, showing the project footprint and adjacent land uses. Coordinates: 28°35'06.31"N 81°22'51.59"W.</div>
+      </div>
+
+      <h3>5. City of Miramar — Broward County Mixed-Use System</h3>
+      <p>A municipal stormwater supply system combining reclaimed water and harvested stormwater for Irrigation Quality (IQ) supply:</p>
+      <ul>
+        <li>Estimated capital cost: $1.3 million (2014).</li>
+        <li>System capacity: 1 MGD.</li>
+        <li>Water type: blended reclaimed and harvested water, delivered as IQ (Irrigation Quality).</li>
+        <li>Delivered cost: $0.80 per 1,000 gallons (2014 estimate).</li>
+        <li>Note: When harvested water is mixed with reclaimed water for contact applications, chlorination must be maintained to preserve residual disinfection.</li>
+      </ul>
+
+      <div class="callout note">
+        <div class="callout-label">IQ Water Note</div>
+        <p>IQ stands for Irrigation Quality — water suitable for non-potable irrigation and similar uses. When harvested water is blended with reclaimed water and may come into contact with people, the blended water must be chlorinated to maintain a residual disinfectant concentration.</p>
+      </div>
+
+      <div class="figure">
+        <div class="figure-icon">🗺️</div>
+        <div class="figure-title">Figure 15-E</div>
+        <div class="figure-desc">City of Miramar Proposed Stormwater Supply System Plan View — site plan showing industrial and commercial areas, 30.24-acre lake, access road, 8-inch reuse main, pump station intake location, and I-75 ramp proximity. Source: Hartman Consulting & Design, Orlando. Figure 1-2.</div>
+      </div>
+
+      <h3>6. Cocoa Village — Harvesting and Use Area</h3>
+      <p>This municipal project in Cocoa Village illustrates the full lifecycle of a stormwater harvesting installation: site preparation, underground conveyance infrastructure, and the end-use application (a decorative public fountain plaza).</p>
+
+      <div class="figure">
+        <div class="figure-icon">🏛️</div>
+        <div class="figure-title">Figure 15-F</div>
+        <div class="figure-desc">Cocoa Village Harvesting and Use Area — aerial view of construction site on waterfront (top left), underground large-diameter pipe installation (bottom left), and completed decorative fountain plaza as the harvested water use area (bottom right).</div>
+      </div>
+    </div>
+
+    <!-- ══ REV CURVES ══ -->
+    <div class="section" id="rev-curves">
+      <h2 class="section-anchor">Annual Removal Curves — REV Curves for Stormwater Harvesting</h2>
+
+      <p>REV curves are the primary graphical tool used in BMPFast to quantify the harvesting efficiency of a stormwater system. The three axes represent:</p>
+
+      <ul>
+        <li><strong>R</strong> — the Y-axis: average daily <strong>R</strong>ate of use (inches/day over Effective Impervious Area, EIA).</li>
+        <li><strong>E</strong> — the curve label: annual removal (retention) <strong>E</strong>fficiency (%).</li>
+        <li><strong>V</strong> — the X-axis: <strong>V</strong>olume of storage for harvesting (inches over EIA).</li>
+      </ul>
+
+      <div class="callout key">
+        <div class="callout-label">Key Relationship</div>
+        <p>For a given storage volume (V) and use rate (R), the REV curves yield the expected annual pollutant removal efficiency (E). When stormwater harvesting is combined with wet detention, a separate concentration reduction credit is added to the harvesting efficiency.</p>
+        <p>Source: Applicant's Handbook Vol. 1, Appendix O, Table 1.</p>
+      </div>
+
+      <p>REV curves are provided for Florida's five meteorological zones. Zone selection is based on project location; each zone reflects regional differences in rainfall patterns that affect harvesting efficiency.</p>
+
+      <div class="figure">
+        <div class="figure-icon">📈</div>
+        <div class="figure-title">Figure 15-G</div>
+        <div class="figure-desc">REV Curves for Stormwater Harvesting — three side-by-side graphs for Zone 1, Zone 3, and Zone 5. Each graph plots Use Rate (inches/day over EIA) on the Y-axis (0.00–0.50) versus Runoff Volume of Water (inches over EIA) on the X-axis (0–6), with efficiency contour lines at 20%, 30%, 40%, 50%, 60%, 70%, 80%, and 90%. Source: A.H. Vol. 1, Appendix O, Table 1.</div>
+      </div>
+    </div>
+
+    <!-- ══ EXAMPLE PROBLEM ══ -->
+    <div class="section" id="example-problem">
+      <h2 class="section-anchor">Example Problem — Redevelopment with Wet Detention and Harvesting</h2>
+
+      <div class="callout">
+        <div class="callout-label">Problem Statement</div>
+        <p>A redevelopment project (increase in directly connected impervious area) involves a 2-acre site classified as light industrial in meteorological zone 4. The municipality requires that runoff be used for irrigation on a 0.93-acre plot of land within the project. Conditions:</p>
+        <ul style="margin-top: 0.5rem;">
+          <li>Curve Number (CN): 60</li>
+          <li>Pre-development DCIA: 20%</li>
+          <li>Post-development DCIA: 32%</li>
+          <li>Wet pond area: 0.28 ac (loading from this area is excluded from catchment loading)</li>
+          <li>No littoral zone in the wet pond</li>
+          <li>Approved harvest volume: 0.25 ac-ft</li>
+          <li>Irrigation rate: 1 inch per week (average yearly)</li>
+          <li>Mean annual rainfall: 52 inches (Zone 4)</li>
+        </ul>
+        <p style="margin-top: 0.75rem;"><strong>Question:</strong> What BMP plan meets the redevelopment performance standard?</p>
+      </div>
+    </div>
+
+    <!-- ══ SOFTWARE NAVIGATION ══ -->
+    <div class="section" id="software-nav">
+      <h2 class="section-anchor">Software Navigation — General Site Information Screen</h2>
+
+      <p>Begin by opening BMPFast and creating a new project. The General Site Information screen is the starting point for every analysis.</p>
+
+      <div class="screen-capture">
+        <div class="sc-label">BMPFast — General Site Information Screen</div>
+        <table>
+          <thead><tr><th>Field</th><th>Value Entered</th></tr></thead>
+          <tbody>
+            <tr><td>Project Name</td><td>harvesting</td></tr>
+            <tr><td>Meteorological Zone</td><td>Florida Zone 4</td></tr>
+            <tr><td>Mean Annual Rainfall</td><td>52 inches</td></tr>
+            <tr><td>Performance Standard of Surface Discharge Analysis</td><td>Redevelopment</td></tr>
+            <tr><td>Conduct Groundwater Discharge Analysis</td><td>No</td></tr>
+            <tr><td>Nitrogen Removal Efficiency (%)</td><td>45</td></tr>
+            <tr><td>Phosphorus Removal Efficiency (%)</td><td>80</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <p>From the General Site Information screen, the six workflow steps are accessed in sequence:</p>
+      <ol>
+        <li><strong>Enter Catchment</strong> — input watershed and land use characteristics.</li>
+        <li><strong>Enter Treatment</strong> — select and configure BMPs for each catchment.</li>
+        <li><strong>Configure Catchments</strong> — define routing relationships between catchments.</li>
+        <li><strong>Summary Treatment Report</strong> — review overall compliance status.</li>
+        <li><strong>Complete Report</strong> — generate the full project report.</li>
+        <li><strong>Cost Comparisons</strong> — compare BMP cost alternatives.</li>
+      </ol>
+
+      <div class="callout note">
+        <div class="callout-label">Navigation Note</div>
+        <p>The arrow in the software interface points to <em>Enter Catchment</em> as the first required action after filling in general project data. Work through steps 1–3 in order before generating reports.</p>
+      </div>
+
+      <div class="figure">
+        <div class="figure-icon">💻</div>
+        <div class="figure-title">Figure 15-H</div>
+        <div class="figure-desc">BMPFast General Site Information screen showing project name "harvesting," Zone 4 selection, 52-inch rainfall, Redevelopment performance standard, N removal efficiency 45%, P removal efficiency 80%, and the six workflow step buttons (Enter Catchment highlighted with arrow).</div>
+      </div>
+    </div>
+
+    <!-- ══ CATCHMENT ENTRY ══ -->
+    <div class="section" id="catchment-entry">
+      <h2 class="section-anchor">Catchment Data Entry — Watershed Characteristics Worksheet</h2>
+
+      <p>Click <strong>Enter Catchment</strong> to open the Watershed Characteristics Worksheet. Enter the following data for the southwest catchment:</p>
+
+      <div class="screen-capture">
+        <div class="sc-label">Watershed Characteristics Worksheet — Catchment 1: Southwest Catchment</div>
+        <table>
+          <thead><tr><th>Parameter</th><th>Pre-Development</th><th>Post-Development</th></tr></thead>
+          <tbody>
+            <tr><td>Land Use</td><td>Light Industrial (TN=1.200, TP=0.260)</td><td>Light Industrial (TN=1.200, TP=0.260)</td></tr>
+            <tr><td>Total Catchment Area (ac)</td><td>2.00</td><td>2.00</td></tr>
+            <tr><td>Non-DCIA Curve Number</td><td>60.00</td><td>60.00</td></tr>
+            <tr><td>DCIA Percentage (0–100%)</td><td>20.00</td><td>32.00</td></tr>
+            <tr><td>EMC(N) mg/L</td><td>1.200</td><td>1.200</td></tr>
+            <tr><td>EMC(P) mg/L</td><td>0.260</td><td>0.260</td></tr>
+            <tr><td>Annual ROC</td><td>0.197</td><td>0.291</td></tr>
+            <tr><td>Runoff (ac-ft/yr)</td><td>1.707</td><td>2.166</td></tr>
+            <tr><td>N Loading (kg/yr)</td><td>2.526</td><td>3.205</td></tr>
+            <tr><td>P Loading (kg/yr)</td><td>0.547</td><td>0.694</td></tr>
+            <tr><td>Wet Pond Area (no loading from this area, ac)</td><td colspan="2">0.28</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="callout">
+        <div class="callout-label">Interpretation</div>
+        <p>The increase in DCIA from 20% to 32% raises the annual runoff coefficient (ROC) from 0.197 to 0.291 and increases the annual runoff volume from 1.707 to 2.166 ac-ft/yr. Nitrogen loading increases from 2.526 to 3.205 kg/yr, and phosphorus loading from 0.547 to 0.694 kg/yr. These post-development loads represent the treatment target that the BMP plan must address.</p>
+      </div>
+
+      <div class="figure">
+        <div class="figure-icon">💻</div>
+        <div class="figure-title">Figure 15-I</div>
+        <div class="figure-desc">BMPFast Watershed Characteristics Worksheet — Catchment 1 "southwest catchment," showing pre/post land use (Light Industrial), area inputs (2.00 ac), CN (60), DCIA percentages (20% pre, 32% post), wet pond area (0.28 ac), and calculated concentrations and loadings for both N and P.</div>
+      </div>
+    </div>
+
+    <!-- ══ WET DETENTION ══ -->
+    <div class="section" id="wet-detention">
+      <h2 class="section-anchor">Step 2A — Wet Detention Worksheet Analysis</h2>
+
+      <p>With stormwater harvesting planned in combination with wet detention, the wet detention BMP is entered first. Navigate to <strong>Enter Treatment</strong> and select Wet Detention.</p>
+
+      <div class="screen-capture">
+        <div class="sc-label">Wet Detention Analysis: Redevelopment — Key Inputs</div>
+        <table>
+          <thead><tr><th>Parameter</th><th>Value</th></tr></thead>
+          <tbody>
+            <tr><td>Littoral zone present</td><td>No (unchecked)</td></tr>
+            <tr><td>Permanent Pool Volume (ac-ft)</td><td>0.23</td></tr>
+            <tr><td>Floating Wetland or other MAPs Credit (%)</td><td>0</td></tr>
+            <tr><td>Input Pond TP (µg/L) if data available</td><td>0</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="callout note">
+        <div class="callout-label">Littoral Zone Credit</div>
+        <p>For wet detention ponds, annual residence times cannot exceed an upper limit in some applications. Additionally, the pond must include a littoral zone to receive full credit. <strong>If no littoral zone is present, the treatment credit is reduced by 10%.</strong></p>
+      </div>
+
+      <h4>Wet Detention Load Diagram (Stand-Alone)</h4>
+      <div class="load-diagram">
+        <div class="load-box">
+          <div class="lb-label">Load (Post)</div>
+          <p>N: 3.20 kg/yr</p>
+          <p>P: 0.69 kg/yr</p>
+          <p>Q: 2.17 ac-ft/yr</p>
+        </div>
+        <div class="load-arrow">→</div>
+        <div class="load-vertical">
+          <div class="load-box">
+            <div class="lb-label">Treatment</div>
+            <p>N: 36%</p>
+            <p>P: 60%</p>
+          </div>
+          <div class="load-down-arrow">↓</div>
+          <div class="load-box">
+            <div class="lb-label">Mass Reduction</div>
+            <p>N: 2.04 kg/yr</p>
+            <p>P: 0.55 kg/yr</p>
+          </div>
+        </div>
+        <div class="load-arrow">→</div>
+        <div class="load-box">
+          <div class="lb-label">Surface Discharge</div>
+          <p>N: 1.16 kg/yr</p>
+          <p>P: 0.15 kg/yr</p>
+        </div>
+      </div>
+
+      <p>Standing alone, wet detention provides 36% nitrogen removal and 60% phosphorus removal. While phosphorus removal approaches the 80% target, nitrogen removal at 36% falls short of the 45% required for redevelopment. A second BMP in series — stormwater harvesting — is needed to achieve compliance.</p>
+
+      <div class="figure">
+        <div class="figure-icon">💻</div>
+        <div class="figure-title">Figure 15-J</div>
+        <div class="figure-desc">BMPFast Wet Detention Analysis screen for Redevelopment — showing permanent pool volume 0.23 ac-ft, no littoral zone, no floating wetland credit, and the Load Diagram for Wet Detention (stand-alone) with load, treatment efficiency, surface discharge, and mass reduction values.</div>
+      </div>
+    </div>
+
+    <!-- ══ HARVESTING WORKSHEET ══ -->
+    <div class="section" id="harvesting-worksheet">
+      <h2 class="section-anchor">Step 2B — Stormwater Harvesting Worksheet Analysis</h2>
+
+      <p>Return to <strong>Enter Treatment</strong> and select Stormwater Harvesting to open the Stormwater Harvesting Worksheet. Enter the irrigation and storage parameters.</p>
+
+      <div class="screen-capture">
+        <div class="sc-label">Stormwater Harvesting Worksheet Analysis: Redevelopment — Key Inputs</div>
+        <table>
+          <thead><tr><th>Parameter</th><th>Value</th></tr></thead>
+          <tbody>
+            <tr><td>Area Available for Irrigation (ac)</td><td>0.93</td></tr>
+            <tr><td>Max Available Harvest Volume (ac-ft)</td><td>0.25</td></tr>
+            <tr><td>Harvest Rate (0.1 – 4.0 in/week)</td><td>1</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <h4>Stormwater Harvesting Load Diagram (Stand-Alone)</h4>
+      <div class="load-diagram">
+        <div class="load-box">
+          <div class="lb-label">Load (Post)</div>
+          <p>N: 3.20 kg/yr</p>
+          <p>P: 0.69 kg/yr</p>
+          <p>Q: 2.17 ac-ft/yr</p>
+        </div>
+        <div class="load-arrow">→</div>
+        <div class="load-vertical">
+          <div class="load-box">
+            <div class="lb-label">Treatment</div>
+            <p>N: 50%</p>
+            <p>P: 50%</p>
+          </div>
+          <div class="load-down-arrow">↓</div>
+          <div class="load-box">
+            <div class="lb-label">Mass Reduction</div>
+            <p>N: 1.37 kg/yr</p>
+            <p>P: 0.30 kg/yr</p>
+            <p>Q: 1.09 ac-ft/yr</p>
+          </div>
+        </div>
+        <div class="load-arrow">→</div>
+        <div class="load-box">
+          <div class="lb-label">Surface Discharge</div>
+          <p>N: 1.84 kg/yr</p>
+          <p>P: 0.40 kg/yr</p>
+          <p>Q: 1.07 ac-ft/yr</p>
+        </div>
+      </div>
+
+      <p>Stormwater harvesting alone provides 50% removal for both nitrogen and phosphorus, exceeding the nitrogen requirement (45%) but falling short of the 80% phosphorus requirement. The required phosphorus treatment efficiency is 80%, while harvesting alone provides 50.4%.</p>
+
+      <div class="callout">
+        <div class="callout-label">BMPFast Output</div>
+        <p>Required Phosphorus Treatment Efficiency: 80.00% &nbsp;|&nbsp; Provided (harvesting alone): 50.4%</p>
+        <p>The <strong>Plot REV</strong> button in this worksheet generates the REV curve plot for the entered conditions, allowing the engineer to visually explore how changes in storage volume or use rate affect harvesting efficiency.</p>
+      </div>
+
+      <div class="figure">
+        <div class="figure-icon">💻</div>
+        <div class="figure-title">Figure 15-K</div>
+        <div class="figure-desc">BMPFast Stormwater Harvesting Worksheet screen — showing irrigation area (0.93 ac), harvest volume (0.25 ac-ft), harvest rate (1 in/week), required vs. provided phosphorus efficiency (80% vs. 50.4%), and Load Diagram for Stormwater Harvesting (stand-alone) with N 50%, P 50% treatment efficiency and corresponding mass reductions.</div>
+      </div>
+    </div>
+
+    <!-- ══ BMPs IN SERIES ══ -->
+    <div class="section" id="bmp-series">
+      <h2 class="section-anchor">BMPs in Series — Wet Detention + Stormwater Harvesting</h2>
+
+      <p>Since neither BMP meets all requirements independently, they are combined in series. In BMPFast, this is done through the <strong>Multiple BMP Worksheet</strong>, accessible under Enter Treatment by selecting the BMP Series option.</p>
+
+      <div class="screen-capture">
+        <div class="sc-label">Multiple BMP Worksheet for Catchment 1 — BMP Configuration</div>
+        <table>
+          <thead><tr><th>BMP Slot</th><th>BMP Selected</th></tr></thead>
+          <tbody>
+            <tr><td>BMP 1</td><td>Wet Detention</td></tr>
+            <tr><td>BMP 2</td><td>Stormwater Harvesting</td></tr>
+            <tr><td>BMP 3</td><td>(not used)</td></tr>
+            <tr><td>BMP 4</td><td>(not used)</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <h4>Load Diagram for Multiple BMPs in Series</h4>
+      <div class="load-diagram">
+        <div class="load-box">
+          <div class="lb-label">Load (Post)</div>
+          <p>N: 3.20 kg/yr</p>
+          <p>P: 0.69 kg/yr</p>
+          <p>Q: 1.09 ac-ft/yr</p>
+        </div>
+        <div class="load-arrow">→</div>
+        <div class="load-vertical">
+          <div class="load-box">
+            <div class="lb-label">Treatment (Series)</div>
+            <p>N: 68%</p>
+            <p>P: 80%</p>
+          </div>
+          <div class="load-down-arrow">↓</div>
+          <div class="load-box">
+            <div class="lb-label">Mass Reduction</div>
+            <p>N: 2.04 kg/yr</p>
+            <p>P: 0.55 kg/yr</p>
+            <p>Q: 0.74 ac-ft/yr</p>
+          </div>
+        </div>
+        <div class="load-arrow">→</div>
+        <div class="load-box">
+          <div class="lb-label">Surface Discharge</div>
+          <p>N: 1.16 kg/yr</p>
+          <p>P: 0.15 kg/yr</p>
+          <p>Q: 0.35 ac-ft/yr</p>
+        </div>
+      </div>
+
+      <p>With BMPs in series, the combined system achieves 68% nitrogen removal and 80% phosphorus removal. Both targets are now met or exceeded.</p>
+
+      <div class="figure">
+        <div class="figure-icon">💻</div>
+        <div class="figure-title">Figure 15-L</div>
+        <div class="figure-desc">BMPFast Multiple BMP Worksheet (left) — BMP 1: Wet Detention, BMP 2: Stormwater Harvesting. Surface Water Discharge panel (right) showing required vs. provided N and P efficiencies. Load Diagram for Multiple BMP in Series showing combined N 68%, P 80% treatment with mass reduction and surface discharge values. Below: Configure Catchments screen and main workflow navigation with Summary Treatment Report highlighted.</div>
+      </div>
+    </div>
+
+    <!-- ══ SUMMARY REPORT ══ -->
+    <div class="section" id="summary-report">
+      <h2 class="section-anchor">Summary Treatment Report</h2>
+
+      <p>Navigate to Step 4: <strong>Summary Treatment Report</strong> to confirm project compliance. The report was generated on 01/17/2026 from the file "2025 harvesting example redevelopment with pond.bmpt."</p>
+
+      <h4>Catchments and Associated BMP Types</h4>
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr><th>ID</th><th>Catchment Name</th><th>Catchment BMP</th><th>Routing Destination</th></tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>1</td>
+              <td>southwest catchment</td>
+              <td>Multiple BMP 1: Wet Detention 2: Stormwater Harvesting</td>
+              <td>Routed to Outlet</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <h4>Volume of Runoff Summary</h4>
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr>
+              <th>Scenario</th>
+              <th>Effective Area (acres)</th>
+              <th>Runoff Volume (ac-ft/yr)</th>
+              <th>Runoff Volume (in/year)</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr><td>Pre-Condition</td><td>2</td><td>1.71</td><td>10.24</td></tr>
+            <tr><td>System Post-Condition (with BMPs)</td><td>1.72</td><td>0.69</td><td>4.82</td></tr>
+            <tr><td>Post-Condition (no BMP)</td><td>1.72</td><td>2.17</td><td>15.11</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <p style="font-size: 0.85rem; color: var(--text-muted);">Effective Area is the watershed area used to normalize runoff (acres). Runoff volumes are shown in ac-ft/yr and converted to depth (in/yr) by dividing by area and multiplying by 12.</p>
+
+      <h4>Summary Loading Analysis — Target Removal Results</h4>
+      <div class="callout key">
+        <div class="callout-label">Compliance Result</div>
+        <p>
+          Is system total nitrogen target removal met? <span class="result-pass">YES</span> (Required: 45% &nbsp;|&nbsp; Provided: 68.13%)<br>
+          Is system total phosphorus target removal met? <span class="result-pass">YES</span> (Required: 80% &nbsp;|&nbsp; Provided: 80.29%)
+        </p>
+      </div>
+
+      <div class="figure">
+        <div class="figure-icon">📋</div>
+        <div class="figure-title">Figure 15-M</div>
+        <div class="figure-desc">BMPFast Summary Treatment Report — Project "harvesting," file "2025 harvesting example redevelopment with pond.bmpt," dated 01/17/2026. Shows catchment/BMP table, Volume of Runoff Summary (pre, post with BMPs, post without BMPs), and % Target Removal confirmation with YES in green for both N (68.13% ≥ 45%) and P (80.29% ≥ 80%), with compliance values circled in red.</div>
+      </div>
+    </div>
+
+    <!-- ══ CUP / WUP ══ -->
+    <div class="section" id="cup-wup">
+      <h2 class="section-anchor">CUP and WUP Permit Analysis</h2>
+
+      <p>BMPFast harvesting analysis can also support Consumptive Use Permit (CUP) or Water Use Permit (WUP) applications, which are issued by Florida's Water Management Districts. These permits govern the quantity of water that may be withdrawn from a water source for beneficial use.</p>
+
+      <p>Relevant regulatory sources include: SFWMD Applicant's Handbook for Water Use Permit Applications (June 13, 2022), SWFWMD (WUP) guidelines (May 2014), and SJRWMD guidelines (August 2014).</p>
+
+      <div class="callout">
+        <div class="callout-label">Example — CUP Analysis Using Excel Model (Older Tool)</div>
+        <p>The following demonstrates how harvesting analysis was performed with an older Excel-based tool, now replaced by BMPFast. The inputs and outputs illustrate the data structure that BMPFast now computes automatically.</p>
+      </div>
+
+      <h4>Excel Model Inputs (Meteorological Zone 2)</h4>
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr><th>Parameter</th><th>Scenario A</th><th>Scenario B</th></tr>
+          </thead>
+          <tbody>
+            <tr><td>Meteorological Zone</td><td>2</td><td>2</td></tr>
+            <tr><td>Total Area Contributing to Harvesting System (ac)</td><td>16.95</td><td>16.95</td></tr>
+            <tr><td>Total Green Area Available for Irrigation (ac)</td><td>9.3</td><td>9.3</td></tr>
+            <tr><td>Weighted Rational Runoff Coefficient (0.00–1.00)</td><td>0.8</td><td>0.325</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <h4>Excel Model Outputs (Average Annual Water Balance)</h4>
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr><th>Output</th><th>Scenario A (ROC = 0.8)</th><th>Scenario B (ROC = 0.325)</th></tr>
+          </thead>
+          <tbody>
+            <tr><td>Average yearly demand for harvested water (ac-ft/yr)</td><td>13.13</td><td>13.131</td></tr>
+            <tr><td>Average supply of harvested water (ac-ft/yr)</td><td>12.83</td><td>7.673</td></tr>
+            <tr><td>Average supplemental water needed per year (ac-ft/yr)</td><td>0.29</td><td>5.458</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <p>Source: AH Vol. 1, Appendix N (Zone 2) and Appendix O, Table 1 ("harvesting"). The table from Appendix N lists Mean Annual Runoff as a function of DCIA percentage for zones 2, with DCIA values from 30% to 35% shown with corresponding ROC values ranging from approximately 0.244 to 0.670.</p>
+
+      <div class="callout note">
+        <div class="callout-label">Practical Implication</div>
+        <p>Scenario A (ROC = 0.8) has a much higher runoff coefficient, producing nearly sufficient harvested supply (12.83 ac-ft/yr) to meet demand (13.13 ac-ft/yr) with only 0.29 ac-ft/yr supplemental water needed. Scenario B (ROC = 0.325) has a lower runoff coefficient and generates substantially less supply (7.673 ac-ft/yr), requiring 5.458 ac-ft/yr of supplemental water. This illustrates how impervious cover and runoff coefficient directly impact harvesting feasibility.</p>
+      </div>
+
+      <div class="figure">
+        <div class="figure-icon">📊</div>
+        <div class="figure-title">Figure 15-N</div>
+        <div class="figure-desc">CUP/WUP Permit Analysis — older Excel model interface showing two side-by-side scenarios for Zone 2 with different runoff coefficients (0.8 and 0.325). Inputs include total area (16.95 ac), green area (9.3 ac), and ROC. Outputs show average yearly demand (~13.13 ac-ft/yr), average supply (12.83 vs. 7.673 ac-ft/yr), and supplemental water required (0.29 vs. 5.458 ac-ft/yr). Accompanying Mean Annual Runoff table from AH Vol. 1, Appendix N, Zone 2 showing DCIA percentages 30–35 with ROC values 0.244–0.670.</div>
+      </div>
+    </div>
+
+    <!-- ══ REV ZONE 2 ══ -->
+    <div class="section" id="rev-zone2">
+      <h2 class="section-anchor">REV Curve Interpretation — Zone 2 Examples</h2>
+
+      <p>REV curves provide a rapid graphical method for estimating harvesting efficiency. Two cases for Zone 2 illustrate the impact of the runoff coefficient (ROC) on annual harvesting efficiency:</p>
+
+      <h3>Case 1: ROC = 0.80 → 61% Annual Harvesting Efficiency</h3>
+      <p>With a high runoff coefficient of 0.80, the system operates on the REV curve at the 61% efficiency contour. This reflects a relatively high ratio of runoff supply to storage volume, meaning much of the runoff is captured and used before overflowing.</p>
+
+      <h3>Case 2: ROC = 0.325 → 90% Annual Harvesting Efficiency</h3>
+      <p>With a lower runoff coefficient of 0.325, the system captures nearly all available runoff — the curve plot intersects the 90% efficiency contour. Less total runoff is generated, but the harvest system retains almost all of it, resulting in higher efficiency.</p>
+
+      <div class="callout key">
+        <div class="callout-label">Key Insight</div>
+        <p>A lower runoff coefficient does not necessarily mean less benefit — it can mean <em>higher harvesting efficiency</em> because all generated runoff is captured and used. The critical design question is whether the absolute volume of harvested water meets the demand, even if the efficiency percentage is high.</p>
+      </div>
+
+      <div class="figure">
+        <div class="figure-icon">📈</div>
+        <div class="figure-title">Figure 15-O</div>
+        <div class="figure-desc">Zone 2 REV Curves — two identical plots of Use Rate (in/day over EIA, Y-axis 0.00–0.50) versus Runoff Volume of Water (in over EIA, X-axis 0–6) with efficiency contour lines at 20%, 30%, 40%, 50%, 60%, 70%, 80%, 90%. Left plot: annotated "61% harvested efficiency when ROC = 0.80." Right plot: annotated "90% harvested efficiency when ROC = 0.325." Source: AH Vol. 1, Appendix O, Table 1 stormwater harvesting.</div>
+      </div>
+    </div>
+
+    <!-- ══ SUMMARY ══ -->
+    <div class="section" id="summary">
+      <h2 class="section-anchor">Module Summary — What Did We Learn?</h2>
+
+      <div class="objectives-box">
+        <h3>Key Takeaways</h3>
+        <ol>
+          <li><strong>Harvesting defined:</strong> Rainwater harvesting applies to fully contained catchments with no groundwater interaction; stormwater harvesting applies to surface drainage catchments with groundwater influence. Only stormwater harvesting receives concentration reduction credit when combined with wet detention.</li>
+          <li><strong>Software navigation:</strong> BMPFast processes harvesting analysis through the standard six-step workflow — Catchment entry, Treatment entry, Catchment configuration, and reporting.</li>
+          <li><strong>Annual mass removal analysis:</strong> The harvesting worksheet calculates treatment efficiency from REV curve data based on irrigation area, available harvest volume, and weekly harvest rate.</li>
+          <li><strong>REV curve discovery:</strong> The Plot REV function in BMPFast allows engineers to interactively explore how changes in storage volume and use rate affect harvesting efficiency for the selected meteorological zone.</li>
+          <li><strong>Water Use Permit support:</strong> BMPFast output — including annual supply, demand, and supplemental water requirements — directly supports CUP/WUP permit applications to Florida Water Management Districts.</li>
+          <li><strong>Example problem result:</strong> A 2-acre light industrial redevelopment in Zone 4, combined wet detention (0.23 ac-ft permanent pool) and stormwater harvesting (0.25 ac-ft harvest volume, 1 in/week), achieved 68.13% nitrogen removal (required 45%) and 80.29% phosphorus removal (required 80%), meeting all redevelopment performance standards.</li>
+        </ol>
+      </div>
+    </div>
+
+    <!-- ══ FIGURE REFERENCES ══ -->
+    <div class="section figure-refs" id="figures">
+      <h2 class="section-anchor">Figure References</h2>
+      <p>The following figures are referenced in this module. Source imagery should be obtained from the identified sources and inserted at the indicated placeholder locations.</p>
+
+      <div class="figure-ref-item">
+        <div class="fr-id">Figure 15-A — South Bay Utilities Site Photos</div>
+        <p>Residential streetscape and irrigated common areas. Source: Horizontal Subsurface Systems and www.stormwater.ucf.edu</p>
+      </div>
+
+      <div class="figure-ref-item">
+        <div class="fr-id">Figure 15-B — Winter Park Florida Retrofit</div>
+        <p>Regional pond collecting runoff water, wet detention pond for pollution control, and lawn irrigation with harvested water. Source: stormwater.ucf.edu case study documentation.</p>
+      </div>
+
+      <div class="figure-ref-item">
+        <div class="fr-id">Figure 15-C — Southeast Central Florida Agricultural Harvesting</div>
+        <p>Citrus grove irrigation (aerial rows) and sprinkler infrastructure serving approximately 550,000 acres. Source: stormwater.ucf.edu</p>
+      </div>
+
+      <div class="figure-ref-item">
+        <div class="fr-id">Figure 15-D — FDOT District Signature Project Aerial Map</div>
+        <p>Google Maps satellite image of Dubsdread Golf Course and I-4 corridor, Orlando FL. Coordinates: 28°35'06.31"N, 81°22'51.59"W. Source: Google Maps / FDOT District 5.</p>
+      </div>
+
+      <div class="figure-ref-item">
+        <div class="fr-id">Figure 15-E — City of Miramar Proposed Stormwater Supply System Plan View</div>
+        <p>Engineering site plan, Figure 1-2. Source: Hartman Consulting & Design, 301 E. Pine St. Suite 1020, Orlando FL 32801.</p>
+      </div>
+
+      <div class="figure-ref-item">
+        <div class="fr-id">Figure 15-F — Cocoa Village Harvesting and Use Area</div>
+        <p>Construction site aerial, pipe installation trench, and completed fountain plaza. Source: stormwater.ucf.edu / City of Cocoa documentation.</p>
+      </div>
+
+      <div class="figure-ref-item">
+        <div class="fr-id">Figure 15-G — REV Curves for Stormwater Harvesting (Zones 1, 3, 5)</div>
+        <p>Three zone-specific REV curve graphs. Source: Applicant's Handbook Vol. 1, Appendix O, Table 1.</p>
+      </div>
+
+      <div class="figure-ref-item">
+        <div class="fr-id">Figure 15-H — BMPFast General Site Information Screen</div>
+        <p>Software screen capture. Source: BMPFast software, project "harvesting."</p>
+      </div>
+
+      <div class="figure-ref-item">
+        <div class="fr-id">Figure 15-I — BMPFast Watershed Characteristics Worksheet</div>
+        <p>Software screen capture, Catchment 1 southwest catchment data entry. Source: BMPFast software.</p>
+      </div>
+
+      <div class="figure-ref-item">
+        <div class="fr-id">Figure 15-J — BMPFast Wet Detention Analysis Screen</div>
+        <p>Software screen capture, redevelopment analysis with load diagram. Source: BMPFast software.</p>
+      </div>
+
+      <div class="figure-ref-item">
+        <div class="fr-id">Figure 15-K — BMPFast Stormwater Harvesting Worksheet Screen</div>
+        <p>Software screen capture showing inputs and load diagram for stand-alone harvesting. Source: BMPFast software.</p>
+      </div>
+
+      <div class="figure-ref-item">
+        <div class="fr-id">Figure 15-L — BMPFast Multiple BMP Worksheet and Series Load Diagram</div>
+        <p>Software screen capture showing BMP series configuration, surface water discharge results, and Configure Catchments screen. Source: BMPFast software.</p>
+      </div>
+
+      <div class="figure-ref-item">
+        <div class="fr-id">Figure 15-M — BMPFast Summary Treatment Report</div>
+        <p>Software report screen capture showing compliance verification. Source: BMPFast software, file "2025 harvesting example redevelopment with pond.bmpt."</p>
+      </div>
+
+      <div class="figure-ref-item">
+        <div class="fr-id">Figure 15-N — CUP/WUP Analysis Excel Model Screen</div>
+        <p>Older Excel-based water balance model interface with two scenarios. Source: AH Vol. 1, Appendix N (Zone 2) and Appendix O, Table 1.</p>
+      </div>
+
+      <div class="figure-ref-item">
+        <div class="fr-id">Figure 15-O — Zone 2 REV Curves (Two Annotated Cases)</div>
+        <p>REV curve graphs for Zone 2 with efficiency annotations for ROC = 0.80 (61%) and ROC = 0.325 (90%). Source: AH Vol. 1, Appendix O, Table 1.</p>
+      </div>
+    </div>
+
+  </div><!-- /content -->
+
+  <footer>
+    <span>BMPFast Learning System · Module 15: Analysis for Harvesting</span>
+    <span>Author: Marty Wanielista · UCF / ERD · January 2026</span>
+    <span>Source: AH Vol. 1, Appendix N &amp; O; stormwater.ucf.edu</span>
+  </footer>
+
+</div><!-- /main -->
+</body>
+</html>

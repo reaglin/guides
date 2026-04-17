@@ -1,0 +1,1364 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>COP4709 - NoSQL &amp; MongoDB Guide</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.6;
+            color: #1a2e2e;
+            background: linear-gradient(135deg, #003333 0%, #005555 50%, #007766 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1000px;
+            margin: 0 auto;
+            background: #fff;
+            border-radius: 15px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.4);
+            overflow: hidden;
+        }
+
+        header {
+            background: linear-gradient(135deg, #003333 0%, #007766 100%);
+            color: white;
+            padding: 40px;
+            text-align: center;
+            border-bottom: 4px solid #00c9a7;
+        }
+
+        header h1 { font-size: 2.5em; margin-bottom: 10px; text-shadow: 2px 2px 6px rgba(0,0,0,0.4); }
+        header p  { font-size: 1.2em; opacity: 0.9; }
+
+        .content { padding: 40px; }
+
+        .intro {
+            background: linear-gradient(135deg, #e6fffa 0%, #b2f0e8 100%);
+            padding: 25px;
+            border-radius: 10px;
+            margin-bottom: 30px;
+            border-left: 5px solid #00a887;
+        }
+        .intro h2 { color: #004d40; margin-bottom: 15px; }
+
+        /* Collapsible */
+        .section { margin-bottom: 25px; }
+
+        .collapsible {
+            background: #fafafa;
+            border: 2px solid #e0f0ee;
+            border-radius: 10px;
+            margin-bottom: 15px;
+            overflow: hidden;
+            transition: all 0.3s ease;
+        }
+
+        .collapsible:hover {
+            border-color: #00a887;
+            box-shadow: 0 4px 12px rgba(0,168,135,0.18);
+        }
+
+        .collapsible-header {
+            background: linear-gradient(135deg, #003333 0%, #007766 100%);
+            color: white;
+            padding: 20px;
+            cursor: pointer;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-weight: 600;
+            font-size: 1.15em;
+            user-select: none;
+            text-shadow: 1px 1px 2px rgba(0,0,0,0.3);
+        }
+
+        .collapsible-header:hover { background: linear-gradient(135deg, #004444 0%, #009988 100%); }
+
+        .collapsible-header::after { content: '▼'; font-size: 0.8em; transition: transform 0.3s ease; }
+
+        .collapsible-content {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.4s ease;
+            padding: 0 20px;
+        }
+
+        .collapsible.active .collapsible-content { max-height: 14000px; padding: 20px; }
+        .collapsible.active .collapsible-header::after { transform: rotate(180deg); }
+
+        /* Info boxes */
+        .highlight-box { background: #fff8e1; border-left: 5px solid #f39c12; padding: 15px; margin: 15px 0; border-radius: 5px; }
+        .success-box   { background: #d4edda; border-left: 5px solid #27ae60; padding: 15px; margin: 15px 0; border-radius: 5px; }
+        .info-box      { background: #e0f7f5; border-left: 5px solid #00a887; padding: 15px; margin: 15px 0; border-radius: 5px; }
+        .danger-box    { background: #fdecea; border-left: 5px solid #c0392b; padding: 15px; margin: 15px 0; border-radius: 5px; }
+        .teal-box      { background: #e0f7f5; border-left: 5px solid #007766; padding: 15px; margin: 15px 0; border-radius: 5px; }
+
+        /* Code blocks — two themes */
+        .code-block {
+            background: #1a2e2e;
+            color: #d4f5ef;
+            padding: 20px;
+            border-radius: 8px;
+            overflow-x: auto;
+            margin: 15px 0;
+            font-family: 'Courier New', monospace;
+            font-size: 0.92em;
+            line-height: 1.65;
+            white-space: pre;
+        }
+
+        /* JSON / MongoDB shell syntax colors */
+        .code-block .kw   { color: #79dac8; }         /* keywords / methods */
+        .code-block .fn   { color: #61d6c4; }         /* function names */
+        .code-block .str  { color: #a8e6cf; }         /* strings */
+        .code-block .num  { color: #ffd180; }         /* numbers */
+        .code-block .bool { color: #ffb347; }         /* true / false / null */
+        .code-block .key  { color: #80d8ff; }         /* JSON field names */
+        .code-block .op   { color: #ff8a80; }         /* operators $gt $eq etc */
+        .code-block .cmt  { color: #4a7a7a; font-style: italic; } /* comments */
+        .code-block .obj  { color: #e0f7f5; }         /* braces/brackets */
+        .code-block .type { color: #b39ddb; }         /* BSON types */
+
+        /* SQL comparison blocks stay distinct */
+        .code-block.sql { background: #1e1e1e; color: #d4d4d4; }
+        .code-block.sql .kw  { color: #569cd6; }
+        .code-block.sql .str { color: #ce9178; }
+        .code-block.sql .num { color: #b5cea8; }
+        .code-block.sql .cmt { color: #6a9955; font-style: italic; }
+        .code-block.sql .fn  { color: #dcdcaa; }
+
+        /* Result / output tables */
+        .result-label {
+            background: #007766;
+            color: white;
+            padding: 6px 14px;
+            font-size: 0.8em;
+            font-weight: 700;
+            border-radius: 5px 5px 0 0;
+            display: inline-block;
+            letter-spacing: 0.05em;
+        }
+
+        .result-json {
+            background: #0d2020;
+            color: #a8e6cf;
+            padding: 18px;
+            border-radius: 0 8px 8px 8px;
+            font-family: 'Courier New', monospace;
+            font-size: 0.88em;
+            line-height: 1.6;
+            margin-bottom: 15px;
+            white-space: pre;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            background: white;
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+            margin-bottom: 15px;
+        }
+
+        th {
+            background: linear-gradient(135deg, #003333, #007766);
+            color: white;
+            padding: 12px 15px;
+            text-align: left;
+            font-weight: 600;
+            font-size: 0.9em;
+        }
+
+        td { padding: 10px 15px; border-bottom: 1px solid #e0f0ee; font-size: 0.92em; }
+        tr:last-child td { border-bottom: none; }
+        tr:nth-child(even) { background: #f0fbf9; }
+        tr:hover { background: #d4f5ef; }
+
+        /* Grids */
+        .two-col   { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin: 20px 0; }
+        .three-col { display: grid; grid-template-columns: repeat(3, 1fr); gap: 15px; margin: 20px 0; }
+        .four-col  { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; margin: 20px 0; }
+
+        .card { padding: 18px; border-radius: 10px; box-shadow: 0 4px 12px rgba(0,0,0,0.08); }
+        .card.teal   { background: linear-gradient(135deg, #e0f7f5, #b2ede4); border: 2px solid #00a887; }
+        .card.good   { background: linear-gradient(135deg, #d4edda, #c3e6cb); border: 2px solid #27ae60; }
+        .card.bad    { background: linear-gradient(135deg, #fdecea, #fcc);     border: 2px solid #c0392b; }
+        .card.blue   { background: linear-gradient(135deg, #e8f4f8, #c8e6f5); border: 2px solid #2980b9; }
+        .card.dark   { background: linear-gradient(135deg, #003333, #005555); color: #a8e6cf; border: 2px solid #00c9a7; }
+        .card.dark h4 { color: #00e5cc; }
+        .card.dark p  { color: #80d8cc; }
+
+        /* NoSQL type cards */
+        .nosql-card {
+            background: linear-gradient(135deg, #003333, #005555);
+            border: 2px solid #00c9a7;
+            border-radius: 10px;
+            padding: 20px;
+            margin-bottom: 16px;
+            color: #d4f5ef;
+        }
+
+        .nosql-card h4 { color: #00e5cc; font-size: 1.1em; margin-bottom: 8px; }
+        .nosql-card .db-examples { margin-top: 10px; }
+
+        .badge {
+            display: inline-block;
+            padding: 3px 10px;
+            border-radius: 12px;
+            font-size: 0.78em;
+            font-weight: 700;
+            margin: 3px 2px;
+        }
+
+        .badge-teal   { background: #00a887; color: white; }
+        .badge-green  { background: #27ae60; color: white; }
+        .badge-blue   { background: #2980b9; color: white; }
+        .badge-amber  { background: #e8940a; color: white; }
+        .badge-red    { background: #c0392b; color: white; }
+        .badge-purple { background: #8e44ad; color: white; }
+        .badge-gray   { background: #7f8c8d; color: white; }
+
+        /* Method pill labels */
+        .method {
+            display: inline-block;
+            padding: 2px 10px;
+            border-radius: 4px;
+            font-family: 'Courier New', monospace;
+            font-size: 0.82em;
+            font-weight: 700;
+            margin-right: 6px;
+        }
+
+        .method-find    { background: #007766; color: white; }
+        .method-insert  { background: #27ae60; color: white; }
+        .method-update  { background: #e8940a; color: white; }
+        .method-delete  { background: #c0392b; color: white; }
+        .method-aggr    { background: #8e44ad; color: white; }
+        .method-index   { background: #2980b9; color: white; }
+
+        /* Typography */
+        h3 {
+            color: #004d40;
+            margin: 22px 0 10px;
+            font-size: 1.35em;
+            border-bottom: 2px solid #b2ede4;
+            padding-bottom: 5px;
+        }
+
+        h4 { color: #003333; margin: 15px 0 8px; font-size: 1.05em; }
+        strong { color: #005555; }
+
+        code {
+            background: #e0f7f5;
+            color: #007766;
+            padding: 2px 6px;
+            border-radius: 4px;
+            font-family: 'Courier New', monospace;
+            font-size: 0.9em;
+        }
+
+        ul, ol { margin: 12px 0 12px 28px; }
+        li { margin: 7px 0; }
+
+        footer {
+            background: #003333;
+            color: #80d8cc;
+            text-align: center;
+            padding: 20px;
+            border-top: 4px solid #00c9a7;
+        }
+    </style>
+</head>
+<body>
+<div class="container">
+
+    <header>
+        <h1>🍃 NoSQL &amp; MongoDB</h1>
+        <p>COP4709 — Database Management</p>
+    </header>
+
+    <div class="content">
+
+        <!-- ═══════ INTRO ═══════ -->
+        <div class="intro">
+            <h2>🔍 What Is NoSQL?</h2>
+            <p><strong>NoSQL</strong> ("Not Only SQL") is a broad category of database systems that store and retrieve data using models other than the traditional relational table. NoSQL databases were developed to address limitations of relational systems when dealing with <strong>massive scale</strong>, <strong>flexible or evolving schemas</strong>, <strong>unstructured data</strong>, or <strong>high-velocity writes</strong>.</p>
+            <p style="margin-top:12px;">NoSQL does not mean "no SQL" — many NoSQL systems support SQL-like query languages. It means the system is not constrained to the relational model. NoSQL databases trade some of the strict consistency guarantees of relational databases for gains in scalability, flexibility, and performance in specific workloads.</p>
+            <p style="margin-top:12px;">This guide uses <strong>MongoDB</strong> — the world's most popular document database — as the primary example, with comparisons to relational SQL throughout.</p>
+        </div>
+
+        <!-- ═══════════════════════════════════════════════════ -->
+        <!-- SECTION 1 — NOSQL TYPES                             -->
+        <!-- ═══════════════════════════════════════════════════ -->
+        <div class="section">
+            <div class="collapsible active">
+                <div class="collapsible-header">1. Types of NoSQL Databases</div>
+                <div class="collapsible-content">
+
+                    <div class="info-box">
+                        NoSQL is not a single technology — it is a family of different data models. Each type is optimised for a specific kind of data or access pattern. Choosing the right NoSQL type (or deciding to use a relational database instead) depends entirely on what your data looks like and how you need to access it.
+                    </div>
+
+                    <!-- Document -->
+                    <div class="nosql-card">
+                        <h4>📄 Document Stores</h4>
+                        <p>Store data as self-contained documents (typically JSON or BSON). Each document can have a different structure — no fixed schema. Documents are grouped into <strong>collections</strong> (analogous to tables). The most flexible and widely-used NoSQL type.</p>
+                        <div class="db-examples">
+                            <span class="badge badge-teal">MongoDB ← this guide</span>
+                            <span class="badge badge-gray">CouchDB</span>
+                            <span class="badge badge-gray">Amazon DocumentDB</span>
+                            <span class="badge badge-gray">Firestore</span>
+                        </div>
+                        <p style="margin-top:10px; font-size:0.9em;"><strong>Best for:</strong> User profiles, product catalogues, content management, e-commerce, mobile apps</p>
+                    </div>
+
+                    <!-- Key-Value -->
+                    <div class="nosql-card">
+                        <h4>🔑 Key-Value Stores</h4>
+                        <p>The simplest NoSQL model. Every item is stored as a key and its associated value. Blazing fast for simple lookups — the value is opaque to the database (it may be a string, number, JSON, binary, etc.).</p>
+                        <div class="db-examples">
+                            <span class="badge badge-red">Redis</span>
+                            <span class="badge badge-gray">Amazon DynamoDB</span>
+                            <span class="badge badge-gray">Memcached</span>
+                            <span class="badge badge-gray">Riak</span>
+                        </div>
+                        <p style="margin-top:10px; font-size:0.9em;"><strong>Best for:</strong> Session caching, shopping carts, real-time leaderboards, pub/sub messaging, rate limiting</p>
+                    </div>
+
+                    <!-- Column-Family -->
+                    <div class="nosql-card">
+                        <h4>📊 Column-Family (Wide-Column) Stores</h4>
+                        <p>Data is stored in rows, but columns are grouped into <strong>column families</strong> and each row can have a different set of columns. Designed for massive distributed write throughput and time-series data across many nodes.</p>
+                        <div class="db-examples">
+                            <span class="badge badge-blue">Apache Cassandra</span>
+                            <span class="badge badge-gray">HBase</span>
+                            <span class="badge badge-gray">Google Bigtable</span>
+                            <span class="badge badge-gray">Amazon Keyspaces</span>
+                        </div>
+                        <p style="margin-top:10px; font-size:0.9em;"><strong>Best for:</strong> IoT sensor data, time-series metrics, event logging, write-heavy analytics at scale</p>
+                    </div>
+
+                    <!-- Graph -->
+                    <div class="nosql-card">
+                        <h4>🕸️ Graph Databases</h4>
+                        <p>Store data as <strong>nodes</strong> (entities) and <strong>edges</strong> (relationships between nodes). Relationships are first-class citizens — traversing connections is extremely fast compared to JOIN chains in relational databases.</p>
+                        <div class="db-examples">
+                            <span class="badge badge-purple">Neo4j</span>
+                            <span class="badge badge-gray">Amazon Neptune</span>
+                            <span class="badge badge-gray">ArangoDB</span>
+                            <span class="badge badge-gray">TigerGraph</span>
+                        </div>
+                        <p style="margin-top:10px; font-size:0.9em;"><strong>Best for:</strong> Social networks, recommendation engines, fraud detection, knowledge graphs, network topology</p>
+                    </div>
+
+                    <h3>NoSQL vs Relational — At a Glance</h3>
+
+                    <table>
+                        <tr><th>Characteristic</th><th>Relational (SQL)</th><th>NoSQL (Document)</th></tr>
+                        <tr>
+                            <td><strong>Data Model</strong></td>
+                            <td>Tables with rows and columns; fixed schema</td>
+                            <td>Collections of flexible JSON documents</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Schema</strong></td>
+                            <td>Schema-on-write — defined before data is inserted</td>
+                            <td>Schema-on-read — structure inferred at query time</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Relationships</strong></td>
+                            <td>Foreign keys, JOINs across tables</td>
+                            <td>Embedding data within documents; or manual references</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Scaling</strong></td>
+                            <td>Primarily vertical (bigger server)</td>
+                            <td>Primarily horizontal (more servers / sharding)</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Consistency</strong></td>
+                            <td>ACID transactions; strong consistency</td>
+                            <td>Eventually consistent by default; ACID available in MongoDB 4+</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Best Fit</strong></td>
+                            <td>Structured business data, financial records, complex queries</td>
+                            <td>Variable-structure data, rapid development, high-volume writes</td>
+                        </tr>
+                    </table>
+
+                    <div class="highlight-box">
+                        <strong>NoSQL is not a replacement for relational databases</strong> — it is an alternative optimised for different problems. Many modern applications use both: a relational database for transactional data (orders, accounts) and a document database for flexible content (user profiles, logs, product details).
+                    </div>
+
+                </div>
+            </div>
+        </div>
+
+        <!-- ═══════════════════════════════════════════════════ -->
+        <!-- SECTION 2 — MONGODB CORE CONCEPTS                   -->
+        <!-- ═══════════════════════════════════════════════════ -->
+        <div class="section">
+            <div class="collapsible">
+                <div class="collapsible-header">2. MongoDB Core Concepts — Documents, Collections &amp; BSON</div>
+                <div class="collapsible-content">
+
+                    <div class="info-box">
+                        MongoDB stores data as <strong>BSON documents</strong> (Binary JSON) organised into <strong>collections</strong> inside a <strong>database</strong>. This hierarchy maps loosely onto the relational model but with key differences.
+                    </div>
+
+                    <h3>The MongoDB Hierarchy</h3>
+
+                    <table>
+                        <tr><th>MongoDB Concept</th><th>Relational Equivalent</th><th>Description</th></tr>
+                        <tr>
+                            <td><strong>Database</strong></td>
+                            <td>Database</td>
+                            <td>A named container for collections</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Collection</strong></td>
+                            <td>Table</td>
+                            <td>A group of documents — no enforced schema by default</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Document</strong></td>
+                            <td>Row</td>
+                            <td>A single JSON/BSON object — the unit of storage</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Field</strong></td>
+                            <td>Column</td>
+                            <td>A key-value pair within a document</td>
+                        </tr>
+                        <tr>
+                            <td><strong>_id</strong></td>
+                            <td>Primary Key</td>
+                            <td>Auto-generated unique identifier (ObjectId by default)</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Embedded document</strong></td>
+                            <td>Foreign key + JOIN</td>
+                            <td>A nested document inside another document</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Array field</strong></td>
+                            <td>One-to-many table</td>
+                            <td>A list of values or sub-documents inside a document</td>
+                        </tr>
+                    </table>
+
+                    <h3>A MongoDB Document</h3>
+                    <p>Documents look like JSON objects. Unlike a table row, a document can contain nested objects and arrays — entire related data sets can live inside a single document.</p>
+
+                    <div class="code-block"><span class="cmt">// A product document in the "products" collection</span>
+<span class="obj">{</span>
+    <span class="key">"_id"</span>:          <span class="type">ObjectId("64b7c3e2f4a5d10023abc001")</span>,
+    <span class="key">"sku"</span>:          <span class="str">"LAPTOP-PRO-15"</span>,
+    <span class="key">"name"</span>:         <span class="str">"ProBook 15 Laptop"</span>,
+    <span class="key">"category"</span>:     <span class="str">"Electronics"</span>,
+    <span class="key">"price"</span>:        <span class="num">1299.99</span>,
+    <span class="key">"in_stock"</span>:     <span class="bool">true</span>,
+    <span class="key">"qty_available"</span>: <span class="num">47</span>,
+
+    <span class="cmt">// Embedded sub-document — no separate "specs" table needed</span>
+    <span class="key">"specs"</span>: <span class="obj">{</span>
+        <span class="key">"cpu"</span>:     <span class="str">"Intel Core i7-13700H"</span>,
+        <span class="key">"ram_gb"</span>:  <span class="num">16</span>,
+        <span class="key">"ssd_gb"</span>:  <span class="num">512</span>,
+        <span class="key">"display"</span>: <span class="str">"15.6 inch 1920x1080"</span>
+    <span class="obj">}</span>,
+
+    <span class="cmt">// Array of strings — no separate tags table needed</span>
+    <span class="key">"tags"</span>: <span class="obj">[</span>
+        <span class="str">"laptop"</span>, <span class="str">"windows"</span>, <span class="str">"portable"</span>, <span class="str">"business"</span>
+    <span class="obj">]</span>,
+
+    <span class="cmt">// Array of sub-documents — no separate reviews table needed</span>
+    <span class="key">"reviews"</span>: <span class="obj">[</span>
+        <span class="obj">{</span>
+            <span class="key">"user"</span>:    <span class="str">"jdoe42"</span>,
+            <span class="key">"rating"</span>:  <span class="num">5</span>,
+            <span class="key">"comment"</span>: <span class="str">"Excellent build quality and performance."</span>,
+            <span class="key">"date"</span>:    <span class="type">ISODate("2025-02-01")</span>
+        <span class="obj">}</span>,
+        <span class="obj">{</span>
+            <span class="key">"user"</span>:    <span class="str">"techfan99"</span>,
+            <span class="key">"rating"</span>:  <span class="num">4</span>,
+            <span class="key">"comment"</span>: <span class="str">"Great laptop, battery could be better."</span>,
+            <span class="key">"date"</span>:    <span class="type">ISODate("2025-02-08")</span>
+        <span class="obj">}</span>
+    <span class="obj">]</span>,
+
+    <span class="key">"created_at"</span>: <span class="type">ISODate("2025-01-15T09:30:00Z")</span>,
+    <span class="key">"updated_at"</span>: <span class="type">ISODate("2025-02-10T14:22:00Z")</span>
+<span class="obj">}</span></div>
+
+                    <h3>BSON Data Types</h3>
+                    <p>MongoDB stores data in BSON — a binary superset of JSON that adds extra data types not available in plain JSON.</p>
+
+                    <table>
+                        <tr><th>BSON Type</th><th>Example Value</th><th>Notes</th></tr>
+                        <tr><td><code>String</code></td><td><code>"hello world"</code></td><td>UTF-8 encoded text</td></tr>
+                        <tr><td><code>Number (Int32/Int64/Double)</code></td><td><code>42</code>, <code>3.14</code></td><td>Integers and floating point</td></tr>
+                        <tr><td><code>Boolean</code></td><td><code>true</code>, <code>false</code></td><td>Logical values</td></tr>
+                        <tr><td><code>Date</code></td><td><code>ISODate("2025-01-15")</code></td><td>Stored as milliseconds since epoch</td></tr>
+                        <tr><td><code>ObjectId</code></td><td><code>ObjectId("64b7...")</code></td><td>12-byte auto-generated unique ID</td></tr>
+                        <tr><td><code>Array</code></td><td><code>["a", "b", "c"]</code></td><td>Ordered list of values</td></tr>
+                        <tr><td><code>Object (Document)</code></td><td><code>{ "x": 1 }</code></td><td>Embedded sub-document</td></tr>
+                        <tr><td><code>Null</code></td><td><code>null</code></td><td>Explicitly absent value</td></tr>
+                        <tr><td><code>Decimal128</code></td><td><code>NumberDecimal("19.99")</code></td><td>High-precision decimal for currency</td></tr>
+                    </table>
+
+                    <h3>Connecting and Selecting a Database</h3>
+
+                    <div class="code-block"><span class="cmt">// Connect via MongoDB shell (mongosh)</span>
+mongosh <span class="str">"mongodb://localhost:27017"</span>
+
+<span class="cmt">// Switch to (or create) a database</span>
+use bookstore
+
+<span class="cmt">// List all collections in the current database</span>
+show collections
+
+<span class="cmt">// Check current database</span>
+db.getName()</div>
+
+                </div>
+            </div>
+        </div>
+
+        <!-- ═══════════════════════════════════════════════════ -->
+        <!-- SECTION 3 — CREATE: INSERT                          -->
+        <!-- ═══════════════════════════════════════════════════ -->
+        <div class="section">
+            <div class="collapsible">
+                <div class="collapsible-header">3. Create — Inserting Documents</div>
+                <div class="collapsible-content">
+
+                    <div class="info-box">
+                        <span class="method method-insert">insertOne</span> <span class="method method-insert">insertMany</span>
+                        MongoDB creates a collection automatically the first time you insert into it — no <code>CREATE TABLE</code> statement required. Each inserted document receives an <code>_id</code> field automatically if one is not provided.
+                    </div>
+
+                    <h3>insertOne — Add a Single Document</h3>
+
+                    <div class="code-block"><span class="cmt">// Insert one book document into the "books" collection</span>
+db.books.insertOne(<span class="obj">{</span>
+    <span class="key">"title"</span>:     <span class="str">"The Pragmatic Programmer"</span>,
+    <span class="key">"authors"</span>:   <span class="obj">[</span><span class="str">"David Thomas"</span>, <span class="str">"Andrew Hunt"</span><span class="obj">]</span>,
+    <span class="key">"isbn"</span>:      <span class="str">"978-0135957059"</span>,
+    <span class="key">"year"</span>:      <span class="num">2019</span>,
+    <span class="key">"price"</span>:     <span class="num">49.95</span>,
+    <span class="key">"category"</span>:  <span class="str">"Technology"</span>,
+    <span class="key">"in_stock"</span>:  <span class="bool">true</span>,
+    <span class="key">"pages"</span>:     <span class="num">352</span>,
+    <span class="key">"tags"</span>:      <span class="obj">[</span><span class="str">"programming"</span>, <span class="str">"software"</span>, <span class="str">"best-practices"</span><span class="obj">]</span>
+<span class="obj">})</span></div>
+
+                    <div class="result-json">{
+  acknowledged: true,
+  insertedId: ObjectId('64b7c3e2f4a5d10023abc002')
+}</div>
+
+                    <h3>insertMany — Add Multiple Documents at Once</h3>
+
+                    <div class="code-block"><span class="cmt">// Insert several books in one operation</span>
+db.books.insertMany(<span class="obj">[</span>
+    <span class="obj">{</span>
+        <span class="key">"title"</span>:     <span class="str">"Clean Code"</span>,
+        <span class="key">"authors"</span>:   <span class="obj">[</span><span class="str">"Robert C. Martin"</span><span class="obj">]</span>,
+        <span class="key">"isbn"</span>:      <span class="str">"978-0132350884"</span>,
+        <span class="key">"year"</span>:      <span class="num">2008</span>,
+        <span class="key">"price"</span>:     <span class="num">44.99</span>,
+        <span class="key">"category"</span>:  <span class="str">"Technology"</span>,
+        <span class="key">"in_stock"</span>:  <span class="bool">true</span>,
+        <span class="key">"pages"</span>:     <span class="num">431</span>
+    <span class="obj">}</span>,
+    <span class="obj">{</span>
+        <span class="key">"title"</span>:     <span class="str">"Design Patterns"</span>,
+        <span class="key">"authors"</span>:   <span class="obj">[</span><span class="str">"Gang of Four"</span><span class="obj">]</span>,
+        <span class="key">"isbn"</span>:      <span class="str">"978-0201633610"</span>,
+        <span class="key">"year"</span>:      <span class="num">1994</span>,
+        <span class="key">"price"</span>:     <span class="num">54.99</span>,
+        <span class="key">"category"</span>:  <span class="str">"Technology"</span>,
+        <span class="key">"in_stock"</span>:  <span class="bool">false</span>,
+        <span class="key">"pages"</span>:     <span class="num">395</span>
+    <span class="obj">}</span>,
+    <span class="obj">{</span>
+        <span class="key">"title"</span>:     <span class="str">"Dune"</span>,
+        <span class="key">"authors"</span>:   <span class="obj">[</span><span class="str">"Frank Herbert"</span><span class="obj">]</span>,
+        <span class="key">"isbn"</span>:      <span class="str">"978-0441013593"</span>,
+        <span class="key">"year"</span>:      <span class="num">1965</span>,
+        <span class="key">"price"</span>:     <span class="num">12.99</span>,
+        <span class="key">"category"</span>:  <span class="str">"Fiction"</span>,
+        <span class="key">"in_stock"</span>:  <span class="bool">true</span>,
+        <span class="key">"pages"</span>:     <span class="num">896</span>
+    <span class="obj">}</span>
+<span class="obj">]</span>)</div>
+
+                    <div class="teal-box">
+                        <strong>Schema Flexibility in Action:</strong> Notice that the books above have slightly different field sets — that is perfectly valid in MongoDB. One book might have a <code>"tags"</code> field, another might not. There is no error for missing fields, and no ALTER TABLE required to add a new field.
+                    </div>
+
+                </div>
+            </div>
+        </div>
+
+        <!-- ═══════════════════════════════════════════════════ -->
+        <!-- SECTION 4 — READ: QUERYING                          -->
+        <!-- ═══════════════════════════════════════════════════ -->
+        <div class="section">
+            <div class="collapsible">
+                <div class="collapsible-header">4. Read — Querying Documents</div>
+                <div class="collapsible-content">
+
+                    <div class="info-box">
+                        <span class="method method-find">find</span> <span class="method method-find">findOne</span>
+                        MongoDB queries use a <strong>filter document</strong> — a JSON object specifying which fields must match. An empty filter <code>{}</code> returns all documents. Projection controls which fields are returned.
+                    </div>
+
+                    <h3>Basic find — Return All or Filtered Documents</h3>
+
+                    <div class="code-block"><span class="cmt">// Return ALL documents in the collection</span>
+db.books.find()
+
+<span class="cmt">// Return all books in the Fiction category</span>
+db.books.find(<span class="obj">{</span> <span class="key">"category"</span>: <span class="str">"Fiction"</span> <span class="obj">}</span>)
+
+<span class="cmt">// findOne — return only the first matching document</span>
+db.books.findOne(<span class="obj">{</span> <span class="key">"title"</span>: <span class="str">"Dune"</span> <span class="obj">}</span>)
+
+<span class="cmt">// Multiple conditions — implicit AND (both must be true)</span>
+db.books.find(<span class="obj">{</span>
+    <span class="key">"category"</span>: <span class="str">"Technology"</span>,
+    <span class="key">"in_stock"</span>:  <span class="bool">true</span>
+<span class="obj">}</span>)</div>
+
+                    <h3>Projection — Selecting Which Fields to Return</h3>
+                    <p>The second argument to <code>find()</code> is a <strong>projection document</strong>. Use <code>1</code> to include a field and <code>0</code> to exclude it. You cannot mix includes and excludes except for <code>_id</code>.</p>
+
+                    <div class="code-block"><span class="cmt">// Return only title and price — exclude _id</span>
+db.books.find(
+    <span class="obj">{</span> <span class="key">"category"</span>: <span class="str">"Technology"</span> <span class="obj">}</span>,
+    <span class="obj">{</span> <span class="key">"title"</span>: <span class="num">1</span>, <span class="key">"price"</span>: <span class="num">1</span>, <span class="key">"_id"</span>: <span class="num">0</span> <span class="obj">}</span>   <span class="cmt">// include title+price, exclude _id</span>
+)</div>
+
+                    <div class="result-json">[
+  { title: 'The Pragmatic Programmer', price: 49.95 },
+  { title: 'Clean Code',               price: 44.99 },
+  { title: 'Design Patterns',          price: 54.99 }
+]</div>
+
+                    <h3>Comparison Operators</h3>
+
+                    <table>
+                        <tr><th>Operator</th><th>Meaning</th><th>SQL Equivalent</th></tr>
+                        <tr><td><code>$eq</code></td><td>Equal to</td><td><code>= value</code></td></tr>
+                        <tr><td><code>$ne</code></td><td>Not equal</td><td><code>&lt;&gt; value</code></td></tr>
+                        <tr><td><code>$gt</code></td><td>Greater than</td><td><code>&gt; value</code></td></tr>
+                        <tr><td><code>$gte</code></td><td>Greater than or equal</td><td><code>&gt;= value</code></td></tr>
+                        <tr><td><code>$lt</code></td><td>Less than</td><td><code>&lt; value</code></td></tr>
+                        <tr><td><code>$lte</code></td><td>Less than or equal</td><td><code>&lt;= value</code></td></tr>
+                        <tr><td><code>$in</code></td><td>Value in a list</td><td><code>IN (a, b, c)</code></td></tr>
+                        <tr><td><code>$nin</code></td><td>Value NOT in a list</td><td><code>NOT IN (a, b, c)</code></td></tr>
+                    </table>
+
+                    <div class="code-block"><span class="cmt">// Books priced between $10 and $50</span>
+db.books.find(<span class="obj">{</span>
+    <span class="key">"price"</span>: <span class="obj">{</span> <span class="op">$gte</span>: <span class="num">10</span>, <span class="op">$lte</span>: <span class="num">50</span> <span class="obj">}</span>
+<span class="obj">}</span>)
+
+<span class="cmt">// Books published after 2000</span>
+db.books.find(<span class="obj">{</span>
+    <span class="key">"year"</span>: <span class="obj">{</span> <span class="op">$gt</span>: <span class="num">2000</span> <span class="obj">}</span>
+<span class="obj">}</span>)
+
+<span class="cmt">// Books in a specific category list</span>
+db.books.find(<span class="obj">{</span>
+    <span class="key">"category"</span>: <span class="obj">{</span> <span class="op">$in</span>: <span class="obj">[</span><span class="str">"Fiction"</span>, <span class="str">"Biography"</span><span class="obj">]</span> <span class="obj">}</span>
+<span class="obj">}</span>)</div>
+
+                    <h3>Logical Operators</h3>
+
+                    <div class="code-block"><span class="cmt">// $and — both conditions must be true (explicit AND)</span>
+db.books.find(<span class="obj">{</span>
+    <span class="op">$and</span>: <span class="obj">[</span>
+        <span class="obj">{</span> <span class="key">"category"</span>: <span class="str">"Technology"</span> <span class="obj">}</span>,
+        <span class="obj">{</span> <span class="key">"price"</span>: <span class="obj">{</span> <span class="op">$lt</span>: <span class="num">50</span> <span class="obj">}</span> <span class="obj">}</span>
+    <span class="obj">]</span>
+<span class="obj">}</span>)
+
+<span class="cmt">// $or — at least one condition must be true</span>
+db.books.find(<span class="obj">{</span>
+    <span class="op">$or</span>: <span class="obj">[</span>
+        <span class="obj">{</span> <span class="key">"category"</span>: <span class="str">"Fiction"</span> <span class="obj">}</span>,
+        <span class="obj">{</span> <span class="key">"price"</span>: <span class="obj">{</span> <span class="op">$lt</span>: <span class="num">15</span> <span class="obj">}</span> <span class="obj">}</span>
+    <span class="obj">]</span>
+<span class="obj">}</span>)
+
+<span class="cmt">// $not — negate a condition</span>
+db.books.find(<span class="obj">{</span>
+    <span class="key">"in_stock"</span>: <span class="obj">{</span> <span class="op">$not</span>: <span class="obj">{</span> <span class="op">$eq</span>: <span class="bool">true</span> <span class="obj">}</span> <span class="obj">}</span>
+<span class="obj">}</span>)</div>
+
+                    <h3>Querying Arrays and Embedded Documents</h3>
+
+                    <div class="code-block"><span class="cmt">// Find books where the tags array CONTAINS "programming"</span>
+db.books.find(<span class="obj">{</span> <span class="key">"tags"</span>: <span class="str">"programming"</span> <span class="obj">}</span>)
+
+<span class="cmt">// $all — array must contain ALL of these values</span>
+db.books.find(<span class="obj">{</span>
+    <span class="key">"tags"</span>: <span class="obj">{</span> <span class="op">$all</span>: <span class="obj">[</span><span class="str">"programming"</span>, <span class="str">"software"</span><span class="obj">]</span> <span class="obj">}</span>
+<span class="obj">}</span>)
+
+<span class="cmt">// Dot notation — query inside an embedded document</span>
+<span class="cmt">// Find books where specs.ram_gb is 16 or more</span>
+db.products.find(<span class="obj">{</span>
+    <span class="key">"specs.ram_gb"</span>: <span class="obj">{</span> <span class="op">$gte</span>: <span class="num">16</span> <span class="obj">}</span>
+<span class="obj">}</span>)
+
+<span class="cmt">// $elemMatch — match array element meeting multiple conditions</span>
+<span class="cmt">// Books with at least one review rated 5 stars</span>
+db.products.find(<span class="obj">{</span>
+    <span class="key">"reviews"</span>: <span class="obj">{</span>
+        <span class="op">$elemMatch</span>: <span class="obj">{</span> <span class="key">"rating"</span>: <span class="num">5</span> <span class="obj">}</span>
+    <span class="obj">}</span>
+<span class="obj">}</span>)</div>
+
+                    <h3>Sorting, Limiting, and Skipping</h3>
+
+                    <div class="code-block"><span class="cmt">// Sort by price ascending (1) or descending (-1)</span>
+db.books.find().sort(<span class="obj">{</span> <span class="key">"price"</span>: <span class="num">1</span> <span class="obj">}</span>)    <span class="cmt">// cheapest first</span>
+db.books.find().sort(<span class="obj">{</span> <span class="key">"price"</span>: <span class="num">-1</span> <span class="obj">}</span>)   <span class="cmt">// most expensive first</span>
+
+<span class="cmt">// Limit — return at most 5 results</span>
+db.books.find().sort(<span class="obj">{</span> <span class="key">"price"</span>: <span class="num">-1</span> <span class="obj">}</span>).limit(<span class="num">5</span>)
+
+<span class="cmt">// Skip + Limit — pagination (page 2, 10 items per page)</span>
+db.books.find()
+        .sort(<span class="obj">{</span> <span class="key">"title"</span>: <span class="num">1</span> <span class="obj">}</span>)
+        .skip(<span class="num">10</span>)   <span class="cmt">// skip first 10</span>
+        .limit(<span class="num">10</span>)  <span class="cmt">// return next 10</span>
+
+<span class="cmt">// Count matching documents</span>
+db.books.countDocuments(<span class="obj">{</span> <span class="key">"category"</span>: <span class="str">"Technology"</span> <span class="obj">}</span>)</div>
+
+                </div>
+            </div>
+        </div>
+
+        <!-- ═══════════════════════════════════════════════════ -->
+        <!-- SECTION 5 — UPDATE                                  -->
+        <!-- ═══════════════════════════════════════════════════ -->
+        <div class="section">
+            <div class="collapsible">
+                <div class="collapsible-header">5. Update — Modifying Documents</div>
+                <div class="collapsible-content">
+
+                    <div class="info-box">
+                        <span class="method method-update">updateOne</span> <span class="method method-update">updateMany</span> <span class="method method-update">replaceOne</span>
+                        MongoDB updates use <strong>update operators</strong> to describe what should change. The <code>$set</code> operator is the most common — it updates or adds specific fields without touching the rest of the document.
+                    </div>
+
+                    <h3>Key Update Operators</h3>
+
+                    <table>
+                        <tr><th>Operator</th><th>Effect</th><th>Example</th></tr>
+                        <tr><td><code>$set</code></td><td>Set a field to a value (add if not exists)</td><td><code>{ $set: { "price": 39.99 } }</code></td></tr>
+                        <tr><td><code>$unset</code></td><td>Remove a field from the document</td><td><code>{ $unset: { "old_code": "" } }</code></td></tr>
+                        <tr><td><code>$inc</code></td><td>Increment a numeric field by N</td><td><code>{ $inc: { "qty": -1 } }</code></td></tr>
+                        <tr><td><code>$mul</code></td><td>Multiply a numeric field by N</td><td><code>{ $mul: { "price": 0.9 } }</code></td></tr>
+                        <tr><td><code>$rename</code></td><td>Rename a field</td><td><code>{ $rename: { "colour": "color" } }</code></td></tr>
+                        <tr><td><code>$push</code></td><td>Append a value to an array</td><td><code>{ $push: { "tags": "sale" } }</code></td></tr>
+                        <tr><td><code>$pull</code></td><td>Remove matching values from an array</td><td><code>{ $pull: { "tags": "discontinued" } }</code></td></tr>
+                        <tr><td><code>$addToSet</code></td><td>Add to array only if value not already present</td><td><code>{ $addToSet: { "tags": "featured" } }</code></td></tr>
+                    </table>
+
+                    <h3>updateOne — Modify the First Matching Document</h3>
+
+                    <div class="code-block"><span class="cmt">// Update the price of "Clean Code"</span>
+db.books.updateOne(
+    <span class="obj">{</span> <span class="key">"title"</span>: <span class="str">"Clean Code"</span> <span class="obj">}</span>,            <span class="cmt">// filter: which document</span>
+    <span class="obj">{</span> <span class="op">$set</span>: <span class="obj">{</span> <span class="key">"price"</span>: <span class="num">39.99</span>, <span class="key">"on_sale"</span>: <span class="bool">true</span> <span class="obj">}</span> <span class="obj">}</span>   <span class="cmt">// update: what to change</span>
+)
+
+<span class="cmt">// Decrement stock quantity when a book is sold</span>
+db.books.updateOne(
+    <span class="obj">{</span> <span class="key">"isbn"</span>: <span class="str">"978-0135957059"</span> <span class="obj">}</span>,
+    <span class="obj">{</span> <span class="op">$inc</span>: <span class="obj">{</span> <span class="key">"qty_available"</span>: <span class="num">-1</span> <span class="obj">}</span> <span class="obj">}</span>
+)
+
+<span class="cmt">// Add a tag to the tags array</span>
+db.books.updateOne(
+    <span class="obj">{</span> <span class="key">"title"</span>: <span class="str">"Dune"</span> <span class="obj">}</span>,
+    <span class="obj">{</span> <span class="op">$addToSet</span>: <span class="obj">{</span> <span class="key">"tags"</span>: <span class="str">"sci-fi"</span> <span class="obj">}</span> <span class="obj">}</span>   <span class="cmt">// only adds if not already there</span>
+)
+
+<span class="cmt">// Push a new review sub-document into the reviews array</span>
+db.products.updateOne(
+    <span class="obj">{</span> <span class="key">"sku"</span>: <span class="str">"LAPTOP-PRO-15"</span> <span class="obj">}</span>,
+    <span class="obj">{</span>
+        <span class="op">$push</span>: <span class="obj">{</span>
+            <span class="key">"reviews"</span>: <span class="obj">{</span>
+                <span class="key">"user"</span>:    <span class="str">"alice_m"</span>,
+                <span class="key">"rating"</span>:  <span class="num">5</span>,
+                <span class="key">"comment"</span>: <span class="str">"Perfect for coding. Highly recommend."</span>,
+                <span class="key">"date"</span>:    <span class="kw">new Date()</span>
+            <span class="obj">}</span>
+        <span class="obj">}</span>
+    <span class="obj">}</span>
+)</div>
+
+                    <h3>updateMany — Modify All Matching Documents</h3>
+
+                    <div class="code-block"><span class="cmt">// Apply a 10% price reduction to all out-of-stock books</span>
+db.books.updateMany(
+    <span class="obj">{</span> <span class="key">"in_stock"</span>: <span class="bool">false</span> <span class="obj">}</span>,
+    <span class="obj">{</span> <span class="op">$mul</span>: <span class="obj">{</span> <span class="key">"price"</span>: <span class="num">0.9</span> <span class="obj">}</span> <span class="obj">}</span>   <span class="cmt">// multiply all prices by 0.9 (10% off)</span>
+)
+
+<span class="cmt">// Add a "last_reviewed" field to ALL documents that don't have it</span>
+db.books.updateMany(
+    <span class="obj">{</span> <span class="key">"last_reviewed"</span>: <span class="obj">{</span> <span class="op">$exists</span>: <span class="bool">false</span> <span class="obj">}</span> <span class="obj">}</span>,
+    <span class="obj">{</span> <span class="op">$set</span>: <span class="obj">{</span> <span class="key">"last_reviewed"</span>: <span class="kw">new Date()</span> <span class="obj">}</span> <span class="obj">}</span>
+)
+
+<span class="cmt">// upsert: update if exists, insert if not found</span>
+db.books.updateOne(
+    <span class="obj">{</span> <span class="key">"isbn"</span>: <span class="str">"978-9999999999"</span> <span class="obj">}</span>,
+    <span class="obj">{</span> <span class="op">$set</span>: <span class="obj">{</span> <span class="key">"title"</span>: <span class="str">"New Release"</span>, <span class="key">"price"</span>: <span class="num">29.99</span> <span class="obj">}</span> <span class="obj">}</span>,
+    <span class="obj">{</span> <span class="key">"upsert"</span>: <span class="bool">true</span> <span class="obj">}</span>   <span class="cmt">// creates a new document if no match found</span>
+)</div>
+
+                </div>
+            </div>
+        </div>
+
+        <!-- ═══════════════════════════════════════════════════ -->
+        <!-- SECTION 6 — DELETE                                  -->
+        <!-- ═══════════════════════════════════════════════════ -->
+        <div class="section">
+            <div class="collapsible">
+                <div class="collapsible-header">6. Delete — Removing Documents</div>
+                <div class="collapsible-content">
+
+                    <div class="info-box">
+                        <span class="method method-delete">deleteOne</span> <span class="method method-delete">deleteMany</span>
+                        Deletion in MongoDB is permanent and immediate — there is no ROLLBACK unless you are inside an explicit transaction. Always verify your filter with a <code>find()</code> before running <code>deleteMany()</code>.
+                    </div>
+
+                    <div class="code-block"><span class="cmt">// Delete one specific book by ISBN</span>
+db.books.deleteOne(<span class="obj">{</span> <span class="key">"isbn"</span>: <span class="str">"978-0201633610"</span> <span class="obj">}</span>)
+
+<span class="cmt">// Delete all books that have been out of stock for over a year
+// First VERIFY with find():</span>
+db.books.find(<span class="obj">{</span>
+    <span class="key">"in_stock"</span>:      <span class="bool">false</span>,
+    <span class="key">"last_updated"</span>:  <span class="obj">{</span> <span class="op">$lt</span>: <span class="kw">new Date</span>(<span class="str">"2024-01-01"</span>) <span class="obj">}</span>
+<span class="obj">}</span>)
+
+<span class="cmt">// Then DELETE after confirming the results look right:</span>
+db.books.deleteMany(<span class="obj">{</span>
+    <span class="key">"in_stock"</span>:      <span class="bool">false</span>,
+    <span class="key">"last_updated"</span>:  <span class="obj">{</span> <span class="op">$lt</span>: <span class="kw">new Date</span>(<span class="str">"2024-01-01"</span>) <span class="obj">}</span>
+<span class="obj">}</span>)
+
+<span class="cmt">// Drop an entire collection (USE WITH EXTREME CAUTION)</span>
+db.books.drop()
+
+<span class="cmt">// Drop the entire database</span>
+db.dropDatabase()</div>
+
+                    <div class="danger-box">
+                        <strong>⚠️ deleteMany({}) deletes every document in the collection</strong> — the equivalent of <code>DELETE FROM table</code> without a WHERE clause. Always test your filter with <code>find()</code> first. In production, consider using a <code>"deleted": true</code> soft-delete field instead of permanent deletion.
+                    </div>
+
+                </div>
+            </div>
+        </div>
+
+        <!-- ═══════════════════════════════════════════════════ -->
+        <!-- SECTION 7 — AGGREGATION PIPELINE                    -->
+        <!-- ═══════════════════════════════════════════════════ -->
+        <div class="section">
+            <div class="collapsible">
+                <div class="collapsible-header">7. The Aggregation Pipeline — Analytics in MongoDB</div>
+                <div class="collapsible-content">
+
+                    <div class="info-box">
+                        <span class="method method-aggr">aggregate</span>
+                        The aggregation pipeline processes documents through a sequence of <strong>stages</strong>. Each stage transforms the documents and passes the result to the next stage. This is MongoDB's answer to SQL's <code>GROUP BY</code>, <code>JOIN</code>, <code>HAVING</code>, and complex <code>SELECT</code> expressions.
+                    </div>
+
+                    <h3>Core Pipeline Stages</h3>
+
+                    <table>
+                        <tr><th>Stage</th><th>SQL Equivalent</th><th>What It Does</th></tr>
+                        <tr><td><code>$match</code></td><td><code>WHERE</code></td><td>Filter documents — put early to reduce data volume</td></tr>
+                        <tr><td><code>$group</code></td><td><code>GROUP BY</code> + aggregates</td><td>Group documents and compute aggregate values</td></tr>
+                        <tr><td><code>$project</code></td><td><code>SELECT columns</code></td><td>Include, exclude, or compute fields</td></tr>
+                        <tr><td><code>$sort</code></td><td><code>ORDER BY</code></td><td>Sort the result documents</td></tr>
+                        <tr><td><code>$limit</code></td><td><code>TOP N / LIMIT</code></td><td>Return only the first N documents</td></tr>
+                        <tr><td><code>$skip</code></td><td><code>OFFSET</code></td><td>Skip the first N documents</td></tr>
+                        <tr><td><code>$unwind</code></td><td>UNNEST / LATERAL JOIN</td><td>Expand an array — one document per array element</td></tr>
+                        <tr><td><code>$lookup</code></td><td><code>LEFT JOIN</code></td><td>Join documents from another collection</td></tr>
+                        <tr><td><code>$addFields</code></td><td>Computed column in SELECT</td><td>Add new computed fields without removing others</td></tr>
+                        <tr><td><code>$count</code></td><td><code>COUNT(*)</code></td><td>Count documents passing through this stage</td></tr>
+                    </table>
+
+                    <h3>Example 1 — Revenue by Category (GROUP BY equivalent)</h3>
+
+                    <div class="code-block"><span class="cmt">// SQL equivalent:
+// SELECT category, COUNT(*) AS book_count,
+//        AVG(price) AS avg_price, SUM(price) AS total_value
+// FROM books
+// WHERE in_stock = true
+// GROUP BY category
+// ORDER BY total_value DESC</span>
+
+db.books.aggregate(<span class="obj">[</span>
+    <span class="cmt">// Stage 1: filter to in-stock books only</span>
+    <span class="obj">{</span> <span class="op">$match</span>: <span class="obj">{</span> <span class="key">"in_stock"</span>: <span class="bool">true</span> <span class="obj">}</span> <span class="obj">}</span>,
+
+    <span class="cmt">// Stage 2: group by category and compute aggregates</span>
+    <span class="obj">{</span>
+        <span class="op">$group</span>: <span class="obj">{</span>
+            <span class="key">"_id"</span>:        <span class="str">"$category"</span>,          <span class="cmt">// group key</span>
+            <span class="key">"book_count"</span>: <span class="obj">{</span> <span class="op">$sum</span>: <span class="num">1</span> <span class="obj">}</span>,            <span class="cmt">// COUNT(*)</span>
+            <span class="key">"avg_price"</span>:  <span class="obj">{</span> <span class="op">$avg</span>: <span class="str">"$price"</span> <span class="obj">}</span>,     <span class="cmt">// AVG(price)</span>
+            <span class="key">"total_value"</span>:<span class="obj">{</span> <span class="op">$sum</span>: <span class="str">"$price"</span> <span class="obj">}</span>,     <span class="cmt">// SUM(price)</span>
+            <span class="key">"min_price"</span>:  <span class="obj">{</span> <span class="op">$min</span>: <span class="str">"$price"</span> <span class="obj">}</span>,     <span class="cmt">// MIN(price)</span>
+            <span class="key">"max_price"</span>:  <span class="obj">{</span> <span class="op">$max</span>: <span class="str">"$price"</span> <span class="obj">}</span>      <span class="cmt">// MAX(price)</span>
+        <span class="obj">}</span>
+    <span class="obj">}</span>,
+
+    <span class="cmt">// Stage 3: clean up the output fields</span>
+    <span class="obj">{</span>
+        <span class="op">$project</span>: <span class="obj">{</span>
+            <span class="key">"category"</span>:   <span class="str">"$_id"</span>,
+            <span class="key">"book_count"</span>: <span class="num">1</span>,
+            <span class="key">"avg_price"</span>:  <span class="obj">{</span> <span class="op">$round</span>: <span class="obj">[</span><span class="str">"$avg_price"</span>, <span class="num">2</span><span class="obj">]</span> <span class="obj">}</span>,
+            <span class="key">"total_value"</span>:<span class="obj">{</span> <span class="op">$round</span>: <span class="obj">[</span><span class="str">"$total_value"</span>, <span class="num">2</span><span class="obj">]</span> <span class="obj">}</span>,
+            <span class="key">"_id"</span>:        <span class="num">0</span>        <span class="cmt">// hide the internal _id field</span>
+        <span class="obj">}</span>
+    <span class="obj">}</span>,
+
+    <span class="cmt">// Stage 4: sort by total_value descending</span>
+    <span class="obj">{</span> <span class="op">$sort</span>: <span class="obj">{</span> <span class="key">"total_value"</span>: <span class="num">-1</span> <span class="obj">}</span> <span class="obj">}</span>
+<span class="obj">]</span>)</div>
+
+                    <div class="result-json">[
+  { category: 'Technology', book_count: 2, avg_price: 47.47, total_value: 94.94 },
+  { category: 'Fiction',    book_count: 1, avg_price: 12.99, total_value: 12.99 }
+]</div>
+
+                    <h3>Example 2 — $unwind: Analysing Array Elements</h3>
+                    <p><code>$unwind</code> expands an array field so each element becomes its own document. Use it to analyse individual items within arrays.</p>
+
+                    <div class="code-block"><span class="cmt">// Count how many books have each tag
+// (tags is an array — $unwind creates one doc per tag)</span>
+db.books.aggregate(<span class="obj">[</span>
+    <span class="obj">{</span> <span class="op">$unwind</span>: <span class="str">"$tags"</span> <span class="obj">}</span>,                    <span class="cmt">// expand tags array</span>
+    <span class="obj">{</span>
+        <span class="op">$group</span>: <span class="obj">{</span>
+            <span class="key">"_id"</span>:       <span class="str">"$tags"</span>,
+            <span class="key">"tag_count"</span>: <span class="obj">{</span> <span class="op">$sum</span>: <span class="num">1</span> <span class="obj">}</span>
+        <span class="obj">}</span>
+    <span class="obj">}</span>,
+    <span class="obj">{</span> <span class="op">$sort</span>: <span class="obj">{</span> <span class="key">"tag_count"</span>: <span class="num">-1</span> <span class="obj">}</span> <span class="obj">}</span>,
+    <span class="obj">{</span> <span class="op">$limit</span>: <span class="num">10</span> <span class="obj">}</span>
+<span class="obj">]</span>)</div>
+
+                    <h3>Example 3 — $lookup: Joining Two Collections</h3>
+
+                    <div class="code-block"><span class="cmt">// $lookup is the LEFT JOIN equivalent
+// Assume: "orders" collection has a customer_id field
+//         "customers" collection has _id and name
+
+// Get each order with the full customer document attached</span>
+db.orders.aggregate(<span class="obj">[</span>
+    <span class="obj">{</span>
+        <span class="op">$lookup</span>: <span class="obj">{</span>
+            <span class="key">"from"</span>:         <span class="str">"customers"</span>,   <span class="cmt">// collection to join</span>
+            <span class="key">"localField"</span>:   <span class="str">"customer_id"</span>, <span class="cmt">// field in orders</span>
+            <span class="key">"foreignField"</span>: <span class="str">"_id"</span>,          <span class="cmt">// field in customers</span>
+            <span class="key">"as"</span>:           <span class="str">"customer"</span>     <span class="cmt">// name for the joined array</span>
+        <span class="obj">}</span>
+    <span class="obj">}</span>,
+
+    <span class="cmt">// $unwind to flatten the joined array (LEFT JOIN result)</span>
+    <span class="obj">{</span> <span class="op">$unwind</span>: <span class="obj">{</span> <span class="key">"path"</span>: <span class="str">"$customer"</span>, <span class="key">"preserveNullAndEmptyArrays"</span>: <span class="bool">true</span> <span class="obj">}</span> <span class="obj">}</span>,
+
+    <span class="cmt">// Shape the output</span>
+    <span class="obj">{</span>
+        <span class="op">$project</span>: <span class="obj">{</span>
+            <span class="key">"order_date"</span>:    <span class="num">1</span>,
+            <span class="key">"total"</span>:         <span class="num">1</span>,
+            <span class="key">"customer_name"</span>: <span class="str">"$customer.name"</span>,
+            <span class="key">"customer_email"</span>:<span class="str">"$customer.email"</span>
+        <span class="obj">}</span>
+    <span class="obj">}</span>
+<span class="obj">]</span>)</div>
+
+                </div>
+            </div>
+        </div>
+
+        <!-- ═══════════════════════════════════════════════════ -->
+        <!-- SECTION 8 — DATA MODELLING                          -->
+        <!-- ═══════════════════════════════════════════════════ -->
+        <div class="section">
+            <div class="collapsible">
+                <div class="collapsible-header">8. Data Modelling — Embedding vs Referencing</div>
+                <div class="collapsible-content">
+
+                    <div class="info-box">
+                        The most important design decision in MongoDB is whether to <strong>embed</strong> related data inside a document or <strong>reference</strong> it from a separate collection. Unlike relational databases where normalisation drives schema design, MongoDB design is driven by <strong>how the data is accessed</strong>.
+                    </div>
+
+                    <h3>Embedding — Related Data Inside One Document</h3>
+
+                    <div class="code-block"><span class="cmt">// EMBEDDED: a customer and their addresses in one document
+// Best when: addresses are always retrieved with the customer,
+//             a customer has a small, bounded number of addresses</span>
+<span class="obj">{</span>
+    <span class="key">"_id"</span>:         <span class="type">ObjectId("...")</span>,
+    <span class="key">"name"</span>:        <span class="str">"Jane Smith"</span>,
+    <span class="key">"email"</span>:       <span class="str">"jane@example.com"</span>,
+    <span class="key">"addresses"</span>: <span class="obj">[</span>
+        <span class="obj">{</span>
+            <span class="key">"type"</span>:    <span class="str">"home"</span>,
+            <span class="key">"street"</span>:  <span class="str">"123 Maple St"</span>,
+            <span class="key">"city"</span>:    <span class="str">"Tampa"</span>,
+            <span class="key">"state"</span>:   <span class="str">"FL"</span>,
+            <span class="key">"zip"</span>:     <span class="str">"33601"</span>
+        <span class="obj">}</span>,
+        <span class="obj">{</span>
+            <span class="key">"type"</span>:    <span class="str">"work"</span>,
+            <span class="key">"street"</span>:  <span class="str">"400 University Dr"</span>,
+            <span class="key">"city"</span>:    <span class="str">"Tampa"</span>,
+            <span class="key">"state"</span>:   <span class="str">"FL"</span>,
+            <span class="key">"zip"</span>:     <span class="str">"33620"</span>
+        <span class="obj">}</span>
+    <span class="obj">]</span>
+<span class="obj">}</span></div>
+
+                    <h3>Referencing — Linked Documents Across Collections</h3>
+
+                    <div class="code-block"><span class="cmt">// REFERENCED: orders stored in a separate collection,
+// linked to customers by customer_id.
+// Best when: orders are queried independently of customers,
+//             or a customer could have thousands of orders
+
+// Customer document:</span>
+<span class="obj">{</span>
+    <span class="key">"_id"</span>:   <span class="type">ObjectId("64b7c3e2f4a5d10023abc010")</span>,
+    <span class="key">"name"</span>:  <span class="str">"Jane Smith"</span>,
+    <span class="key">"email"</span>: <span class="str">"jane@example.com"</span>
+<span class="obj">}</span>
+
+<span class="cmt">// Order document (separate collection):</span>
+<span class="obj">{</span>
+    <span class="key">"_id"</span>:          <span class="type">ObjectId("64b7c3e2f4a5d10023abc099")</span>,
+    <span class="key">"customer_id"</span>:  <span class="type">ObjectId("64b7c3e2f4a5d10023abc010")</span>,  <span class="cmt">// reference</span>
+    <span class="key">"order_date"</span>:   <span class="type">ISODate("2025-03-15")</span>,
+    <span class="key">"status"</span>:       <span class="str">"Completed"</span>,
+    <span class="key">"total"</span>:        <span class="num">94.94</span>
+<span class="obj">}</span></div>
+
+                    <div class="two-col">
+                        <div class="card good">
+                            <h4>✅ Use Embedding When:</h4>
+                            <ul>
+                                <li>Related data is <strong>always accessed together</strong> (one-to-one or one-to-few)</li>
+                                <li>The embedded data has a <strong>bounded size</strong> (won't grow to thousands of items)</li>
+                                <li>The embedded data is <strong>not shared</strong> between multiple parent documents</li>
+                                <li>You want <strong>single-document reads</strong> — no join required</li>
+                                <li><em>Examples:</em> addresses, order line items, product specs, review list (small)</li>
+                            </ul>
+                        </div>
+                        <div class="card teal">
+                            <h4>✅ Use Referencing When:</h4>
+                            <ul>
+                                <li>Related data is <strong>queried independently</strong> or accessed separately</li>
+                                <li>The relationship is <strong>one-to-many with unbounded growth</strong> (many orders per customer)</li>
+                                <li>The related data is <strong>shared</strong> by multiple documents (same author for many books)</li>
+                                <li>Embedded data would make documents <strong>exceed 16MB</strong> (MongoDB document size limit)</li>
+                                <li><em>Examples:</em> orders, events, log entries, comments on popular content</li>
+                            </ul>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+
+        <!-- ═══════════════════════════════════════════════════ -->
+        <!-- SECTION 9 — INDEXES IN MONGODB                      -->
+        <!-- ═══════════════════════════════════════════════════ -->
+        <div class="section">
+            <div class="collapsible">
+                <div class="collapsible-header">9. Indexes in MongoDB</div>
+                <div class="collapsible-content">
+
+                    <div class="info-box">
+                        <span class="method method-index">createIndex</span>
+                        MongoDB indexes work on the same B-tree principle as relational indexes. Without an index, every query performs a <strong>collection scan</strong> — reading every document. With the right index, MongoDB performs a fast <strong>index scan</strong>. Every collection has a default index on <code>_id</code>.
+                    </div>
+
+                    <div class="code-block"><span class="cmt">// Single-field index — speeds up queries filtering on category</span>
+db.books.createIndex(<span class="obj">{</span> <span class="key">"category"</span>: <span class="num">1</span> <span class="obj">}</span>)   <span class="cmt">// 1 = ascending, -1 = descending</span>
+
+<span class="cmt">// Compound index — covers queries filtering on both fields</span>
+db.books.createIndex(<span class="obj">{</span> <span class="key">"category"</span>: <span class="num">1</span>, <span class="key">"price"</span>: <span class="num">-1</span> <span class="obj">}</span>)
+
+<span class="cmt">// Unique index — enforces uniqueness (like a UNIQUE CONSTRAINT)</span>
+db.books.createIndex(<span class="obj">{</span> <span class="key">"isbn"</span>: <span class="num">1</span> <span class="obj">}</span>, <span class="obj">{</span> <span class="key">"unique"</span>: <span class="bool">true</span> <span class="obj">}</span>)
+
+<span class="cmt">// Text index — enables full-text search on string fields</span>
+db.books.createIndex(<span class="obj">{</span> <span class="key">"title"</span>: <span class="str">"text"</span>, <span class="key">"description"</span>: <span class="str">"text"</span> <span class="obj">}</span>)
+
+<span class="cmt">// Use the text index with $text search</span>
+db.books.find(<span class="obj">{</span> <span class="op">$text</span>: <span class="obj">{</span> <span class="op">$search</span>: <span class="str">"pragmatic programming"</span> <span class="obj">}</span> <span class="obj">}</span>)
+
+<span class="cmt">// TTL index — automatically deletes documents after a time period
+// Useful for session data, logs, temporary records</span>
+db.sessions.createIndex(
+    <span class="obj">{</span> <span class="key">"created_at"</span>: <span class="num">1</span> <span class="obj">}</span>,
+    <span class="obj">{</span> <span class="key">"expireAfterSeconds"</span>: <span class="num">3600</span> <span class="obj">}</span>   <span class="cmt">// auto-delete after 1 hour</span>
+)
+
+<span class="cmt">// View all indexes on a collection</span>
+db.books.getIndexes()
+
+<span class="cmt">// Drop an index by name</span>
+db.books.dropIndex(<span class="str">"category_1_price_-1"</span>)
+
+<span class="cmt">// Explain a query — shows if an index is being used</span>
+db.books.find(<span class="obj">{</span> <span class="key">"category"</span>: <span class="str">"Technology"</span> <span class="obj">}</span>).explain(<span class="str">"executionStats"</span>)</div>
+
+                    <div class="highlight-box">
+                        <strong>💡 Checking for a COLLSCAN in explain():</strong> When <code>explain()</code> reports a <code>COLLSCAN</code> (collection scan) on a large collection, you need an index. Look for <code>IXSCAN</code> to confirm an index was used. The <code>totalDocsExamined</code> vs <code>nReturned</code> ratio tells you how efficient the query is.
+                    </div>
+
+                </div>
+            </div>
+        </div>
+
+        <!-- ═══════════════════════════════════════════════════ -->
+        <!-- SECTION 10 — SQL vs MONGODB SIDE BY SIDE            -->
+        <!-- ═══════════════════════════════════════════════════ -->
+        <div class="section">
+            <div class="collapsible">
+                <div class="collapsible-header">10. SQL vs MongoDB — Side-by-Side Comparison</div>
+                <div class="collapsible-content">
+
+                    <div class="two-col">
+                        <div>
+                            <h3>Create / Insert</h3>
+                            <div class="code-block sql"><span class="cmt">-- SQL Server</span>
+<span class="kw">INSERT INTO</span> books
+    (title, category, price)
+<span class="kw">VALUES</span>
+    (<span class="str">'Clean Code'</span>, <span class="str">'Technology'</span>, <span class="num">44.99</span>);</div>
+                        </div>
+                        <div>
+                            <h3>&nbsp;</h3>
+                            <div class="code-block"><span class="cmt">// MongoDB</span>
+db.books.insertOne(<span class="obj">{</span>
+    <span class="key">"title"</span>:    <span class="str">"Clean Code"</span>,
+    <span class="key">"category"</span>: <span class="str">"Technology"</span>,
+    <span class="key">"price"</span>:    <span class="num">44.99</span>
+<span class="obj">})</span></div>
+                        </div>
+                    </div>
+
+                    <div class="two-col">
+                        <div>
+                            <h3>Select / Find</h3>
+                            <div class="code-block sql"><span class="cmt">-- SQL Server</span>
+<span class="kw">SELECT</span> title, price
+<span class="kw">FROM</span>   books
+<span class="kw">WHERE</span>  category = <span class="str">'Technology'</span>
+  <span class="kw">AND</span>  price &lt; <span class="num">50</span>
+<span class="kw">ORDER BY</span> price;</div>
+                        </div>
+                        <div>
+                            <h3>&nbsp;</h3>
+                            <div class="code-block"><span class="cmt">// MongoDB</span>
+db.books.find(
+    <span class="obj">{</span>
+        <span class="key">"category"</span>: <span class="str">"Technology"</span>,
+        <span class="key">"price"</span>: <span class="obj">{</span> <span class="op">$lt</span>: <span class="num">50</span> <span class="obj">}</span>
+    <span class="obj">}</span>,
+    <span class="obj">{</span> <span class="key">"title"</span>: <span class="num">1</span>, <span class="key">"price"</span>: <span class="num">1</span>, <span class="key">"_id"</span>: <span class="num">0</span> <span class="obj">}</span>
+).sort(<span class="obj">{</span> <span class="key">"price"</span>: <span class="num">1</span> <span class="obj">}</span>)</div>
+                        </div>
+                    </div>
+
+                    <div class="two-col">
+                        <div>
+                            <h3>Update</h3>
+                            <div class="code-block sql"><span class="cmt">-- SQL Server</span>
+<span class="kw">UPDATE</span> books
+<span class="kw">SET</span>    price = <span class="num">39.99</span>
+<span class="kw">WHERE</span>  title = <span class="str">'Clean Code'</span>;</div>
+                        </div>
+                        <div>
+                            <h3>&nbsp;</h3>
+                            <div class="code-block"><span class="cmt">// MongoDB</span>
+db.books.updateOne(
+    <span class="obj">{</span> <span class="key">"title"</span>: <span class="str">"Clean Code"</span> <span class="obj">}</span>,
+    <span class="obj">{</span> <span class="op">$set</span>: <span class="obj">{</span> <span class="key">"price"</span>: <span class="num">39.99</span> <span class="obj">}</span> <span class="obj">}</span>
+)</div>
+                        </div>
+                    </div>
+
+                    <div class="two-col">
+                        <div>
+                            <h3>Aggregate</h3>
+                            <div class="code-block sql"><span class="cmt">-- SQL Server</span>
+<span class="kw">SELECT</span>   category,
+         <span class="fn">COUNT</span>(*) <span class="kw">AS</span> cnt,
+         <span class="fn">AVG</span>(price) <span class="kw">AS</span> avg_p
+<span class="kw">FROM</span>     books
+<span class="kw">WHERE</span>    in_stock = <span class="num">1</span>
+<span class="kw">GROUP BY</span> category
+<span class="kw">ORDER BY</span> cnt <span class="kw">DESC</span>;</div>
+                        </div>
+                        <div>
+                            <h3>&nbsp;</h3>
+                            <div class="code-block"><span class="cmt">// MongoDB</span>
+db.books.aggregate(<span class="obj">[</span>
+  <span class="obj">{</span> <span class="op">$match</span>:  <span class="obj">{</span> <span class="key">"in_stock"</span>: <span class="bool">true</span> <span class="obj">}</span> <span class="obj">}</span>,
+  <span class="obj">{</span> <span class="op">$group</span>:  <span class="obj">{</span>
+      <span class="key">"_id"</span>:   <span class="str">"$category"</span>,
+      <span class="key">"cnt"</span>:   <span class="obj">{</span> <span class="op">$sum</span>: <span class="num">1</span> <span class="obj">}</span>,
+      <span class="key">"avg_p"</span>: <span class="obj">{</span> <span class="op">$avg</span>: <span class="str">"$price"</span> <span class="obj">}</span>
+  <span class="obj">}</span> <span class="obj">}</span>,
+  <span class="obj">{</span> <span class="op">$sort</span>:  <span class="obj">{</span> <span class="key">"cnt"</span>: <span class="num">-1</span> <span class="obj">}</span> <span class="obj">}</span>
+<span class="obj">]</span>)</div>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+
+        <!-- ═══════════════════════════════════════════════════ -->
+        <!-- SECTION 11 — WHEN TO CHOOSE NOSQL                   -->
+        <!-- ═══════════════════════════════════════════════════ -->
+        <div class="section">
+            <div class="collapsible">
+                <div class="collapsible-header">11. When to Choose NoSQL vs Relational</div>
+                <div class="collapsible-content">
+
+                    <div class="info-box">
+                        There is no universally superior database type — the right choice depends on your data characteristics, access patterns, consistency requirements, and team familiarity. Many production systems use both.
+                    </div>
+
+                    <h3>Choose MongoDB (Document Store) When...</h3>
+
+                    <div class="success-box">
+                        <ul>
+                            <li><strong>Data structure varies between records</strong> — products with different attributes, user profiles with optional fields, multi-tenant data with per-customer schemas</li>
+                            <li><strong>Data is naturally hierarchical or nested</strong> — orders with line items, blog posts with comments, medical records with sections</li>
+                            <li><strong>Schema evolves rapidly</strong> — early-stage applications where the data model changes frequently</li>
+                            <li><strong>High write volume at scale</strong> — MongoDB shards horizontally across many nodes</li>
+                            <li><strong>Data is best read as a complete unit</strong> — fetch one document and have everything you need, no JOINs</li>
+                            <li><strong>Geospatial queries</strong> — MongoDB has native 2D sphere index support for location-based queries</li>
+                        </ul>
+                    </div>
+
+                    <h3>Choose a Relational Database (SQL Server, PostgreSQL) When...</h3>
+
+                    <div class="teal-box">
+                        <ul>
+                            <li><strong>Data is highly structured and consistent</strong> — financial transactions, accounting, payroll, inventory</li>
+                            <li><strong>Complex relationships and multi-table JOINs</strong> are central to how the data is used</li>
+                            <li><strong>ACID transactions across multiple tables</strong> are required — banking, order processing</li>
+                            <li><strong>Data integrity constraints are critical</strong> — foreign keys, check constraints, not-null enforcement</li>
+                            <li><strong>Complex reporting and ad-hoc analysis</strong> — SQL's GROUP BY and window functions are more expressive for analytics</li>
+                            <li><strong>Team expertise is in SQL</strong> — relational databases have more mature tooling and wider knowledge bases</li>
+                        </ul>
+                    </div>
+
+                    <h3>Decision Summary Table</h3>
+
+                    <table>
+                        <tr><th>Factor</th><th>Favour SQL</th><th>Favour MongoDB</th></tr>
+                        <tr>
+                            <td><strong>Schema</strong></td>
+                            <td>Fixed, well-defined, stable</td>
+                            <td>Variable, evolving, flexible</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Data shape</strong></td>
+                            <td>Flat, many tables, normalised</td>
+                            <td>Hierarchical, nested, self-contained</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Relationships</strong></td>
+                            <td>Complex many-to-many, referential integrity</td>
+                            <td>Simple references or embedded data</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Transactions</strong></td>
+                            <td>Multi-table ACID required</td>
+                            <td>Single-document operations; multi-doc transactions available</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Scale</strong></td>
+                            <td>Vertical scaling; hundreds of GB</td>
+                            <td>Horizontal sharding; terabytes to petabytes</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Query complexity</strong></td>
+                            <td>Complex analytics, multi-join reports</td>
+                            <td>Document retrieval, simple aggregations</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Development speed</strong></td>
+                            <td>Schema changes require migration planning</td>
+                            <td>Add fields instantly, no migrations required</td>
+                        </tr>
+                    </table>
+
+                    <div class="highlight-box">
+                        <strong>💡 Polyglot Persistence:</strong> Large-scale applications routinely use multiple database types together. A typical architecture might use PostgreSQL for orders and accounts (ACID, relational), MongoDB for product catalogues and user content (flexible schema), Redis for session caching (key-value, sub-millisecond), and Elasticsearch for full-text product search. Each database is chosen for its strengths in the specific use case.
+                    </div>
+
+                </div>
+            </div>
+        </div>
+
+    </div><!-- /content -->
+
+    <footer>
+        <p>COP4709 — Database Management Systems</p>
+        <p>&copy; 2025 Course Materials &nbsp;|&nbsp; Last Updated: February 2025</p>
+    </footer>
+
+</div><!-- /container -->
+
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        const headers = document.querySelectorAll('.collapsible-header');
+        headers.forEach(header => {
+            header.addEventListener('click', function () {
+                this.parentElement.classList.toggle('active');
+            });
+        });
+        document.querySelector('.collapsible').classList.add('active');
+    });
+</script>
+</body>
+</html>

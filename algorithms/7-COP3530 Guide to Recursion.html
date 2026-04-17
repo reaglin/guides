@@ -1,0 +1,1724 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>COP 3530 – Recursion: The Art of Self-Reference</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700;900&family=Fira+Code:wght@400;500;600&family=Source+Sans+3:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --earth-dark:   #2c1810;
+    --earth-mid:    #4a2c1a;
+    --earth-light:  #6b3e2a;
+    --golden:       #d4af37;
+    --golden-lt:    #e6c659;
+    --amber:        #cc8400;
+    --copper:       #b87333;
+    --sage:         #9caa7a;
+    --moss:         #6b8e23;
+    --rust:         #b7410e;
+    --cream:        #f5f1e8;
+    --text:         #f5f1e8;
+    --text-dim:     #d4c4a8;
+    --card-bg:      #3d2415;
+    --border:       #5a3f2d;
+    --white:        #ffffff;
+  }
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: 'Source Sans 3', sans-serif;
+    background: linear-gradient(135deg, var(--earth-dark) 0%, var(--earth-mid) 100%);
+    color: var(--text);
+    line-height: 1.7;
+    font-size: 15px;
+    min-height: 100vh;
+  }
+
+  /* ── ORGANIC BACKGROUND EFFECTS ── */
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background: 
+      radial-gradient(circle at 20% 30%, rgba(212,175,55,0.04) 0%, transparent 50%),
+      radial-gradient(circle at 80% 70%, rgba(183,115,51,0.03) 0%, transparent 50%),
+      radial-gradient(circle at 40% 80%, rgba(156,170,122,0.02) 0%, transparent 50%);
+    pointer-events: none;
+    z-index: -1;
+  }
+
+  /* ── HERO HEADER ── */
+  .hero {
+    background: linear-gradient(135deg, #2c1810 0%, #4a2c1a 50%, #3d2415 100%);
+    border-bottom: 4px solid var(--golden);
+    padding: 52px 42px 46px;
+    position: relative;
+    overflow: hidden;
+  }
+  .hero::after {
+    content: '';
+    position: absolute; inset: 0;
+    background: repeating-linear-gradient(
+      120deg,
+      transparent,
+      transparent 80px,
+      rgba(212,175,55,0.03) 80px,
+      rgba(212,175,55,0.03) 82px
+    );
+    pointer-events: none;
+  }
+  .hero-badge {
+    display: inline-block;
+    background: linear-gradient(90deg, var(--golden), var(--copper));
+    color: var(--earth-dark);
+    font-family: 'Fira Code', monospace;
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    padding: 5px 18px;
+    border-radius: 25px;
+    margin-bottom: 20px;
+    box-shadow: 0 4px 15px rgba(212,175,55,0.3);
+  }
+  .hero h1 {
+    font-family: 'Playfair Display', serif;
+    font-size: clamp(32px, 5.5vw, 56px);
+    font-weight: 900;
+    color: var(--white);
+    line-height: 1.05;
+    letter-spacing: -1px;
+    text-shadow: 0 2px 10px rgba(0,0,0,0.4);
+  }
+  .hero h1 .accent { 
+    color: var(--golden); 
+    text-shadow: 0 2px 15px rgba(212,175,55,0.5);
+  }
+  .hero-sub {
+    font-family: 'Playfair Display', serif;
+    font-size: 18px;
+    color: var(--golden-lt);
+    margin-top: 14px;
+    font-weight: 400;
+    font-style: italic;
+    letter-spacing: 0.5px;
+  }
+  .hero-meta {
+    display: flex;
+    gap: 36px;
+    margin-top: 32px;
+    flex-wrap: wrap;
+  }
+  .hero-meta span {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-size: 13px;
+    color: var(--text-dim);
+    font-family: 'Fira Code', monospace;
+  }
+  .hero-meta span b { 
+    color: var(--golden); 
+  }
+
+  /* ── MAIN CONTENT ── */
+  .container { max-width: 1180px; margin: 0 auto; padding: 46px 34px 85px; }
+
+  /* ── SECTION TITLES ── */
+  .section-title {
+    font-family: 'Playfair Display', serif;
+    font-size: 28px;
+    font-weight: 700;
+    color: var(--golden);
+    border-left: 5px solid var(--copper);
+    padding-left: 22px;
+    margin: 56px 0 26px;
+    letter-spacing: 0.2px;
+    text-shadow: 0 1px 8px rgba(212,175,55,0.2);
+  }
+  .section-title.first { margin-top: 18px; }
+
+  /* ── INTRO CARD ── */
+  .intro-card {
+    background: var(--card-bg);
+    border: 1px solid var(--border);
+    border-left: 5px solid var(--golden);
+    border-radius: 14px;
+    padding: 28px 32px;
+    margin-bottom: 18px;
+    font-size: 15px;
+    color: var(--text);
+    line-height: 1.8;
+    box-shadow: 0 6px 25px rgba(0,0,0,0.15);
+  }
+  .intro-card p + p { margin-top: 18px; }
+  .intro-card strong { color: var(--golden-lt); }
+  .intro-card em { color: var(--amber); font-style: normal; }
+
+  /* ── COLLAPSIBLE DETAILS ── */
+  details {
+    background: var(--card-bg);
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    margin-bottom: 18px;
+    overflow: hidden;
+    transition: box-shadow 0.3s, border-color 0.3s;
+  }
+  details[open] { 
+    box-shadow: 0 8px 35px rgba(212,175,55,0.12); 
+    border-color: var(--golden);
+  }
+  details[open] summary { 
+    border-bottom: 1px solid var(--border);
+    background: rgba(212,175,55,0.06);
+  }
+
+  summary {
+    display: flex;
+    align-items: center;
+    gap: 18px;
+    padding: 22px 26px;
+    cursor: pointer;
+    list-style: none;
+    font-family: 'Playfair Display', serif;
+    font-size: 17px;
+    font-weight: 600;
+    color: var(--text);
+    user-select: none;
+    transition: background 0.25s;
+  }
+  summary::-webkit-details-marker { display: none; }
+  summary::after {
+    content: '▶';
+    margin-left: auto;
+    color: var(--golden);
+    font-size: 15px;
+    transition: transform 0.3s;
+    text-shadow: 0 1px 6px rgba(212,175,55,0.4);
+  }
+  details[open] summary::after { transform: rotate(90deg); }
+  summary:hover { background: rgba(212,175,55,0.08); }
+
+  .summary-icon {
+    width: 44px; height: 44px;
+    border-radius: 12px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 20px;
+    flex-shrink: 0;
+    border: 2px solid;
+  }
+
+  .details-body { padding: 26px 30px 36px; }
+
+  /* ── CONCEPT CARDS ── */
+  .concept-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(340px, 1fr));
+    gap: 20px;
+    margin-top: 10px;
+  }
+  .concept-card {
+    background: var(--earth-light);
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    padding: 24px 28px;
+    transition: transform 0.3s, box-shadow 0.3s;
+    position: relative;
+    overflow: hidden;
+  }
+  .concept-card:hover { 
+    transform: translateY(-5px); 
+    box-shadow: 0 12px 45px rgba(212,175,55,0.08);
+  }
+  .concept-card::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0; height: 4px;
+    background: linear-gradient(90deg, var(--golden), var(--copper));
+  }
+  .concept-card-header {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 14px;
+    margin-bottom: 16px;
+  }
+  .concept-card-name {
+    font-family: 'Playfair Display', serif;
+    font-weight: 700;
+    font-size: 18px;
+    color: var(--white);
+    text-shadow: 0 1px 4px rgba(0,0,0,0.3);
+  }
+  .concept-card p {
+    font-size: 14px;
+    color: var(--text-dim);
+    line-height: 1.7;
+    margin-bottom: 14px;
+  }
+
+  /* ── COMPLEXITY BADGES ── */
+  .complexity-row {
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
+    margin-top: 16px;
+  }
+  .comp-badge {
+    font-family: 'Fira Code', monospace;
+    font-size: 11px;
+    font-weight: 500;
+    padding: 4px 14px;
+    border-radius: 10px;
+    text-align: center;
+    border: 1px solid;
+  }
+  .comp-time   { background: rgba(212,175,55,0.15); color: var(--golden); border-color: var(--golden); }
+  .comp-space  { background: rgba(230,198,89,0.12);  color: var(--golden-lt); border-color: var(--golden-lt); }
+  .comp-rec    { background: rgba(183,115,51,0.15); color: var(--copper); border-color: var(--copper); }
+  .comp-opt    { background: rgba(156,170,122,0.15); color: var(--sage); border-color: var(--sage); }
+
+  /* ── CODE BLOCKS ── */
+  .code-block {
+    background: #241610;
+    border: 1px solid var(--border);
+    border-left: 5px solid var(--golden);
+    border-radius: 12px;
+    padding: 22px 26px;
+    font-family: 'Fira Code', monospace;
+    font-size: 13px;
+    color: #e8dcc6;
+    overflow-x: auto;
+    white-space: pre;
+    line-height: 1.8;
+    margin: 18px 0;
+    box-shadow: 0 6px 20px rgba(0,0,0,0.25);
+  }
+  .code-comment { color: #a08b73; font-style: italic; }
+  .code-keyword { color: var(--golden-lt); font-weight: 500; }
+  .code-type    { color: var(--copper); }
+  .code-string  { color: var(--sage); }
+  .code-number  { color: var(--amber); }
+  .code-func    { color: var(--rust); }
+
+  /* ── RECURSIVE TREE DIAGRAMS ── */
+  .tree-diagram {
+    background: var(--earth-light);
+    border: 2px solid var(--border);
+    border-radius: 12px;
+    padding: 28px;
+    margin: 20px 0;
+    text-align: center;
+    font-family: 'Fira Code', monospace;
+    position: relative;
+    overflow-x: auto;
+  }
+  .tree-node {
+    background: linear-gradient(135deg, var(--golden), var(--copper));
+    color: var(--earth-dark);
+    padding: 10px 16px;
+    border-radius: 10px;
+    font-size: 13px;
+    font-weight: 600;
+    display: inline-block;
+    margin: 6px;
+    box-shadow: 0 3px 12px rgba(212,175,55,0.3);
+    position: relative;
+  }
+  .tree-branch {
+    color: var(--golden);
+    font-size: 16px;
+    font-weight: bold;
+    margin: 0 8px;
+  }
+  .tree-level {
+    margin: 15px 0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-wrap: wrap;
+  }
+
+  /* ── TRACE TABLE ── */
+  .trace-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 14px;
+    margin-top: 12px;
+    background: var(--earth-light);
+    border-radius: 12px;
+    overflow: hidden;
+    box-shadow: 0 6px 25px rgba(0,0,0,0.15);
+  }
+  .trace-table thead tr {
+    background: var(--earth-mid);
+    font-family: 'Playfair Display', serif;
+    font-weight: 600;
+    font-size: 13px;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    color: var(--golden);
+  }
+  .trace-table th, .trace-table td {
+    padding: 16px 20px;
+    text-align: left;
+    border-bottom: 1px solid var(--border);
+  }
+  .trace-table tbody tr:hover { 
+    background: rgba(212,175,55,0.08); 
+  }
+  .trace-table .mono { 
+    font-family: 'Fira Code', monospace; 
+    color: var(--golden-lt);
+  }
+  .trace-table .call-depth-1 { background: rgba(212,175,55,0.05); }
+  .trace-table .call-depth-2 { background: rgba(183,115,51,0.05); }
+  .trace-table .call-depth-3 { background: rgba(156,170,122,0.05); }
+
+  /* ── COMPARISON CARDS ── */
+  .comparison-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 20px;
+    margin-top: 10px;
+  }
+  .vs-card {
+    background: var(--earth-light);
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    padding: 22px 26px;
+  }
+  .vs-card.recursive::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0; height: 3px;
+    background: var(--golden);
+  }
+  .vs-card.iterative::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0; height: 3px;
+    background: var(--copper);
+  }
+  .vs-card { position: relative; }
+
+  .vs-header {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    margin-bottom: 14px;
+  }
+  .vs-icon {
+    width: 40px; height: 40px;
+    border-radius: 12px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 18px;
+    flex-shrink: 0;
+  }
+  .vs-title {
+    font-family: 'Playfair Display', serif;
+    font-weight: 700;
+    font-size: 16px;
+    color: var(--white);
+  }
+
+  /* ── PROS/CONS LISTS ── */
+  .pros-cons {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 20px;
+    margin-top: 16px;
+  }
+  .pros, .cons {
+    background: var(--earth-light);
+    border-radius: 10px;
+    padding: 16px 20px;
+  }
+  .pros h4, .cons h4 {
+    font-family: 'Playfair Display', serif;
+    font-size: 14px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    margin-bottom: 10px;
+  }
+  .pros h4 { color: var(--sage); }
+  .cons h4 { color: var(--rust); }
+  .pros ul, .cons ul { font-size: 13px; line-height: 1.7; }
+  .pros li, .cons li {
+    margin-bottom: 6px;
+    color: var(--text-dim);
+    list-style: none;
+    padding-left: 18px;
+    position: relative;
+  }
+  .pros li::before { content: '✓'; position: absolute; left: 0; color: var(--sage); }
+  .cons li::before { content: '✗'; position: absolute; left: 0; color: var(--rust); }
+
+  /* ── CALLOUTS ── */
+  .callout {
+    border-radius: 12px;
+    padding: 20px 24px;
+    margin: 18px 0;
+    font-size: 14px;
+    line-height: 1.8;
+    display: flex;
+    gap: 18px;
+    align-items: flex-start;
+    border: 2px solid;
+  }
+  .callout-info { 
+    background: rgba(212,175,55,0.08); 
+    border-color: var(--golden);
+    box-shadow: 0 4px 20px rgba(212,175,55,0.06);
+  }
+  .callout-tip { 
+    background: rgba(183,115,51,0.08); 
+    border-color: var(--copper);
+    box-shadow: 0 4px 20px rgba(183,115,51,0.06);
+  }
+  .callout-warn { 
+    background: rgba(183,65,14,0.08); 
+    border-color: var(--rust);
+    box-shadow: 0 4px 20px rgba(183,65,14,0.06);
+  }
+  .callout-icon { 
+    font-size: 22px; 
+    flex-shrink: 0; 
+    margin-top: 2px;
+  }
+  .callout-content { flex: 1; }
+  .callout-content strong { 
+    display: block; 
+    margin-bottom: 10px; 
+    font-family: 'Playfair Display', serif; 
+    font-size: 15px; 
+    letter-spacing: 0.4px; 
+    color: var(--white);
+  }
+
+  /* ── FOOTER ── */
+  footer {
+    text-align: center;
+    padding: 40px 20px;
+    border-top: 2px solid var(--border);
+    font-size: 12px;
+    font-family: 'Fira Code', monospace;
+    color: var(--text-dim);
+    margin-top: 36px;
+    background: var(--earth-mid);
+  }
+  footer span { 
+    color: var(--golden); 
+  }
+
+  /* ── RESPONSIVE ── */
+  @media (max-width: 768px) {
+    .hero-meta { flex-direction: column; gap: 18px; }
+    .concept-grid { grid-template-columns: 1fr; }
+    .comparison-grid { grid-template-columns: 1fr; }
+    .pros-cons { grid-template-columns: 1fr; }
+  }
+</style>
+</head>
+<body>
+
+<!-- ═══════════════════════════════════ HERO ═══════════════════════════════════ -->
+<header class="hero">
+  <div class="hero-badge">COP 3530 · Data Structures</div>
+  <h1><span class="accent">Recursion</span><br>The Art of Self-Reference</h1>
+  <div class="hero-sub">When Functions Call Themselves to Solve Complex Problems</div>
+  <div class="hero-meta">
+    <span>🌳 <b>Concept:</b> Self-referential problem solving</span>
+    <span>🔄 <b>Pattern:</b> Divide, solve, combine</span>
+    <span>📊 <b>Analysis:</b> Time & space complexity</span>
+    <span>⚖️ <b>Trade-offs:</b> Elegance vs efficiency</span>
+  </div>
+</header>
+
+<div class="container">
+
+  <!-- ═══════════════════ SECTION 1: WHAT IS RECURSION ═══════════════════ -->
+  <div class="section-title first">What Is Recursion?</div>
+
+  <div class="intro-card">
+    <p><strong>Recursion</strong> is a programming technique where a function calls itself to solve a smaller instance of the same problem. It's a fundamental concept that mirrors how we naturally break down complex problems: solve the big problem by solving smaller versions of the same problem, until you reach a case so simple it requires no further breakdown.</p>
+    <p>Every recursive solution has two essential components: a <em>base case</em> (the stopping condition) and a <em>recursive case</em> (the self-referential call). Without the base case, recursion would continue infinitely. Without the recursive case, it's not recursion — just a regular function call.</p>
+    <p>Recursion appears throughout computer science, mathematics, and nature itself. From the branching of trees to the structure of fractals, from sorting algorithms to tree traversals, recursive patterns provide elegant solutions to problems that would be cumbersome to solve iteratively.</p>
+  </div>
+
+  <div class="callout callout-info">
+    <span class="callout-icon" style="color:var(--golden);">🧠</span>
+    <div class="callout-content">
+      <strong>The Recursive Mindset</strong>
+      To think recursively, ask: "How can I solve this problem if I assume I can already solve a smaller version of it?" This shift in perspective transforms many complex problems into surprisingly simple solutions.
+    </div>
+  </div>
+
+  <!-- Basic Structure -->
+  <details open>
+    <summary>
+      <div class="summary-icon" style="background:rgba(212,175,55,0.15); color:var(--golden); border-color:var(--golden);">🎯</div>
+      Anatomy of a Recursive Function
+    </summary>
+    <div class="details-body">
+      <p style="color:var(--text-dim); margin-bottom:18px; font-size:14px;">Every recursive function follows the same fundamental structure. Understanding this pattern is key to reading, writing, and debugging recursive code.</p>
+      
+      <div class="code-block"><span class="code-comment">// The Universal Recursive Pattern</span>
+<span class="code-type">returnType</span> <span class="code-func">recursiveFunction</span>(<span class="code-type">parameters</span>) {
+    <span class="code-comment">// 1. BASE CASE - The stopping condition</span>
+    <span class="code-keyword">if</span> (<span class="code-string">problem is small enough to solve directly</span>) {
+        <span class="code-keyword">return</span> <span class="code-string">direct solution</span>;
+    }
+    
+    <span class="code-comment">// 2. RECURSIVE CASE - Break down the problem</span>
+    <span class="code-type">smallerProblem</span> = <span class="code-string">reduce the problem size</span>;
+    <span class="code-type">result</span> = <span class="code-func">recursiveFunction</span>(smallerProblem);
+    
+    <span class="code-comment">// 3. COMBINE - Build final solution from subproblem</span>
+    <span class="code-keyword">return</span> <span class="code-string">combine result with current level work</span>;
+}</div>
+
+      <div class="concept-grid">
+        <div class="concept-card">
+          <div class="concept-card-header">
+            <div class="concept-card-name">Base Case</div>
+          </div>
+          <p>The terminating condition that stops recursion. It represents the simplest form of the problem that can be solved directly without further recursive calls. Critical for preventing infinite recursion.</p>
+          <div class="complexity-row">
+            <span class="comp-badge comp-time">Must be reachable</span>
+            <span class="comp-badge comp-space">O(1) typically</span>
+          </div>
+        </div>
+
+        <div class="concept-card">
+          <div class="concept-card-header">
+            <div class="concept-card-name">Recursive Case</div>
+          </div>
+          <p>The part where the function calls itself with a modified parameter. The modification must progress toward the base case. This is where the "divide" part of divide-and-conquer happens.</p>
+          <div class="complexity-row">
+            <span class="comp-badge comp-rec">Self-reference</span>
+            <span class="comp-badge comp-opt">Problem reduction</span>
+          </div>
+        </div>
+
+        <div class="concept-card">
+          <div class="concept-card-header">
+            <div class="concept-card-name">Recursive Leap of Faith</div>
+          </div>
+          <p>The mental model where you trust that recursive calls will correctly solve the subproblem. Focus on the current level of recursion, assume smaller problems are handled correctly.</p>
+          <div class="complexity-row">
+            <span class="comp-badge comp-opt">Trust the process</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="code-block"><span class="code-comment">// Classic Example: Factorial</span>
+<span class="code-type">int</span> <span class="code-func">factorial</span>(<span class="code-type">int</span> n) {
+    <span class="code-comment">// Base case: factorial of 0 or 1 is 1</span>
+    <span class="code-keyword">if</span> (n <= <span class="code-number">1</span>) {
+        <span class="code-keyword">return</span> <span class="code-number">1</span>;
+    }
+    
+    <span class="code-comment">// Recursive case: n! = n * (n-1)!</span>
+    <span class="code-keyword">return</span> n * <span class="code-func">factorial</span>(n - <span class="code-number">1</span>);
+}
+
+<span class="code-comment">// Trace: factorial(4) calls factorial(3) calls factorial(2) calls factorial(1)
+// Returns: 1 → 2*1=2 → 3*2=6 → 4*6=24</span></div>
+
+      <div class="callout callout-tip">
+        <span class="callout-icon" style="color:var(--copper);">💡</span>
+        <div class="callout-content">
+          <strong>The Three Questions</strong>
+          When analyzing any recursive function, ask: (1) What is the base case? (2) How does each recursive call get closer to the base case? (3) How are results combined? If you can answer these three questions, you understand the recursion.
+        </div>
+      </div>
+    </div>
+  </details>
+
+  <!-- ═══════════════════ SECTION 2: HOW RECURSION WORKS ═══════════════════ -->
+  <div class="section-title">How Recursion Works: The Call Stack</div>
+
+  <details>
+    <summary>
+      <div class="summary-icon" style="background:rgba(183,115,51,0.15); color:var(--copper); border-color:var(--copper);">📚</div>
+      Memory Model &amp; Execution Flow
+    </summary>
+    <div class="details-body">
+      <p style="color:var(--text-dim); margin-bottom:18px; font-size:14px;">Understanding how recursive calls are managed in memory is crucial for predicting behavior, analyzing complexity, and debugging stack overflow errors. The call stack is the key data structure that makes recursion possible.</p>
+
+      <div class="concept-grid">
+        <div class="concept-card">
+          <div class="concept-card-header">
+            <div class="concept-card-name">Function Call Stack</div>
+          </div>
+          <p>Each function call creates a new frame on the system stack. This frame contains local variables, parameters, and the return address. Recursive calls stack up until the base case is reached.</p>
+          <div class="complexity-row">
+            <span class="comp-badge comp-space">O(depth) memory</span>
+            <span class="comp-badge comp-rec">LIFO structure</span>
+          </div>
+        </div>
+
+        <div class="concept-card">
+          <div class="concept-card-header">
+            <div class="concept-card-name">Stack Frame Contents</div>
+          </div>
+          <p>Each recursive call gets its own copy of parameters and local variables. Changes in one frame don't affect other frames. This isolation is what allows recursion to work correctly.</p>
+          <div class="complexity-row">
+            <span class="comp-badge comp-space">Isolated scope</span>
+            <span class="comp-badge comp-opt">Parameter copies</span>
+          </div>
+        </div>
+
+        <div class="concept-card">
+          <div class="concept-card-header">
+            <div class="concept-card-name">Stack Unwinding</div>
+          </div>
+          <p>When base case is reached, functions return in reverse order of calls. Return values propagate back up the stack, allowing results to be combined at each level.</p>
+          <div class="complexity-row">
+            <span class="comp-badge comp-rec">Reverse execution</span>
+            <span class="comp-badge comp-opt">Result building</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="tree-diagram">
+        <div style="color:var(--golden); font-weight:600; margin-bottom:15px;">Call Stack Visualization: factorial(4)</div>
+        
+        <div class="tree-level">
+          <div class="tree-node">factorial(4)</div>
+        </div>
+        
+        <div class="tree-level">
+          <span class="tree-branch">│</span>
+        </div>
+        
+        <div class="tree-level">
+          <div class="tree-node">factorial(3)</div>
+        </div>
+        
+        <div class="tree-level">
+          <span class="tree-branch">│</span>
+        </div>
+        
+        <div class="tree-level">
+          <div class="tree-node">factorial(2)</div>
+        </div>
+        
+        <div class="tree-level">
+          <span class="tree-branch">│</span>
+        </div>
+        
+        <div class="tree-level">
+          <div class="tree-node">factorial(1) → BASE CASE → returns 1</div>
+        </div>
+        
+        <div style="margin-top:20px; color:var(--text-dim); font-size:12px;">
+          Stack grows ⬇️ during calls, then unwinds ⬆️ with return values<br>
+          Returns: 1 → 2×1=2 → 3×2=6 → 4×6=24
+        </div>
+      </div>
+
+      <div class="callout callout-warn">
+        <span class="callout-icon" style="color:var(--rust);">⚠️</span>
+        <div class="callout-content">
+          <strong>Stack Overflow Risk</strong>
+          Every recursive call consumes stack space. Deep recursion (thousands of levels) can exhaust available stack memory, causing a stack overflow error. This is why iterative solutions are sometimes preferred for problems with large input sizes.
+        </div>
+      </div>
+    </div>
+  </details>
+
+
+  <!-- ═══════════════════ SECTION 3: COMMON RECURSIVE ALGORITHMS ═══════════════════ -->
+  <div class="section-title">Classic Recursive Algorithms</div>
+
+  <details open>
+    <summary>
+      <div class="summary-icon" style="background:rgba(156,170,122,0.15); color:var(--sage); border-color:var(--sage);">🌿</div>
+      Essential Patterns &amp; Examples
+    </summary>
+    <div class="details-body">
+      <p style="color:var(--text-dim); margin-bottom:18px; font-size:14px;">These algorithms demonstrate the most common recursive patterns. Mastering these gives you the tools to recognize when recursion is the natural solution and how to implement it correctly.</p>
+
+      <div class="concept-grid">
+        <div class="concept-card">
+          <div class="concept-card-header">
+            <div class="concept-card-name">Mathematical Recursion</div>
+          </div>
+          <p><strong>Factorial, Fibonacci, Power:</strong> Direct mathematical definitions translate to recursive code. These problems have naturally recursive mathematical definitions, making them perfect introductory examples.</p>
+          <div class="complexity-row">
+            <span class="comp-badge comp-time">O(n) - O(2ⁿ)</span>
+            <span class="comp-badge comp-space">O(n) depth</span>
+          </div>
+        </div>
+
+        <div class="concept-card">
+          <div class="concept-card-header">
+            <div class="concept-card-name">Tree Recursion</div>
+          </div>
+          <p><strong>Tree traversals, Binary search:</strong> Hierarchical structures naturally call for recursive solutions. Each node delegates work to its children, then combines the results.</p>
+          <div class="complexity-row">
+            <span class="comp-badge comp-time">O(n) nodes</span>
+            <span class="comp-badge comp-space">O(height)</span>
+          </div>
+        </div>
+
+        <div class="concept-card">
+          <div class="concept-card-header">
+            <div class="concept-card-name">Divide & Conquer</div>
+          </div>
+          <p><strong>Merge sort, Quick sort:</strong> Split problem into independent subproblems, solve recursively, then combine. Most efficient recursive algorithms follow this pattern.</p>
+          <div class="complexity-row">
+            <span class="comp-badge comp-time">O(n log n)</span>
+            <span class="comp-badge comp-space">O(log n)</span>
+          </div>
+        </div>
+
+        <div class="concept-card">
+          <div class="concept-card-header">
+            <div class="concept-card-name">Backtracking</div>
+          </div>
+          <p><strong>N-Queens, Maze solving:</strong> Explore all possibilities by making a choice, recursing, then undoing the choice if it doesn't work. Classic search pattern.</p>
+          <div class="complexity-row">
+            <span class="comp-badge comp-time">Exponential</span>
+            <span class="comp-badge comp-space">O(depth)</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="code-block"><span class="code-comment">// 1. FIBONACCI - Classic Tree Recursion (Naive)</span>
+<span class="code-type">int</span> <span class="code-func">fibonacci</span>(<span class="code-type">int</span> n) {
+    <span class="code-comment">// Base cases</span>
+    <span class="code-keyword">if</span> (n <= <span class="code-number">1</span>) <span class="code-keyword">return</span> n;
+    
+    <span class="code-comment">// Recursive case: F(n) = F(n-1) + F(n-2)</span>
+    <span class="code-keyword">return</span> <span class="code-func">fibonacci</span>(n - <span class="code-number">1</span>) + <span class="code-func">fibonacci</span>(n - <span class="code-number">2</span>);
+}
+<span class="code-comment">// Time: O(2^n) - exponential due to repeated calculations
+// Space: O(n) - maximum recursion depth</span>
+
+<span class="code-comment">// 2. BINARY TREE TRAVERSAL - Structural Recursion</span>
+<span class="code-keyword">void</span> <span class="code-func">inorderTraversal</span>(<span class="code-type">TreeNode</span>* root) {
+    <span class="code-comment">// Base case: empty tree</span>
+    <span class="code-keyword">if</span> (root == <span class="code-keyword">nullptr</span>) <span class="code-keyword">return</span>;
+    
+    <span class="code-comment">// Recursive case: left, root, right</span>
+    <span class="code-func">inorderTraversal</span>(root->left);     <span class="code-comment">// Process left subtree</span>
+    cout << root->val << <span class="code-string">" "</span>;              <span class="code-comment">// Process current node</span>
+    <span class="code-func">inorderTraversal</span>(root->right);    <span class="code-comment">// Process right subtree</span>
+}
+<span class="code-comment">// Time: O(n) - visit each node once
+// Space: O(height) - recursion depth equals tree height</span>
+
+<span class="code-comment">// 3. MERGE SORT - Divide & Conquer</span>
+<span class="code-keyword">void</span> <span class="code-func">mergeSort</span>(<span class="code-type">int</span> arr[], <span class="code-type">int</span> left, <span class="code-type">int</span> right) {
+    <span class="code-comment">// Base case: single element or empty</span>
+    <span class="code-keyword">if</span> (left >= right) <span class="code-keyword">return</span>;
+    
+    <span class="code-comment">// Divide: find middle point</span>
+    <span class="code-type">int</span> mid = left + (right - left) / <span class="code-number">2</span>;
+    
+    <span class="code-comment">// Conquer: recursively sort both halves</span>
+    <span class="code-func">mergeSort</span>(arr, left, mid);
+    <span class="code-func">mergeSort</span>(arr, mid + <span class="code-number">1</span>, right);
+    
+    <span class="code-comment">// Combine: merge sorted halves</span>
+    <span class="code-func">merge</span>(arr, left, mid, right);
+}
+<span class="code-comment">// Time: O(n log n) - divide by 2, merge takes O(n)
+// Space: O(n) - auxiliary array + O(log n) recursion stack</span>
+
+<span class="code-comment">// 4. N-QUEENS - Backtracking</span>
+<span class="code-type">bool</span> <span class="code-func">solveNQueens</span>(<span class="code-type">int</span> board[][], <span class="code-type">int</span> col, <span class="code-type">int</span> N) {
+    <span class="code-comment">// Base case: all queens placed</span>
+    <span class="code-keyword">if</span> (col >= N) <span class="code-keyword">return</span> <span class="code-keyword">true</span>;
+    
+    <span class="code-comment">// Try placing queen in each row of this column</span>
+    <span class="code-keyword">for</span> (<span class="code-type">int</span> row = <span class="code-number">0</span>; row < N; row++) {
+        <span class="code-keyword">if</span> (<span class="code-func">isSafe</span>(board, row, col, N)) {
+            board[row][col] = <span class="code-number">1</span>;              <span class="code-comment">// Place queen</span>
+            
+            <span class="code-keyword">if</span> (<span class="code-func">solveNQueens</span>(board, col + <span class="code-number">1</span>, N)) {
+                <span class="code-keyword">return</span> <span class="code-keyword">true</span>;                <span class="code-comment">// Solution found</span>
+            }
+            
+            board[row][col] = <span class="code-number">0</span>;              <span class="code-comment">// Backtrack</span>
+        }
+    }
+    <span class="code-keyword">return</span> <span class="code-keyword">false</span>;                          <span class="code-comment">// No solution in this path</span>
+}
+<span class="code-comment">// Time: O(N!) - try all possible queen placements
+// Space: O(N) - recursion depth</span></div>
+
+      <div class="tree-diagram">
+        <div style="color:var(--golden); font-weight:600; margin-bottom:15px;">Fibonacci Tree: fib(5)</div>
+        
+        <div class="tree-level">
+          <div class="tree-node">fib(5)</div>
+        </div>
+        
+        <div class="tree-level">
+          <span class="tree-branch">╱</span>
+          <span style="margin:0 40px;"></span>
+          <span class="tree-branch">╲</span>
+        </div>
+        
+        <div class="tree-level">
+          <div class="tree-node">fib(4)</div>
+          <span style="margin:0 20px;"></span>
+          <div class="tree-node">fib(3)</div>
+        </div>
+        
+        <div class="tree-level">
+          <span class="tree-branch">╱ ╲</span>
+          <span style="margin:0 30px;"></span>
+          <span class="tree-branch">╱ ╲</span>
+        </div>
+        
+        <div class="tree-level">
+          <div class="tree-node">fib(3)</div>
+          <div class="tree-node">fib(2)</div>
+          <div class="tree-node">fib(2)</div>
+          <div class="tree-node">fib(1)</div>
+        </div>
+        
+        <div style="margin-top:15px; color:var(--text-dim); font-size:12px;">
+          Note: fib(3) and fib(2) calculated multiple times! → O(2ⁿ) complexity
+        </div>
+      </div>
+
+      <div class="callout callout-tip">
+        <span class="callout-icon" style="color:var(--copper);">🎯</span>
+        <div class="callout-content">
+          <strong>Pattern Recognition</strong>
+          Mathematical recurrences → Direct recursion. Tree/graph structures → Structural recursion. Large problems with independent subproblems → Divide & conquer. Search with choice exploration → Backtracking. Learning these patterns helps you quickly identify the right recursive approach.
+        </div>
+      </div>
+    </div>
+  </details>
+
+
+  <!-- ═══════════════════ SECTION 4: TRACING RECURSION ═══════════════════ -->
+  <div class="section-title">Tracing Recursive Execution</div>
+
+  <details>
+    <summary>
+      <div class="summary-icon" style="background:rgba(204,132,0,0.15); color:var(--amber); border-color:var(--amber);">🔍</div>
+      Step-by-Step Execution Analysis
+    </summary>
+    <div class="details-body">
+      <p style="color:var(--text-dim); margin-bottom:18px; font-size:14px;">Tracing recursion step-by-step helps you understand execution flow, debug problems, and predict behavior. We'll trace through complete examples to see how recursive calls stack up and unwind.</p>
+
+      <div class="callout callout-info">
+        <span class="callout-icon" style="color:var(--golden);">📋</span>
+        <div class="callout-content">
+          <strong>How to Trace Recursion</strong>
+          1. Track each function call with its parameters<br>
+          2. Note when base cases are reached<br>
+          3. Follow return values as they propagate back up<br>
+          4. Pay attention to stack depth and memory usage
+        </div>
+      </div>
+
+      <div class="concept-grid">
+        <div class="concept-card">
+          <div class="concept-card-header">
+            <div class="concept-card-name">Detailed Trace: factorial(4)</div>
+          </div>
+          <div class="trace-table">
+            <thead>
+              <tr>
+                <th>Call</th>
+                <th>Parameter</th>
+                <th>Action</th>
+                <th>Return Value</th>
+                <th>Stack Depth</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr class="call-depth-1">
+                <td>factorial(4)</td>
+                <td>n = 4</td>
+                <td>4 > 1, so call factorial(3)</td>
+                <td>4 × 6 = 24</td>
+                <td>1</td>
+              </tr>
+              <tr class="call-depth-2">
+                <td>factorial(3)</td>
+                <td>n = 3</td>
+                <td>3 > 1, so call factorial(2)</td>
+                <td>3 × 2 = 6</td>
+                <td>2</td>
+              </tr>
+              <tr class="call-depth-3">
+                <td>factorial(2)</td>
+                <td>n = 2</td>
+                <td>2 > 1, so call factorial(1)</td>
+                <td>2 × 1 = 2</td>
+                <td>3</td>
+              </tr>
+              <tr class="call-depth-3">
+                <td>factorial(1)</td>
+                <td>n = 1</td>
+                <td><strong>Base case!</strong> Return 1</td>
+                <td>1</td>
+                <td>4</td>
+              </tr>
+            </tbody>
+          </div>
+        </div>
+      </div>
+
+      <div class="code-block"><span class="code-comment">// Manual trace with print statements</span>
+<span class="code-type">int</span> <span class="code-func">factorial</span>(<span class="code-type">int</span> n, <span class="code-type">int</span> depth = <span class="code-number">0</span>) {
+    <span class="code-comment">// Print entering function</span>
+    <span class="code-keyword">for</span> (<span class="code-type">int</span> i = <span class="code-number">0</span>; i < depth; i++) cout << <span class="code-string">"  "</span>;
+    cout << <span class="code-string">"→ factorial("</span> << n << <span class="code-string">") called"</span> << endl;
+    
+    <span class="code-comment">// Base case</span>
+    <span class="code-keyword">if</span> (n <= <span class="code-number">1</span>) {
+        <span class="code-keyword">for</span> (<span class="code-type">int</span> i = <span class="code-number">0</span>; i < depth; i++) cout << <span class="code-string">"  "</span>;
+        cout << <span class="code-string">"← BASE CASE: returning 1"</span> << endl;
+        <span class="code-keyword">return</span> <span class="code-number">1</span>;
+    }
+    
+    <span class="code-comment">// Recursive call</span>
+    <span class="code-type">int</span> result = n * <span class="code-func">factorial</span>(n - <span class="code-number">1</span>, depth + <span class="code-number">1</span>);
+    
+    <span class="code-comment">// Print returning from function</span>
+    <span class="code-keyword">for</span> (<span class="code-type">int</span> i = <span class="code-number">0</span>; i < depth; i++) cout << <span class="code-string">"  "</span>;
+    cout << <span class="code-string">"← factorial("</span> << n << <span class="code-string">") returning "</span> << result << endl;
+    
+    <span class="code-keyword">return</span> result;
+}
+
+<span class="code-comment">/* OUTPUT for factorial(4):
+→ factorial(4) called
+  → factorial(3) called
+    → factorial(2) called
+      → factorial(1) called
+      ← BASE CASE: returning 1
+    ← factorial(2) returning 2
+  ← factorial(3) returning 6
+← factorial(4) returning 24
+*/</span></div>
+
+      <div class="concept-grid">
+        <div class="concept-card">
+          <div class="concept-card-header">
+            <div class="concept-card-name">Binary Search Trace</div>
+          </div>
+          <p>Let's trace binary search for target 7 in array [1,3,5,7,9,11,13]:</p>
+          <div class="trace-table">
+            <thead>
+              <tr>
+                <th>Call</th>
+                <th>Array Slice</th>
+                <th>Mid Value</th>
+                <th>Action</th>
+                <th>Result</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr class="call-depth-1">
+                <td>binarySearch(0,6)</td>
+                <td>[1,3,5,7,9,11,13]</td>
+                <td>7 (index 3)</td>
+                <td>7 == target</td>
+                <td>Found at 3</td>
+              </tr>
+            </tbody>
+          </table>
+          <p style="margin-top:10px; font-size:12px; color:var(--text-dim);">Lucky case - found immediately! Usually requires log n calls.</p>
+        </div>
+
+        <div class="concept-card">
+          <div class="concept-card-header">
+            <div class="concept-card-name">Fibonacci Trace (Partial)</div>
+          </div>
+          <p>Just the first few calls of fib(5) to show exponential explosion:</p>
+          <div class="trace-table">
+            <thead>
+              <tr>
+                <th>Call Order</th>
+                <th>Function Call</th>
+                <th>Calls Made</th>
+                <th>Return Value</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr class="call-depth-1">
+                <td>1</td>
+                <td>fib(5)</td>
+                <td>fib(4), fib(3)</td>
+                <td>5</td>
+              </tr>
+              <tr class="call-depth-2">
+                <td>2</td>
+                <td>fib(4)</td>
+                <td>fib(3), fib(2)</td>
+                <td>3</td>
+              </tr>
+              <tr class="call-depth-3">
+                <td>3</td>
+                <td>fib(3)</td>
+                <td>fib(2), fib(1)</td>
+                <td>2</td>
+              </tr>
+              <tr class="call-depth-3">
+                <td>4</td>
+                <td>fib(2)</td>
+                <td>fib(1), fib(0)</td>
+                <td>1</td>
+              </tr>
+              <tr class="call-depth-3">
+                <td>...</td>
+                <td>15 total calls!</td>
+                <td>Many repeated</td>
+                <td>...</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <div class="callout callout-warn">
+        <span class="callout-icon" style="color:var(--rust);">⚠️</span>
+        <div class="callout-content">
+          <strong>Tracing Pitfalls</strong>
+          Be careful with tree recursion (like Fibonacci) — the number of calls grows exponentially. For debugging, add depth limits or trace only the first few levels. Also watch for infinite recursion where base cases are never reached.
+        </div>
+      </div>
+    </div>
+  </details>
+
+  <!-- ═══════════════════ SECTION 5: COMPUTATIONAL COMPLEXITY ═══════════════════ -->
+  <div class="section-title">Computational Complexity of Recursion</div>
+
+  <details>
+    <summary>
+      <div class="summary-icon" style="background:rgba(183,65,14,0.15); color:var(--rust); border-color:var(--rust);">📊</div>
+      Time &amp; Space Analysis Techniques
+    </summary>
+    <div class="details-body">
+      <p style="color:var(--text-dim); margin-bottom:18px; font-size:14px;">Analyzing recursive algorithms requires understanding recurrence relations, tree structures, and stack memory usage. The complexity often depends on the depth of recursion and the work done at each level.</p>
+
+      <div class="concept-grid">
+        <div class="concept-card">
+          <div class="concept-card-header">
+            <div class="concept-card-name">Linear Recursion</div>
+          </div>
+          <p><strong>Pattern:</strong> Each call makes one recursive call<br>
+          <strong>Examples:</strong> Factorial, Linear search, List traversal<br>
+          <strong>Analysis:</strong> T(n) = T(n-1) + O(1) = O(n)</p>
+          <div class="complexity-row">
+            <span class="comp-badge comp-time">O(n) time</span>
+            <span class="comp-badge comp-space">O(n) space</span>
+          </div>
+        </div>
+
+        <div class="concept-card">
+          <div class="concept-card-header">
+            <div class="concept-card-name">Binary Recursion</div>
+          </div>
+          <p><strong>Pattern:</strong> Each call makes two recursive calls<br>
+          <strong>Examples:</strong> Fibonacci (naive), Binary tree traversal<br>
+          <strong>Analysis:</strong> T(n) = 2T(n-1) + O(1) = O(2ⁿ) worst case</p>
+          <div class="complexity-row">
+            <span class="comp-badge comp-time">O(2ⁿ) time</span>
+            <span class="comp-badge comp-space">O(n) space</span>
+          </div>
+        </div>
+
+        <div class="concept-card">
+          <div class="concept-card-header">
+            <div class="concept-card-name">Divide & Conquer</div>
+          </div>
+          <p><strong>Pattern:</strong> Split problem in half, solve both parts<br>
+          <strong>Examples:</strong> Merge sort, Binary search<br>
+          <strong>Analysis:</strong> T(n) = 2T(n/2) + O(n) = O(n log n)</p>
+          <div class="complexity-row">
+            <span class="comp-badge comp-time">O(n log n) time</span>
+            <span class="comp-badge comp-space">O(log n) space</span>
+          </div>
+        </div>
+
+        <div class="concept-card">
+          <div class="concept-card-header">
+            <div class="concept-card-name">Master Theorem</div>
+          </div>
+          <p><strong>Formula:</strong> T(n) = aT(n/b) + f(n)<br>
+          <strong>Use:</strong> Solve many divide-and-conquer recurrences<br>
+          <strong>Cases:</strong> Compare f(n) with n^(log_b a)</p>
+          <div class="complexity-row">
+            <span class="comp-badge comp-opt">Systematic approach</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="code-block"><span class="code-comment">// Complexity Analysis Examples</span>
+
+<span class="code-comment">// 1. LINEAR RECURSION - O(n) time, O(n) space</span>
+<span class="code-type">int</span> <span class="code-func">sum</span>(<span class="code-type">int</span> n) {
+    <span class="code-keyword">if</span> (n == <span class="code-number">0</span>) <span class="code-keyword">return</span> <span class="code-number">0</span>;           <span class="code-comment">// Base: O(1)</span>
+    <span class="code-keyword">return</span> n + <span class="code-func">sum</span>(n - <span class="code-number">1</span>);           <span class="code-comment">// Recurrence: T(n) = T(n-1) + 1</span>
+}
+<span class="code-comment">// Analysis: T(n) = T(n-1) + O(1) → T(n) = O(n)
+// Space: O(n) due to n stack frames</span>
+
+<span class="code-comment">// 2. BINARY RECURSION - O(2^n) time, O(n) space</span>
+<span class="code-type">int</span> <span class="code-func">fibonacci</span>(<span class="code-type">int</span> n) {
+    <span class="code-keyword">if</span> (n <= <span class="code-number">1</span>) <span class="code-keyword">return</span> n;          <span class="code-comment">// Base: O(1)</span>
+    <span class="code-keyword">return</span> <span class="code-func">fib</span>(n-<span class="code-number">1</span>) + <span class="code-func">fib</span>(n-<span class="code-number">2</span>); <span class="code-comment">// Recurrence: T(n) = T(n-1) + T(n-2)</span>
+}
+<span class="code-comment">// Analysis: T(n) ≈ 2T(n-1) → T(n) = O(2^n) - exponential!
+// Space: O(n) maximum recursion depth</span>
+
+<span class="code-comment">// 3. DIVIDE & CONQUER - O(n log n) time, O(log n) space</span>
+<span class="code-keyword">void</span> <span class="code-func">mergeSort</span>(<span class="code-type">int</span> arr[], <span class="code-type">int</span> left, <span class="code-type">int</span> right) {
+    <span class="code-keyword">if</span> (left >= right) <span class="code-keyword">return</span>;     <span class="code-comment">// Base: O(1)</span>
+    <span class="code-type">int</span> mid = (left + right) / <span class="code-number">2</span>;
+    <span class="code-func">mergeSort</span>(arr, left, mid);      <span class="code-comment">// T(n/2)</span>
+    <span class="code-func">mergeSort</span>(arr, mid+<span class="code-number">1</span>, right);  <span class="code-comment">// T(n/2)</span>
+    <span class="code-func">merge</span>(arr, left, mid, right);  <span class="code-comment">// O(n)</span>
+}
+<span class="code-comment">// Analysis: T(n) = 2T(n/2) + O(n) → T(n) = O(n log n)
+// Space: O(log n) recursion depth + O(n) auxiliary array</span>
+
+<span class="code-comment">// 4. LOGARITHMIC - O(log n) time, O(log n) space</span>
+<span class="code-type">int</span> <span class="code-func">binarySearch</span>(<span class="code-type">int</span> arr[], <span class="code-type">int</span> target, <span class="code-type">int</span> left, <span class="code-type">int</span> right) {
+    <span class="code-keyword">if</span> (left > right) <span class="code-keyword">return</span> <span class="code-number">-1</span>;        <span class="code-comment">// Base: O(1)</span>
+    <span class="code-type">int</span> mid = (left + right) / <span class="code-number">2</span>;
+    <span class="code-keyword">if</span> (arr[mid] == target) <span class="code-keyword">return</span> mid;
+    <span class="code-keyword">if</span> (arr[mid] > target)
+        <span class="code-keyword">return</span> <span class="code-func">binarySearch</span>(arr, target, left, mid-<span class="code-number">1</span>);   <span class="code-comment">// T(n/2)</span>
+    <span class="code-keyword">else</span>
+        <span class="code-keyword">return</span> <span class="code-func">binarySearch</span>(arr, target, mid+<span class="code-number">1</span>, right); <span class="code-comment">// T(n/2)</span>
+}
+<span class="code-comment">// Analysis: T(n) = T(n/2) + O(1) → T(n) = O(log n)
+// Space: O(log n) recursion depth</span></div>
+
+      <div class="callout callout-tip">
+        <span class="callout-icon" style="color:var(--copper);">📈</span>
+        <div class="callout-content">
+          <strong>Quick Complexity Rules</strong>
+          <strong>Time:</strong> Count total recursive calls × work per call. <strong>Space:</strong> Maximum recursion depth × space per frame. Tree recursion often has exponential time but linear space. Divide-and-conquer usually has O(n log n) time and O(log n) space.
+        </div>
+      </div>
+    </div>
+  </details>
+
+
+  <!-- ═══════════════════ SECTION 6: ALTERNATIVES TO RECURSION ═══════════════════ -->
+  <div class="section-title">Alternative Computation Methods</div>
+
+  <details>
+    <summary>
+      <div class="summary-icon" style="background:rgba(107,142,35,0.15); color:var(--moss); border-color:var(--moss);">🔄</div>
+      Iterative Solutions &amp; Optimizations
+    </summary>
+    <div class="details-body">
+      <p style="color:var(--text-dim); margin-bottom:18px; font-size:14px;">Not every problem needs recursion. Sometimes iterative solutions are more efficient, use less memory, or are easier to understand. Understanding when and how to convert between recursive and iterative approaches is a crucial skill.</p>
+
+      <div class="comparison-grid">
+        <div class="vs-card recursive">
+          <div class="vs-header">
+            <div class="vs-icon" style="background:rgba(212,175,55,0.2); color:var(--golden);">🌳</div>
+            <div class="vs-title">Recursive Factorial</div>
+          </div>
+          <div class="code-block" style="margin:0; font-size:12px;"><span class="code-type">int</span> <span class="code-func">factorial</span>(<span class="code-type">int</span> n) {
+    <span class="code-keyword">if</span> (n <= <span class="code-number">1</span>) <span class="code-keyword">return</span> <span class="code-number">1</span>;
+    <span class="code-keyword">return</span> n * <span class="code-func">factorial</span>(n - <span class="code-number">1</span>);
+}</div>
+          <p style="font-size:13px; margin-top:8px;"><strong>Pros:</strong> Elegant, matches mathematical definition<br>
+          <strong>Cons:</strong> O(n) space, stack overflow risk</p>
+        </div>
+
+        <div class="vs-card iterative">
+          <div class="vs-header">
+            <div class="vs-icon" style="background:rgba(183,115,51,0.2); color:var(--copper);">🔁</div>
+            <div class="vs-title">Iterative Factorial</div>
+          </div>
+          <div class="code-block" style="margin:0; font-size:12px;"><span class="code-type">int</span> <span class="code-func">factorial</span>(<span class="code-type">int</span> n) {
+    <span class="code-type">int</span> result = <span class="code-number">1</span>;
+    <span class="code-keyword">for</span> (<span class="code-type">int</span> i = <span class="code-number">2</span>; i <= n; i++) {
+        result *= i;
+    }
+    <span class="code-keyword">return</span> result;
+}</div>
+          <p style="font-size:13px; margin-top:8px;"><strong>Pros:</strong> O(1) space, no stack overflow<br>
+          <strong>Cons:</strong> Less intuitive for some problems</p>
+        </div>
+      </div>
+
+      <div class="concept-grid">
+        <div class="concept-card">
+          <div class="concept-card-header">
+            <div class="concept-card-name">Stack-Based Simulation</div>
+          </div>
+          <p>Use an explicit stack to simulate recursive calls. Useful when you need recursion's logic but want to control stack size or avoid function call overhead.</p>
+          <div class="complexity-row">
+            <span class="comp-badge comp-time">Same time as recursive</span>
+            <span class="comp-badge comp-space">Controllable space</span>
+          </div>
+        </div>
+
+        <div class="concept-card">
+          <div class="concept-card-header">
+            <div class="concept-card-name">Dynamic Programming</div>
+          </div>
+          <p>Store results of subproblems to avoid recomputation. Converts exponential tree recursion into linear iteration. Essential optimization for overlapping subproblems.</p>
+          <div class="complexity-row">
+            <span class="comp-badge comp-time">O(n) from O(2ⁿ)</span>
+            <span class="comp-badge comp-space">O(n) table</span>
+          </div>
+        </div>
+
+        <div class="concept-card">
+          <div class="concept-card-header">
+            <div class="concept-card-name">Tail Recursion Optimization</div>
+          </div>
+          <p>When the recursive call is the last operation, compilers can optimize it into a loop. Keeps space constant instead of linear growth.</p>
+          <div class="complexity-row">
+            <span class="comp-badge comp-space">O(1) space</span>
+            <span class="comp-badge comp-opt">Compiler dependent</span>
+          </div>
+        </div>
+
+        <div class="concept-card">
+          <div class="concept-card-header">
+            <div class="concept-card-name">Memoization</div>
+          </div>
+          <p>Cache recursive function results in a hash table. Top-down approach to dynamic programming. Add caching to existing recursive code with minimal changes.</p>
+          <div class="complexity-row">
+            <span class="comp-badge comp-time">Avoid recalculation</span>
+            <span class="comp-badge comp-space">O(n) cache</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="code-block"><span class="code-comment">// FIBONACCI: Four Different Approaches</span>
+
+<span class="code-comment">// 1. Naive Recursion - O(2^n) time, O(n) space</span>
+<span class="code-type">int</span> <span class="code-func">fibRecursive</span>(<span class="code-type">int</span> n) {
+    <span class="code-keyword">if</span> (n <= <span class="code-number">1</span>) <span class="code-keyword">return</span> n;
+    <span class="code-keyword">return</span> <span class="code-func">fibRecursive</span>(n-<span class="code-number">1</span>) + <span class="code-func">fibRecursive</span>(n-<span class="code-number">2</span>);
+}
+
+<span class="code-comment">// 2. Memoization (Top-Down DP) - O(n) time, O(n) space</span>
+<span class="code-type">int</span> memo[<span class="code-number">1000</span>];
+<span class="code-type">int</span> <span class="code-func">fibMemo</span>(<span class="code-type">int</span> n) {
+    <span class="code-keyword">if</span> (n <= <span class="code-number">1</span>) <span class="code-keyword">return</span> n;
+    <span class="code-keyword">if</span> (memo[n] != <span class="code-number">0</span>) <span class="code-keyword">return</span> memo[n];  <span class="code-comment">// Already computed</span>
+    memo[n] = <span class="code-func">fibMemo</span>(n-<span class="code-number">1</span>) + <span class="code-func">fibMemo</span>(n-<span class="code-number">2</span>);
+    <span class="code-keyword">return</span> memo[n];
+}
+
+<span class="code-comment">// 3. Dynamic Programming (Bottom-Up) - O(n) time, O(n) space</span>
+<span class="code-type">int</span> <span class="code-func">fibDP</span>(<span class="code-type">int</span> n) {
+    <span class="code-keyword">if</span> (n <= <span class="code-number">1</span>) <span class="code-keyword">return</span> n;
+    <span class="code-type">int</span> dp[n+<span class="code-number">1</span>];
+    dp[<span class="code-number">0</span>] = <span class="code-number">0</span>; dp[<span class="code-number">1</span>] = <span class="code-number">1</span>;
+    <span class="code-keyword">for</span> (<span class="code-type">int</span> i = <span class="code-number">2</span>; i <= n; i++) {
+        dp[i] = dp[i-<span class="code-number">1</span>] + dp[i-<span class="code-number">2</span>];
+    }
+    <span class="code-keyword">return</span> dp[n];
+}
+
+<span class="code-comment">// 4. Space-Optimized Iterative - O(n) time, O(1) space</span>
+<span class="code-type">int</span> <span class="code-func">fibIterative</span>(<span class="code-type">int</span> n) {
+    <span class="code-keyword">if</span> (n <= <span class="code-number">1</span>) <span class="code-keyword">return</span> n;
+    <span class="code-type">int</span> prev2 = <span class="code-number">0</span>, prev1 = <span class="code-number">1</span>, current;
+    <span class="code-keyword">for</span> (<span class="code-type">int</span> i = <span class="code-number">2</span>; i <= n; i++) {
+        current = prev1 + prev2;
+        prev2 = prev1;
+        prev1 = current;
+    }
+    <span class="code-keyword">return</span> current;
+}</div>
+
+      <div class="code-block"><span class="code-comment">// TREE TRAVERSAL: Stack-Based Alternative</span>
+<span class="code-keyword">void</span> <span class="code-func">inorderIterative</span>(<span class="code-type">TreeNode</span>* root) {
+    <span class="code-type">stack</span><<span class="code-type">TreeNode</span>*> s;
+    <span class="code-type">TreeNode</span>* current = root;
+    
+    <span class="code-keyword">while</span> (current != <span class="code-keyword">nullptr</span> || !s.empty()) {
+        <span class="code-comment">// Go to leftmost node</span>
+        <span class="code-keyword">while</span> (current != <span class="code-keyword">nullptr</span>) {
+            s.push(current);
+            current = current->left;
+        }
+        
+        <span class="code-comment">// Process node and move to right subtree</span>
+        current = s.top(); s.pop();
+        cout << current->val << <span class="code-string">" "</span>;
+        current = current->right;
+    }
+}
+<span class="code-comment">// Same O(n) time as recursive, but explicit stack control</span></div>
+
+      <div class="callout callout-tip">
+        <span class="callout-icon" style="color:var(--copper);">⚖️</span>
+        <div class="callout-content">
+          <strong>When to Use Each Approach</strong>
+          <strong>Recursion:</strong> When the problem naturally decomposes recursively and stack depth is manageable.<br>
+          <strong>Memoization:</strong> When you have a recursive solution with overlapping subproblems.<br>
+          <strong>Dynamic Programming:</strong> When you can identify optimal substructure and want maximum efficiency.<br>
+          <strong>Iteration:</strong> When you need guaranteed O(1) space or want to avoid function call overhead.
+        </div>
+      </div>
+    </div>
+  </details>
+
+
+  <!-- ═══════════════════ SECTION 7: ADVANTAGES AND DISADVANTAGES ═══════════════════ -->
+  <div class="section-title">Advantages &amp; Disadvantages of Recursion</div>
+
+  <details open>
+    <summary>
+      <div class="summary-icon" style="background:rgba(212,175,55,0.15); color:var(--golden); border-color:var(--golden);">⚖️</div>
+      When to Use Recursion &amp; When to Avoid It
+    </summary>
+    <div class="details-body">
+      <p style="color:var(--text-dim); margin-bottom:18px; font-size:14px;">Recursion is a powerful tool, but like all tools, it has appropriate and inappropriate uses. Understanding the trade-offs helps you make better design decisions and write more efficient code.</p>
+
+      <div class="pros-cons">
+        <div class="pros">
+          <h4>Advantages of Recursion</h4>
+          <ul>
+            <li>Elegant and readable for naturally recursive problems</li>
+            <li>Mirrors mathematical definitions closely</li>
+            <li>Simplifies complex problems through divide-and-conquer</li>
+            <li>Natural fit for tree and graph traversals</li>
+            <li>Enables powerful algorithms like backtracking</li>
+            <li>Reduces code complexity for recursive data structures</li>
+            <li>Makes proofs of correctness more straightforward</li>
+            <li>Excellent for problems with overlapping substructure</li>
+          </ul>
+        </div>
+        <div class="cons">
+          <h4>Disadvantages of Recursion</h4>
+          <ul>
+            <li>Higher memory overhead due to function calls</li>
+            <li>Risk of stack overflow with deep recursion</li>
+            <li>Generally slower than iterative solutions</li>
+            <li>Can be exponentially inefficient without optimization</li>
+            <li>Harder to debug and trace execution</li>
+            <li>Not all problems benefit from recursive approach</li>
+            <li>May be harder for beginners to understand</li>
+            <li>Compiler optimizations may vary</li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="concept-grid">
+        <div class="concept-card">
+          <div class="concept-card-header">
+            <div class="concept-card-name">Excellent for Recursion</div>
+          </div>
+          <p><strong>Tree/Graph Operations:</strong> Traversals, search, path finding<br>
+          <strong>Divide & Conquer:</strong> Merge sort, quick sort, binary search<br>
+          <strong>Backtracking:</strong> N-Queens, Sudoku, maze solving<br>
+          <strong>Mathematical:</strong> Fibonacci, combinatorics, fractals</p>
+          <div class="complexity-row">
+            <span class="comp-badge comp-opt">Natural fit</span>
+            <span class="comp-badge comp-rec">Elegant code</span>
+          </div>
+        </div>
+
+        <div class="concept-card">
+          <div class="concept-card-header">
+            <div class="concept-card-name">Consider Alternatives</div>
+          </div>
+          <p><strong>Simple Loops:</strong> Basic counting, linear operations<br>
+          <strong>Large Inputs:</strong> Risk of stack overflow<br>
+          <strong>Performance Critical:</strong> Gaming, real-time systems<br>
+          <strong>Memory Constrained:</strong> Embedded systems</p>
+          <div class="complexity-row">
+            <span class="comp-badge comp-space">Memory concerns</span>
+            <span class="comp-badge comp-time">Performance critical</span>
+          </div>
+        </div>
+
+        <div class="concept-card">
+          <div class="concept-card-header">
+            <div class="concept-card-name">Recursion Optimization</div>
+          </div>
+          <p><strong>Memoization:</strong> Cache results for overlapping subproblems<br>
+          <strong>Tail Recursion:</strong> Enable compiler optimization<br>
+          <strong>Iterative Conversion:</strong> Use explicit stack when needed<br>
+          <strong>Base Case Optimization:</strong> Handle small cases directly</p>
+          <div class="complexity-row">
+            <span class="comp-badge comp-opt">Best of both worlds</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="code-block"><span class="code-comment">// Decision Framework: When to Use Recursion</span>
+
+<span class="code-comment">// ✅ GOOD: Tree traversal - naturally recursive structure</span>
+<span class="code-keyword">void</span> <span class="code-func">printTree</span>(<span class="code-type">TreeNode</span>* root) {
+    <span class="code-keyword">if</span> (!root) <span class="code-keyword">return</span>;           <span class="code-comment">// Base case</span>
+    cout << root->val << <span class="code-string">" "</span>;        <span class="code-comment">// Process node</span>
+    <span class="code-func">printTree</span>(root->left);           <span class="code-comment">// Recurse left</span>
+    <span class="code-func">printTree</span>(root->right);          <span class="code-comment">// Recurse right</span>
+}
+<span class="code-comment">// Why good: Matches the tree structure perfectly</span>
+
+<span class="code-comment">// ❌ POOR: Simple counting - iterative is clearer</span>
+<span class="code-type">int</span> <span class="code-func">countToN</span>(<span class="code-type">int</span> n) {
+    <span class="code-keyword">if</span> (n == <span class="code-number">0</span>) <span class="code-keyword">return</span> <span class="code-number">0</span>;
+    cout << n << <span class="code-string">" "</span>;
+    <span class="code-keyword">return</span> <span class="code-func">countToN</span>(n - <span class="code-number">1</span>);
+}
+<span class="code-comment">// Why poor: Simple loop is clearer and more efficient</span>
+
+<span class="code-comment">// ✅ GOOD: Divide and conquer - breaks problem naturally</span>
+<span class="code-type">int</span> <span class="code-func">maxElement</span>(<span class="code-type">int</span> arr[], <span class="code-type">int</span> left, <span class="code-type">int</span> right) {
+    <span class="code-keyword">if</span> (left == right) <span class="code-keyword">return</span> arr[left];  <span class="code-comment">// Base case</span>
+    <span class="code-type">int</span> mid = (left + right) / <span class="code-number">2</span>;
+    <span class="code-type">int</span> leftMax = <span class="code-func">maxElement</span>(arr, left, mid);
+    <span class="code-type">int</span> rightMax = <span class="code-func">maxElement</span>(arr, mid+<span class="code-number">1</span>, right);
+    <span class="code-keyword">return</span> max(leftMax, rightMax);
+}
+<span class="code-comment">// Why good: Demonstrates divide-and-conquer thinking</span>
+
+<span class="code-comment">// ⚠️ CAUTION: Fibonacci without memoization - exponential</span>
+<span class="code-type">int</span> <span class="code-func">fibSlow</span>(<span class="code-type">int</span> n) {
+    <span class="code-keyword">if</span> (n <= <span class="code-number">1</span>) <span class="code-keyword">return</span> n;
+    <span class="code-keyword">return</span> <span class="code-func">fibSlow</span>(n-<span class="code-number">1</span>) + <span class="code-func">fibSlow</span>(n-<span class="code-number">2</span>);
+}
+<span class="code-comment">// Why caution: O(2^n) without memoization - add caching!</span></code></div>
+
+      <div class="callout callout-info">
+        <span class="callout-icon" style="color:var(--golden);">🎯</span>
+        <div class="callout-content">
+          <strong>The Bottom Line</strong>
+          Use recursion when the problem naturally breaks down into similar subproblems, especially for tree structures, divide-and-conquer algorithms, and backtracking. Avoid it for simple sequential operations or when stack depth could be problematic. When in doubt, prototype both recursive and iterative solutions to compare.
+        </div>
+      </div>
+    </div>
+  </details>
+
+  <!-- ═══════════════════ SECTION 8: MASTERY SUMMARY ═══════════════════ -->
+  <div class="section-title">Recursion Mastery Summary</div>
+
+  <details open>
+    <summary>
+      <div class="summary-icon" style="background:rgba(156,170,122,0.15); color:var(--sage); border-color:var(--sage);">🎯</div>
+      Complete Understanding Checklist
+    </summary>
+    <div class="details-body">
+      <div class="callout callout-tip">
+        <span class="callout-icon" style="color:var(--copper);">✅</span>
+        <div class="callout-content">
+          <strong>Theoretical Understanding</strong>
+          ✅ Understand base case and recursive case concepts<br>
+          ✅ Explain how the call stack manages recursive calls<br>
+          ✅ Analyze time and space complexity of recursive algorithms<br>
+          ✅ Identify when recursion is the natural solution<br>
+          ✅ Recognize different types of recursion (linear, tree, divide-and-conquer)
+        </div>
+      </div>
+
+      <div class="callout callout-info">
+        <span class="callout-icon" style="color:var(--golden);">✅</span>
+        <div class="callout-content">
+          <strong>Practical Skills</strong>
+          ✅ Implement classic recursive algorithms from memory<br>
+          ✅ Trace recursive execution step by step<br>
+          ✅ Convert between recursive and iterative solutions<br>
+          ✅ Apply memoization to optimize recursive algorithms<br>
+          ✅ Debug recursive code and identify infinite recursion
+        </div>
+      </div>
+
+      <div class="concept-grid">
+        <div class="concept-card">
+          <div class="concept-card-header">
+            <div class="concept-card-name">Core Algorithms Mastered</div>
+          </div>
+          <p><strong>Mathematical:</strong> Factorial, Fibonacci, Power, GCD<br>
+          <strong>Tree Operations:</strong> All traversals, height, search<br>
+          <strong>Sorting:</strong> Merge sort, quick sort principles<br>
+          <strong>Searching:</strong> Binary search, tree search<br>
+          <strong>Backtracking:</strong> N-Queens, maze solving patterns</p>
+        </div>
+
+        <div class="concept-card">
+          <div class="concept-card-header">
+            <div class="concept-card-name">Optimization Techniques</div>
+          </div>
+          <p><strong>Memoization:</strong> Top-down caching of results<br>
+          <strong>Dynamic Programming:</strong> Bottom-up table building<br>
+          <strong>Tail Recursion:</strong> Optimization-friendly patterns<br>
+          <strong>Iterative Conversion:</strong> Stack-based simulation<br>
+          <strong>Base Case Optimization:</strong> Handle small cases efficiently</p>
+        </div>
+
+        <div class="concept-card">
+          <div class="concept-card-header">
+            <div class="concept-card-name">What You've Gained</div>
+          </div>
+          <p>A powerful problem-solving technique that enables elegant solutions to complex problems. The foundation for understanding trees, graphs, dynamic programming, and advanced algorithms. A new way of thinking about breaking problems into smaller pieces.</p>
+        </div>
+      </div>
+
+      <div class="code-block"><span class="code-comment">// The Recursive Mindset You've Developed</span>
+
+<span class="code-comment">// 1. PROBLEM DECOMPOSITION</span>
+<span class="code-string">"How can I break this into smaller, similar problems?"</span>
+
+<span class="code-comment">// 2. BASE CASE IDENTIFICATION</span>
+<span class="code-string">"What's the simplest version I can solve directly?"</span>
+
+<span class="code-comment">// 3. RECURSIVE LEAP OF FAITH</span>
+<span class="code-string">"I'll trust that smaller problems are solved correctly."</span>
+
+<span class="code-comment">// 4. RESULT COMBINATION</span>
+<span class="code-string">"How do I combine subproblem results into final answer?"</span>
+
+<span class="code-comment">// 5. COMPLEXITY ANALYSIS</span>
+<span class="code-string">"What's the tree structure and work at each level?"</span>
+
+<span class="code-comment">// This thinking pattern applies to:</span>
+- Tree and graph algorithms
+- Divide-and-conquer strategies  
+- Dynamic programming problems
+- Mathematical proofs and reasoning
+- System design and architecture</code></div>
+
+      <div class="callout callout-warn">
+        <span class="callout-icon" style="color:var(--rust);">🚀</span>
+        <div class="callout-content">
+          <strong>Next Steps in Your Journey</strong>
+          <strong>Trees:</strong> Apply recursion to binary trees, BSTs, and tree algorithms<br>
+          <strong>Graphs:</strong> Use recursive DFS and understand graph theory<br>
+          <strong>Dynamic Programming:</strong> Optimize recursive solutions systematically<br>
+          <strong>Advanced Algorithms:</strong> Explore divide-and-conquer algorithms<br>
+          <strong>System Design:</strong> Apply recursive thinking to complex systems
+        </div>
+      </div>
+
+      <div class="tree-diagram">
+        <div style="color:var(--golden); font-weight:600; margin-bottom:15px;">Your Recursion Journey</div>
+        
+        <div class="tree-level">
+          <div class="tree-node">Understanding Recursion</div>
+        </div>
+        
+        <div class="tree-level">
+          <span class="tree-branch">│</span>
+        </div>
+        
+        <div class="tree-level">
+          <div class="tree-node">Mastering Classic Algorithms</div>
+        </div>
+        
+        <div class="tree-level">
+          <span class="tree-branch">│</span>
+        </div>
+        
+        <div class="tree-level">
+          <div class="tree-node">Applying to Complex Problems</div>
+        </div>
+        
+        <div class="tree-level">
+          <span class="tree-branch">│</span>
+        </div>
+        
+        <div class="tree-level">
+          <div class="tree-node">Advanced Data Structures & Algorithms</div>
+        </div>
+        
+        <div style="margin-top:20px; color:var(--text-dim); font-size:12px;">
+          Each level builds on the previous — recursion is your foundation for advanced CS
+        </div>
+      </div>
+    </div>
+  </details>
+
+  <!-- Footer -->
+  <footer>
+    <span>COP 3530</span> · Data Structures · Recursion: Complete Mastery Guide
+    &nbsp;|&nbsp; The art of elegant problem decomposition
+    &nbsp;|&nbsp; <span>Foundation for advanced algorithms</span>
+  </footer>
+
+</div><!-- end .container -->
+
+<script>
+  // Organic, smooth interactions for the earth-tone aesthetic
+  document.addEventListener('DOMContentLoaded', () => {
+    // Smooth section opening with gentle scroll
+    document.querySelectorAll('summary').forEach(summary => {
+      summary.addEventListener('click', (e) => {
+        const details = summary.parentElement;
+        if (!details.open) {
+          setTimeout(() => {
+            details.scrollIntoView({ 
+              behavior: 'smooth', 
+              block: 'start' 
+            });
+          }, 200);
+        }
+      });
+    });
+
+    // Add warm glow effects to code blocks
+    document.querySelectorAll('.code-block').forEach(block => {
+      block.addEventListener('mouseenter', () => {
+        block.style.borderLeftColor = 'var(--copper)';
+        block.style.boxShadow = '0 8px 30px rgba(212,175,55,0.15)';
+      });
+      block.addEventListener('mouseleave', () => {
+        block.style.borderLeftColor = 'var(--golden)';
+        block.style.boxShadow = '0 6px 20px rgba(0,0,0,0.25)';
+      });
+    });
+
+    // Enhance concept cards with organic hover effects
+    document.querySelectorAll('.concept-card').forEach(card => {
+      card.addEventListener('mouseenter', () => {
+        card.style.boxShadow = '0 15px 50px rgba(212,175,55,0.12)';
+        card.style.borderColor = 'var(--golden)';
+      });
+      card.addEventListener('mouseleave', () => {
+        card.style.boxShadow = '';
+        card.style.borderColor = 'var(--border)';
+      });
+    });
+
+    // Add subtle animations to complexity badges
+    const badges = document.querySelectorAll('.comp-badge');
+    badges.forEach(badge => {
+      badge.style.transition = 'all 0.3s ease';
+      badge.addEventListener('mouseenter', () => {
+        badge.style.transform = 'scale(1.05)';
+        badge.style.boxShadow = '0 4px 15px rgba(212,175,55,0.2)';
+      });
+      badge.addEventListener('mouseleave', () => {
+        badge.style.transform = 'scale(1)';
+        badge.style.boxShadow = 'none';
+      });
+    });
+
+    // Tree node interactions
+    document.querySelectorAll('.tree-node').forEach(node => {
+      node.addEventListener('mouseenter', () => {
+        node.style.transform = 'scale(1.05)';
+        node.style.boxShadow = '0 5px 20px rgba(212,175,55,0.4)';
+      });
+      node.addEventListener('mouseleave', () => {
+        node.style.transform = 'scale(1)';
+        node.style.boxShadow = '0 3px 12px rgba(212,175,55,0.3)';
+      });
+    });
+  });
+</script>
+
+</div></div></body>
+</html>

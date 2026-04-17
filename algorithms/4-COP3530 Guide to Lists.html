@@ -1,0 +1,1412 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>COP 3530 – The List: A Comprehensive Guide</title>
+<link href="https://fonts.googleapis.com/css2?family=Crimson+Pro:wght@300;400;600;700&family=Source+Code+Pro:wght@400;500;600&family=Inter:wght@300;400;500;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --forest:     #1a2f1a;
+    --forest-mid: #2a4a2a;
+    --forest-lt:  #3a5f3a;
+    --emerald:    #2d7d32;
+    --emerald-lt: #4caf50;
+    --gold:       #f9a825;
+    --gold-lt:    #fbc02d;
+    --sage:       #689f38;
+    --mint:       #66bb6a;
+    --rust:       #d84315;
+    --amber:      #ff8f00;
+    --text:       #e8f5e8;
+    --text-dim:   #a8c8a8;
+    --card-bg:    #233323;
+    --border:     #4a6b4a;
+    --white:      #ffffff;
+  }
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: 'Inter', sans-serif;
+    background: var(--forest);
+    color: var(--text);
+    line-height: 1.7;
+    font-size: 15px;
+  }
+
+  /* ── HERO HEADER ── */
+  .hero {
+    background: linear-gradient(135deg, #1a2f1a 0%, #2d5a2d 50%, #1a3f1a 100%);
+    border-bottom: 4px solid var(--gold);
+    padding: 48px 40px 38px;
+    position: relative;
+    overflow: hidden;
+  }
+  .hero::before {
+    content: '';
+    position: absolute; inset: 0;
+    background: repeating-linear-gradient(
+      60deg,
+      transparent,
+      transparent 60px,
+      rgba(45,125,50,0.04) 60px,
+      rgba(45,125,50,0.04) 61px
+    );
+    pointer-events: none;
+  }
+  .hero-badge {
+    display: inline-block;
+    background: var(--emerald);
+    color: var(--white);
+    font-family: 'Source Code Pro', monospace;
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    padding: 4px 15px;
+    border-radius: 4px;
+    margin-bottom: 16px;
+  }
+  .hero h1 {
+    font-family: 'Crimson Pro', serif;
+    font-size: clamp(32px, 5.2vw, 52px);
+    font-weight: 700;
+    color: var(--white);
+    line-height: 1.1;
+    letter-spacing: -0.8px;
+  }
+  .hero h1 .accent { color: var(--gold); }
+  .hero-sub {
+    font-family: 'Crimson Pro', serif;
+    font-size: 18px;
+    color: var(--emerald-lt);
+    margin-top: 10px;
+    font-weight: 500;
+    font-style: italic;
+    letter-spacing: 0.3px;
+  }
+  .hero-meta {
+    display: flex;
+    gap: 32px;
+    margin-top: 24px;
+    flex-wrap: wrap;
+  }
+  .hero-meta span {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 13px;
+    color: var(--text-dim);
+    font-family: 'Source Code Pro', monospace;
+  }
+  .hero-meta span b { color: var(--gold-lt); }
+
+  /* ── MAIN CONTENT ── */
+  .container { max-width: 1140px; margin: 0 auto; padding: 40px 30px 70px; }
+
+  /* ── SECTION TITLES ── */
+  .section-title {
+    font-family: 'Crimson Pro', serif;
+    font-size: 26px;
+    font-weight: 700;
+    color: var(--emerald-lt);
+    border-left: 5px solid var(--gold);
+    padding-left: 18px;
+    margin: 48px 0 22px;
+    letter-spacing: 0.1px;
+  }
+  .section-title.first { margin-top: 12px; }
+
+  /* ── INTRO CARD ── */
+  .intro-card {
+    background: var(--card-bg);
+    border: 1px solid var(--border);
+    border-left: 4px solid var(--emerald);
+    border-radius: 10px;
+    padding: 24px 28px;
+    margin-bottom: 14px;
+    font-size: 15px;
+    color: var(--text);
+    line-height: 1.75;
+  }
+  .intro-card p + p { margin-top: 14px; }
+  .intro-card strong { color: var(--gold-lt); }
+  .intro-card em { color: var(--emerald-lt); font-style: normal; }
+
+  /* ── COLLAPSIBLE DETAILS ── */
+  details {
+    background: var(--card-bg);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    margin-bottom: 14px;
+    overflow: hidden;
+    transition: box-shadow 0.25s, border-color 0.25s;
+  }
+  details[open] { 
+    box-shadow: 0 0 0 2px var(--emerald); 
+    border-color: var(--emerald);
+  }
+  details[open] summary { border-bottom: 1px solid var(--border); }
+
+  summary {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    padding: 17px 22px;
+    cursor: pointer;
+    list-style: none;
+    font-family: 'Crimson Pro', serif;
+    font-size: 16px;
+    font-weight: 600;
+    color: var(--text);
+    user-select: none;
+    transition: background 0.2s;
+  }
+  summary::-webkit-details-marker { display: none; }
+  summary::after {
+    content: '▶';
+    margin-left: auto;
+    color: var(--emerald-lt);
+    font-size: 14px;
+    transition: transform 0.25s;
+  }
+  details[open] summary::after { transform: rotate(90deg); }
+  summary:hover { background: rgba(45,125,50,0.08); }
+
+  .summary-icon {
+    width: 36px; height: 36px;
+    border-radius: 8px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 16px;
+    flex-shrink: 0;
+  }
+
+  .details-body { padding: 20px 24px 26px; }
+
+  /* ── IMPLEMENTATION COMPARISON CARDS ── */
+  .impl-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+    gap: 16px;
+    margin-top: 6px;
+  }
+  .impl-card {
+    background: var(--forest-mid);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 20px 22px;
+    transition: transform 0.2s, border-color 0.2s;
+  }
+  .impl-card:hover { transform: translateY(-3px); border-color: var(--emerald); }
+  .impl-card-header {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 10px;
+    margin-bottom: 12px;
+  }
+  .impl-card-name {
+    font-family: 'Crimson Pro', serif;
+    font-weight: 700;
+    font-size: 16px;
+    color: var(--white);
+  }
+  .impl-card p {
+    font-size: 14px;
+    color: var(--text-dim);
+    line-height: 1.65;
+    margin-bottom: 10px;
+  }
+  .impl-card .complexity-row {
+    display: flex;
+    gap: 6px;
+    margin-top: 12px;
+    flex-wrap: wrap;
+  }
+
+  /* ── COMPLEXITY BADGES ── */
+  .complexity-badge {
+    display: inline-block;
+    font-family: 'Source Code Pro', monospace;
+    font-size: 11px;
+    font-weight: 500;
+    padding: 3px 10px;
+    border-radius: 6px;
+    text-align: center;
+  }
+  .comp-o1     { background: rgba(102,187,106,0.2); color: #66bb6a; border: 1px solid rgba(102,187,106,0.3); }
+  .comp-on     { background: rgba(249,168,37,0.18); color: #f9a825; border: 1px solid rgba(249,168,37,0.3); }
+  .comp-on2    { background: rgba(216,67,21,0.2);   color: #ff7043; border: 1px solid rgba(216,67,21,0.3); }
+  .comp-space  { background: rgba(45,125,50,0.15);  color: #4caf50; border: 1px solid rgba(45,125,50,0.25); }
+
+  /* ── PROS/CONS LISTS ── */
+  .pros-cons {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 18px;
+    margin-top: 14px;
+  }
+  .pros, .cons {
+    background: var(--forest-lt);
+    border-radius: 8px;
+    padding: 14px 16px;
+  }
+  .pros h4, .cons h4 {
+    font-family: 'Crimson Pro', serif;
+    font-size: 13px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    margin-bottom: 8px;
+  }
+  .pros h4 { color: var(--mint); }
+  .cons h4 { color: var(--rust); }
+  .pros ul, .cons ul { font-size: 13px; line-height: 1.6; }
+  .pros li, .cons li {
+    margin-bottom: 4px;
+    color: var(--text-dim);
+    list-style: none;
+    padding-left: 16px;
+    position: relative;
+  }
+  .pros li::before { content: '✓'; position: absolute; left: 0; color: var(--mint); }
+  .cons li::before { content: '✗'; position: absolute; left: 0; color: var(--rust); }
+
+  /* ── CODE BLOCKS ── */
+  .code-block {
+    background: #1a2b1a;
+    border: 1px solid var(--border);
+    border-left: 4px solid var(--emerald);
+    border-radius: 8px;
+    padding: 18px 20px;
+    font-family: 'Source Code Pro', monospace;
+    font-size: 13px;
+    color: #d0e0d0;
+    overflow-x: auto;
+    white-space: pre;
+    line-height: 1.7;
+    margin: 14px 0;
+  }
+  .code-comment { color: #7a9a7a; }
+  .code-keyword { color: var(--emerald-lt); font-weight: 500; }
+  .code-type    { color: var(--gold-lt); }
+  .code-string  { color: var(--mint); }
+  .code-number  { color: var(--gold); }
+
+  /* ── COMPARISON TABLE ── */
+  .comparison-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 14px;
+    margin-top: 8px;
+    background: var(--forest-mid);
+    border-radius: 8px;
+    overflow: hidden;
+  }
+  .comparison-table thead tr {
+    background: var(--forest-lt);
+    font-family: 'Crimson Pro', serif;
+    font-weight: 600;
+    font-size: 13px;
+    text-transform: uppercase;
+    letter-spacing: 0.8px;
+    color: var(--text-dim);
+  }
+  .comparison-table th, .comparison-table td {
+    padding: 12px 16px;
+    text-align: left;
+    border-bottom: 1px solid var(--border);
+  }
+  .comparison-table tbody tr:hover { background: rgba(45,125,50,0.08); }
+  .comparison-table .mono { font-family: 'Source Code Pro', monospace; color: var(--gold-lt); }
+
+  /* ── REAL WORLD EXAMPLES ── */
+  .realworld-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 14px;
+    margin-top: 6px;
+  }
+  .realworld-card {
+    background: var(--forest-mid);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 18px 20px;
+  }
+  .realworld-card-header {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 10px;
+  }
+  .realworld-icon {
+    width: 34px; height: 34px;
+    border-radius: 8px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 16px;
+    flex-shrink: 0;
+  }
+  .realworld-title {
+    font-family: 'Crimson Pro', serif;
+    font-weight: 600;
+    font-size: 15px;
+    color: var(--white);
+  }
+  .realworld-card p { font-size: 13px; color: var(--text-dim); line-height: 1.6; }
+  .realworld-tech {
+    margin-top: 10px;
+    padding-top: 10px;
+    border-top: 1px solid var(--border);
+    font-size: 12px;
+    font-family: 'Source Code Pro', monospace;
+    color: var(--text-dim);
+  }
+  .realworld-tech strong { color: var(--gold); }
+
+  /* ── CALLOUTS ── */
+  .callout {
+    border-radius: 8px;
+    padding: 16px 20px;
+    margin: 14px 0;
+    font-size: 14px;
+    line-height: 1.7;
+    display: flex;
+    gap: 14px;
+    align-items: flex-start;
+  }
+  .callout-info { background: rgba(45,125,50,0.12); border: 1px solid rgba(45,125,50,0.3); }
+  .callout-tip  { background: rgba(249,168,37,0.1);  border: 1px solid rgba(249,168,37,0.25); }
+  .callout-warn { background: rgba(216,67,21,0.12);  border: 1px solid rgba(216,67,21,0.28); }
+  .callout-icon { font-size: 18px; flex-shrink: 0; margin-top: 1px; }
+  .callout-content { flex: 1; }
+  .callout-content strong { 
+    display: block; 
+    margin-bottom: 6px; 
+    font-family: 'Crimson Pro', serif; 
+    font-size: 14px; 
+    letter-spacing: 0.3px; 
+  }
+
+  /* ── VISUAL DIAGRAM ── */
+  .diagram {
+    background: var(--forest-lt);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 20px;
+    margin: 16px 0;
+    text-align: center;
+    font-family: 'Source Code Pro', monospace;
+  }
+  .node {
+    display: inline-block;
+    background: var(--emerald);
+    color: var(--white);
+    padding: 8px 12px;
+    border-radius: 6px;
+    margin: 0 4px;
+    font-size: 13px;
+    font-weight: 500;
+  }
+  .arrow { 
+    color: var(--gold); 
+    font-size: 16px; 
+    margin: 0 6px; 
+    vertical-align: middle;
+  }
+  .null { color: var(--rust); font-weight: 600; }
+
+  /* ── FOOTER ── */
+  footer {
+    text-align: center;
+    padding: 32px 20px;
+    border-top: 1px solid var(--border);
+    font-size: 12px;
+    font-family: 'Source Code Pro', monospace;
+    color: var(--text-dim);
+    margin-top: 28px;
+  }
+  footer span { color: var(--gold); }
+
+  /* ── RESPONSIVE ── */
+  @media (max-width: 768px) {
+    .pros-cons { grid-template-columns: 1fr; }
+    .hero-meta { flex-direction: column; gap: 16px; }
+  }
+</style>
+</head>
+<body>
+
+<!-- ═══════════════════════════════════ HERO ═══════════════════════════════════ -->
+<header class="hero">
+  <div class="hero-badge">COP 3530 · Data Structures</div>
+  <h1>The <span class="accent">List</span><br>A Comprehensive Guide</h1>
+  <div class="hero-sub">Understanding Every Implementation, Optimization &amp; Application</div>
+  <div class="hero-meta">
+    <span>🔗 <b>Focus:</b> Linked Data Structures</span>
+    <span>⚡ <b>Implementations:</b> Singly, Doubly, Circular</span>
+    <span>🎯 <b>Level:</b> Fundamental → Intermediate</span>
+    <span>📊 <b>Analysis:</b> Time, Space, Trade-offs</span>
+  </div>
+</header>
+
+<div class="container">
+
+  <!-- ═══════════════════ SECTION 1: LIST FUNDAMENTALS ═══════════════════ -->
+  <div class="section-title first">What Is a List?</div>
+
+  <div class="intro-card">
+    <p>A <strong>List</strong> is a linear collection of elements where each element points to the next, forming a chain-like sequence. Unlike arrays, lists don't require contiguous memory allocation — each element (called a <em>node</em>) can be stored anywhere in memory, connected through <em>pointers</em> or <em>references</em>.</p>
+    <p>This fundamental difference gives lists unique advantages: they can grow and shrink dynamically during runtime, and insertion/deletion at any position requires no shifting of elements. However, this flexibility comes with trade-offs in memory overhead and access patterns that every computer scientist must understand.</p>
+    <p>Lists serve as the foundation for more complex structures like stacks, queues, and many graph representations. They are also the first introduction to <strong>pointer-based data structures</strong> — a critical concept for systems programming, memory management, and understanding how modern programming languages work under the hood.</p>
+  </div>
+
+  <div class="callout callout-info">
+    <span class="callout-icon">🧠</span>
+    <div class="callout-content">
+      <strong>Key Insight</strong>
+      Lists trade <em>random access</em> (O(1) in arrays) for <em>dynamic memory allocation</em> and <em>efficient insertion/deletion</em>. This trade-off appears throughout computer science — understanding when to make it separates good programmers from great ones.
+    </div>
+  </div>
+
+  <!-- Basic Structure -->
+  <div class="section-title">Basic List Structure</div>
+  
+  <details open>
+    <summary>
+      <div class="summary-icon" style="background:rgba(102,187,106,0.2);">🔗</div>
+      Node Structure &amp; Terminology
+    </summary>
+    <div class="details-body">
+      <p style="color:var(--text-dim); margin-bottom:16px; font-size:14px;">Every list is composed of nodes, where each node contains two fundamental components: the data it stores and the connection to the next element.</p>
+      
+      <div class="code-block"><span class="code-comment">// Basic Node Structure in C++</span>
+<span class="code-keyword">struct</span> <span class="code-type">ListNode</span> {
+    <span class="code-type">int</span> data;           <span class="code-comment">// The value stored in this node</span>
+    <span class="code-type">ListNode</span>* next;    <span class="code-comment">// Pointer to the next node</span>
+    
+    <span class="code-comment">// Constructor</span>
+    <span class="code-type">ListNode</span>(<span class="code-type">int</span> val) : data(val), next(<span class="code-keyword">nullptr</span>) {}
+};</div>
+
+      <div class="diagram">
+        <div>
+          <span class="node">42</span>
+          <span class="arrow">→</span>
+          <span class="node">17</span>
+          <span class="arrow">→</span>
+          <span class="node">93</span>
+          <span class="arrow">→</span>
+          <span class="null">NULL</span>
+        </div>
+        <div style="margin-top:8px; color:var(--text-dim); font-size:12px;">
+          Node 1 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Node 2 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Node 3 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; End
+        </div>
+      </div>
+
+      <div class="callout callout-tip">
+        <span class="callout-icon">💡</span>
+        <div class="callout-content">
+          <strong>Memory Layout Reality</strong>
+          Unlike the neat diagram above, nodes in a real linked list are scattered throughout memory. The operating system allocates memory wherever space is available, and the pointers create the logical sequence. This is why traversal requires following pointers rather than simple arithmetic like in arrays.
+        </div>
+      </div>
+    </div>
+  </details>
+
+
+  <!-- ═══════════════════ SECTION 2: SINGLY LINKED LISTS ═══════════════════ -->
+  <div class="section-title">Singly Linked List</div>
+
+  <details open>
+    <summary>
+      <div class="summary-icon" style="background:rgba(249,168,37,0.18);">➡️</div>
+      Basic Singly Linked List
+    </summary>
+    <div class="details-body">
+      <p style="color:var(--text-dim); margin-bottom:16px; font-size:14px;">The simplest list implementation. Each node points to the next node in sequence, with the last node pointing to NULL. Traversal is unidirectional — you can only move forward through the list.</p>
+
+      <div class="impl-grid">
+        <div class="impl-card">
+          <div class="impl-card-header">
+            <div class="impl-card-name">Standard Implementation</div>
+          </div>
+          <p>Maintains only a head pointer. All operations start from the head and traverse as needed. Most basic form — minimum memory overhead but limited functionality.</p>
+          <div class="complexity-row">
+            <span class="complexity-badge comp-on">Search: O(n)</span>
+            <span class="complexity-badge comp-o1">Insert Front: O(1)</span>
+            <span class="complexity-badge comp-on">Insert Back: O(n)</span>
+            <span class="complexity-badge comp-on">Delete: O(n)</span>
+          </div>
+        </div>
+        
+        <div class="impl-card">
+          <div class="impl-card-header">
+            <div class="impl-card-name">With Tail Pointer</div>
+          </div>
+          <p>Maintains both head and tail pointers. Enables O(1) insertion at the back, making it suitable for queue implementations and append-heavy workloads.</p>
+          <div class="complexity-row">
+            <span class="complexity-badge comp-on">Search: O(n)</span>
+            <span class="complexity-badge comp-o1">Insert Front: O(1)</span>
+            <span class="complexity-badge comp-o1">Insert Back: O(1)</span>
+            <span class="complexity-badge comp-on">Delete: O(n)</span>
+          </div>
+        </div>
+
+        <div class="impl-card">
+          <div class="impl-card-header">
+            <div class="impl-card-name">With Size Counter</div>
+          </div>
+          <p>Tracks the number of nodes in a separate variable. Enables O(1) size queries, which can be important for algorithms that need to know list length frequently.</p>
+          <div class="complexity-row">
+            <span class="complexity-badge comp-o1">Size: O(1)</span>
+            <span class="complexity-badge comp-space">+4 bytes</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="code-block"><span class="code-comment">// Singly Linked List with Tail Pointer</span>
+<span class="code-keyword">class</span> <span class="code-type">SinglyLinkedList</span> {
+<span class="code-keyword">private</span>:
+    <span class="code-type">ListNode</span>* head;
+    <span class="code-type">ListNode</span>* tail;    <span class="code-comment">// Optimization: O(1) append</span>
+    <span class="code-type">int</span> size;          <span class="code-comment">// Optimization: O(1) size query</span>
+
+<span class="code-keyword">public</span>:
+    <span class="code-comment">// O(1) insertion at front</span>
+    <span class="code-keyword">void</span> <span class="code-type">pushFront</span>(<span class="code-type">int</span> val) {
+        <span class="code-type">ListNode</span>* newNode = <span class="code-keyword">new</span> <span class="code-type">ListNode</span>(val);
+        newNode->next = head;
+        head = newNode;
+        <span class="code-keyword">if</span> (tail == <span class="code-keyword">nullptr</span>) tail = newNode;  <span class="code-comment">// First node</span>
+        size++;
+    }
+    
+    <span class="code-comment">// O(1) insertion at back (thanks to tail pointer)</span>
+    <span class="code-keyword">void</span> <span class="code-type">pushBack</span>(<span class="code-type">int</span> val) {
+        <span class="code-type">ListNode</span>* newNode = <span class="code-keyword">new</span> <span class="code-type">ListNode</span>(val);
+        <span class="code-keyword">if</span> (tail) {
+            tail->next = newNode;
+            tail = newNode;
+        } <span class="code-keyword">else</span> {
+            head = tail = newNode;  <span class="code-comment">// First node</span>
+        }
+        size++;
+    }
+};</div>
+
+      <div class="pros-cons">
+        <div class="pros">
+          <h4>Advantages</h4>
+          <ul>
+            <li>Simple implementation and debugging</li>
+            <li>Minimum memory overhead per node</li>
+            <li>O(1) insertion/deletion at front</li>
+            <li>Dynamic size — grows as needed</li>
+            <li>Cache-friendly traversal (forward only)</li>
+          </ul>
+        </div>
+        <div class="cons">
+          <h4>Disadvantages</h4>
+          <ul>
+            <li>No reverse traversal</li>
+            <li>O(n) deletion anywhere except front</li>
+            <li>O(n) access to arbitrary positions</li>
+            <li>Extra memory per node for pointer</li>
+            <li>Not cache-friendly compared to arrays</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </details>
+
+  <!-- ═══════════════════ SECTION 3: DOUBLY LINKED LISTS ═══════════════════ -->
+  <div class="section-title">Doubly Linked List</div>
+
+  <details>
+    <summary>
+      <div class="summary-icon" style="background:rgba(45,125,50,0.18);">↔️</div>
+      Doubly Linked List Implementation
+    </summary>
+    <div class="details-body">
+      <p style="color:var(--text-dim); margin-bottom:16px; font-size:14px;">Each node maintains pointers to both the next AND previous nodes. This bidirectional connectivity enables reverse traversal and more efficient deletion operations, at the cost of additional memory per node.</p>
+
+      <div class="diagram" style="font-size:12px;">
+        <div>
+          <span class="null">NULL</span>
+          <span class="arrow">←</span>
+          <span style="background:var(--emerald); color:white; padding:6px 10px; border-radius:6px; margin:0 4px;">42</span>
+          <span class="arrow">⇄</span>
+          <span style="background:var(--emerald); color:white; padding:6px 10px; border-radius:6px; margin:0 4px;">17</span>
+          <span class="arrow">⇄</span>
+          <span style="background:var(--emerald); color:white; padding:6px 10px; border-radius:6px; margin:0 4px;">93</span>
+          <span class="arrow">→</span>
+          <span class="null">NULL</span>
+        </div>
+        <div style="margin-top:8px; color:var(--text-dim); font-size:11px;">
+          prev ← data → next &nbsp;&nbsp;&nbsp; Each node has TWO pointers
+        </div>
+      </div>
+
+      <div class="code-block"><span class="code-comment">// Doubly Linked List Node</span>
+<span class="code-keyword">struct</span> <span class="code-type">DoublyNode</span> {
+    <span class="code-type">int</span> data;
+    <span class="code-type">DoublyNode</span>* next;
+    <span class="code-type">DoublyNode</span>* prev;    <span class="code-comment">// Additional pointer for reverse traversal</span>
+    
+    <span class="code-type">DoublyNode</span>(<span class="code-type">int</span> val) : data(val), next(<span class="code-keyword">nullptr</span>), prev(<span class="code-keyword">nullptr</span>) {}
+};
+
+<span class="code-keyword">class</span> <span class="code-type">DoublyLinkedList</span> {
+<span class="code-keyword">private</span>:
+    <span class="code-type">DoublyNode</span>* head;
+    <span class="code-type">DoublyNode</span>* tail;
+
+<span class="code-keyword">public</span>:
+    <span class="code-comment">// O(1) deletion when you have the node reference</span>
+    <span class="code-keyword">void</span> <span class="code-type">deleteNode</span>(<span class="code-type">DoublyNode</span>* node) {
+        <span class="code-keyword">if</span> (node->prev) node->prev->next = node->next;
+        <span class="code-keyword">else</span> head = node->next;  <span class="code-comment">// Deleting head</span>
+        
+        <span class="code-keyword">if</span> (node->next) node->next->prev = node->prev;
+        <span class="code-keyword">else</span> tail = node->prev;  <span class="code-comment">// Deleting tail</span>
+        
+        <span class="code-keyword">delete</span> node;
+    }
+    
+    <span class="code-comment">// O(1) insertion after a given node</span>
+    <span class="code-keyword">void</span> <span class="code-type">insertAfter</span>(<span class="code-type">DoublyNode</span>* node, <span class="code-type">int</span> val) {
+        <span class="code-type">DoublyNode</span>* newNode = <span class="code-keyword">new</span> <span class="code-type">DoublyNode</span>(val);
+        newNode->next = node->next;
+        newNode->prev = node;
+        
+        <span class="code-keyword">if</span> (node->next) node->next->prev = newNode;
+        <span class="code-keyword">else</span> tail = newNode;  <span class="code-comment">// Inserted at end</span>
+        
+        node->next = newNode;
+    }
+};</div>
+
+      <div class="comparison-table">
+        <thead>
+          <tr>
+            <th>Operation</th>
+            <th>Singly Linked</th>
+            <th>Doubly Linked</th>
+            <th>Improvement</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>Forward Traversal</td>
+            <td><span class="mono">O(n)</span></td>
+            <td><span class="mono">O(n)</span></td>
+            <td>Same</td>
+          </tr>
+          <tr>
+            <td>Reverse Traversal</td>
+            <td><span style="color:var(--rust);">Impossible</span></td>
+            <td><span class="mono">O(n)</span></td>
+            <td><strong>New capability</strong></td>
+          </tr>
+          <tr>
+            <td>Delete at Position</td>
+            <td><span class="mono">O(n)</span></td>
+            <td><span class="mono">O(n)</span></td>
+            <td>Same</td>
+          </tr>
+          <tr>
+            <td>Delete Given Node</td>
+            <td><span class="mono">O(n)</span></td>
+            <td><span class="mono">O(1)</span></td>
+            <td><strong>Dramatic improvement</strong></td>
+          </tr>
+          <tr>
+            <td>Insert After Node</td>
+            <td><span class="mono">O(1)</span></td>
+            <td><span class="mono">O(1)</span></td>
+            <td>Same</td>
+          </tr>
+          <tr>
+            <td>Insert Before Node</td>
+            <td><span class="mono">O(n)</span></td>
+            <td><span class="mono">O(1)</span></td>
+            <td><strong>Major improvement</strong></td>
+          </tr>
+          <tr>
+            <td>Memory per Node</td>
+            <td>16 bytes</td>
+            <td>24 bytes</td>
+            <td>+50% overhead</td>
+          </tr>
+        </tbody>
+      </table>
+
+      <div class="pros-cons">
+        <div class="pros">
+          <h4>Advantages</h4>
+          <ul>
+            <li>Bidirectional traversal</li>
+            <li>O(1) deletion with node reference</li>
+            <li>O(1) insertion before/after known node</li>
+            <li>More symmetric operations</li>
+            <li>Easier implementation of stacks, deques</li>
+          </ul>
+        </div>
+        <div class="cons">
+          <h4>Disadvantages</h4>
+          <ul>
+            <li>50% more memory per node</li>
+            <li>More complex pointer manipulation</li>
+            <li>Slightly slower traversal (2 pointers to update)</li>
+            <li>More opportunities for bugs</li>
+            <li>Cache performance may be worse</li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="callout callout-info">
+        <span class="callout-icon">🎯</span>
+        <div class="callout-content">
+          <strong>When to Choose Doubly Linked Lists</strong>
+          Use doubly linked lists when you frequently need to delete nodes (given a reference to them), implement deques, or need reverse traversal. They're the backbone of std::list in C++ and LinkedList in Java.
+        </div>
+      </div>
+    </div>
+  </details>
+
+
+  <!-- ═══════════════════ SECTION 4: CIRCULAR LISTS ═══════════════════ -->
+  <div class="section-title">Circular Linked Lists</div>
+
+  <details>
+    <summary>
+      <div class="summary-icon" style="background:rgba(216,67,21,0.18);">🔄</div>
+      Circular List Implementations
+    </summary>
+    <div class="details-body">
+      <p style="color:var(--text-dim); margin-bottom:16px; font-size:14px;">In circular lists, the last node points back to the first node instead of NULL, forming a loop. This creates unique properties useful for round-robin scheduling, circular buffers, and algorithms that need to cycle through data repeatedly.</p>
+
+      <div class="diagram">
+        <div style="position:relative; padding:20px;">
+          <span class="node">42</span>
+          <span class="arrow">→</span>
+          <span class="node">17</span>
+          <span class="arrow">→</span>
+          <span class="node">93</span>
+          <br><br>
+          <span style="color:var(--gold); font-size:14px;">↗&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;↙</span>
+          <div style="margin-top:-8px; color:var(--text-dim); font-size:12px;">
+            Tail points back to head — forms a cycle
+          </div>
+        </div>
+      </div>
+
+      <div class="impl-grid">
+        <div class="impl-card">
+          <div class="impl-card-header">
+            <div class="impl-card-name">Singly Circular</div>
+          </div>
+          <p>Last node points to first node. Commonly uses a single "tail" pointer rather than head, since tail->next gives you the head. Enables O(1) access to both ends.</p>
+          <div class="complexity-row">
+            <span class="complexity-badge comp-o1">Access Head: O(1)</span>
+            <span class="complexity-badge comp-o1">Access Tail: O(1)</span>
+            <span class="complexity-badge comp-on">Search: O(n)</span>
+          </div>
+        </div>
+
+        <div class="impl-card">
+          <div class="impl-card-header">
+            <div class="impl-card-name">Doubly Circular</div>
+          </div>
+          <p>Both forward and backward pointers form circles. Head's prev points to tail, tail's next points to head. Maximum flexibility but highest memory cost.</p>
+          <div class="complexity-row">
+            <span class="complexity-badge comp-o1">Insert/Delete: O(1)</span>
+            <span class="complexity-badge comp-space">+8 bytes/node</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="code-block"><span class="code-comment">// Singly Circular List - using tail pointer</span>
+<span class="code-keyword">class</span> <span class="code-type">CircularList</span> {
+<span class="code-keyword">private</span>:
+    <span class="code-type">ListNode</span>* tail;  <span class="code-comment">// Points to last node; tail->next is head</span>
+
+<span class="code-keyword">public</span>:
+    <span class="code-type">CircularList</span>() : tail(<span class="code-keyword">nullptr</span>) {}
+    
+    <span class="code-comment">// O(1) insertion at front</span>
+    <span class="code-keyword">void</span> <span class="code-type">insertAtHead</span>(<span class="code-type">int</span> val) {
+        <span class="code-type">ListNode</span>* newNode = <span class="code-keyword">new</span> <span class="code-type">ListNode</span>(val);
+        <span class="code-keyword">if</span> (!tail) {
+            tail = newNode;
+            tail->next = tail;  <span class="code-comment">// Single node points to itself</span>
+        } <span class="code-keyword">else</span> {
+            newNode->next = tail->next;  <span class="code-comment">// New node points to current head</span>
+            tail->next = newNode;        <span class="code-comment">// Tail points to new head</span>
+        }
+    }
+    
+    <span class="code-comment">// Traverse safely - must check for completion</span>
+    <span class="code-keyword">void</span> <span class="code-type">traverse</span>() {
+        <span class="code-keyword">if</span> (!tail) <span class="code-keyword">return</span>;
+        
+        <span class="code-type">ListNode</span>* current = tail->next;  <span class="code-comment">// Start at head</span>
+        <span class="code-keyword">do</span> {
+            std::cout << current->data << <span class="code-string">" "</span>;
+            current = current->next;
+        } <span class="code-keyword">while</span> (current != tail->next);  <span class="code-comment">// Stop when back to head</span>
+    }
+};</div>
+
+      <div class="callout callout-warn">
+        <span class="callout-icon">⚠️</span>
+        <div class="callout-content">
+          <strong>Critical: Infinite Loop Prevention</strong>
+          All traversal algorithms must include proper termination conditions. In circular lists, you cannot check for NULL — you must track when you've returned to the starting point. Forgetting this creates infinite loops that will crash your program.
+        </div>
+      </div>
+
+      <div class="pros-cons">
+        <div class="pros">
+          <h4>Advantages</h4>
+          <ul>
+            <li>No "end" — useful for round-robin algorithms</li>
+            <li>O(1) access to both head and tail (with tail pointer)</li>
+            <li>Natural for cyclical data (playlists, game turns)</li>
+            <li>Efficient concatenation of lists</li>
+            <li>Memory efficient buffer implementations</li>
+          </ul>
+        </div>
+        <div class="cons">
+          <h4>Disadvantages</h4>
+          <ul>
+            <li>Complex traversal logic (infinite loop risk)</li>
+            <li>More error-prone implementation</li>
+            <li>Debugging is more difficult</li>
+            <li>Some algorithms don't work naturally</li>
+            <li>Requires careful memory management</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </details>
+
+  <!-- ═══════════════════ SECTION 5: SPECIALIZED OPTIMIZATIONS ═══════════════════ -->
+  <div class="section-title">Specialized List Optimizations</div>
+
+  <details>
+    <summary>
+      <div class="summary-icon" style="background:rgba(102,187,106,0.2);">⚡</div>
+      Performance &amp; Memory Optimizations
+    </summary>
+    <div class="details-body">
+      <p style="color:var(--text-dim); margin-bottom:16px; font-size:14px;">Beyond basic implementations, several optimizations can dramatically improve performance for specific use cases. These techniques are commonly found in production systems and standard library implementations.</p>
+
+      <div class="impl-grid">
+        <div class="impl-card">
+          <div class="impl-card-header">
+            <div class="impl-card-name">Skip List</div>
+          </div>
+          <p>Probabilistic data structure with multiple "express lanes" allowing O(log n) search. Used in Redis, LevelDB. Combines simplicity of lists with performance of balanced trees.</p>
+          <div class="complexity-row">
+            <span class="complexity-badge comp-o1">Search: O(log n) expected</span>
+            <span class="complexity-badge comp-space">Variable overhead</span>
+          </div>
+        </div>
+
+        <div class="impl-card">
+          <div class="impl-card-header">
+            <div class="impl-card-name">Unrolled Linked List</div>
+          </div>
+          <p>Each node contains multiple elements in an array. Reduces pointer overhead and improves cache locality while maintaining dynamic insertion/deletion benefits.</p>
+          <div class="complexity-row">
+            <span class="complexity-badge comp-on">Search: O(n/B)</span>
+            <span class="complexity-badge comp-space">Better cache use</span>
+          </div>
+        </div>
+
+        <div class="impl-card">
+          <div class="impl-card-header">
+            <div class="impl-card-name">XOR Linked List</div>
+          </div>
+          <p>Stores XOR of previous and next pointers instead of separate prev/next. Uses same memory as singly linked list but enables bidirectional traversal. Clever but fragile.</p>
+          <div class="complexity-row">
+            <span class="complexity-badge comp-space">Same as singly</span>
+            <span class="complexity-badge comp-o1">Bidirectional</span>
+          </div>
+        </div>
+
+        <div class="impl-card">
+          <div class="impl-card-header">
+            <div class="impl-card-name">Memory Pool Lists</div>
+          </div>
+          <p>Pre-allocate chunks of nodes to avoid malloc/free overhead. Common in real-time systems, game engines, and high-frequency trading where allocation speed matters more than memory efficiency.</p>
+          <div class="complexity-row">
+            <span class="complexity-badge comp-o1">Allocation: O(1)</span>
+            <span class="complexity-badge comp-space">Predictable memory</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="callout callout-tip">
+        <span class="callout-icon">💡</span>
+        <div class="callout-content">
+          <strong>Production Reality</strong>
+          Most standard library implementations use highly optimized versions. C++ std::list is typically a doubly-linked circular list with a sentinel node. Java's LinkedList is doubly-linked with size tracking. Understanding these optimizations helps you choose the right tool and avoid reimplementing what already exists.
+        </div>
+      </div>
+    </div>
+  </details>
+
+
+  <!-- ═══════════════════ SECTION 6: REAL-WORLD APPLICATIONS ═══════════════════ -->
+  <div class="section-title">Lists in Real Systems</div>
+
+  <details open>
+    <summary>
+      <div class="summary-icon" style="background:rgba(249,168,37,0.18);">🏗️</div>
+      Production Systems &amp; Applications
+    </summary>
+    <div class="details-body">
+      <p style="color:var(--text-dim); margin-bottom:16px; font-size:14px;">Lists aren't academic exercises — they're fundamental building blocks in production software. Understanding where and why they're used helps you recognize the right tool for each problem.</p>
+
+      <div class="realworld-grid">
+        <div class="realworld-card">
+          <div class="realworld-card-header">
+            <div class="realworld-icon" style="background:rgba(45,125,50,0.2);">🧠</div>
+            <div class="realworld-title">Operating Systems</div>
+          </div>
+          <p>Process scheduling queues, memory free lists, device driver queues. The Linux kernel extensively uses doubly-linked lists for task management and resource tracking.</p>
+          <div class="realworld-tech"><strong>Implementation:</strong> Doubly-linked circular with intrusive design</div>
+        </div>
+
+        <div class="realworld-card">
+          <div class="realworld-card-header">
+            <div class="realworld-icon" style="background:rgba(249,168,37,0.18);">🌐</div>
+            <div class="realworld-title">Web Browsers</div>
+          </div>
+          <p>Browser history (back/forward), undo/redo systems, tab management. DOM manipulation APIs often return NodeLists backed by linked structures.</p>
+          <div class="realworld-tech"><strong>Implementation:</strong> Doubly-linked for bidirectional navigation</div>
+        </div>
+
+        <div class="realworld-card">
+          <div class="realworld-card-header">
+            <div class="realworld-icon" style="background:rgba(102,187,106,0.2);">💾</div>
+            <div class="realworld-title">Database Systems</div>
+          </div>
+          <p>Buffer pool management (LRU lists), transaction logs, lock wait queues. PostgreSQL uses linked lists for query plan nodes and memory contexts.</p>
+          <div class="realworld-tech"><strong>Implementation:</strong> Various - singly for logs, doubly for LRU</div>
+        </div>
+
+        <div class="realworld-card">
+          <div class="realworld-card-header">
+            <div class="realworld-icon" style="background:rgba(216,67,21,0.18);">🎮</div>
+            <div class="realworld-title">Game Engines</div>
+          </div>
+          <p>Entity lists, particle systems, event queues, AI behavior trees. Game objects are often managed in linked lists for dynamic addition/removal.</p>
+          <div class="realworld-tech"><strong>Implementation:</strong> Often memory-pooled for performance</div>
+        </div>
+
+        <div class="realworld-card">
+          <div class="realworld-card-header">
+            <div class="realworld-icon" style="background:rgba(45,125,50,0.18);">📱</div>
+            <div class="realworld-title">Mobile Apps</div>
+          </div>
+          <p>Contact lists, message threads, photo galleries. UITableView/RecyclerView often use list-like data structures for efficient scrolling and memory management.</p>
+          <div class="realworld-tech"><strong>Implementation:</strong> Depends on UI framework requirements</div>
+        </div>
+
+        <div class="realworld-card">
+          <div class="realworld-card-header">
+            <div class="realworld-icon" style="background:rgba(216,67,21,0.18);">🔄</div>
+            <div class="realworld-title">Round-Robin Systems</div>
+          </div>
+          <p>CPU scheduling algorithms, load balancers distributing requests, multiplayer game turn systems. Circular lists naturally model cyclical processes.</p>
+          <div class="realworld-tech"><strong>Implementation:</strong> Circular singly-linked with tail pointer</div>
+        </div>
+
+        <div class="realworld-card">
+          <div class="realworld-card-header">
+            <div class="realworld-icon" style="background:rgba(249,168,37,0.18);">🎵</div>
+            <div class="realworld-title">Media Players</div>
+          </div>
+          <p>Playlists, shuffle algorithms, recently played tracks. Spotify, Apple Music, and YouTube use list structures to manage playback queues and recommendations.</p>
+          <div class="realworld-tech"><strong>Implementation:</strong> Doubly-linked for skip prev/next functionality</div>
+        </div>
+
+        <div class="realworld-card">
+          <div class="realworld-card-header">
+            <div class="realworld-icon" style="background:rgba(45,125,50,0.2);">⚡</div>
+            <div class="realworld-title">Network Protocols</div>
+          </div>
+          <p>TCP segment reassembly, packet queues in routers, connection pools in load balancers. Network stacks extensively use lists for buffering and ordering.</p>
+          <div class="realworld-tech"><strong>Implementation:</strong> Usually singly-linked for FIFO queues</div>
+        </div>
+
+        <div class="realworld-card">
+          <div class="realworld-card-header">
+            <div class="realworld-icon" style="background:rgba(102,187,106,0.2);">🧮</div>
+            <div class="realworld-title">Compilers</div>
+          </div>
+          <p>Symbol tables, abstract syntax trees, intermediate representation. GCC and LLVM use linked structures throughout the compilation pipeline.</p>
+          <div class="realworld-tech"><strong>Implementation:</strong> Mixed - often specialized per use case</div>
+        </div>
+      </div>
+
+      <div class="callout callout-info">
+        <span class="callout-icon">📊</span>
+        <div class="callout-content">
+          <strong>Industry Pattern Recognition</strong>
+          Notice the patterns: <em>Doubly-linked</em> when bidirectional access is needed (browsers, media). <em>Singly-linked</em> for simple queues (networks, logs). <em>Circular</em> for round-robin scenarios (scheduling, turn-based systems). Recognizing these patterns helps you choose the right implementation.
+        </div>
+      </div>
+    </div>
+  </details>
+
+  <!-- ═══════════════════ SECTION 7: COMPREHENSIVE COMPARISON ═══════════════════ -->
+  <div class="section-title">Implementation Comparison &amp; Decision Guide</div>
+
+  <details>
+    <summary>
+      <div class="summary-icon" style="background:rgba(102,187,106,0.2);">⚖️</div>
+      Complete Implementation Analysis
+    </summary>
+    <div class="details-body">
+      <div class="comparison-table">
+        <thead>
+          <tr>
+            <th>Aspect</th>
+            <th>Singly Linked</th>
+            <th>Doubly Linked</th>
+            <th>Circular (Singly)</th>
+            <th>Circular (Doubly)</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><strong>Memory per Node</strong></td>
+            <td>16 bytes</td>
+            <td>24 bytes</td>
+            <td>16 bytes</td>
+            <td>24 bytes</td>
+          </tr>
+          <tr>
+            <td><strong>Implementation Complexity</strong></td>
+            <td>Low</td>
+            <td>Medium</td>
+            <td>Medium-High</td>
+            <td>High</td>
+          </tr>
+          <tr>
+            <td><strong>Bug Vulnerability</strong></td>
+            <td>Low</td>
+            <td>Medium</td>
+            <td>High</td>
+            <td>Very High</td>
+          </tr>
+          <tr>
+            <td><strong>Forward Traversal</strong></td>
+            <td><span class="mono">O(n)</span></td>
+            <td><span class="mono">O(n)</span></td>
+            <td><span class="mono">O(n)</span></td>
+            <td><span class="mono">O(n)</span></td>
+          </tr>
+          <tr>
+            <td><strong>Backward Traversal</strong></td>
+            <td style="color:var(--rust);">Impossible</td>
+            <td><span class="mono">O(n)</span></td>
+            <td style="color:var(--rust);">Impossible</td>
+            <td><span class="mono">O(n)</span></td>
+          </tr>
+          <tr>
+            <td><strong>Insert at Front</strong></td>
+            <td><span class="mono">O(1)</span></td>
+            <td><span class="mono">O(1)</span></td>
+            <td><span class="mono">O(1)</span></td>
+            <td><span class="mono">O(1)</span></td>
+          </tr>
+          <tr>
+            <td><strong>Insert at Back</strong></td>
+            <td><span class="mono">O(1)*</span></td>
+            <td><span class="mono">O(1)</span></td>
+            <td><span class="mono">O(1)</span></td>
+            <td><span class="mono">O(1)</span></td>
+          </tr>
+          <tr>
+            <td><strong>Delete Given Node</strong></td>
+            <td><span class="mono">O(n)</span></td>
+            <td><span class="mono">O(1)</span></td>
+            <td><span class="mono">O(n)</span></td>
+            <td><span class="mono">O(1)</span></td>
+          </tr>
+          <tr>
+            <td><strong>Insert Before Node</strong></td>
+            <td><span class="mono">O(n)</span></td>
+            <td><span class="mono">O(1)</span></td>
+            <td><span class="mono">O(n)</span></td>
+            <td><span class="mono">O(1)</span></td>
+          </tr>
+          <tr>
+            <td><strong>Cache Performance</strong></td>
+            <td>Good</td>
+            <td>Fair</td>
+            <td>Good</td>
+            <td>Fair</td>
+          </tr>
+          <tr>
+            <td><strong>Ideal Use Cases</strong></td>
+            <td>Stacks, simple queues</td>
+            <td>Deques, complex editing</td>
+            <td>Round-robin, buffers</td>
+            <td>Complex cyclical systems</td>
+          </tr>
+        </tbody>
+      </table>
+      <p style="color:var(--text-dim); font-size:12px; margin-top:12px; font-family:'Source Code Pro', monospace;">* = with tail pointer optimization</p>
+
+      <div class="callout callout-tip" style="margin-top:20px;">
+        <span class="callout-icon">🎯</span>
+        <div class="callout-content">
+          <strong>Decision Framework</strong>
+          <strong>Choose Singly Linked</strong> for simple, forward-only data flows (stacks, simple queues, basic iteration).<br>
+          <strong>Choose Doubly Linked</strong> when you need bidirectional access or frequent deletion of arbitrary nodes.<br>
+          <strong>Choose Circular</strong> when your algorithm naturally cycles through data or has no clear "end" point.<br>
+          <strong>Choose Arrays</strong> when you need random access or when cache performance matters more than dynamic insertion.
+        </div>
+      </div>
+    </div>
+  </details>
+
+
+  <!-- ═══════════════════ SECTION 8: FUNDAMENTAL ALGORITHMS ON LISTS ═══════════════════ -->
+  <div class="section-title">Essential Algorithms on Lists</div>
+
+  <details>
+    <summary>
+      <div class="summary-icon" style="background:rgba(249,168,37,0.18);">🔧</div>
+      Core Operations &amp; Classic Algorithms
+    </summary>
+    <div class="details-body">
+      <p style="color:var(--text-dim); margin-bottom:16px; font-size:14px;">Certain algorithms appear repeatedly when working with lists. Mastering these patterns prepares you for both technical interviews and practical programming challenges.</p>
+
+      <div class="impl-grid">
+        <div class="impl-card">
+          <div class="impl-card-header">
+            <div class="impl-card-name">Reversal</div>
+          </div>
+          <p>Reverse a linked list in-place. Classic interview question that tests pointer manipulation skills. O(n) time, O(1) space. Essential for many other algorithms.</p>
+          <div class="complexity-row">
+            <span class="complexity-badge comp-on">Time: O(n)</span>
+            <span class="complexity-badge comp-o1">Space: O(1)</span>
+          </div>
+        </div>
+
+        <div class="impl-card">
+          <div class="impl-card-header">
+            <div class="impl-card-name">Cycle Detection</div>
+          </div>
+          <p>Floyd's "tortoise and hare" algorithm detects cycles in O(n) time with O(1) space. Critical for debugging and handling potentially corrupted list structures.</p>
+          <div class="complexity-row">
+            <span class="complexity-badge comp-on">Time: O(n)</span>
+            <span class="complexity-badge comp-o1">Space: O(1)</span>
+          </div>
+        </div>
+
+        <div class="impl-card">
+          <div class="impl-card-header">
+            <div class="impl-card-name">Merge Two Sorted Lists</div>
+          </div>
+          <p>Combine two sorted lists into one sorted list. Building block for merge sort on lists and many distributed systems algorithms. Demonstrates recursive thinking.</p>
+          <div class="complexity-row">
+            <span class="complexity-badge comp-on">Time: O(m+n)</span>
+            <span class="complexity-badge comp-o1">Space: O(1)</span>
+          </div>
+        </div>
+
+        <div class="impl-card">
+          <div class="impl-card-header">
+            <div class="impl-card-name">Find Middle Element</div>
+          </div>
+          <p>Two-pointer technique: slow pointer moves 1 step, fast moves 2. When fast reaches end, slow is at middle. Used in many divide-and-conquer algorithms.</p>
+          <div class="complexity-row">
+            <span class="complexity-badge comp-on">Time: O(n)</span>
+            <span class="complexity-badge comp-o1">Space: O(1)</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="code-block"><span class="code-comment">// List Reversal - Essential Algorithm</span>
+<span class="code-type">ListNode</span>* <span class="code-type">reverseList</span>(<span class="code-type">ListNode</span>* head) {
+    <span class="code-type">ListNode</span>* prev = <span class="code-keyword">nullptr</span>;
+    <span class="code-type">ListNode</span>* current = head;
+    
+    <span class="code-keyword">while</span> (current) {
+        <span class="code-type">ListNode</span>* nextTemp = current->next;  <span class="code-comment">// Save next</span>
+        current->next = prev;                    <span class="code-comment">// Reverse link</span>
+        prev = current;                          <span class="code-comment">// Move prev forward</span>
+        current = nextTemp;                      <span class="code-comment">// Move current forward</span>
+    }
+    
+    <span class="code-keyword">return</span> prev;  <span class="code-comment">// prev is now the new head</span>
+}
+
+<span class="code-comment">// Cycle Detection - Floyd's Algorithm</span>
+<span class="code-type">bool</span> <span class="code-type">hasCycle</span>(<span class="code-type">ListNode</span>* head) {
+    <span class="code-keyword">if</span> (!head || !head->next) <span class="code-keyword">return</span> <span class="code-keyword">false</span>;
+    
+    <span class="code-type">ListNode</span>* slow = head;
+    <span class="code-type">ListNode</span>* fast = head;
+    
+    <span class="code-keyword">while</span> (fast && fast->next) {
+        slow = slow->next;          <span class="code-comment">// Move 1 step</span>
+        fast = fast->next->next;    <span class="code-comment">// Move 2 steps</span>
+        
+        <span class="code-keyword">if</span> (slow == fast) <span class="code-keyword">return</span> <span class="code-keyword">true</span>;  <span class="code-comment">// Cycle detected</span>
+    }
+    
+    <span class="code-keyword">return</span> <span class="code-keyword">false</span>;  <span class="code-comment">// No cycle</span>
+}</div>
+
+      <div class="callout callout-tip">
+        <span class="callout-icon">🎓</span>
+        <div class="callout-content">
+          <strong>Interview Preparation</strong>
+          These algorithms appear in 70%+ of technical interviews. Practice implementing them without looking at references. Focus on edge cases: empty lists, single nodes, and cycles. The patterns here extend to trees and graphs.
+        </div>
+      </div>
+    </div>
+  </details>
+
+  <!-- ═══════════════════ SECTION 9: WHY LISTS MATTER ═══════════════════ -->
+  <div class="section-title">Why Lists Are Fundamental</div>
+
+  <details>
+    <summary>
+      <div class="summary-icon" style="background:rgba(45,125,50,0.18);">🧭</div>
+      The Foundation of Computer Science
+    </summary>
+    <div class="details-body">
+      <p style="color:var(--text-dim); margin-bottom:16px; font-size:14px;">Lists might seem simple, but they're the gateway to understanding all of computer science. Every advanced data structure and algorithm concept builds on the principles you learn here.</p>
+
+      <div class="impl-grid">
+        <div class="impl-card">
+          <div class="impl-card-header">
+            <div class="impl-card-name">Pointer Mastery</div>
+          </div>
+          <p>Lists teach pointer manipulation, memory management, and reference semantics — skills essential for systems programming, C/C++, and understanding how high-level languages work internally.</p>
+        </div>
+
+        <div class="impl-card">
+          <div class="impl-card-header">
+            <div class="impl-card-name">Dynamic Memory</div>
+          </div>
+          <p>Lists introduce heap allocation, object lifetime management, and memory ownership concepts that are critical for preventing memory leaks and understanding garbage collection.</p>
+        </div>
+
+        <div class="impl-card">
+          <div class="impl-card-header">
+            <div class="impl-card-name">Algorithm Thinking</div>
+          </div>
+          <p>List algorithms teach recursive thinking, invariant maintenance, and edge case handling — patterns that apply to trees, graphs, and dynamic programming problems.</p>
+        </div>
+
+        <div class="impl-card">
+          <div class="impl-card-header">
+            <div class="impl-card-name">Foundation for Advanced Structures</div>
+          </div>
+          <p>Trees are specialized lists. Graphs use adjacency lists. Hash tables handle collisions with lists. Understanding lists deeply accelerates learning all other data structures.</p>
+        </div>
+      </div>
+
+      <div class="callout callout-info">
+        <span class="callout-icon">🚀</span>
+        <div class="callout-content">
+          <strong>The Path Forward</strong>
+          Master lists completely before moving to trees and graphs. The concepts transfer directly: tree traversal is list traversal with branches, graph algorithms use lists for adjacency representation, and many "advanced" algorithms are just clever applications of list manipulation techniques.
+        </div>
+      </div>
+
+      <div class="code-block"><span class="code-comment">// Lists Enable Everything</span>
+
+<span class="code-comment">// Trees are lists with branching</span>
+<span class="code-keyword">struct</span> <span class="code-type">TreeNode</span> {
+    <span class="code-type">int</span> data;
+    <span class="code-type">TreeNode</span>* left;   <span class="code-comment">// Like "next" in a list</span>
+    <span class="code-type">TreeNode</span>* right;  <span class="code-comment">// Additional "next" pointer</span>
+};
+
+<span class="code-comment">// Hash tables use lists for collision resolution</span>
+<span class="code-keyword">class</span> <span class="code-type">HashTable</span> {
+    std::vector<<span class="code-type">ListNode</span>*> buckets;  <span class="code-comment">// Array of lists</span>
+};
+
+<span class="code-comment">// Graphs use lists for adjacency representation</span>
+<span class="code-keyword">class</span> <span class="code-type">Graph</span> {
+    std::vector<<span class="code-type">std::list<int></span>> adjacency;  <span class="code-comment">// List of lists</span>
+};</div>
+    </div>
+  </details>
+
+  <!-- Summary & Next Steps -->
+  <div class="callout callout-info" style="margin-top:28px;">
+    <span class="callout-icon">📋</span>
+    <div class="callout-content">
+      <strong>Summary & Mastery Checklist</strong>
+      ✅ Understand when to choose each list type<br>
+      ✅ Implement all variants from memory<br>
+      ✅ Recognize the trade-offs in time, space, and complexity<br>
+      ✅ Solve classic algorithms (reversal, cycle detection, merging)<br>
+      ✅ Identify real-world applications and their implementation choices<br>
+      ✅ Debug pointer-related issues efficiently<br><br>
+      <strong>Next:</strong> Move to Stacks and Queues (which use lists as building blocks), then Trees (which extend list concepts to hierarchical data).
+    </div>
+  </div>
+
+  <!-- Footer -->
+  <footer>
+    <span>COP 3530</span> · Data Structures · The List: Complete Guide
+    &nbsp;|&nbsp; Foundation for all pointer-based structures
+    &nbsp;|&nbsp; <span>Master the fundamentals</span></div>
+  </footer>
+
+</div><!-- end .container -->
+
+<script>
+  // Smooth interactions for enhanced user experience
+  document.addEventListener('DOMContentLoaded', () => {
+    // Auto-expand first section by default
+    const firstDetails = document.querySelector('details');
+    if (firstDetails) firstDetails.open = true;
+
+    // Smooth scrolling when opening sections
+    document.querySelectorAll('summary').forEach(summary => {
+      summary.addEventListener('click', (e) => {
+        const details = summary.parentElement;
+        if (!details.open) {
+          // Small delay to allow for opening animation
+          setTimeout(() => {
+            details.scrollIntoView({ 
+              behavior: 'smooth', 
+              block: 'start' 
+            });
+          }, 100);
+        }
+      });
+    });
+
+    // Highlight code blocks on hover for better readability
+    document.querySelectorAll('.code-block').forEach(block => {
+      block.addEventListener('mouseenter', () => {
+        block.style.borderLeftColor = 'var(--gold)';
+        block.style.boxShadow = '0 0 0 1px rgba(249,168,37,0.2)';
+      });
+      block.addEventListener('mouseleave', () => {
+        block.style.borderLeftColor = 'var(--emerald)';
+        block.style.boxShadow = 'none';
+      });
+    });
+  });
+</script>
+
+</div></body>
+</html>

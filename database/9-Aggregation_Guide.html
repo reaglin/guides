@@ -1,0 +1,1375 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>COP4709 - Aggregation in SQL</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            background: linear-gradient(135deg, #11998e 0%, #38ef7d 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1000px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            overflow: hidden;
+        }
+
+        header {
+            background: linear-gradient(135deg, #11998e 0%, #38ef7d 100%);
+            color: white;
+            padding: 40px;
+            text-align: center;
+        }
+
+        header h1 {
+            font-size: 2.5em;
+            margin-bottom: 10px;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.2);
+        }
+
+        header p {
+            font-size: 1.2em;
+            opacity: 0.95;
+        }
+
+        .content {
+            padding: 40px;
+        }
+
+        .intro {
+            background: linear-gradient(135deg, #f0fffe 0%, #c8f7e8 100%);
+            padding: 25px;
+            border-radius: 10px;
+            margin-bottom: 30px;
+            border-left: 5px solid #11998e;
+        }
+
+        .intro h2 {
+            color: #11998e;
+            margin-bottom: 15px;
+        }
+
+        .section {
+            margin-bottom: 25px;
+        }
+
+        .collapsible {
+            background: #f8f9fa;
+            border: 2px solid #e9ecef;
+            border-radius: 10px;
+            margin-bottom: 15px;
+            overflow: hidden;
+            transition: all 0.3s ease;
+        }
+
+        .collapsible:hover {
+            border-color: #11998e;
+            box-shadow: 0 4px 12px rgba(17, 153, 142, 0.15);
+        }
+
+        .collapsible-header {
+            background: linear-gradient(135deg, #11998e 0%, #38ef7d 100%);
+            color: white;
+            padding: 20px;
+            cursor: pointer;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-weight: 600;
+            font-size: 1.2em;
+            user-select: none;
+            text-shadow: 1px 1px 2px rgba(0,0,0,0.15);
+        }
+
+        .collapsible-header:hover {
+            background: linear-gradient(135deg, #0e8a7e 0%, #2fd970 100%);
+        }
+
+        .collapsible-header::after {
+            content: '▼';
+            font-size: 0.8em;
+            transition: transform 0.3s ease;
+        }
+
+        .collapsible-content {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.4s ease;
+            padding: 0 20px;
+        }
+
+        .collapsible.active .collapsible-content {
+            max-height: 8000px;
+            padding: 20px;
+        }
+
+        .collapsible.active .collapsible-header::after {
+            transform: rotate(180deg);
+        }
+
+        /* Info boxes */
+        .highlight-box {
+            background: #fff3cd;
+            border-left: 5px solid #ffc107;
+            padding: 15px;
+            margin: 15px 0;
+            border-radius: 5px;
+        }
+
+        .success-box {
+            background: #d4edda;
+            border-left: 5px solid #28a745;
+            padding: 15px;
+            margin: 15px 0;
+            border-radius: 5px;
+        }
+
+        .info-box {
+            background: #d1ecf1;
+            border-left: 5px solid #17a2b8;
+            padding: 15px;
+            margin: 15px 0;
+            border-radius: 5px;
+        }
+
+        .danger-box {
+            background: #f8d7da;
+            border-left: 5px solid #dc3545;
+            padding: 15px;
+            margin: 15px 0;
+            border-radius: 5px;
+        }
+
+        .teal-box {
+            background: #e0f7f5;
+            border-left: 5px solid #11998e;
+            padding: 15px;
+            margin: 15px 0;
+            border-radius: 5px;
+        }
+
+        /* Code blocks */
+        .code-block {
+            background: #2d2d2d;
+            color: #f8f8f2;
+            padding: 20px;
+            border-radius: 8px;
+            overflow-x: auto;
+            margin: 15px 0;
+            font-family: 'Courier New', monospace;
+            font-size: 0.92em;
+            line-height: 1.6;
+            white-space: pre;
+        }
+
+        .code-block .keyword  { color: #ff79c6; }
+        .code-block .func     { color: #50fa7b; }
+        .code-block .string   { color: #f1fa8c; }
+        .code-block .comment  { color: #6272a4; font-style: italic; }
+        .code-block .alias    { color: #8be9fd; }
+        .code-block .number   { color: #bd93f9; }
+
+        /* Result tables (query output mockups) */
+        .result-table-wrap {
+            margin: 15px 0;
+        }
+
+        .result-label {
+            background: #11998e;
+            color: white;
+            padding: 6px 14px;
+            font-size: 0.8em;
+            font-weight: 700;
+            border-radius: 5px 5px 0 0;
+            display: inline-block;
+            letter-spacing: 0.05em;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            background: white;
+            border-radius: 0 8px 8px 8px;
+            overflow: hidden;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+            margin-bottom: 15px;
+        }
+
+        th {
+            background: linear-gradient(135deg, #11998e 0%, #38ef7d 100%);
+            color: white;
+            padding: 12px 15px;
+            text-align: left;
+            font-weight: 600;
+            font-family: 'Courier New', monospace;
+            font-size: 0.95em;
+        }
+
+        td {
+            padding: 10px 15px;
+            border-bottom: 1px solid #e9ecef;
+            font-family: 'Courier New', monospace;
+            font-size: 0.9em;
+        }
+
+        tr:last-child td { border-bottom: none; }
+        tr:hover { background: #f0fffe; }
+
+        /* Layout helpers */
+        .comparison-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+            margin: 20px 0;
+        }
+
+        .comparison-card {
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+        }
+
+        .comparison-card.good {
+            background: linear-gradient(135deg, #d4edda 0%, #c3e6cb 100%);
+            border: 2px solid #28a745;
+        }
+
+        .comparison-card.bad {
+            background: linear-gradient(135deg, #f8d7da 0%, #f5c6cb 100%);
+            border: 2px solid #dc3545;
+        }
+
+        .func-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 15px;
+            margin: 20px 0;
+        }
+
+        .func-card {
+            background: linear-gradient(135deg, #e0f7f5 0%, #b2ebf2 100%);
+            border: 2px solid #11998e;
+            border-radius: 10px;
+            padding: 15px;
+            text-align: center;
+        }
+
+        .func-card .func-name {
+            font-family: 'Courier New', monospace;
+            font-size: 1.3em;
+            font-weight: 700;
+            color: #11998e;
+        }
+
+        .func-card p {
+            font-size: 0.9em;
+            margin-top: 6px;
+            color: #555;
+        }
+
+        ul, ol {
+            margin: 12px 0 12px 28px;
+        }
+
+        li { margin: 7px 0; }
+
+        h3 {
+            color: #11998e;
+            margin: 22px 0 10px 0;
+            font-size: 1.35em;
+        }
+
+        h4 {
+            color: #0e8a7e;
+            margin: 15px 0 8px 0;
+            font-size: 1.05em;
+        }
+
+        strong { color: #11998e; }
+
+        code {
+            background: #e8f8f5;
+            color: #0e8a7e;
+            padding: 2px 6px;
+            border-radius: 4px;
+            font-family: 'Courier New', monospace;
+            font-size: 0.92em;
+        }
+
+        footer {
+            background: #2d3436;
+            color: white;
+            text-align: center;
+            padding: 20px;
+            margin-top: 40px;
+        }
+    </style>
+</head>
+<body>
+<div class="container">
+
+    <header>
+        <h1>∑ Aggregation in SQL</h1>
+        <p>COP4709 — Database Management</p>
+    </header>
+
+    <div class="content">
+
+        <!-- INTRO -->
+        <div class="intro">
+            <h2>📐 What Is Aggregation?</h2>
+            <p>Aggregation in SQL means performing a <strong>calculation across a set of rows</strong> to produce a single summary value. Instead of returning every row, aggregate functions collapse them into meaningful totals, counts, averages, and more.</p>
+            <p style="margin-top:12px;">For example: rather than listing every sale ever made, you can ask SQL to return the <em>total revenue per month</em>, the <em>average order value</em>, or the <em>highest-selling product</em> — all in a single query.</p>
+            <p style="margin-top:12px;"><strong>Key supporting tools:</strong> <code>AS</code> gives your output columns readable names, <code>GROUP BY</code> controls what rows get aggregated together, and <code>HAVING</code> filters the results after aggregation.</p>
+        </div>
+
+        <!-- SECTION 1: THE AGGREGATION FUNCTIONS AT A GLANCE -->
+        <div class="section">
+            <div class="collapsible active">
+                <div class="collapsible-header">1. The Aggregation Functions at a Glance</div>
+                <div class="collapsible-content">
+
+                    <div class="func-grid">
+                        <div class="func-card">
+                            <div class="func-name">COUNT()</div>
+                            <p>Counts rows or non-NULL values</p>
+                        </div>
+                        <div class="func-card">
+                            <div class="func-name">SUM()</div>
+                            <p>Totals numeric values</p>
+                        </div>
+                        <div class="func-card">
+                            <div class="func-name">AVG()</div>
+                            <p>Calculates the mean of numeric values</p>
+                        </div>
+                        <div class="func-card">
+                            <div class="func-name">MIN()</div>
+                            <p>Returns the smallest value</p>
+                        </div>
+                        <div class="func-card">
+                            <div class="func-name">MAX()</div>
+                            <p>Returns the largest value</p>
+                        </div>
+                        <div class="func-card">
+                            <div class="func-name">COUNT(DISTINCT)</div>
+                            <p>Counts unique non-NULL values</p>
+                        </div>
+                    </div>
+
+                    <div class="teal-box">
+                        <strong>General Syntax Pattern:</strong>
+                        <br><br>
+                        <code>SELECT  FUNCTION(column)  AS  alias_name  FROM  table  [WHERE ...]  [GROUP BY ...]  [HAVING ...]  [ORDER BY ...];</code>
+                    </div>
+
+                    <h3>Sample Dataset Used Throughout This Guide</h3>
+                    <p>All examples below use these two tables from a fictional online bookstore.</p>
+
+                    <div class="code-block"><span class="keyword">CREATE TABLE</span> orders (
+    order_id    <span class="keyword">INT PRIMARY KEY</span>,
+    customer_id <span class="keyword">INT</span>,
+    order_date  <span class="keyword">DATE</span>,
+    category    <span class="keyword">VARCHAR</span>(<span class="number">50</span>),
+    total       <span class="keyword">DECIMAL</span>(<span class="number">8,2</span>),
+    qty         <span class="keyword">INT</span>,
+    status      <span class="keyword">VARCHAR</span>(<span class="number">20</span>)
+);
+
+<span class="keyword">INSERT INTO</span> orders
+    (order_id, customer_id, order_date,   category,    total,  qty, status)
+<span class="keyword">VALUES</span>
+    (<span class="number">1</span>,  <span class="number">101</span>, <span class="string">'2025-01-05'</span>, <span class="string">'Fiction'</span>,    <span class="number">29.99</span>,  <span class="number">2</span>,  <span class="string">'Completed'</span>),
+    (<span class="number">2</span>,  <span class="number">102</span>, <span class="string">'2025-01-12'</span>, <span class="string">'Science'</span>,    <span class="number">54.50</span>,  <span class="number">3</span>,  <span class="string">'Completed'</span>),
+    (<span class="number">3</span>,  <span class="number">101</span>, <span class="string">'2025-01-18'</span>, <span class="string">'Fiction'</span>,    <span class="number">15.00</span>,  <span class="number">1</span>,  <span class="string">'Completed'</span>),
+    (<span class="number">4</span>,  <span class="number">103</span>, <span class="string">'2025-02-02'</span>, <span class="string">'History'</span>,    <span class="number">42.75</span>,  <span class="number">2</span>,  <span class="string">'Completed'</span>),
+    (<span class="number">5</span>,  <span class="number">102</span>, <span class="string">'2025-02-14'</span>, <span class="string">'Science'</span>,    <span class="number">38.00</span>,  <span class="number">2</span>,  <span class="string">'Cancelled'</span>),
+    (<span class="number">6</span>,  <span class="number">104</span>, <span class="string">'2025-02-20'</span>, <span class="string">'Fiction'</span>,    <span class="number">22.50</span>,  <span class="number">1</span>,  <span class="string">'Completed'</span>),
+    (<span class="number">7</span>,  <span class="number">103</span>, <span class="string">'2025-03-03'</span>, <span class="string">'History'</span>,    <span class="number">67.20</span>,  <span class="number">4</span>,  <span class="string">'Completed'</span>),
+    (<span class="number">8</span>,  <span class="number">105</span>, <span class="string">'2025-03-10'</span>, <span class="string">'Science'</span>,    <span class="number">91.00</span>,  <span class="number">5</span>,  <span class="string">'Completed'</span>),
+    (<span class="number">9</span>,  <span class="number">101</span>, <span class="string">'2025-03-15'</span>, <span class="string">'Biography'</span>,  <span class="number">18.99</span>,  <span class="number">1</span>,  <span class="string">'Completed'</span>),
+    (<span class="number">10</span>, <span class="number">104</span>, <span class="string">'2025-03-22'</span>, <span class="string">'Fiction'</span>,    <span class="number">33.00</span>,  <span class="number">2</span>,  <span class="string">'Pending'</span>);</div>
+
+                </div>
+            </div>
+        </div>
+
+        <!-- SECTION 2: COUNT -->
+        <div class="section">
+            <div class="collapsible">
+                <div class="collapsible-header">2. COUNT() — Counting Rows and Values</div>
+                <div class="collapsible-content">
+
+                    <div class="info-box">
+                        <strong>COUNT()</strong> returns the number of rows that match the query. It has three important forms that behave differently.
+                    </div>
+
+                    <h3>COUNT(*) — Count Every Row</h3>
+                    <p>Counts all rows including those with NULL values in any column.</p>
+
+                    <div class="code-block"><span class="comment">-- How many orders have been placed in total?</span>
+<span class="keyword">SELECT</span>  <span class="func">COUNT</span>(*)  <span class="keyword">AS</span>  <span class="alias">total_orders</span>
+<span class="keyword">FROM</span>    orders;</div>
+
+                    <div class="result-table-wrap">
+                        <div class="result-label">▶ RESULT</div>
+                        <table>
+                            <tr><th>total_orders</th></tr>
+                            <tr><td>10</td></tr>
+                        </table>
+                    </div>
+
+                    <h3>COUNT(column) — Count Non-NULL Values</h3>
+                    <p>Counts only rows where the specified column is <strong>not NULL</strong>. Useful for spotting missing data.</p>
+
+                    <div class="code-block"><span class="comment">-- How many orders have a recorded status?</span>
+<span class="keyword">SELECT</span>  <span class="func">COUNT</span>(status)  <span class="keyword">AS</span>  <span class="alias">orders_with_status</span>
+<span class="keyword">FROM</span>    orders;</div>
+
+                    <div class="result-table-wrap">
+                        <div class="result-label">▶ RESULT</div>
+                        <table>
+                            <tr><th>orders_with_status</th></tr>
+                            <tr><td>10</td></tr>
+                        </table>
+                    </div>
+
+                    <h3>COUNT(DISTINCT column) — Count Unique Values</h3>
+                    <p>Counts only <strong>distinct (unique)</strong> non-NULL values in the column.</p>
+
+                    <div class="code-block"><span class="comment">-- How many unique customers have placed an order?</span>
+<span class="keyword">SELECT</span>  <span class="func">COUNT</span>(<span class="keyword">DISTINCT</span> customer_id)  <span class="keyword">AS</span>  <span class="alias">unique_customers</span>
+<span class="keyword">FROM</span>    orders;</div>
+
+                    <div class="result-table-wrap">
+                        <div class="result-label">▶ RESULT</div>
+                        <table>
+                            <tr><th>unique_customers</th></tr>
+                            <tr><td>5</td></tr>
+                        </table>
+                    </div>
+
+                    <h3>COUNT() with WHERE</h3>
+
+                    <div class="code-block"><span class="comment">-- How many completed orders are there?</span>
+<span class="keyword">SELECT</span>  <span class="func">COUNT</span>(*)  <span class="keyword">AS</span>  <span class="alias">completed_orders</span>
+<span class="keyword">FROM</span>    orders
+<span class="keyword">WHERE</span>   status = <span class="string">'Completed'</span>;</div>
+
+                    <div class="result-table-wrap">
+                        <div class="result-label">▶ RESULT</div>
+                        <table>
+                            <tr><th>completed_orders</th></tr>
+                            <tr><td>8</td></tr>
+                        </table>
+                    </div>
+
+                    <div class="highlight-box">
+                        <strong>⚠️ COUNT(*) vs COUNT(column):</strong> <code>COUNT(*)</code> always counts every row. <code>COUNT(column)</code> skips NULLs. If a column has NULLs in some rows, these two will return different numbers — a common source of confusion in reporting queries.
+                    </div>
+
+                </div>
+            </div>
+        </div>
+
+        <!-- SECTION 3: SUM -->
+        <div class="section">
+            <div class="collapsible">
+                <div class="collapsible-header">3. SUM() — Totalling Numeric Values</div>
+                <div class="collapsible-content">
+
+                    <div class="info-box">
+                        <strong>SUM()</strong> adds up all non-NULL values in a numeric column. It returns NULL if there are no rows (not zero), and ignores NULL values in the column.
+                    </div>
+
+                    <h3>Basic SUM</h3>
+
+                    <div class="code-block"><span class="comment">-- What is the total revenue across all orders?</span>
+<span class="keyword">SELECT</span>  <span class="func">SUM</span>(total)  <span class="keyword">AS</span>  <span class="alias">total_revenue</span>
+<span class="keyword">FROM</span>    orders;</div>
+
+                    <div class="result-table-wrap">
+                        <div class="result-label">▶ RESULT</div>
+                        <table>
+                            <tr><th>total_revenue</th></tr>
+                            <tr><td>412.93</td></tr>
+                        </table>
+                    </div>
+
+                    <h3>SUM with WHERE</h3>
+
+                    <div class="code-block"><span class="comment">-- What is the total revenue from completed orders only?</span>
+<span class="keyword">SELECT</span>  <span class="func">SUM</span>(total)  <span class="keyword">AS</span>  <span class="alias">completed_revenue</span>
+<span class="keyword">FROM</span>    orders
+<span class="keyword">WHERE</span>   status = <span class="string">'Completed'</span>;</div>
+
+                    <div class="result-table-wrap">
+                        <div class="result-label">▶ RESULT</div>
+                        <table>
+                            <tr><th>completed_revenue</th></tr>
+                            <tr><td>341.93</td></tr>
+                        </table>
+                    </div>
+
+                    <h3>SUM on Multiple Columns</h3>
+
+                    <div class="code-block"><span class="comment">-- Total revenue and total items sold in one query</span>
+<span class="keyword">SELECT</span>  <span class="func">SUM</span>(total)  <span class="keyword">AS</span>  <span class="alias">total_revenue</span>,
+        <span class="func">SUM</span>(qty)    <span class="keyword">AS</span>  <span class="alias">total_books_sold</span>
+<span class="keyword">FROM</span>    orders
+<span class="keyword">WHERE</span>   status = <span class="string">'Completed'</span>;</div>
+
+                    <div class="result-table-wrap">
+                        <div class="result-label">▶ RESULT</div>
+                        <table>
+                            <tr><th>total_revenue</th><th>total_books_sold</th></tr>
+                            <tr><td>341.93</td><td>20</td></tr>
+                        </table>
+                    </div>
+
+                    <div class="success-box">
+                        <strong>💡 Tip — Arithmetic Inside SUM:</strong> You can do math inside the function. For example, <code>SUM(qty * unit_price)</code> calculates a line total before summing — useful when you store quantity and price separately.
+                    </div>
+
+                </div>
+            </div>
+        </div>
+
+        <!-- SECTION 4: AVG -->
+        <div class="section">
+            <div class="collapsible">
+                <div class="collapsible-header">4. AVG() — Calculating Averages</div>
+                <div class="collapsible-content">
+
+                    <div class="info-box">
+                        <strong>AVG()</strong> returns the arithmetic mean of all non-NULL values in a column. It is equivalent to <code>SUM(col) / COUNT(col)</code>, but it ignores NULLs in the count — which is not always the same as dividing by the total number of rows.
+                    </div>
+
+                    <h3>Basic AVG</h3>
+
+                    <div class="code-block"><span class="comment">-- What is the average order value?</span>
+<span class="keyword">SELECT</span>  <span class="func">AVG</span>(total)  <span class="keyword">AS</span>  <span class="alias">avg_order_value</span>
+<span class="keyword">FROM</span>    orders;</div>
+
+                    <div class="result-table-wrap">
+                        <div class="result-label">▶ RESULT</div>
+                        <table>
+                            <tr><th>avg_order_value</th></tr>
+                            <tr><td>41.293000</td></tr>
+                        </table>
+                    </div>
+
+                    <h3>Rounding AVG Output</h3>
+                    <p>AVG often returns many decimal places. Use <code>ROUND()</code> for cleaner output.</p>
+
+                    <div class="code-block"><span class="comment">-- Round to 2 decimal places for currency display</span>
+<span class="keyword">SELECT</span>  <span class="func">ROUND</span>(<span class="func">AVG</span>(total), <span class="number">2</span>)  <span class="keyword">AS</span>  <span class="alias">avg_order_value</span>
+<span class="keyword">FROM</span>    orders;</div>
+
+                    <div class="result-table-wrap">
+                        <div class="result-label">▶ RESULT</div>
+                        <table>
+                            <tr><th>avg_order_value</th></tr>
+                            <tr><td>41.29</td></tr>
+                        </table>
+                    </div>
+
+                    <h3>AVG with a Filter</h3>
+
+                    <div class="code-block"><span class="comment">-- What is the average order value in the Fiction category?</span>
+<span class="keyword">SELECT</span>  <span class="func">ROUND</span>(<span class="func">AVG</span>(total), <span class="number">2</span>)  <span class="keyword">AS</span>  <span class="alias">avg_fiction_order</span>
+<span class="keyword">FROM</span>    orders
+<span class="keyword">WHERE</span>   category = <span class="string">'Fiction'</span>;</div>
+
+                    <div class="result-table-wrap">
+                        <div class="result-label">▶ RESULT</div>
+                        <table>
+                            <tr><th>avg_fiction_order</th></tr>
+                            <tr><td>25.12</td></tr>
+                        </table>
+                    </div>
+
+                    <div class="danger-box">
+                        <strong>⚠️ NULL Trap with AVG:</strong> If a column has NULLs, <code>AVG()</code> ignores them. This means the average is computed over fewer rows than the total row count. If a missing value should be treated as zero, use <code>AVG(COALESCE(column, 0))</code> to substitute NULLs before averaging.
+                    </div>
+
+                </div>
+            </div>
+        </div>
+
+        <!-- SECTION 5: MIN and MAX -->
+        <div class="section">
+            <div class="collapsible">
+                <div class="collapsible-header">5. MIN() and MAX() — Finding Extremes</div>
+                <div class="collapsible-content">
+
+                    <div class="info-box">
+                        <strong>MIN()</strong> and <strong>MAX()</strong> return the smallest and largest values in a column. They work on numbers, dates, and strings (alphabetically for strings). Both ignore NULL values.
+                    </div>
+
+                    <h3>MIN and MAX on Numbers</h3>
+
+                    <div class="code-block"><span class="comment">-- What were the cheapest and most expensive orders?</span>
+<span class="keyword">SELECT</span>  <span class="func">MIN</span>(total)  <span class="keyword">AS</span>  <span class="alias">smallest_order</span>,
+        <span class="func">MAX</span>(total)  <span class="keyword">AS</span>  <span class="alias">largest_order</span>
+<span class="keyword">FROM</span>    orders;</div>
+
+                    <div class="result-table-wrap">
+                        <div class="result-label">▶ RESULT</div>
+                        <table>
+                            <tr><th>smallest_order</th><th>largest_order</th></tr>
+                            <tr><td>15.00</td><td>91.00</td></tr>
+                        </table>
+                    </div>
+
+                    <h3>MIN and MAX on Dates</h3>
+                    <p><code>MIN</code> on a date returns the earliest date; <code>MAX</code> returns the most recent.</p>
+
+                    <div class="code-block"><span class="comment">-- When was our first and most recent order?</span>
+<span class="keyword">SELECT</span>  <span class="func">MIN</span>(order_date)  <span class="keyword">AS</span>  <span class="alias">first_order_date</span>,
+        <span class="func">MAX</span>(order_date)  <span class="keyword">AS</span>  <span class="alias">latest_order_date</span>
+<span class="keyword">FROM</span>    orders;</div>
+
+                    <div class="result-table-wrap">
+                        <div class="result-label">▶ RESULT</div>
+                        <table>
+                            <tr><th>first_order_date</th><th>latest_order_date</th></tr>
+                            <tr><td>2025-01-05</td><td>2025-03-22</td></tr>
+                        </table>
+                    </div>
+
+                    <h3>MIN and MAX on Strings</h3>
+                    <p>On text columns, <code>MIN</code> and <code>MAX</code> use alphabetical ordering.</p>
+
+                    <div class="code-block"><span class="comment">-- First and last category alphabetically</span>
+<span class="keyword">SELECT</span>  <span class="func">MIN</span>(category)  <span class="keyword">AS</span>  <span class="alias">first_alpha_category</span>,
+        <span class="func">MAX</span>(category)  <span class="keyword">AS</span>  <span class="alias">last_alpha_category</span>
+<span class="keyword">FROM</span>    orders;</div>
+
+                    <div class="result-table-wrap">
+                        <div class="result-label">▶ RESULT</div>
+                        <table>
+                            <tr><th>first_alpha_category</th><th>last_alpha_category</th></tr>
+                            <tr><td>Biography</td><td>Science</td></tr>
+                        </table>
+                    </div>
+
+                    <h3>Combining All Five Functions</h3>
+
+                    <div class="code-block"><span class="comment">-- Full summary of completed order activity</span>
+<span class="keyword">SELECT</span>  <span class="func">COUNT</span>(*)                     <span class="keyword">AS</span>  <span class="alias">order_count</span>,
+        <span class="func">SUM</span>(total)                   <span class="keyword">AS</span>  <span class="alias">total_revenue</span>,
+        <span class="func">ROUND</span>(<span class="func">AVG</span>(total), <span class="number">2</span>)        <span class="keyword">AS</span>  <span class="alias">avg_order_value</span>,
+        <span class="func">MIN</span>(total)                   <span class="keyword">AS</span>  <span class="alias">min_order_value</span>,
+        <span class="func">MAX</span>(total)                   <span class="keyword">AS</span>  <span class="alias">max_order_value</span>
+<span class="keyword">FROM</span>    orders
+<span class="keyword">WHERE</span>   status = <span class="string">'Completed'</span>;</div>
+
+                    <div class="result-table-wrap">
+                        <div class="result-label">▶ RESULT</div>
+                        <table>
+                            <tr><th>order_count</th><th>total_revenue</th><th>avg_order_value</th><th>min_order_value</th><th>max_order_value</th></tr>
+                            <tr><td>8</td><td>341.93</td><td>42.74</td><td>15.00</td><td>91.00</td></tr>
+                        </table>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+
+        <!-- SECTION 6: AS -->
+        <div class="section">
+            <div class="collapsible">
+                <div class="collapsible-header">6. AS — Naming Your Output Columns</div>
+                <div class="collapsible-content">
+
+                    <div class="info-box">
+                        <strong>AS</strong> creates a column alias — a custom label for a column in your query results. Without it, aggregate expressions produce ugly auto-generated headers like <code>COUNT(*)</code> or <code>ROUND(AVG(total),2)</code>, which are hard to read and can break application code that references column names.
+                    </div>
+
+                    <h3>Without AS vs With AS</h3>
+
+                    <div class="comparison-grid">
+                        <div class="comparison-card bad">
+                            <h4>❌ Without AS</h4>
+                            <div class="code-block" style="font-size:0.82em;"><span class="keyword">SELECT</span>  <span class="func">COUNT</span>(*),
+        <span class="func">SUM</span>(total),
+        <span class="func">AVG</span>(total)
+<span class="keyword">FROM</span>    orders;</div>
+                            <p style="margin-top:10px; font-size:0.88em;">Output headers: <code>COUNT(*)</code>, <code>SUM(total)</code>, <code>AVG(total)</code> — cryptic and unusable as references.</p>
+                        </div>
+                        <div class="comparison-card good">
+                            <h4>✅ With AS</h4>
+                            <div class="code-block" style="font-size:0.82em;"><span class="keyword">SELECT</span>  <span class="func">COUNT</span>(*)          <span class="keyword">AS</span>  <span class="alias">order_count</span>,
+        <span class="func">SUM</span>(total)         <span class="keyword">AS</span>  <span class="alias">total_revenue</span>,
+        <span class="func">AVG</span>(total)         <span class="keyword">AS</span>  <span class="alias">avg_order_value</span>
+<span class="keyword">FROM</span>    orders;</div>
+                            <p style="margin-top:10px; font-size:0.88em;">Output headers: <code>order_count</code>, <code>total_revenue</code>, <code>avg_order_value</code> — readable, meaningful, referenceable.</p>
+                        </div>
+                    </div>
+
+                    <h3>AS Rules and Syntax Notes</h3>
+
+                    <div class="code-block"><span class="comment">-- AS is optional — a space alone also creates an alias (but AS is clearer)</span>
+<span class="keyword">SELECT</span>  <span class="func">COUNT</span>(*) order_count    <span class="keyword">FROM</span>  orders;   <span class="comment">-- Works but harder to read</span>
+<span class="keyword">SELECT</span>  <span class="func">COUNT</span>(*) <span class="keyword">AS</span> order_count  <span class="keyword">FROM</span>  orders;   <span class="comment">-- Preferred: AS is explicit</span>
+
+<span class="comment">-- Use quotes for aliases with spaces or special characters</span>
+<span class="keyword">SELECT</span>  <span class="func">COUNT</span>(*)  <span class="keyword">AS</span>  <span class="string">"Total Orders Placed"</span>
+<span class="keyword">FROM</span>    orders;
+
+<span class="comment">-- AS also works on regular columns and table names</span>
+<span class="keyword">SELECT</span>  o.order_id      <span class="keyword">AS</span>  <span class="alias">id</span>,
+        o.total         <span class="keyword">AS</span>  <span class="alias">order_total</span>,
+        o.order_date    <span class="keyword">AS</span>  <span class="alias">placed_on</span>
+<span class="keyword">FROM</span>    orders  <span class="keyword">AS</span>  <span class="alias">o</span>;</div>
+
+                    <h3>Using AS with Calculated Columns</h3>
+                    <p>AS is especially valuable when your SELECT contains math or function calls.</p>
+
+                    <div class="code-block"><span class="comment">-- Revenue report with formatted/computed output columns</span>
+<span class="keyword">SELECT</span>  category,
+        <span class="func">COUNT</span>(*)                          <span class="keyword">AS</span>  <span class="alias">num_orders</span>,
+        <span class="func">SUM</span>(total)                        <span class="keyword">AS</span>  <span class="alias">gross_revenue</span>,
+        <span class="func">ROUND</span>(<span class="func">AVG</span>(total), <span class="number">2</span>)             <span class="keyword">AS</span>  <span class="alias">avg_order_value</span>,
+        <span class="func">ROUND</span>(<span class="func">SUM</span>(total) * <span class="number">0.10</span>, <span class="number">2</span>)      <span class="keyword">AS</span>  <span class="alias">estimated_tax</span>
+<span class="keyword">FROM</span>    orders
+<span class="keyword">GROUP BY</span> category
+<span class="keyword">ORDER BY</span> gross_revenue <span class="keyword">DESC</span>;</div>
+
+                    <div class="result-table-wrap">
+                        <div class="result-label">▶ RESULT</div>
+                        <table>
+                            <tr><th>category</th><th>num_orders</th><th>gross_revenue</th><th>avg_order_value</th><th>estimated_tax</th></tr>
+                            <tr><td>Science</td><td>3</td><td>183.50</td><td>61.17</td><td>18.35</td></tr>
+                            <tr><td>History</td><td>2</td><td>109.95</td><td>54.98</td><td>11.00</td></tr>
+                            <tr><td>Fiction</td><td>4</td><td>100.49</td><td>25.12</td><td>10.05</td></tr>
+                            <tr><td>Biography</td><td>1</td><td>18.99</td><td>18.99</td><td>1.90</td></tr>
+                        </table>
+                    </div>
+
+                    <div class="highlight-box">
+                        <strong>⚠️ You Cannot Use an Alias in WHERE:</strong> Because <code>WHERE</code> is evaluated before <code>SELECT</code>, you cannot reference an alias you defined in SELECT inside a WHERE clause. Use <code>HAVING</code> instead, or repeat the expression. This is a very common beginner mistake.
+                        <div class="code-block" style="margin-top:10px;"><span class="comment">-- ❌ This fails — alias not yet defined at WHERE stage</span>
+<span class="keyword">SELECT</span>  <span class="func">SUM</span>(total)  <span class="keyword">AS</span>  <span class="alias">total_revenue</span>
+<span class="keyword">FROM</span>    orders
+<span class="keyword">WHERE</span>   total_revenue > <span class="number">100</span>;   <span class="comment">-- ERROR: unknown column</span>
+
+<span class="comment">-- ✅ Use HAVING instead (filters after aggregation)</span>
+<span class="keyword">SELECT</span>  category,
+        <span class="func">SUM</span>(total)  <span class="keyword">AS</span>  <span class="alias">total_revenue</span>
+<span class="keyword">FROM</span>    orders
+<span class="keyword">GROUP BY</span> category
+<span class="keyword">HAVING</span>  <span class="func">SUM</span>(total) > <span class="number">100</span>;</div>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+
+        <!-- SECTION 7: GROUP BY -->
+        <div class="section">
+            <div class="collapsible">
+                <div class="collapsible-header">7. GROUP BY — Aggregating by Category</div>
+                <div class="collapsible-content">
+
+                    <div class="info-box">
+                        <strong>GROUP BY</strong> splits rows into groups based on one or more columns, then applies an aggregate function to each group separately. Without GROUP BY, aggregate functions collapse the entire table into one row.
+                    </div>
+
+                    <h3>GROUP BY a Single Column</h3>
+
+                    <div class="code-block"><span class="comment">-- How many orders and total revenue per category?</span>
+<span class="keyword">SELECT</span>  category,
+        <span class="func">COUNT</span>(*)        <span class="keyword">AS</span>  <span class="alias">order_count</span>,
+        <span class="func">SUM</span>(total)      <span class="keyword">AS</span>  <span class="alias">total_revenue</span>
+<span class="keyword">FROM</span>    orders
+<span class="keyword">GROUP BY</span> category
+<span class="keyword">ORDER BY</span> total_revenue <span class="keyword">DESC</span>;</div>
+
+                    <div class="result-table-wrap">
+                        <div class="result-label">▶ RESULT</div>
+                        <table>
+                            <tr><th>category</th><th>order_count</th><th>total_revenue</th></tr>
+                            <tr><td>Science</td><td>3</td><td>183.50</td></tr>
+                            <tr><td>History</td><td>2</td><td>109.95</td></tr>
+                            <tr><td>Fiction</td><td>4</td><td>100.49</td></tr>
+                            <tr><td>Biography</td><td>1</td><td>18.99</td></tr>
+                        </table>
+                    </div>
+
+                    <h3>GROUP BY Multiple Columns</h3>
+                    <p>Adding more columns to GROUP BY creates finer groupings — one row per unique combination.</p>
+
+                    <div class="code-block"><span class="comment">-- Orders and revenue broken down by category AND status</span>
+<span class="keyword">SELECT</span>  category,
+        status,
+        <span class="func">COUNT</span>(*)        <span class="keyword">AS</span>  <span class="alias">order_count</span>,
+        <span class="func">SUM</span>(total)      <span class="keyword">AS</span>  <span class="alias">total_revenue</span>
+<span class="keyword">FROM</span>    orders
+<span class="keyword">GROUP BY</span> category, status
+<span class="keyword">ORDER BY</span> category, status;</div>
+
+                    <div class="result-table-wrap">
+                        <div class="result-label">▶ RESULT</div>
+                        <table>
+                            <tr><th>category</th><th>status</th><th>order_count</th><th>total_revenue</th></tr>
+                            <tr><td>Biography</td><td>Completed</td><td>1</td><td>18.99</td></tr>
+                            <tr><td>Fiction</td><td>Completed</td><td>3</td><td>67.49</td></tr>
+                            <tr><td>Fiction</td><td>Pending</td><td>1</td><td>33.00</td></tr>
+                            <tr><td>History</td><td>Completed</td><td>2</td><td>109.95</td></tr>
+                            <tr><td>Science</td><td>Cancelled</td><td>1</td><td>38.00</td></tr>
+                            <tr><td>Science</td><td>Completed</td><td>2</td><td>145.50</td></tr>
+                        </table>
+                    </div>
+
+                    <h3>The Golden Rule of GROUP BY</h3>
+
+                    <div class="danger-box">
+                        <strong>Every column in SELECT must either:</strong>
+                        <ol style="margin-top:8px;">
+                            <li>Be listed in <code>GROUP BY</code>, OR</li>
+                            <li>Be inside an aggregate function like <code>COUNT()</code>, <code>SUM()</code>, etc.</li>
+                        </ol>
+                        <div class="code-block" style="margin-top:10px;"><span class="comment">-- ❌ Fails — order_date is neither grouped nor aggregated</span>
+<span class="keyword">SELECT</span>  category,
+        order_date,        <span class="comment">-- Which date would SQL pick? Undefined!</span>
+        <span class="func">SUM</span>(total)  <span class="keyword">AS</span>  <span class="alias">total_revenue</span>
+<span class="keyword">FROM</span>    orders
+<span class="keyword">GROUP BY</span> category;
+
+<span class="comment">-- ✅ Fixed — aggregate the date or add it to GROUP BY</span>
+<span class="keyword">SELECT</span>  category,
+        <span class="func">MIN</span>(order_date)  <span class="keyword">AS</span>  <span class="alias">first_order_date</span>,
+        <span class="func">SUM</span>(total)       <span class="keyword">AS</span>  <span class="alias">total_revenue</span>
+<span class="keyword">FROM</span>    orders
+<span class="keyword">GROUP BY</span> category;</div>
+                    </div>
+
+                    <h3>GROUP BY with a Date Function</h3>
+                    <p>A common real-world pattern: group by month or year to create time-series reports.</p>
+
+                    <div class="code-block"><span class="comment">-- Monthly revenue report</span>
+<span class="keyword">SELECT</span>  <span class="func">YEAR</span>(order_date)   <span class="keyword">AS</span>  <span class="alias">order_year</span>,
+        <span class="func">MONTH</span>(order_date)  <span class="keyword">AS</span>  <span class="alias">order_month</span>,
+        <span class="func">COUNT</span>(*)           <span class="keyword">AS</span>  <span class="alias">order_count</span>,
+        <span class="func">SUM</span>(total)         <span class="keyword">AS</span>  <span class="alias">monthly_revenue</span>
+<span class="keyword">FROM</span>    orders
+<span class="keyword">GROUP BY</span> <span class="func">YEAR</span>(order_date),
+         <span class="func">MONTH</span>(order_date)
+<span class="keyword">ORDER BY</span> order_year,
+         order_month;</div>
+
+                    <div class="result-table-wrap">
+                        <div class="result-label">▶ RESULT</div>
+                        <table>
+                            <tr><th>order_year</th><th>order_month</th><th>order_count</th><th>monthly_revenue</th></tr>
+                            <tr><td>2025</td><td>1</td><td>3</td><td>99.49</td></tr>
+                            <tr><td>2025</td><td>2</td><td>3</td><td>103.25</td></tr>
+                            <tr><td>2025</td><td>3</td><td>4</td><td>210.19</td></tr>
+                        </table>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+
+        <!-- SECTION 8: HAVING -->
+        <div class="section">
+            <div class="collapsible">
+                <div class="collapsible-header">8. HAVING — Filtering Aggregated Results</div>
+                <div class="collapsible-content">
+
+                    <div class="info-box">
+                        <strong>HAVING</strong> filters groups after aggregation has been performed — it is the GROUP BY equivalent of WHERE. Use WHERE to filter individual rows before grouping; use HAVING to filter the resulting groups after grouping.
+                    </div>
+
+                    <h3>WHERE vs HAVING — Side by Side</h3>
+
+                    <div class="comparison-grid">
+                        <div class="comparison-card good">
+                            <h4>WHERE — Filters rows BEFORE grouping</h4>
+                            <div class="code-block" style="font-size:0.82em;"><span class="comment">-- Only consider completed orders,
+-- then group and aggregate</span>
+<span class="keyword">SELECT</span>  category,
+        <span class="func">SUM</span>(total) <span class="keyword">AS</span> <span class="alias">revenue</span>
+<span class="keyword">FROM</span>    orders
+<span class="keyword">WHERE</span>   status = <span class="string">'Completed'</span>
+<span class="keyword">GROUP BY</span> category;</div>
+                        </div>
+                        <div class="comparison-card good">
+                            <h4>HAVING — Filters groups AFTER grouping</h4>
+                            <div class="code-block" style="font-size:0.82em;"><span class="comment">-- Group all orders, then keep only
+-- categories with revenue over $100</span>
+<span class="keyword">SELECT</span>  category,
+        <span class="func">SUM</span>(total) <span class="keyword">AS</span> <span class="alias">revenue</span>
+<span class="keyword">FROM</span>    orders
+<span class="keyword">GROUP BY</span> category
+<span class="keyword">HAVING</span>  <span class="func">SUM</span>(total) > <span class="number">100</span>;</div>
+                        </div>
+                    </div>
+
+                    <h3>Basic HAVING Example</h3>
+
+                    <div class="code-block"><span class="comment">-- Which categories have generated more than $100 in revenue?</span>
+<span class="keyword">SELECT</span>  category,
+        <span class="func">COUNT</span>(*)    <span class="keyword">AS</span>  <span class="alias">order_count</span>,
+        <span class="func">SUM</span>(total)  <span class="keyword">AS</span>  <span class="alias">total_revenue</span>
+<span class="keyword">FROM</span>    orders
+<span class="keyword">GROUP BY</span> category
+<span class="keyword">HAVING</span>  <span class="func">SUM</span>(total) > <span class="number">100</span>
+<span class="keyword">ORDER BY</span> total_revenue <span class="keyword">DESC</span>;</div>
+
+                    <div class="result-table-wrap">
+                        <div class="result-label">▶ RESULT</div>
+                        <table>
+                            <tr><th>category</th><th>order_count</th><th>total_revenue</th></tr>
+                            <tr><td>Science</td><td>3</td><td>183.50</td></tr>
+                            <tr><td>History</td><td>2</td><td>109.95</td></tr>
+                            <tr><td>Fiction</td><td>4</td><td>100.49</td></tr>
+                        </table>
+                    </div>
+
+                    <h3>Using WHERE and HAVING Together</h3>
+
+                    <div class="code-block"><span class="comment">-- Among completed orders only, which categories
+-- have more than 1 order AND average value above $30?</span>
+<span class="keyword">SELECT</span>  category,
+        <span class="func">COUNT</span>(*)              <span class="keyword">AS</span>  <span class="alias">order_count</span>,
+        <span class="func">ROUND</span>(<span class="func">AVG</span>(total), <span class="number">2</span>)  <span class="keyword">AS</span>  <span class="alias">avg_order_value</span>
+<span class="keyword">FROM</span>    orders
+<span class="keyword">WHERE</span>   status = <span class="string">'Completed'</span>       <span class="comment">-- row-level filter (before grouping)</span>
+<span class="keyword">GROUP BY</span> category
+<span class="keyword">HAVING</span>  <span class="func">COUNT</span>(*) > <span class="number">1</span>              <span class="comment">-- group-level filter (after grouping)</span>
+   <span class="keyword">AND</span>  <span class="func">AVG</span>(total) > <span class="number">30</span>
+<span class="keyword">ORDER BY</span> avg_order_value <span class="keyword">DESC</span>;</div>
+
+                    <div class="result-table-wrap">
+                        <div class="result-label">▶ RESULT</div>
+                        <table>
+                            <tr><th>category</th><th>order_count</th><th>avg_order_value</th></tr>
+                            <tr><td>Science</td><td>2</td><td>72.75</td></tr>
+                            <tr><td>History</td><td>2</td><td>54.98</td></tr>
+                        </table>
+                    </div>
+
+                    <h3>HAVING with COUNT — Finding Active Groups</h3>
+
+                    <div class="code-block"><span class="comment">-- Which customers have placed more than one order?</span>
+<span class="keyword">SELECT</span>  customer_id,
+        <span class="func">COUNT</span>(*)    <span class="keyword">AS</span>  <span class="alias">order_count</span>,
+        <span class="func">SUM</span>(total)  <span class="keyword">AS</span>  <span class="alias">lifetime_value</span>
+<span class="keyword">FROM</span>    orders
+<span class="keyword">GROUP BY</span> customer_id
+<span class="keyword">HAVING</span>  <span class="func">COUNT</span>(*) > <span class="number">1</span>
+<span class="keyword">ORDER BY</span> order_count <span class="keyword">DESC</span>;</div>
+
+                    <div class="result-table-wrap">
+                        <div class="result-label">▶ RESULT</div>
+                        <table>
+                            <tr><th>customer_id</th><th>order_count</th><th>lifetime_value</th></tr>
+                            <tr><td>101</td><td>3</td><td>63.98</td></tr>
+                            <tr><td>102</td><td>2</td><td>92.50</td></tr>
+                            <tr><td>103</td><td>2</td><td>109.95</td></tr>
+                            <tr><td>104</td><td>2</td><td>55.50</td></tr>
+                        </table>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+
+        <!-- SECTION 9: ADVANCED -->
+        <div class="section">
+            <div class="collapsible">
+                <div class="collapsible-header">9. Additional Aggregate Functions</div>
+                <div class="collapsible-content">
+
+                    <h3>COUNT(DISTINCT) — Unique Value Counts Within Groups</h3>
+
+                    <div class="code-block"><span class="comment">-- How many distinct customers ordered in each category?</span>
+<span class="keyword">SELECT</span>  category,
+        <span class="func">COUNT</span>(*)                       <span class="keyword">AS</span>  <span class="alias">total_orders</span>,
+        <span class="func">COUNT</span>(<span class="keyword">DISTINCT</span> customer_id)   <span class="keyword">AS</span>  <span class="alias">unique_customers</span>
+<span class="keyword">FROM</span>    orders
+<span class="keyword">GROUP BY</span> category
+<span class="keyword">ORDER BY</span> unique_customers <span class="keyword">DESC</span>;</div>
+
+                    <div class="result-table-wrap">
+                        <div class="result-label">▶ RESULT</div>
+                        <table>
+                            <tr><th>category</th><th>total_orders</th><th>unique_customers</th></tr>
+                            <tr><td>Fiction</td><td>4</td><td>3</td></tr>
+                            <tr><td>Science</td><td>3</td><td>2</td></tr>
+                            <tr><td>History</td><td>2</td><td>1</td></tr>
+                            <tr><td>Biography</td><td>1</td><td>1</td></tr>
+                        </table>
+                    </div>
+
+                    <h3>GROUP_CONCAT / STRING_AGG — Aggregating Text</h3>
+                    <p>These vendor-specific functions concatenate string values across rows in a group into a single list. Great for producing summary columns.</p>
+
+                    <div class="code-block"><span class="comment">-- MySQL / MariaDB: GROUP_CONCAT</span>
+<span class="keyword">SELECT</span>  customer_id,
+        <span class="func">GROUP_CONCAT</span>(category <span class="keyword">ORDER BY</span> order_date <span class="keyword">SEPARATOR</span> <span class="string">', '</span>)
+            <span class="keyword">AS</span>  <span class="alias">categories_purchased</span>
+<span class="keyword">FROM</span>    orders
+<span class="keyword">GROUP BY</span> customer_id;
+
+<span class="comment">-- PostgreSQL / SQL Server 2017+: STRING_AGG</span>
+<span class="keyword">SELECT</span>  customer_id,
+        <span class="func">STRING_AGG</span>(category, <span class="string">', '</span>)  <span class="keyword">AS</span>  <span class="alias">categories_purchased</span>
+<span class="keyword">FROM</span>    orders
+<span class="keyword">GROUP BY</span> customer_id;</div>
+
+                    <div class="result-table-wrap">
+                        <div class="result-label">▶ RESULT (MySQL)</div>
+                        <table>
+                            <tr><th>customer_id</th><th>categories_purchased</th></tr>
+                            <tr><td>101</td><td>Fiction, Fiction, Biography</td></tr>
+                            <tr><td>102</td><td>Science, Science</td></tr>
+                            <tr><td>103</td><td>History, History</td></tr>
+                            <tr><td>104</td><td>Fiction, Fiction</td></tr>
+                            <tr><td>105</td><td>Science</td></tr>
+                        </table>
+                    </div>
+
+                    <h3>VARIANCE and STDDEV — Statistical Functions</h3>
+                    <p>Available in most SQL databases for statistical analysis of numeric distributions.</p>
+
+                    <div class="code-block"><span class="comment">-- How consistent are order values per category?
+-- Lower stddev = more uniform pricing</span>
+<span class="keyword">SELECT</span>  category,
+        <span class="func">ROUND</span>(<span class="func">AVG</span>(total), <span class="number">2</span>)      <span class="keyword">AS</span>  <span class="alias">avg_order_value</span>,
+        <span class="func">ROUND</span>(<span class="func">STDDEV</span>(total), <span class="number">2</span>)   <span class="keyword">AS</span>  <span class="alias">std_deviation</span>,
+        <span class="func">ROUND</span>(<span class="func">VARIANCE</span>(total), <span class="number">2</span>)  <span class="keyword">AS</span>  <span class="alias">variance</span>
+<span class="keyword">FROM</span>    orders
+<span class="keyword">GROUP BY</span> category
+<span class="keyword">ORDER BY</span> std_deviation <span class="keyword">DESC</span>;</div>
+
+                    <div class="info-box">
+                        <strong>Function Name Variations by Database:</strong>
+                        <ul>
+                            <li><strong>MySQL / PostgreSQL:</strong> <code>STDDEV()</code>, <code>VARIANCE()</code></li>
+                            <li><strong>SQL Server:</strong> <code>STDEV()</code>, <code>VAR()</code></li>
+                            <li><strong>Oracle:</strong> <code>STDDEV()</code>, <code>VARIANCE()</code></li>
+                            <li>Most also offer population vs sample variants: <code>STDDEV_POP()</code> / <code>STDDEV_SAMP()</code></li>
+                        </ul>
+                    </div>
+
+                    <h3>WITH ROLLUP — Subtotals and Grand Totals</h3>
+                    <p><code>WITH ROLLUP</code> (MySQL/SQL Server) or <code>ROLLUP()</code> (PostgreSQL/Oracle) adds subtotal and grand total rows automatically.</p>
+
+                    <div class="code-block"><span class="comment">-- Revenue by category with a grand total row at the bottom</span>
+<span class="keyword">SELECT</span>  <span class="func">COALESCE</span>(category, <span class="string">'GRAND TOTAL'</span>)  <span class="keyword">AS</span>  <span class="alias">category</span>,
+        <span class="func">COUNT</span>(*)                              <span class="keyword">AS</span>  <span class="alias">order_count</span>,
+        <span class="func">SUM</span>(total)                            <span class="keyword">AS</span>  <span class="alias">total_revenue</span>
+<span class="keyword">FROM</span>    orders
+<span class="keyword">GROUP BY</span> category <span class="keyword">WITH ROLLUP</span>
+<span class="keyword">ORDER BY</span> total_revenue <span class="keyword">DESC</span>;</div>
+
+                    <div class="result-table-wrap">
+                        <div class="result-label">▶ RESULT</div>
+                        <table>
+                            <tr><th>category</th><th>order_count</th><th>total_revenue</th></tr>
+                            <tr><td>Science</td><td>3</td><td>183.50</td></tr>
+                            <tr><td>History</td><td>2</td><td>109.95</td></tr>
+                            <tr><td>Fiction</td><td>4</td><td>100.49</td></tr>
+                            <tr><td>Biography</td><td>1</td><td>18.99</td></tr>
+                            <tr style="font-weight:bold; background:#e0f7f5;"><td>GRAND TOTAL</td><td>10</td><td>412.93</td></tr>
+                        </table>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+
+        <!-- SECTION 10: ORDER OF EXECUTION -->
+        <div class="section">
+            <div class="collapsible">
+                <div class="collapsible-header">10. Query Execution Order — How SQL Processes Aggregation</div>
+                <div class="collapsible-content">
+
+                    <div class="info-box">
+                        Understanding the <strong>logical order SQL evaluates a query</strong> explains why aliases defined in SELECT can't be used in WHERE, and why HAVING exists as a separate clause.
+                    </div>
+
+                    <h3>The 6 Clauses in Execution Order</h3>
+
+                    <table>
+                        <tr>
+                            <th>Step</th>
+                            <th>Clause</th>
+                            <th>What Happens</th>
+                        </tr>
+                        <tr>
+                            <td><strong>1</strong></td>
+                            <td><code>FROM</code></td>
+                            <td>Identify the source table(s); perform any JOINs</td>
+                        </tr>
+                        <tr>
+                            <td><strong>2</strong></td>
+                            <td><code>WHERE</code></td>
+                            <td>Filter individual rows — aliases don't exist yet</td>
+                        </tr>
+                        <tr>
+                            <td><strong>3</strong></td>
+                            <td><code>GROUP BY</code></td>
+                            <td>Divide the remaining rows into groups</td>
+                        </tr>
+                        <tr>
+                            <td><strong>4</strong></td>
+                            <td><code>HAVING</code></td>
+                            <td>Filter groups using aggregate conditions</td>
+                        </tr>
+                        <tr>
+                            <td><strong>5</strong></td>
+                            <td><code>SELECT</code></td>
+                            <td>Calculate expressions, apply aggregates, assign aliases</td>
+                        </tr>
+                        <tr>
+                            <td><strong>6</strong></td>
+                            <td><code>ORDER BY</code></td>
+                            <td>Sort the final result — aliases CAN be used here</td>
+                        </tr>
+                    </table>
+
+                    <h3>Full Aggregation Query Template</h3>
+
+                    <div class="code-block"><span class="comment">-- Complete template showing all clauses in write order
+-- (which differs from execution order above)</span>
+
+<span class="keyword">SELECT</span>   column_or_expression    <span class="keyword">AS</span>  <span class="alias">alias</span>,
+         <span class="func">AGGREGATE</span>(column)       <span class="keyword">AS</span>  <span class="alias">aggregate_alias</span>
+<span class="keyword">FROM</span>     table_name              <span class="keyword">AS</span>  <span class="alias">t</span>
+<span class="keyword">WHERE</span>    row_level_condition                  <span class="comment">-- filters rows BEFORE grouping</span>
+<span class="keyword">GROUP BY</span> column_or_expression                <span class="comment">-- defines the groups</span>
+<span class="keyword">HAVING</span>   group_level_condition               <span class="comment">-- filters groups AFTER aggregation</span>
+<span class="keyword">ORDER BY</span> aggregate_alias  <span class="keyword">DESC</span>              <span class="comment">-- aliases OK here</span>
+<span class="keyword">LIMIT</span>    <span class="number">10</span>;                                 <span class="comment">-- optional row limit</span></div>
+
+                </div>
+            </div>
+        </div>
+
+        <!-- SECTION 11: REAL-WORLD EXAMPLES -->
+        <div class="section">
+            <div class="collapsible">
+                <div class="collapsible-header">11. Real-World Aggregation Examples</div>
+                <div class="collapsible-content">
+
+                    <h3>📦 E-Commerce: Top Customers Report</h3>
+
+                    <div class="code-block"><span class="comment">-- Rank the top 5 customers by lifetime value,
+-- only counting completed orders</span>
+<span class="keyword">SELECT</span>   customer_id,
+         <span class="func">COUNT</span>(*)                  <span class="keyword">AS</span>  <span class="alias">total_orders</span>,
+         <span class="func">SUM</span>(total)                <span class="keyword">AS</span>  <span class="alias">lifetime_value</span>,
+         <span class="func">ROUND</span>(<span class="func">AVG</span>(total), <span class="number">2</span>)    <span class="keyword">AS</span>  <span class="alias">avg_order_value</span>,
+         <span class="func">MAX</span>(order_date)           <span class="keyword">AS</span>  <span class="alias">last_order_date</span>
+<span class="keyword">FROM</span>     orders
+<span class="keyword">WHERE</span>    status = <span class="string">'Completed'</span>
+<span class="keyword">GROUP BY</span> customer_id
+<span class="keyword">ORDER BY</span> lifetime_value <span class="keyword">DESC</span>
+<span class="keyword">LIMIT</span>    <span class="number">5</span>;</div>
+
+                    <h3>🏥 Healthcare: Appointment Summary by Doctor</h3>
+
+                    <div class="code-block"><span class="comment">-- For a healthcare database: summarise each doctor's workload</span>
+<span class="keyword">SELECT</span>   d.doctor_name,
+         d.specialisation,
+         <span class="func">COUNT</span>(a.appointment_id)           <span class="keyword">AS</span>  <span class="alias">total_appointments</span>,
+         <span class="func">COUNT</span>(<span class="keyword">DISTINCT</span> a.patient_id)      <span class="keyword">AS</span>  <span class="alias">unique_patients</span>,
+         <span class="func">SUM</span>(<span class="keyword">CASE WHEN</span> a.status = <span class="string">'No-Show'</span>
+              <span class="keyword">THEN</span> <span class="number">1</span> <span class="keyword">ELSE</span> <span class="number">0</span> <span class="keyword">END</span>)           <span class="keyword">AS</span>  <span class="alias">no_shows</span>,
+         <span class="func">ROUND</span>(
+             <span class="func">SUM</span>(<span class="keyword">CASE WHEN</span> a.status = <span class="string">'No-Show'</span>
+                  <span class="keyword">THEN</span> <span class="number">1</span> <span class="keyword">ELSE</span> <span class="number">0</span> <span class="keyword">END</span>) * <span class="number">100.0</span>
+             / <span class="func">COUNT</span>(*), <span class="number">1</span>)                <span class="keyword">AS</span>  <span class="alias">no_show_rate_pct</span>
+<span class="keyword">FROM</span>     appointments  <span class="keyword">AS</span>  <span class="alias">a</span>
+<span class="keyword">JOIN</span>     doctors        <span class="keyword">AS</span>  <span class="alias">d</span>
+         <span class="keyword">ON</span>  a.doctor_id = d.doctor_id
+<span class="keyword">WHERE</span>    a.appointment_date >= <span class="string">'2025-01-01'</span>
+<span class="keyword">GROUP BY</span> d.doctor_name,
+         d.specialisation
+<span class="keyword">HAVING</span>   <span class="func">COUNT</span>(a.appointment_id) >= <span class="number">10</span>
+<span class="keyword">ORDER BY</span> total_appointments <span class="keyword">DESC</span>;</div>
+
+                    <div class="teal-box">
+                        <strong>💡 Pattern — SUM(CASE WHEN ...):</strong> This trick lets you count rows that meet a specific condition within an aggregate query without needing a separate subquery. It is one of the most useful aggregation patterns in real-world SQL.
+                    </div>
+
+                    <h3>🎓 University: Grade Distribution Report</h3>
+
+                    <div class="code-block"><span class="comment">-- For a university database: grade distribution per course</span>
+<span class="keyword">SELECT</span>   c.course_code,
+         c.course_name,
+         <span class="func">COUNT</span>(e.student_id)               <span class="keyword">AS</span>  <span class="alias">enrolled_students</span>,
+         <span class="func">ROUND</span>(<span class="func">AVG</span>(e.final_grade), <span class="number">2</span>)      <span class="keyword">AS</span>  <span class="alias">class_average</span>,
+         <span class="func">MIN</span>(e.final_grade)                 <span class="keyword">AS</span>  <span class="alias">lowest_grade</span>,
+         <span class="func">MAX</span>(e.final_grade)                 <span class="keyword">AS</span>  <span class="alias">highest_grade</span>,
+         <span class="func">SUM</span>(<span class="keyword">CASE WHEN</span> e.final_grade >= <span class="number">90</span>
+              <span class="keyword">THEN</span> <span class="number">1</span> <span class="keyword">ELSE</span> <span class="number">0</span> <span class="keyword">END</span>)           <span class="keyword">AS</span>  <span class="alias">a_grades</span>,
+         <span class="func">SUM</span>(<span class="keyword">CASE WHEN</span> e.final_grade &lt; <span class="number">60</span>
+              <span class="keyword">THEN</span> <span class="number">1</span> <span class="keyword">ELSE</span> <span class="number">0</span> <span class="keyword">END</span>)           <span class="keyword">AS</span>  <span class="alias">failing_grades</span>
+<span class="keyword">FROM</span>     enrollments  <span class="keyword">AS</span>  <span class="alias">e</span>
+<span class="keyword">JOIN</span>     courses       <span class="keyword">AS</span>  <span class="alias">c</span>
+         <span class="keyword">ON</span>  e.course_id = c.course_id
+<span class="keyword">WHERE</span>    e.semester_code = <span class="string">'SPRING2025'</span>
+<span class="keyword">GROUP BY</span> c.course_code,
+         c.course_name
+<span class="keyword">HAVING</span>   <span class="func">COUNT</span>(e.student_id) >= <span class="number">5</span>
+<span class="keyword">ORDER BY</span> class_average <span class="keyword">DESC</span>;</div>
+
+                </div>
+            </div>
+        </div>
+
+        <!-- SECTION 12: BEST PRACTICES -->
+        <div class="section">
+            <div class="collapsible">
+                <div class="collapsible-header">12. Best Practices &amp; Common Mistakes</div>
+                <div class="collapsible-content">
+
+                    <h3>✅ Best Practices</h3>
+
+                    <div class="success-box">
+                        <ul>
+                            <li><strong>Always use AS on aggregate columns</strong> — auto-generated names break application code and are unreadable in reports.</li>
+                            <li><strong>Use WHERE before GROUP BY to pre-filter</strong> — filtering rows early reduces the data the database has to aggregate.</li>
+                            <li><strong>Align your SQL keywords</strong> — well-formatted queries are easier to debug and maintain.</li>
+                            <li><strong>Test aggregates on small data first</strong> — verify your GROUP BY logic before running on millions of rows.</li>
+                            <li><strong>Use ROUND() on AVG and division</strong> — raw averages often produce unnecessary decimal precision.</li>
+                            <li><strong>Name aliases after what they represent</strong> — <code>monthly_revenue</code> not <code>col1</code> or <code>sum1</code>.</li>
+                        </ul>
+                    </div>
+
+                    <h3>❌ Common Mistakes</h3>
+
+                    <div class="danger-box">
+                        <ul>
+                            <li><strong>Using WHERE instead of HAVING</strong> to filter on an aggregate — WHERE runs before GROUP BY so aggregate values don't exist yet.</li>
+                            <li><strong>Selecting non-aggregated columns</strong> that aren't in GROUP BY — this produces undefined results (or an error in strict mode).</li>
+                            <li><strong>Forgetting that COUNT(column) ignores NULLs</strong> — use COUNT(*) when you want to count all rows regardless.</li>
+                            <li><strong>Referencing aliases in WHERE</strong> — the alias doesn't exist at that stage of execution.</li>
+                            <li><strong>Assuming SUM returns 0 when there are no rows</strong> — it returns NULL; use <code>COALESCE(SUM(col), 0)</code> for zero-safe output.</li>
+                            <li><strong>Grouping by a high-cardinality column</strong> like <code>order_id</code> — each group will have only one row and aggregation is pointless.</li>
+                        </ul>
+                    </div>
+
+                    <h3>Quick Reference Table</h3>
+
+                    <table>
+                        <tr>
+                            <th>Function</th>
+                            <th>Returns</th>
+                            <th>Ignores NULLs?</th>
+                            <th>Works on Strings?</th>
+                            <th>Works on Dates?</th>
+                        </tr>
+                        <tr>
+                            <td><code>COUNT(*)</code></td>
+                            <td>Row count</td>
+                            <td>No</td>
+                            <td>N/A</td>
+                            <td>N/A</td>
+                        </tr>
+                        <tr>
+                            <td><code>COUNT(col)</code></td>
+                            <td>Non-NULL count</td>
+                            <td>Yes</td>
+                            <td>Yes</td>
+                            <td>Yes</td>
+                        </tr>
+                        <tr>
+                            <td><code>SUM(col)</code></td>
+                            <td>Total</td>
+                            <td>Yes</td>
+                            <td>No</td>
+                            <td>No</td>
+                        </tr>
+                        <tr>
+                            <td><code>AVG(col)</code></td>
+                            <td>Mean</td>
+                            <td>Yes</td>
+                            <td>No</td>
+                            <td>No</td>
+                        </tr>
+                        <tr>
+                            <td><code>MIN(col)</code></td>
+                            <td>Smallest value</td>
+                            <td>Yes</td>
+                            <td>Yes (alpha)</td>
+                            <td>Yes (earliest)</td>
+                        </tr>
+                        <tr>
+                            <td><code>MAX(col)</code></td>
+                            <td>Largest value</td>
+                            <td>Yes</td>
+                            <td>Yes (alpha)</td>
+                            <td>Yes (latest)</td>
+                        </tr>
+                        <tr>
+                            <td><code>COUNT(DISTINCT col)</code></td>
+                            <td>Unique non-NULL count</td>
+                            <td>Yes</td>
+                            <td>Yes</td>
+                            <td>Yes</td>
+                        </tr>
+                        <tr>
+                            <td><code>STDDEV(col)</code></td>
+                            <td>Standard deviation</td>
+                            <td>Yes</td>
+                            <td>No</td>
+                            <td>No</td>
+                        </tr>
+                        <tr>
+                            <td><code>GROUP_CONCAT / STRING_AGG</code></td>
+                            <td>Concatenated string</td>
+                            <td>Yes</td>
+                            <td>Yes</td>
+                            <td>Yes</td>
+                        </tr>
+                    </table>
+
+                </div>
+            </div>
+        </div>
+
+    </div><!-- /content -->
+
+    <footer>
+        <p>COP4709 — Database Management Systems</p>
+        <p>&copy; 2025 Course Materials | Last Updated: February 2025</p>
+    </footer>
+
+</div><!-- /container -->
+
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        const headers = document.querySelectorAll('.collapsible-header');
+        headers.forEach(header => {
+            header.addEventListener('click', function () {
+                this.parentElement.classList.toggle('active');
+            });
+        });
+        // Open first section by default
+        document.querySelector('.collapsible').classList.add('active');
+    });
+</script>
+</body>
+</html>

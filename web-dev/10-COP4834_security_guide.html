@@ -1,0 +1,1895 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>COP4834 - Client-Server Security</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%);
+            padding: 20px;
+            line-height: 1.6;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.5);
+            overflow: hidden;
+        }
+
+        /* ── Header ── */
+        .header {
+            background: linear-gradient(135deg, #1a1a2e 0%, #0f3460 60%, #e94560 100%);
+            color: white;
+            padding: 45px 40px;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .header::before {
+            content: '🔒';
+            position: absolute;
+            font-size: 200px;
+            opacity: 0.05;
+            top: -30px;
+            right: -20px;
+        }
+
+        .header h1 {
+            font-size: 2.5em;
+            margin-bottom: 10px;
+            text-shadow: 2px 2px 8px rgba(0,0,0,0.5);
+        }
+
+        .header p {
+            font-size: 1.2em;
+            opacity: 0.9;
+        }
+
+        .content {
+            padding: 40px;
+        }
+
+        /* ── Intro box ── */
+        .intro-box {
+            background: linear-gradient(135deg, #1a1a2e 0%, #0f3460 100%);
+            color: white;
+            padding: 30px;
+            border-radius: 10px;
+            margin-bottom: 30px;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.3);
+            border-left: 6px solid #e94560;
+        }
+
+        .intro-box h2 {
+            margin-bottom: 15px;
+            font-size: 1.8em;
+            color: #f1f1f1;
+        }
+
+        /* ── Collapsible buttons ── */
+        .collapsible {
+            background: linear-gradient(135deg, #1a1a2e 0%, #0f3460 100%);
+            color: white;
+            cursor: pointer;
+            padding: 18px 22px;
+            width: 100%;
+            border: none;
+            text-align: left;
+            outline: none;
+            font-size: 1.15em;
+            font-weight: bold;
+            border-radius: 8px;
+            margin-bottom: 10px;
+            transition: all 0.3s ease;
+            box-shadow: 0 3px 10px rgba(0,0,0,0.25);
+            border-left: 5px solid #e94560;
+        }
+
+        .collapsible:hover {
+            background: linear-gradient(135deg, #0f3460 0%, #e94560 100%);
+            transform: translateY(-2px);
+            box-shadow: 0 6px 18px rgba(0,0,0,0.35);
+        }
+
+        .collapsible.active {
+            background: linear-gradient(135deg, #0f3460 0%, #27ae60 100%);
+            border-left-color: #27ae60;
+        }
+
+        .collapsible:after {
+            content: '\002B';
+            float: right;
+            font-size: 1.3em;
+            font-weight: bold;
+        }
+
+        .collapsible.active:after {
+            content: '\2212';
+        }
+
+        .collapsible-content {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.35s ease-out;
+            background-color: #f8f9fa;
+            border-radius: 0 0 8px 8px;
+            margin-bottom: 20px;
+        }
+
+        .collapsible-inner {
+            padding: 28px;
+        }
+
+        /* ── Callout boxes ── */
+        .info-box {
+            background: #e8f4fd;
+            border-left: 5px solid #0f3460;
+            padding: 20px;
+            margin: 20px 0;
+            border-radius: 5px;
+        }
+
+        .warning-box {
+            background: #fef5e7;
+            border-left: 5px solid #f39c12;
+            padding: 20px;
+            margin: 20px 0;
+            border-radius: 5px;
+        }
+
+        .success-box {
+            background: #d5f4e6;
+            border-left: 5px solid #27ae60;
+            padding: 20px;
+            margin: 20px 0;
+            border-radius: 5px;
+        }
+
+        .tip-box {
+            background: #ebf5fb;
+            border-left: 5px solid #3498db;
+            padding: 20px;
+            margin: 20px 0;
+            border-radius: 5px;
+        }
+
+        .danger-box {
+            background: #fdf0f0;
+            border-left: 5px solid #e94560;
+            padding: 20px;
+            margin: 20px 0;
+            border-radius: 5px;
+        }
+
+        /* ── Step containers ── */
+        .step-container {
+            background: white;
+            border: 2px solid #0f3460;
+            border-radius: 8px;
+            padding: 20px;
+            margin: 15px 0;
+        }
+
+        .step-number {
+            display: inline-block;
+            background: linear-gradient(135deg, #0f3460, #e94560);
+            color: white;
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            text-align: center;
+            line-height: 36px;
+            font-weight: bold;
+            margin-right: 10px;
+        }
+
+        .step-title {
+            display: inline-block;
+            font-size: 1.25em;
+            color: #1a1a2e;
+            font-weight: bold;
+            vertical-align: middle;
+        }
+
+        .step-content {
+            margin-top: 15px;
+            padding-left: 46px;
+        }
+
+        /* ── Inline code ── */
+        code {
+            background: #1a1a2e;
+            color: #e94560;
+            padding: 3px 8px;
+            border-radius: 4px;
+            font-family: 'Courier New', monospace;
+            font-size: 0.9em;
+        }
+
+        /* ── Typography ── */
+        h3 {
+            color: #1a1a2e;
+            margin: 22px 0 10px 0;
+            font-size: 1.45em;
+            border-bottom: 2px solid #e94560;
+            padding-bottom: 6px;
+            display: inline-block;
+        }
+
+        h4 {
+            color: #0f3460;
+            margin: 15px 0 8px 0;
+            font-size: 1.15em;
+        }
+
+        ul, ol {
+            margin-left: 25px;
+            margin-top: 10px;
+        }
+
+        li {
+            margin: 9px 0;
+        }
+
+        strong {
+            color: #1a1a2e;
+        }
+
+        p {
+            margin: 8px 0;
+        }
+
+        /* ── Tables ── */
+        .comparison-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 20px 0;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+            border-radius: 8px;
+            overflow: hidden;
+        }
+
+        .comparison-table th {
+            background: linear-gradient(135deg, #1a1a2e, #0f3460);
+            color: white;
+            padding: 14px 16px;
+            text-align: left;
+            font-weight: bold;
+        }
+
+        .comparison-table td {
+            padding: 12px 16px;
+            border-bottom: 1px solid #dee2e6;
+        }
+
+        .comparison-table tr:last-child td {
+            border-bottom: none;
+        }
+
+        .comparison-table tr:hover td {
+            background: #f0f4ff;
+        }
+
+        /* ── Security-themed cards ── */
+        .threat-card {
+            background: white;
+            border: 2px solid #e94560;
+            border-radius: 10px;
+            padding: 20px;
+            margin: 15px 0;
+            position: relative;
+        }
+
+        .threat-card h4 {
+            color: #e94560;
+            font-size: 1.2em;
+            margin-bottom: 8px;
+        }
+
+        .control-card {
+            background: white;
+            border: 2px solid #27ae60;
+            border-radius: 10px;
+            padding: 20px;
+            margin: 15px 0;
+        }
+
+        .control-card h4 {
+            color: #27ae60;
+            font-size: 1.2em;
+            margin-bottom: 8px;
+        }
+
+        .layer-card {
+            background: white;
+            border: 2px solid #0f3460;
+            border-radius: 10px;
+            padding: 20px;
+            margin: 15px 0;
+        }
+
+        .layer-card h4 {
+            color: #0f3460;
+            font-size: 1.2em;
+            margin-bottom: 8px;
+        }
+
+        /* ── Do / Don't grid ── */
+        .do-dont-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 18px;
+            margin: 18px 0;
+        }
+
+        .do-box {
+            background: #d5f4e6;
+            border: 2px solid #27ae60;
+            border-radius: 8px;
+            padding: 18px;
+        }
+
+        .do-box h4 { color: #27ae60; margin-bottom: 10px; }
+
+        .dont-box {
+            background: #fdf0f0;
+            border: 2px solid #e94560;
+            border-radius: 8px;
+            padding: 18px;
+        }
+
+        .dont-box h4 { color: #e94560; margin-bottom: 10px; }
+
+        /* ── Feature grid ── */
+        .feature-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+            gap: 15px;
+            margin: 18px 0;
+        }
+
+        .feature-item {
+            background: linear-gradient(135deg, #f8f9fa, #e8ecf5);
+            border: 2px solid #0f3460;
+            border-radius: 8px;
+            padding: 18px;
+            text-align: center;
+        }
+
+        .feature-item h5 {
+            color: #0f3460;
+            margin-bottom: 8px;
+            font-size: 1.05em;
+        }
+
+        /* ── Severity badges ── */
+        .badge {
+            display: inline-block;
+            padding: 3px 10px;
+            border-radius: 20px;
+            font-size: 0.8em;
+            font-weight: bold;
+            margin-left: 8px;
+            vertical-align: middle;
+        }
+
+        .badge-critical { background: #e94560; color: white; }
+        .badge-high     { background: #e67e22; color: white; }
+        .badge-medium   { background: #f39c12; color: white; }
+        .badge-low      { background: #27ae60; color: white; }
+
+        /* ── Checklist ── */
+        .checklist {
+            background: #f0f4ff;
+            border: 2px solid #0f3460;
+            border-radius: 8px;
+            padding: 20px;
+            margin: 15px 0;
+        }
+
+        .checklist h4 { color: #0f3460; margin-bottom: 12px; }
+
+        .checklist ul { list-style: none; margin-left: 0; }
+
+        .checklist li::before {
+            content: "☐ ";
+            color: #0f3460;
+            font-weight: bold;
+        }
+
+        /* ── Flow arrow ── */
+        .flow-grid {
+            display: flex;
+            align-items: stretch;
+            gap: 0;
+            margin: 20px 0;
+            flex-wrap: wrap;
+        }
+
+        .flow-step {
+            flex: 1;
+            min-width: 130px;
+            background: linear-gradient(135deg, #1a1a2e, #0f3460);
+            color: white;
+            padding: 16px 12px;
+            text-align: center;
+            font-weight: bold;
+            font-size: 0.9em;
+            position: relative;
+        }
+
+        .flow-step:not(:last-child)::after {
+            content: '▶';
+            position: absolute;
+            right: -12px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #e94560;
+            font-size: 1.2em;
+            z-index: 10;
+        }
+
+        .flow-step span {
+            display: block;
+            font-size: 1.5em;
+            margin-bottom: 5px;
+        }
+
+        /* ── OWASP row colors ── */
+        .owasp-row td:first-child { font-weight: bold; }
+        .owasp-critical { background: #fff0f3; }
+        .owasp-high     { background: #fff8f0; }
+
+        /* ── Footer ── */
+        .footer {
+            background: linear-gradient(135deg, #1a1a2e 0%, #0f3460 60%, #e94560 100%);
+            color: white;
+            padding: 25px 20px;
+            text-align: center;
+        }
+
+        .footer p { opacity: 0.9; margin: 4px 0; }
+
+        @media (max-width: 700px) {
+            .do-dont-grid { grid-template-columns: 1fr; }
+            .flow-step:not(:last-child)::after { display: none; }
+        }
+    </style>
+</head>
+<body>
+<div class="container">
+
+    <div class="header">
+        <h1>🔒 COP4834 Web Systems II</h1>
+        <p>Client-Server Security in Full-Stack Development</p>
+    </div>
+
+    <div class="content">
+
+        <div class="intro-box">
+            <h2>📚 Module Overview</h2>
+            <p>Security is not a feature you add at the end — it is a discipline woven into every layer of a full-stack application from the first day of design. This module walks through every surface of a client-server system that requires protection: the browser, the network, the API, the server, the database, and the data itself. Understanding <em>what</em> needs to be secured and <em>why</em> is the foundation for building applications that can be trusted in production.</p>
+        </div>
+
+        <!-- ═══════════════════════════════════════════ -->
+        <!-- SECTION 1 -->
+        <!-- ═══════════════════════════════════════════ -->
+        <button class="collapsible">1. The Security Mindset — Defense in Depth</button>
+        <div class="collapsible-content">
+            <div class="collapsible-inner">
+
+                <h3>Think Like an Attacker</h3>
+
+                <div class="info-box">
+                    <h4>📖 Core Principle</h4>
+                    <p><strong>Defense in Depth</strong> means layering multiple independent security controls so that if one layer fails, the attacker still has to breach several more before reaching your data. No single control is sufficient on its own.</p>
+                </div>
+
+                <h3>The Full-Stack Attack Surface</h3>
+                <p>Every full-stack application has multiple surfaces where an attacker can attempt to gain access or cause harm:</p>
+
+                <div class="flow-grid">
+                    <div class="flow-step"><span>🌐</span>Browser / Client</div>
+                    <div class="flow-step"><span>📡</span>Network / Transport</div>
+                    <div class="flow-step"><span>🔌</span>API Layer</div>
+                    <div class="flow-step"><span>⚙️</span>Application Server</div>
+                    <div class="flow-step"><span>🗄️</span>Database</div>
+                    <div class="flow-step"><span>📁</span>Data & Files</div>
+                </div>
+
+                <p>Each layer must be independently secured. Relying on a single outer wall — such as a firewall — leaves you completely exposed if that wall is breached.</p>
+
+                <h3>Security Principles Every Developer Must Know</h3>
+
+                <div class="feature-grid">
+                    <div class="feature-item">
+                        <h5>🔐 Least Privilege</h5>
+                        <p>Grant the minimum access needed to perform a task — nothing more.</p>
+                    </div>
+                    <div class="feature-item">
+                        <h5>🛡️ Fail Securely</h5>
+                        <p>When something goes wrong, deny access by default rather than allowing it.</p>
+                    </div>
+                    <div class="feature-item">
+                        <h5>🔍 Never Trust Input</h5>
+                        <p>All data arriving from outside the server must be treated as hostile until proven otherwise.</p>
+                    </div>
+                    <div class="feature-item">
+                        <h5>🏗️ Security by Design</h5>
+                        <p>Build security in from the start. Retrofitting it is far more expensive and error-prone.</p>
+                    </div>
+                    <div class="feature-item">
+                        <h5>🔄 Defense in Depth</h5>
+                        <p>Multiple overlapping controls. One failure should not compromise the system.</p>
+                    </div>
+                    <div class="feature-item">
+                        <h5>📋 Separation of Concerns</h5>
+                        <p>Keep authentication, authorization, business logic, and data access clearly separated.</p>
+                    </div>
+                    <div class="feature-item">
+                        <h5>🧩 Reduce Attack Surface</h5>
+                        <p>Disable unused features, ports, and services. Less exposure means fewer entry points.</p>
+                    </div>
+                    <div class="feature-item">
+                        <h5>📣 Assume Breach</h5>
+                        <p>Design systems expecting a component may be compromised. Limit blast radius.</p>
+                    </div>
+                </div>
+
+                <div class="warning-box">
+                    <h4>⚠️ The #1 Developer Security Mistake</h4>
+                    <p>Treating security as someone else's job — the network team's, the DBA's, the DevOps team's. In full-stack development, <strong>every developer is responsible for the security of the code they write</strong>. Security decisions happen at the keyboard, not just in the firewall configuration.</p>
+                </div>
+
+                <h3>The Cost of Ignoring Security</h3>
+                <table class="comparison-table">
+                    <thead>
+                        <tr>
+                            <th>Stage</th>
+                            <th>Relative Cost to Fix a Security Flaw</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr><td>Design phase</td><td>1× (cheapest)</td></tr>
+                        <tr><td>Development phase</td><td>6×</td></tr>
+                        <tr><td>Testing phase</td><td>15×</td></tr>
+                        <tr><td>After deployment</td><td>30×</td></tr>
+                        <tr><td>After a breach</td><td>100×+ (fines, reputation, legal)</td></tr>
+                    </tbody>
+                </table>
+
+            </div>
+        </div>
+
+        <!-- ═══════════════════════════════════════════ -->
+        <!-- SECTION 2 -->
+        <!-- ═══════════════════════════════════════════ -->
+        <button class="collapsible">2. Authentication — Proving Who You Are</button>
+        <div class="collapsible-content">
+            <div class="collapsible-inner">
+
+                <div class="info-box">
+                    <h4>📖 Definition</h4>
+                    <p><strong>Authentication</strong> is the process of verifying that a user or system is who they claim to be. It answers the question: <em>"Are you really you?"</em></p>
+                </div>
+
+                <h3>Authentication Factors</h3>
+
+                <div class="layer-card">
+                    <h4>Something You Know — Knowledge Factors</h4>
+                    <ul>
+                        <li>Passwords and passphrases</li>
+                        <li>Security questions (considered weak — avoid where possible)</li>
+                        <li>PINs</li>
+                    </ul>
+                </div>
+
+                <div class="layer-card">
+                    <h4>Something You Have — Possession Factors</h4>
+                    <ul>
+                        <li>One-time passwords (OTP) via authenticator app (TOTP)</li>
+                        <li>SMS codes (weak — vulnerable to SIM swapping)</li>
+                        <li>Hardware security keys (FIDO2 / WebAuthn)</li>
+                        <li>Email magic links</li>
+                    </ul>
+                </div>
+
+                <div class="layer-card">
+                    <h4>Something You Are — Inherence Factors</h4>
+                    <ul>
+                        <li>Fingerprint</li>
+                        <li>Face recognition</li>
+                        <li>Voice recognition</li>
+                    </ul>
+                </div>
+
+                <h3>Multi-Factor Authentication (MFA)</h3>
+
+                <div class="success-box">
+                    <h4>✅ MFA is One of the Single Most Effective Controls Available</h4>
+                    <p>Requiring two or more independent factors makes credential theft far less impactful. Even if an attacker steals a password, they still cannot authenticate without the second factor. MFA should be mandatory for administrative accounts and strongly encouraged for all users.</p>
+                </div>
+
+                <h3>Password Security Requirements</h3>
+
+                <div class="do-dont-grid">
+                    <div class="do-box">
+                        <h4>✅ DO</h4>
+                        <ul>
+                            <li>Hash passwords with a strong, slow algorithm (bcrypt, Argon2, scrypt)</li>
+                            <li>Add a unique salt per password before hashing</li>
+                            <li>Enforce a minimum length (12+ characters recommended)</li>
+                            <li>Check passwords against known breach lists (Have I Been Pwned API)</li>
+                            <li>Allow passphrases and spaces</li>
+                            <li>Allow paste in password fields</li>
+                            <li>Offer a "show password" toggle</li>
+                        </ul>
+                    </div>
+                    <div class="dont-box">
+                        <h4>❌ DON'T</h4>
+                        <ul>
+                            <li>Store passwords in plain text — ever</li>
+                            <li>Use MD5 or SHA-1 for password storage</li>
+                            <li>Enforce arbitrary complexity rules that reduce passphrase length</li>
+                            <li>Force frequent password rotation without cause</li>
+                            <li>Display passwords in emails or logs</li>
+                            <li>Limit password length unnecessarily</li>
+                            <li>Build your own authentication system when battle-tested libraries exist</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <h3>Account Enumeration</h3>
+                <div class="warning-box">
+                    <h4>⚠️ Don't Reveal Whether an Account Exists</h4>
+                    <p>Login and password-reset error messages must be generic. Saying <em>"No account found with that email"</em> allows attackers to build a list of valid usernames. Instead always say something like: <em>"If an account exists with that email, you will receive a reset link."</em></p>
+                </div>
+
+                <h3>Account Lockout and Brute-Force Protection</h3>
+                <ul>
+                    <li><strong>Rate limiting:</strong> Limit login attempts per IP per time window</li>
+                    <li><strong>Progressive delays:</strong> Slow down responses after repeated failures</li>
+                    <li><strong>Temporary lockout:</strong> Lock accounts after N failed attempts with admin-reset or timed unlock</li>
+                    <li><strong>CAPTCHA:</strong> Challenge suspicious traffic, particularly after multiple failures</li>
+                    <li><strong>Alerting:</strong> Notify users of login attempts and new device logins</li>
+                </ul>
+
+                <h3>Third-Party Authentication (OAuth / OIDC)</h3>
+                <div class="tip-box">
+                    <h4>💡 Using "Sign in with Google / Microsoft / GitHub"</h4>
+                    <p>Delegating authentication to a trusted Identity Provider (IdP) can be a strong security choice — the IdP has world-class security teams protecting those credentials. However, you still need to validate tokens correctly, restrict allowed providers, and manage your own authorization layer after authentication succeeds.</p>
+                </div>
+
+            </div>
+        </div>
+
+        <!-- ═══════════════════════════════════════════ -->
+        <!-- SECTION 3 -->
+        <!-- ═══════════════════════════════════════════ -->
+        <button class="collapsible">3. Authorization — Controlling What You Can Do</button>
+        <div class="collapsible-content">
+            <div class="collapsible-inner">
+
+                <div class="info-box">
+                    <h4>📖 Definition</h4>
+                    <p><strong>Authorization</strong> determines what an authenticated user is allowed to do. It answers: <em>"You are who you say you are — but are you allowed to do this?"</em> Authentication and authorization are separate concerns and must both be enforced.</p>
+                </div>
+
+                <h3>Authorization Models</h3>
+
+                <div class="layer-card">
+                    <h4>Role-Based Access Control (RBAC)</h4>
+                    <p>Users are assigned to roles, and roles are granted permissions.</p>
+                    <ul>
+                        <li><strong>Example roles:</strong> Admin, Manager, Employee, Guest</li>
+                        <li>Simple to implement and reason about</li>
+                        <li>Works well for most business applications</li>
+                        <li>Roles must be assigned carefully — role sprawl is a real risk</li>
+                    </ul>
+                </div>
+
+                <div class="layer-card">
+                    <h4>Attribute-Based Access Control (ABAC)</h4>
+                    <p>Access decisions based on attributes of the user, resource, and environment.</p>
+                    <ul>
+                        <li><strong>Example:</strong> A user in the "Finance" department can access budget reports only during business hours</li>
+                        <li>More flexible than RBAC, but more complex to manage</li>
+                        <li>Suited to complex enterprise environments</li>
+                    </ul>
+                </div>
+
+                <div class="layer-card">
+                    <h4>Row-Level Security</h4>
+                    <p>Users can only access rows in a table that belong to them.</p>
+                    <ul>
+                        <li><strong>Example:</strong> A customer can only view their own orders, not all orders in the database</li>
+                        <li>Must be enforced at the <strong>server/API layer</strong>, not the client</li>
+                        <li>Can also be enforced at the database layer for extra depth</li>
+                    </ul>
+                </div>
+
+                <h3>The Golden Rule of Authorization</h3>
+
+                <div class="danger-box">
+                    <h4>🚨 Never Enforce Authorization on the Client Alone</h4>
+                    <p>Hiding a button in the browser does <strong>not</strong> prevent an attacker from calling the underlying API directly. <strong>Every API endpoint must validate that the current user has permission to perform that action</strong> — every single time, on the server. Client-side checks are UI niceties only.</p>
+                </div>
+
+                <h3>Insecure Direct Object Reference (IDOR)</h3>
+
+                <div class="threat-card">
+                    <h4>What is IDOR?</h4>
+                    <p>When an API exposes internal IDs and does not verify ownership, users can manipulate IDs to access other users' data.</p>
+                    <ul>
+                        <li><strong>Example:</strong> <code>/api/orders/1042</code> — if the server doesn't check that order 1042 belongs to the logged-in user, any authenticated user can fetch it by changing the number.</li>
+                        <li><strong>Fix:</strong> Always filter queries by the current user's identity in addition to the requested ID. The query should include <em>both</em> the record ID and the user's ID.</li>
+                    </ul>
+                </div>
+
+                <h3>Privilege Escalation</h3>
+                <div class="warning-box">
+                    <h4>⚠️ Vertical and Horizontal Escalation</h4>
+                    <ul>
+                        <li><strong>Vertical:</strong> A regular user accesses admin-only functionality</li>
+                        <li><strong>Horizontal:</strong> A user accesses another user's data at the same privilege level (IDOR)</li>
+                    </ul>
+                    <p>Both must be guarded against at every API endpoint.</p>
+                </div>
+
+                <h3>Authorization Checklist</h3>
+                <div class="checklist">
+                    <h4>Every API Endpoint Must:</h4>
+                    <ul>
+                        <li>Verify the user is authenticated before anything else</li>
+                        <li>Verify the user has the required role or permission</li>
+                        <li>Verify the user owns or has rights to the specific resource requested</li>
+                        <li>Return a generic 403 Forbidden — not detailed error info — on failure</li>
+                        <li>Log unauthorized access attempts for monitoring</li>
+                    </ul>
+                </div>
+
+            </div>
+        </div>
+
+        <!-- ═══════════════════════════════════════════ -->
+        <!-- SECTION 4 -->
+        <!-- ═══════════════════════════════════════════ -->
+        <button class="collapsible">4. Transport Security — Protecting Data in Motion</button>
+        <div class="collapsible-content">
+            <div class="collapsible-inner">
+
+                <div class="info-box">
+                    <h4>📖 Why Transport Security Matters</h4>
+                    <p>Data traveling between a browser and server passes through many intermediate network nodes — routers, ISPs, proxies. Without encryption, anyone on the network path can read or alter that data. This is called a <strong>Man-in-the-Middle (MitM)</strong> attack.</p>
+                </div>
+
+                <h3>HTTPS and TLS</h3>
+
+                <div class="control-card">
+                    <h4>HTTPS (HTTP over TLS) — Non-Negotiable</h4>
+                    <ul>
+                        <li>All production applications must use HTTPS — no exceptions</li>
+                        <li><strong>TLS (Transport Layer Security)</strong> encrypts all data in transit</li>
+                        <li>Use <strong>TLS 1.2 minimum</strong>; TLS 1.3 preferred</li>
+                        <li>Disable deprecated versions: SSL 2/3, TLS 1.0, TLS 1.1</li>
+                        <li>Certificates can be obtained free from <strong>Let's Encrypt</strong></li>
+                        <li>Redirect all HTTP traffic permanently to HTTPS (301 redirect)</li>
+                    </ul>
+                </div>
+
+                <h3>HTTP Strict Transport Security (HSTS)</h3>
+                <div class="success-box">
+                    <h4>✅ Tell Browsers to Always Use HTTPS</h4>
+                    <p>The HSTS response header instructs browsers to <em>only</em> connect to your domain over HTTPS for a defined period — even if the user types <code>http://</code>. This prevents protocol downgrade attacks. Include subdomains in the policy and consider HSTS preloading.</p>
+                </div>
+
+                <h3>Certificate Management</h3>
+                <ul>
+                    <li>Monitor certificate expiry — expired certificates break the site and destroy trust</li>
+                    <li>Use <strong>automated renewal</strong> (e.g., Let's Encrypt with Certbot, cloud-managed certificates)</li>
+                    <li>Use strong key lengths (RSA 2048-bit minimum, or ECDSA P-256)</li>
+                    <li>Keep private keys private — never commit them to version control</li>
+                    <li>Consider <strong>Certificate Pinning</strong> for high-security mobile applications</li>
+                </ul>
+
+                <h3>Protecting APIs and Internal Traffic</h3>
+                <ul>
+                    <li>Enforce TLS on <strong>internal service-to-service communication</strong> as well — not just public-facing endpoints</li>
+                    <li>Validate TLS certificates when making server-side HTTP requests to other services — don't disable certificate verification</li>
+                    <li>Use mutual TLS (mTLS) for machine-to-machine authentication in microservices</li>
+                </ul>
+
+                <h3>Content Security and Integrity</h3>
+
+                <div class="layer-card">
+                    <h4>Subresource Integrity (SRI)</h4>
+                    <p>When loading scripts or stylesheets from a Content Delivery Network (CDN), use SRI hashes. This ensures that if the CDN is compromised and the file is altered, the browser will refuse to load it. SRI hashes are added as an attribute on <code>&lt;script&gt;</code> and <code>&lt;link&gt;</code> tags.</p>
+                </div>
+
+            </div>
+        </div>
+
+        <!-- ═══════════════════════════════════════════ -->
+        <!-- SECTION 5 -->
+        <!-- ═══════════════════════════════════════════ -->
+        <button class="collapsible">5. Input Validation and Sanitization</button>
+        <div class="collapsible-content">
+            <div class="collapsible-inner">
+
+                <div class="danger-box">
+                    <h4>🚨 The Root Cause of Most Attacks</h4>
+                    <p>The majority of web application vulnerabilities — SQL Injection, XSS, Command Injection, Path Traversal — all share a single root cause: <strong>trusting data supplied by the user without validating or sanitizing it first</strong>. This section is foundational to everything else.</p>
+                </div>
+
+                <h3>Validation vs. Sanitization</h3>
+
+                <table class="comparison-table">
+                    <thead>
+                        <tr><th>Concept</th><th>What It Does</th><th>Example</th></tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td><strong>Validation</strong></td>
+                            <td>Checks that input meets expected rules — rejects it if not</td>
+                            <td>Email field must match email format; price must be a positive number</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Sanitization</strong></td>
+                            <td>Transforms input to remove or neutralize dangerous content</td>
+                            <td>Strip HTML tags from a comment field; encode special characters</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Encoding (Output)</strong></td>
+                            <td>Encodes data appropriately for the context it is being rendered in</td>
+                            <td>HTML-encode user content before inserting into a web page</td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <h3>Where to Validate</h3>
+
+                <div class="do-dont-grid">
+                    <div class="do-box">
+                        <h4>✅ Server-Side Validation (Required)</h4>
+                        <p>All validation <strong>must</strong> happen on the server. This is the only validation that can be trusted because the server is under your control.</p>
+                        <ul>
+                            <li>Validates data type, format, length, range</li>
+                            <li>Applies business rules</li>
+                            <li>Cannot be bypassed by the user</li>
+                        </ul>
+                    </div>
+                    <div class="do-box">
+                        <h4>✅ Client-Side Validation (UX Enhancement)</h4>
+                        <p>Client-side validation improves user experience with immediate feedback, but must <strong>never</strong> be the only layer of defense.</p>
+                        <ul>
+                            <li>HTML5 input attributes (required, type, pattern)</li>
+                            <li>JavaScript validation</li>
+                            <li>Can always be bypassed — treat it as cosmetic</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <h3>What to Validate on Every Input Field</h3>
+                <ul>
+                    <li><strong>Data type:</strong> Is it actually a number, date, email, etc.?</li>
+                    <li><strong>Length:</strong> Is it within acceptable min/max character limits?</li>
+                    <li><strong>Format:</strong> Does it match the expected pattern?</li>
+                    <li><strong>Range:</strong> For numbers/dates, is the value in an acceptable range?</li>
+                    <li><strong>Allowed characters:</strong> Does it contain unexpected characters?</li>
+                    <li><strong>Required fields:</strong> Are mandatory fields present and non-empty?</li>
+                    <li><strong>Business rules:</strong> End date must be after start date; quantity must be positive</li>
+                </ul>
+
+                <h3>File Upload Security</h3>
+
+                <div class="threat-card">
+                    <h4>File Uploads Are a High-Risk Area</h4>
+                    <ul>
+                        <li>Validate file type using <strong>magic bytes (file signature)</strong>, not just the extension or Content-Type header — both can be spoofed</li>
+                        <li>Enforce maximum file size limits</li>
+                        <li>Restrict allowed file types to only what is needed</li>
+                        <li>Store uploaded files <strong>outside the web root</strong> so they cannot be executed directly</li>
+                        <li>Rename files on upload — never use the user-supplied filename</li>
+                        <li>Scan uploaded files for malware where possible</li>
+                        <li>Serve files through a handler that sets correct Content-Type and Content-Disposition headers</li>
+                    </ul>
+                </div>
+
+            </div>
+        </div>
+
+        <!-- ═══════════════════════════════════════════ -->
+        <!-- SECTION 6 -->
+        <!-- ═══════════════════════════════════════════ -->
+        <button class="collapsible">6. Common Attacks and How to Prevent Them</button>
+        <div class="collapsible-content">
+            <div class="collapsible-inner">
+
+                <div class="info-box">
+                    <h4>📖 The OWASP Top 10</h4>
+                    <p>The <strong>Open Web Application Security Project (OWASP)</strong> publishes a regularly updated list of the most critical web application security risks. Every developer should be familiar with this list. See: <strong>owasp.org/Top10</strong></p>
+                </div>
+
+                <h3>Attack Reference Table</h3>
+
+                <table class="comparison-table">
+                    <thead>
+                        <tr>
+                            <th>Attack</th>
+                            <th>Severity</th>
+                            <th>What the Attacker Does</th>
+                            <th>Primary Defense</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr class="owasp-critical">
+                            <td>SQL Injection</td>
+                            <td><span class="badge badge-critical">Critical</span></td>
+                            <td>Injects SQL commands via user input to read, modify, or delete the database</td>
+                            <td>Parameterized queries / prepared statements</td>
+                        </tr>
+                        <tr class="owasp-critical">
+                            <td>Cross-Site Scripting (XSS)</td>
+                            <td><span class="badge badge-critical">Critical</span></td>
+                            <td>Injects malicious scripts into pages viewed by other users</td>
+                            <td>Output encoding; Content Security Policy</td>
+                        </tr>
+                        <tr class="owasp-high">
+                            <td>Cross-Site Request Forgery (CSRF)</td>
+                            <td><span class="badge badge-high">High</span></td>
+                            <td>Tricks a logged-in user's browser into making requests they didn't intend</td>
+                            <td>CSRF tokens; SameSite cookie attribute</td>
+                        </tr>
+                        <tr class="owasp-high">
+                            <td>Broken Authentication</td>
+                            <td><span class="badge badge-high">High</span></td>
+                            <td>Exploits weak login/session logic to gain unauthorized access</td>
+                            <td>Strong session management; MFA; rate limiting</td>
+                        </tr>
+                        <tr class="owasp-high">
+                            <td>Insecure Direct Object Reference (IDOR)</td>
+                            <td><span class="badge badge-high">High</span></td>
+                            <td>Manipulates IDs in requests to access other users' data</td>
+                            <td>Enforce ownership checks at API layer</td>
+                        </tr>
+                        <tr>
+                            <td>Security Misconfiguration</td>
+                            <td><span class="badge badge-high">High</span></td>
+                            <td>Exploits default credentials, debug modes, or exposed services</td>
+                            <td>Hardening checklists; disable defaults</td>
+                        </tr>
+                        <tr>
+                            <td>Sensitive Data Exposure</td>
+                            <td><span class="badge badge-high">High</span></td>
+                            <td>Reads data exposed in logs, URLs, responses, or error messages</td>
+                            <td>Encryption; proper error handling; data minimization</td>
+                        </tr>
+                        <tr>
+                            <td>Command Injection</td>
+                            <td><span class="badge badge-critical">Critical</span></td>
+                            <td>Injects OS commands through user input that the server executes</td>
+                            <td>Never pass user input to shell commands; use safe APIs</td>
+                        </tr>
+                        <tr>
+                            <td>Path Traversal</td>
+                            <td><span class="badge badge-high">High</span></td>
+                            <td>Manipulates file paths to read files outside intended directories</td>
+                            <td>Validate and canonicalize paths; deny <code>../</code> sequences</td>
+                        </tr>
+                        <tr>
+                            <td>Open Redirect</td>
+                            <td><span class="badge badge-medium">Medium</span></td>
+                            <td>Abuses redirect parameters to send users to phishing sites</td>
+                            <td>Validate redirect URLs against an allowlist</td>
+                        </tr>
+                        <tr>
+                            <td>Mass Assignment</td>
+                            <td><span class="badge badge-high">High</span></td>
+                            <td>Sends extra fields in a request to overwrite protected properties (e.g., setting isAdmin=true)</td>
+                            <td>Use DTOs; explicitly allowlist accepted fields</td>
+                        </tr>
+                        <tr>
+                            <td>XXE (XML External Entity)</td>
+                            <td><span class="badge badge-high">High</span></td>
+                            <td>Exploits XML parsers to read files or make server-side requests</td>
+                            <td>Disable external entity processing in XML parsers</td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <h3>SQL Injection — Deep Dive</h3>
+
+                <div class="threat-card">
+                    <h4>How It Works</h4>
+                    <p>When user input is concatenated directly into SQL queries, an attacker can inject SQL syntax to change the meaning of the query — extracting all rows, bypassing login checks, deleting tables, or even reading files from the server.</p>
+                    <p><strong>The classic example:</strong> entering <code>' OR '1'='1</code> into a username field can make a poorly written login query return all users, bypassing authentication entirely.</p>
+                </div>
+
+                <div class="control-card">
+                    <h4>Prevention: Parameterized Queries / Prepared Statements</h4>
+                    <p>The only reliable defense is to <strong>never concatenate user input into SQL</strong>. Use parameterized queries (also called prepared statements) where the query structure is defined separately from the data. The database engine then treats the user's input as pure data — it can never be interpreted as SQL syntax.</p>
+                    <p>Stored procedures also help, provided they themselves use parameters internally rather than dynamic SQL concatenation.</p>
+                </div>
+
+                <h3>Cross-Site Scripting (XSS) — Deep Dive</h3>
+
+                <div class="threat-card">
+                    <h4>Three Types of XSS</h4>
+                    <ul>
+                        <li><strong>Stored XSS:</strong> Malicious script saved to the database, then rendered to all visitors (e.g., a comment field). Most dangerous.</li>
+                        <li><strong>Reflected XSS:</strong> Malicious script in a URL parameter, reflected in the response immediately. Delivered via phishing links.</li>
+                        <li><strong>DOM-Based XSS:</strong> JavaScript in the page itself processes attacker-controlled data unsafely.</li>
+                    </ul>
+                    <p><strong>Impact:</strong> Steal session cookies, capture keystrokes, redirect users, deface pages, deliver malware.</p>
+                </div>
+
+                <div class="control-card">
+                    <h4>Prevention: Output Encoding + Content Security Policy</h4>
+                    <ul>
+                        <li><strong>HTML-encode all user-supplied content</strong> before inserting it into HTML — this turns <code>&lt;script&gt;</code> into harmless text</li>
+                        <li>Use your framework's built-in escaping (React, Angular, Razor all do this by default)</li>
+                        <li>Never use <code>innerHTML</code>, <code>document.write</code>, or <code>eval()</code> with user data</li>
+                        <li>Implement a <strong>Content Security Policy (CSP)</strong> header to restrict which scripts the browser is allowed to execute</li>
+                    </ul>
+                </div>
+
+                <h3>Cross-Site Request Forgery (CSRF) — Deep Dive</h3>
+
+                <div class="threat-card">
+                    <h4>How It Works</h4>
+                    <p>If a user is logged into your site and visits a malicious page, that page can cause the user's browser to send a request to your site using the user's existing session cookie — without the user's knowledge. The browser automatically attaches cookies to requests matching the domain.</p>
+                </div>
+
+                <div class="control-card">
+                    <h4>Prevention</h4>
+                    <ul>
+                        <li><strong>CSRF tokens:</strong> A unique, secret, per-session token embedded in forms and validated on every state-changing request</li>
+                        <li><strong>SameSite cookie attribute:</strong> Setting cookies to <code>SameSite=Strict</code> or <code>SameSite=Lax</code> prevents them from being sent in cross-site requests</li>
+                        <li><strong>Verify the Origin/Referer header</strong> on sensitive endpoints</li>
+                        <li>For APIs using tokens in headers (not cookies), CSRF is typically not a concern since cross-origin requests cannot set custom headers</li>
+                    </ul>
+                </div>
+
+            </div>
+        </div>
+
+        <!-- ═══════════════════════════════════════════ -->
+        <!-- SECTION 7 -->
+        <!-- ═══════════════════════════════════════════ -->
+        <button class="collapsible">7. Session Management and Token Security</button>
+        <div class="collapsible-content">
+            <div class="collapsible-inner">
+
+                <div class="info-box">
+                    <h4>📖 Why Sessions Need Protecting</h4>
+                    <p>HTTP is stateless. Sessions and tokens are the mechanism that remembers who a user is between requests. If an attacker can steal or forge a session, they can impersonate that user completely — without ever knowing their password.</p>
+                </div>
+
+                <h3>Session Cookies</h3>
+
+                <div class="control-card">
+                    <h4>Secure Cookie Attributes</h4>
+                    <table class="comparison-table">
+                        <thead>
+                            <tr><th>Attribute</th><th>Purpose</th></tr>
+                        </thead>
+                        <tbody>
+                            <tr><td><code>HttpOnly</code></td><td>Prevents JavaScript from reading the cookie — protects against XSS-based session theft</td></tr>
+                            <tr><td><code>Secure</code></td><td>Cookie is only sent over HTTPS — never over HTTP</td></tr>
+                            <tr><td><code>SameSite=Strict</code></td><td>Cookie never sent in cross-site requests — strongest CSRF protection</td></tr>
+                            <tr><td><code>SameSite=Lax</code></td><td>Cookie sent on top-level navigations only — good balance of protection and usability</td></tr>
+                            <tr><td><code>Domain</code></td><td>Restrict which subdomains receive the cookie</td></tr>
+                            <tr><td><code>Path</code></td><td>Restrict which paths on the server receive the cookie</td></tr>
+                            <tr><td><code>Expires / Max-Age</code></td><td>Session should expire — never persist indefinitely</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <h3>Session ID Requirements</h3>
+                <ul>
+                    <li>Session IDs must be <strong>long and cryptographically random</strong> — not predictable or sequential</li>
+                    <li>Generate a <strong>new session ID after login</strong> (session fixation prevention)</li>
+                    <li>Invalidate the session completely on logout — don't just clear the client cookie</li>
+                    <li>Implement server-side session expiry for idle and absolute timeouts</li>
+                    <li>Never put session IDs in URLs — they end up in server logs and browser history</li>
+                </ul>
+
+                <h3>JSON Web Tokens (JWT)</h3>
+
+                <div class="layer-card">
+                    <h4>JWTs — Common in Modern APIs</h4>
+                    <p>JWTs are self-contained tokens used especially in stateless API authentication. They contain signed claims about the user.</p>
+                    <ul>
+                        <li>Always verify the token's <strong>signature</strong> on every request — never skip this step</li>
+                        <li>Explicitly specify the expected <strong>signing algorithm</strong> — reject the "none" algorithm</li>
+                        <li>Validate <strong>expiry (exp)</strong>, issuer (iss), and audience (aud) claims</li>
+                        <li>Use short expiry times for access tokens (15 minutes is common) and longer-lived refresh tokens</li>
+                        <li>Store JWTs in <strong>HttpOnly cookies</strong> — not in localStorage (vulnerable to XSS)</li>
+                        <li>Implement token revocation for refresh tokens and high-security scenarios</li>
+                    </ul>
+                </div>
+
+                <div class="warning-box">
+                    <h4>⚠️ localStorage vs HttpOnly Cookie for Token Storage</h4>
+                    <p>Storing tokens in <code>localStorage</code> or <code>sessionStorage</code> exposes them to any JavaScript running on the page. A single XSS vulnerability can immediately steal all tokens. <strong>HttpOnly cookies are the safer choice</strong> because JavaScript cannot read them, even if XSS occurs.</p>
+                </div>
+
+                <h3>Logout and Session Termination</h3>
+                <ul>
+                    <li>Provide a clear logout option and make it work completely</li>
+                    <li>On logout, invalidate the server-side session record</li>
+                    <li>Clear the session cookie on the client</li>
+                    <li>For JWTs: revoke the refresh token and implement short-lived access tokens</li>
+                    <li>Offer "log out from all devices" for user account security</li>
+                    <li>Automatically expire inactive sessions after a reasonable idle period</li>
+                </ul>
+
+            </div>
+        </div>
+
+        <!-- ═══════════════════════════════════════════ -->
+        <!-- SECTION 8 -->
+        <!-- ═══════════════════════════════════════════ -->
+        <button class="collapsible">8. API Security</button>
+        <div class="collapsible-content">
+            <div class="collapsible-inner">
+
+                <div class="info-box">
+                    <h4>📖 APIs Are a Primary Attack Target</h4>
+                    <p>In modern full-stack applications, the API is the backbone connecting client and server. It must be treated as a first-class security boundary — not a trusted internal channel.</p>
+                </div>
+
+                <h3>Authentication and Authorization at the API Layer</h3>
+                <ul>
+                    <li>Every endpoint (except intentional public ones) must require authentication</li>
+                    <li>Authorization must be checked on every request for every endpoint — no exceptions</li>
+                    <li>Use token-based auth (JWT, API keys) for stateless APIs</li>
+                    <li>API keys must be kept secret — never embedded in client-side code or source repositories</li>
+                </ul>
+
+                <h3>Rate Limiting and Throttling</h3>
+
+                <div class="control-card">
+                    <h4>Preventing API Abuse</h4>
+                    <ul>
+                        <li><strong>Rate limiting:</strong> Restrict the number of requests a client can make per time window (e.g., 100 requests per minute)</li>
+                        <li><strong>Throttling:</strong> Slow down responses rather than blocking, for softer limiting</li>
+                        <li>Apply limits per user, per IP, and globally</li>
+                        <li>Return appropriate <strong>429 Too Many Requests</strong> responses with a Retry-After header</li>
+                        <li>Rate limiting protects against brute-force, credential stuffing, scraping, and denial-of-service</li>
+                    </ul>
+                </div>
+
+                <h3>API Versioning and Deprecation</h3>
+                <ul>
+                    <li>Version your API (e.g., <code>/api/v1/</code>) so old versions can be deprecated and removed</li>
+                    <li>Remove or restrict old versions that may have unpatched vulnerabilities</li>
+                    <li>Don't expose functionality that is no longer actively maintained</li>
+                </ul>
+
+                <h3>Input Validation at the API Layer</h3>
+                <ul>
+                    <li>Validate all incoming request data: body, query parameters, path parameters, and headers</li>
+                    <li>Define and enforce an explicit schema for every endpoint's expected input</li>
+                    <li>Reject requests with unexpected or extra fields (prevent mass assignment)</li>
+                    <li>Limit request body size to prevent resource exhaustion attacks</li>
+                </ul>
+
+                <h3>Error Responses</h3>
+
+                <div class="do-dont-grid">
+                    <div class="do-box">
+                        <h4>✅ Secure Error Handling</h4>
+                        <ul>
+                            <li>Return generic error messages to clients</li>
+                            <li>Log detailed errors server-side for debugging</li>
+                            <li>Use standard HTTP status codes consistently</li>
+                            <li>Return 401 for unauthenticated, 403 for unauthorized</li>
+                        </ul>
+                    </div>
+                    <div class="dont-box">
+                        <h4>❌ Information Leakage</h4>
+                        <ul>
+                            <li>Don't expose stack traces to clients</li>
+                            <li>Don't reveal database names, query details, or internal paths</li>
+                            <li>Don't expose framework version numbers</li>
+                            <li>Don't confirm whether a username exists in error messages</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <h3>CORS — Cross-Origin Resource Sharing</h3>
+
+                <div class="layer-card">
+                    <h4>Configuring CORS Correctly</h4>
+                    <p>CORS controls which domains are allowed to make browser-based requests to your API. Misconfigured CORS is a common vulnerability.</p>
+                    <ul>
+                        <li>Define an explicit <strong>allowlist</strong> of permitted origins — never use a wildcard (<code>*</code>) for authenticated APIs</li>
+                        <li>Never reflect the request's Origin header back without validation — this grants any site access</li>
+                        <li>Only allow the HTTP methods your API actually uses</li>
+                        <li>Only expose headers that are needed</li>
+                        <li>Credentials (cookies) require <code>Access-Control-Allow-Credentials: true</code> and a non-wildcard origin — be very deliberate with this</li>
+                    </ul>
+                </div>
+
+                <h3>GraphQL-Specific Concerns</h3>
+                <ul>
+                    <li>Disable introspection in production — it reveals your entire schema to attackers</li>
+                    <li>Implement query depth and complexity limits to prevent Denial of Service via deeply nested queries</li>
+                    <li>Apply authorization checks at the resolver level — not just at the entry point</li>
+                    <li>Disable detailed error messages that reveal schema information</li>
+                </ul>
+
+            </div>
+        </div>
+
+        <!-- ═══════════════════════════════════════════ -->
+        <!-- SECTION 9 -->
+        <!-- ═══════════════════════════════════════════ -->
+        <button class="collapsible">9. Database Security</button>
+        <div class="collapsible-content">
+            <div class="collapsible-inner">
+
+                <h3>Principle of Least Privilege for Database Accounts</h3>
+
+                <div class="control-card">
+                    <h4>Database Users Should Only Do What They Need To</h4>
+                    <ul>
+                        <li>The application's database user should have <strong>only</strong> SELECT, INSERT, UPDATE, DELETE on the tables it needs</li>
+                        <li>It should <strong>not</strong> have DROP TABLE, CREATE, or schema modification rights in production</li>
+                        <li>Administrative database operations should use a separate, tightly controlled account</li>
+                        <li>Migration scripts should run under a separate account with schema-change permissions, not the application account</li>
+                    </ul>
+                </div>
+
+                <h3>Preventing SQL Injection</h3>
+                <ul>
+                    <li>Use <strong>parameterized queries (prepared statements)</strong> — this is the primary defense</li>
+                    <li>Use an ORM (Object-Relational Mapper) correctly — ORMs parameterize by default, but raw query methods can bypass this</li>
+                    <li>Never construct SQL queries by concatenating user input, regardless of sanitization attempts</li>
+                    <li>Apply stored procedures with parameterization where appropriate</li>
+                </ul>
+
+                <h3>Protecting Sensitive Data at Rest</h3>
+
+                <div class="threat-card">
+                    <h4>Sensitive Data Categories</h4>
+                    <p>The following data requires special handling and must never be stored as plain text:</p>
+                    <ul>
+                        <li><strong>Passwords:</strong> One-way hashed with bcrypt, Argon2, or scrypt — never plain text or reversibly encrypted</li>
+                        <li><strong>Payment card data:</strong> Use a PCI-DSS compliant payment provider (Stripe, Braintree) — never store raw card numbers</li>
+                        <li><strong>Social Security / National ID numbers:</strong> Encrypt at rest with strong encryption</li>
+                        <li><strong>Health records:</strong> Subject to HIPAA; encryption and access logging required</li>
+                        <li><strong>API keys and secrets:</strong> Never stored in code or plain text — use encrypted secret stores</li>
+                    </ul>
+                </div>
+
+                <h3>Database Encryption</h3>
+                <ul>
+                    <li><strong>Encryption at rest:</strong> Encrypt the entire database volume or use transparent data encryption (TDE)</li>
+                    <li><strong>Column-level encryption:</strong> Encrypt specific sensitive columns so even database administrators cannot read them without the key</li>
+                    <li><strong>Key management:</strong> Encryption keys must be stored separately from the data they protect — a separate key management service (KMS) is ideal</li>
+                </ul>
+
+                <h3>Database Access Controls</h3>
+                <ul>
+                    <li>Do not expose the database port to the public internet — restrict to the application server's IP</li>
+                    <li>Use a VPC or private network for database communication</li>
+                    <li>Enable database audit logging for sensitive operations</li>
+                    <li>Disable or remove unused database features, stored procedures, and user accounts</li>
+                    <li>Change all default credentials immediately on installation</li>
+                    <li>Regularly patch the database engine</li>
+                </ul>
+
+                <h3>Backups</h3>
+                <div class="success-box">
+                    <h4>✅ Backups Are Part of Security</h4>
+                    <ul>
+                        <li>Encrypt all database backups</li>
+                        <li>Test restore procedures regularly — an untested backup is not a backup</li>
+                        <li>Store backups in a separate location from the primary database</li>
+                        <li>Control who can access and delete backup files</li>
+                        <li>Define and document your Recovery Time Objective (RTO) and Recovery Point Objective (RPO)</li>
+                    </ul>
+                </div>
+
+            </div>
+        </div>
+
+        <!-- ═══════════════════════════════════════════ -->
+        <!-- SECTION 10 -->
+        <!-- ═══════════════════════════════════════════ -->
+        <button class="collapsible">10. Server and Infrastructure Security</button>
+        <div class="collapsible-content">
+            <div class="collapsible-inner">
+
+                <h3>Server Hardening</h3>
+
+                <div class="step-container">
+                    <span class="step-number">1</span>
+                    <span class="step-title">Minimize the Attack Surface</span>
+                    <div class="step-content">
+                        <ul>
+                            <li>Disable all services, ports, and features that are not actively needed</li>
+                            <li>Remove unused software and packages from the server</li>
+                            <li>Use a minimal base OS image — smaller surface means fewer vulnerabilities</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <div class="step-container">
+                    <span class="step-number">2</span>
+                    <span class="step-title">Keep Everything Patched</span>
+                    <div class="step-content">
+                        <ul>
+                            <li>Apply OS security patches promptly — many breaches exploit known, patched vulnerabilities</li>
+                            <li>Keep web server software (Nginx, Apache, IIS) updated</li>
+                            <li>Keep runtime environments (Node.js, .NET, Java) updated</li>
+                            <li>Subscribe to security advisories for your technology stack</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <div class="step-container">
+                    <span class="step-number">3</span>
+                    <span class="step-title">Network Controls</span>
+                    <div class="step-content">
+                        <ul>
+                            <li>Use a <strong>firewall</strong> to allow only necessary inbound traffic (typically 80, 443, and SSH from restricted IPs)</li>
+                            <li>Place databases and internal services in private subnets — never publicly accessible</li>
+                            <li>Use <strong>network segmentation</strong> so a compromised web server cannot directly reach the database</li>
+                            <li>Consider a <strong>Web Application Firewall (WAF)</strong> for additional protection against common attacks</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <div class="step-container">
+                    <span class="step-number">4</span>
+                    <span class="step-title">SSH and Remote Access</span>
+                    <div class="step-content">
+                        <ul>
+                            <li>Disable password-based SSH — use SSH keys only</li>
+                            <li>Disable root login over SSH</li>
+                            <li>Restrict SSH access to specific, known IP addresses</li>
+                            <li>Change the default SSH port (minor obscurity benefit, not a substitute for other controls)</li>
+                            <li>Use a bastion host / jump server for production access</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <div class="step-container">
+                    <span class="step-number">5</span>
+                    <span class="step-title">Secrets Management</span>
+                    <div class="step-content">
+                        <ul>
+                            <li>Store all secrets (database passwords, API keys, encryption keys) in a <strong>secrets manager</strong> — not in environment files or source code</li>
+                            <li>Use tools like <strong>AWS Secrets Manager, Azure Key Vault, HashiCorp Vault</strong></li>
+                            <li>Never commit secrets to version control — use pre-commit hooks to scan for accidental secrets</li>
+                            <li>Rotate secrets regularly and immediately when a person with access leaves</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <h3>Dependency Security</h3>
+
+                <div class="danger-box">
+                    <h4>🚨 Your Dependencies Are Part of Your Attack Surface</h4>
+                    <p>Modern applications depend on hundreds of third-party packages. Each one is a potential source of vulnerabilities.</p>
+                    <ul>
+                        <li>Use <strong>dependency scanning tools</strong> (npm audit, Dependabot, Snyk, OWASP Dependency-Check)</li>
+                        <li>Keep dependencies updated and patch known vulnerabilities promptly</li>
+                        <li>Audit new dependencies before adding them — prefer packages with active maintenance and large communities</li>
+                        <li>Use a lock file to pin dependency versions and prevent unexpected updates</li>
+                        <li>Be aware of <strong>supply chain attacks</strong> — malicious packages that mimic legitimate ones (typosquatting)</li>
+                    </ul>
+                </div>
+
+                <h3>Container Security</h3>
+                <ul>
+                    <li>Run containers as a <strong>non-root user</strong></li>
+                    <li>Use minimal base images (Alpine Linux, distroless images)</li>
+                    <li>Scan container images for known vulnerabilities before deployment</li>
+                    <li>Do not store secrets in Docker images or environment variables in Dockerfiles</li>
+                    <li>Use read-only file systems where possible</li>
+                    <li>Apply resource limits to containers to prevent resource exhaustion</li>
+                </ul>
+
+            </div>
+        </div>
+
+        <!-- ═══════════════════════════════════════════ -->
+        <!-- SECTION 11 -->
+        <!-- ═══════════════════════════════════════════ -->
+        <button class="collapsible">11. Client-Side Security</button>
+        <div class="collapsible-content">
+            <div class="collapsible-inner">
+
+                <div class="info-box">
+                    <h4>📖 The Browser as a Security Boundary</h4>
+                    <p>The browser runs code in an environment you do not control. Users may have malicious extensions, run on compromised machines, or be tricked by other sites. Client-side security is about making the browser itself an ally against attacks.</p>
+                </div>
+
+                <h3>Security Headers</h3>
+                <p>HTTP response headers can instruct the browser to enforce security policies. These are set by the server.</p>
+
+                <table class="comparison-table">
+                    <thead>
+                        <tr>
+                            <th>Header</th>
+                            <th>Purpose</th>
+                            <th>Priority</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td><strong>Content-Security-Policy (CSP)</strong></td>
+                            <td>Restricts which scripts, styles, images, and connections are allowed — the primary XSS defense</td>
+                            <td><span class="badge badge-critical">Critical</span></td>
+                        </tr>
+                        <tr>
+                            <td><strong>Strict-Transport-Security (HSTS)</strong></td>
+                            <td>Forces browsers to always use HTTPS</td>
+                            <td><span class="badge badge-critical">Critical</span></td>
+                        </tr>
+                        <tr>
+                            <td><strong>X-Frame-Options</strong></td>
+                            <td>Prevents your site being loaded in an iframe — protects against clickjacking</td>
+                            <td><span class="badge badge-high">High</span></td>
+                        </tr>
+                        <tr>
+                            <td><strong>X-Content-Type-Options</strong></td>
+                            <td>Prevents browsers from MIME-sniffing responses — stops content type confusion attacks</td>
+                            <td><span class="badge badge-high">High</span></td>
+                        </tr>
+                        <tr>
+                            <td><strong>Referrer-Policy</strong></td>
+                            <td>Controls how much referrer information is shared with other sites</td>
+                            <td><span class="badge badge-medium">Medium</span></td>
+                        </tr>
+                        <tr>
+                            <td><strong>Permissions-Policy</strong></td>
+                            <td>Restricts browser features (camera, microphone, geolocation) the page can use</td>
+                            <td><span class="badge badge-medium">Medium</span></td>
+                        </tr>
+                        <tr>
+                            <td><strong>Cross-Origin-Opener-Policy</strong></td>
+                            <td>Isolates the browsing context to protect against cross-origin attacks</td>
+                            <td><span class="badge badge-medium">Medium</span></td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <div class="tip-box">
+                    <h4>💡 Test Your Security Headers</h4>
+                    <p>Use <strong>securityheaders.com</strong> to scan your site and get a grade with actionable recommendations. This is a free tool every deployed application should be run through.</p>
+                </div>
+
+                <h3>Content Security Policy (CSP) — Key Directives</h3>
+                <ul>
+                    <li><strong>default-src:</strong> Fallback policy for all resource types not explicitly listed</li>
+                    <li><strong>script-src:</strong> Where scripts can be loaded from — restrict to your own domain and trusted CDNs</li>
+                    <li><strong>style-src:</strong> Where stylesheets can be loaded from</li>
+                    <li><strong>img-src:</strong> Where images can be loaded from</li>
+                    <li><strong>connect-src:</strong> Which URLs the page can make requests to (fetch, XHR, WebSocket)</li>
+                    <li><strong>frame-ancestors:</strong> Which sites can embed this page in an iframe (replaces X-Frame-Options)</li>
+                    <li>Start with a <strong>report-only mode</strong> to test CSP without breaking functionality, then enforce it</li>
+                </ul>
+
+                <h3>Sensitive Data in the Browser</h3>
+
+                <div class="do-dont-grid">
+                    <div class="do-box">
+                        <h4>✅ Safe Practices</h4>
+                        <ul>
+                            <li>Store tokens in HttpOnly cookies</li>
+                            <li>Clear sensitive data from memory when no longer needed</li>
+                            <li>Use HTTPS to prevent interception</li>
+                            <li>Be deliberate about what you put in URLs (logs capture them)</li>
+                        </ul>
+                    </div>
+                    <div class="dont-box">
+                        <h4>❌ Don't Store These in the Browser</h4>
+                        <ul>
+                            <li>Auth tokens in localStorage (XSS risk)</li>
+                            <li>Passwords in any form</li>
+                            <li>Credit card numbers</li>
+                            <li>Social security numbers</li>
+                            <li>Sensitive PII in session or local storage</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <h3>Third-Party Scripts</h3>
+                <div class="warning-box">
+                    <h4>⚠️ Every Third-Party Script Is a Trust Decision</h4>
+                    <p>Analytics scripts, chat widgets, A/B testing tools, and advertising scripts all run with the same privileges as your own code. A compromised third-party script can steal everything on the page. Evaluate every third-party script carefully, use SRI hashes where possible, and restrict them with CSP to limit what they can access.</p>
+                </div>
+
+            </div>
+        </div>
+
+        <!-- ═══════════════════════════════════════════ -->
+        <!-- SECTION 12 -->
+        <!-- ═══════════════════════════════════════════ -->
+        <button class="collapsible">12. Data Protection and Privacy</button>
+        <div class="collapsible-content">
+            <div class="collapsible-inner">
+
+                <h3>Data Minimization</h3>
+
+                <div class="control-card">
+                    <h4>Collect Only What You Need</h4>
+                    <p>The most secure data is data you never collect. Every field you store is a liability — it must be protected, maintained, and disclosed in a breach. Before adding any data field, ask: <em>"Do we actually need this?"</em></p>
+                    <ul>
+                        <li>Define a clear purpose for each piece of data collected</li>
+                        <li>Set retention periods and delete data when it is no longer needed</li>
+                        <li>Avoid collecting unnecessary PII (Personally Identifiable Information)</li>
+                    </ul>
+                </div>
+
+                <h3>Sensitive Data Classification</h3>
+
+                <table class="comparison-table">
+                    <thead>
+                        <tr><th>Classification</th><th>Examples</th><th>Required Controls</th></tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td><strong>Public</strong></td>
+                            <td>Product names, marketing content</td>
+                            <td>Basic integrity controls</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Internal</strong></td>
+                            <td>Employee directories, internal documents</td>
+                            <td>Authentication, access logging</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Confidential</strong></td>
+                            <td>Customer PII, financial data, business strategy</td>
+                            <td>Encryption at rest and in transit, strict access controls, audit logging</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Restricted</strong></td>
+                            <td>Passwords, payment data, health records, government IDs</td>
+                            <td>Strongest encryption, minimal access, regulatory compliance, dedicated storage</td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <h3>Regulatory Compliance</h3>
+
+                <div class="layer-card">
+                    <h4>Key Regulations Developers Must Be Aware Of</h4>
+                    <ul>
+                        <li><strong>GDPR (EU):</strong> Requires consent for data collection, right to access, right to erasure ("right to be forgotten"), breach notification within 72 hours. Applies to any app serving EU users.</li>
+                        <li><strong>CCPA (California):</strong> California Consumer Privacy Act — similar rights to GDPR for California residents. Applies broadly to businesses handling California residents' data.</li>
+                        <li><strong>HIPAA (US):</strong> Governs health information. Requires encryption, audit logging, minimum necessary access, and Business Associate Agreements.</li>
+                        <li><strong>PCI-DSS:</strong> Payment Card Industry standard. If handling card data, requires a formal compliance program. Use a payment processor (Stripe, Square) to avoid direct card handling.</li>
+                        <li><strong>COPPA (US):</strong> Governs data collection from children under 13. Parental consent required.</li>
+                    </ul>
+                </div>
+
+                <h3>Data in Transit and at Rest</h3>
+                <ul>
+                    <li><strong>In transit:</strong> All data must be encrypted using TLS. No plain HTTP for any data exchange.</li>
+                    <li><strong>At rest:</strong> Encrypt sensitive database columns, files, and backups. Use a managed encryption service to handle key management.</li>
+                    <li><strong>In logs:</strong> Never log passwords, tokens, full credit card numbers, or other sensitive data. Mask or truncate where necessary.</li>
+                    <li><strong>In URLs:</strong> Never put sensitive values in query strings — they appear in server logs, browser history, and referrer headers.</li>
+                    <li><strong>In error messages:</strong> Errors must never include sensitive data or internal system details.</li>
+                </ul>
+
+                <h3>Breach Notification</h3>
+                <div class="danger-box">
+                    <h4>🚨 Know Your Obligations Before a Breach Happens</h4>
+                    <p>Most jurisdictions require notification of affected users and/or regulators within a specified time window after discovering a breach. GDPR requires notification within 72 hours. Define your incident response plan <em>before</em> you need it — not after a breach has occurred.</p>
+                </div>
+
+            </div>
+        </div>
+
+        <!-- ═══════════════════════════════════════════ -->
+        <!-- SECTION 13 -->
+        <!-- ═══════════════════════════════════════════ -->
+        <button class="collapsible">13. Logging, Monitoring, and Incident Response</button>
+        <div class="collapsible-content">
+            <div class="collapsible-inner">
+
+                <div class="info-box">
+                    <h4>📖 You Cannot Defend What You Cannot See</h4>
+                    <p>Logging and monitoring are the difference between discovering a breach in minutes and discovering it months later — or never at all. Many organizations only learn they were breached from external reports, not their own systems.</p>
+                </div>
+
+                <h3>What to Log</h3>
+
+                <div class="do-dont-grid">
+                    <div class="do-box">
+                        <h4>✅ Security-Relevant Events to Log</h4>
+                        <ul>
+                            <li>All authentication events (successes and failures)</li>
+                            <li>Authorization failures (403 responses)</li>
+                            <li>Password changes and resets</li>
+                            <li>Account creation and deletion</li>
+                            <li>Privilege changes (role assignments)</li>
+                            <li>API errors and unusual request patterns</li>
+                            <li>Large data exports or bulk operations</li>
+                            <li>Admin actions</li>
+                            <li>System errors and exceptions</li>
+                        </ul>
+                    </div>
+                    <div class="dont-box">
+                        <h4>❌ Never Log These</h4>
+                        <ul>
+                            <li>Passwords (even hashed)</li>
+                            <li>Full session tokens or JWTs</li>
+                            <li>Credit card numbers</li>
+                            <li>Social security numbers</li>
+                            <li>API keys or secrets</li>
+                            <li>Health information</li>
+                            <li>Full request bodies that may contain sensitive data</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <h3>Log Quality Requirements</h3>
+                <ul>
+                    <li>Each log entry should include: <strong>timestamp (UTC), user/session ID, action, resource, outcome, source IP</strong></li>
+                    <li>Use structured logging (JSON format) rather than plain text — easier to query and analyze</li>
+                    <li>Ensure log timestamps are synchronized (NTP) across all servers</li>
+                    <li>Logs must be <strong>tamper-evident</strong> — store them where application servers cannot modify or delete them</li>
+                    <li>Retain logs for a sufficient period to support investigations (90 days minimum; regulatory requirements may demand more)</li>
+                </ul>
+
+                <h3>Monitoring and Alerting</h3>
+
+                <div class="control-card">
+                    <h4>Set Up Alerts For</h4>
+                    <ul>
+                        <li>Multiple failed login attempts in a short window (brute-force indicator)</li>
+                        <li>Login from a new country or unusual location</li>
+                        <li>Spike in 403/500 error rates (attack or system failure)</li>
+                        <li>Sudden increase in database query volume (potential data exfiltration)</li>
+                        <li>Admin account logins, especially outside business hours</li>
+                        <li>Changes to security configuration</li>
+                        <li>Certificate expiry approaching</li>
+                        <li>Dependency vulnerability alerts from scanning tools</li>
+                    </ul>
+                </div>
+
+                <h3>Incident Response Plan</h3>
+
+                <div class="step-container">
+                    <span class="step-number">1</span>
+                    <span class="step-title">Preparation</span>
+                    <div class="step-content">
+                        <p>Document the plan, assign roles, test it. Know who to call and what to do before an incident occurs. A plan written during a breach is too late.</p>
+                    </div>
+                </div>
+
+                <div class="step-container">
+                    <span class="step-number">2</span>
+                    <span class="step-title">Detection and Analysis</span>
+                    <div class="step-content">
+                        <p>Monitoring alerts fire or suspicious activity is reported. Investigate to confirm and understand the scope. Preserve evidence — do not modify systems until logs are captured.</p>
+                    </div>
+                </div>
+
+                <div class="step-container">
+                    <span class="step-number">3</span>
+                    <span class="step-title">Containment</span>
+                    <div class="step-content">
+                        <p>Stop the bleeding — isolate affected systems, revoke compromised credentials, block attacker IPs. Choose between short-term containment (keep system alive for investigation) and long-term containment (take offline).</p>
+                    </div>
+                </div>
+
+                <div class="step-container">
+                    <span class="step-number">4</span>
+                    <span class="step-title">Eradication</span>
+                    <div class="step-content">
+                        <p>Remove the threat — close the vulnerability exploited, remove any installed malware or backdoors, reset all compromised credentials.</p>
+                    </div>
+                </div>
+
+                <div class="step-container">
+                    <span class="step-number">5</span>
+                    <span class="step-title">Recovery</span>
+                    <div class="step-content">
+                        <p>Restore systems from clean backups, verify integrity, monitor closely for re-attack. Notify affected users and regulators as required.</p>
+                    </div>
+                </div>
+
+                <div class="step-container">
+                    <span class="step-number">6</span>
+                    <span class="step-title">Lessons Learned</span>
+                    <div class="step-content">
+                        <p>Conduct a post-incident review. Document what happened, what worked, what failed, and what changes are needed. Update security controls and the incident response plan.</p>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+
+        <!-- ═══════════════════════════════════════════ -->
+        <!-- SECTION 14 -->
+        <!-- ═══════════════════════════════════════════ -->
+        <button class="collapsible">14. Security Checklist — Production Readiness</button>
+        <div class="collapsible-content">
+            <div class="collapsible-inner">
+
+                <div class="success-box">
+                    <h4>✅ Use This Before Every Production Deployment</h4>
+                    <p>Work through each category before launching any application. This is a starting point — your specific application may require additional controls.</p>
+                </div>
+
+                <div class="checklist">
+                    <h4>🔐 Authentication</h4>
+                    <ul>
+                        <li>Passwords are hashed with bcrypt, Argon2, or scrypt</li>
+                        <li>MFA is available (required for admin accounts)</li>
+                        <li>Account lockout / rate limiting is implemented on login</li>
+                        <li>Error messages do not reveal whether an account exists</li>
+                        <li>Password reset tokens expire and can only be used once</li>
+                        <li>New session ID is issued on login</li>
+                    </ul>
+                </div>
+
+                <div class="checklist">
+                    <h4>🛡️ Authorization</h4>
+                    <ul>
+                        <li>Every API endpoint checks authentication</li>
+                        <li>Every API endpoint checks the user's permission for that action</li>
+                        <li>Resource ownership is verified (IDOR prevention)</li>
+                        <li>Client-side-only authorization checks have been identified and eliminated</li>
+                        <li>Admin functionality is fully separated from user functionality</li>
+                    </ul>
+                </div>
+
+                <div class="checklist">
+                    <h4>📡 Transport Security</h4>
+                    <ul>
+                        <li>HTTPS is enforced everywhere — HTTP redirects to HTTPS</li>
+                        <li>TLS 1.2+ only — older versions disabled</li>
+                        <li>HSTS header is set with a long max-age</li>
+                        <li>Certificate is valid and auto-renewal is configured</li>
+                        <li>Sensitive data never sent via HTTP</li>
+                    </ul>
+                </div>
+
+                <div class="checklist">
+                    <h4>🧹 Input and Output</h4>
+                    <ul>
+                        <li>All user input is validated server-side</li>
+                        <li>Parameterized queries are used everywhere — no SQL concatenation</li>
+                        <li>All user content is output-encoded for the context (HTML, JS, URL)</li>
+                        <li>File uploads are validated for type, size, and stored outside web root</li>
+                        <li>No stack traces or internal details returned in error responses</li>
+                    </ul>
+                </div>
+
+                <div class="checklist">
+                    <h4>🌐 Browser Security</h4>
+                    <ul>
+                        <li>Content Security Policy (CSP) header is set and tested</li>
+                        <li>X-Frame-Options or CSP frame-ancestors is set</li>
+                        <li>X-Content-Type-Options: nosniff is set</li>
+                        <li>Referrer-Policy is set appropriately</li>
+                        <li>Cookies have HttpOnly, Secure, and SameSite attributes</li>
+                        <li>No sensitive data in localStorage</li>
+                    </ul>
+                </div>
+
+                <div class="checklist">
+                    <h4>🔌 API</h4>
+                    <ul>
+                        <li>Rate limiting is in place on all endpoints</li>
+                        <li>CORS is configured with an explicit origin allowlist</li>
+                        <li>API keys and secrets are not embedded in client code</li>
+                        <li>Request body size limits are enforced</li>
+                        <li>Unexpected fields are rejected (mass assignment protection)</li>
+                    </ul>
+                </div>
+
+                <div class="checklist">
+                    <h4>🗄️ Database</h4>
+                    <ul>
+                        <li>Database account has minimum required permissions</li>
+                        <li>Database port is not exposed to the internet</li>
+                        <li>Default credentials have been changed</li>
+                        <li>Sensitive columns are encrypted</li>
+                        <li>Backups are encrypted and tested</li>
+                    </ul>
+                </div>
+
+                <div class="checklist">
+                    <h4>🖥️ Server / Infrastructure</h4>
+                    <ul>
+                        <li>OS and all packages are patched to current</li>
+                        <li>Unused ports and services are disabled</li>
+                        <li>Secrets are stored in a secrets manager — not in code or .env files in repos</li>
+                        <li>Dependencies have been scanned for known vulnerabilities</li>
+                        <li>SSH password login is disabled</li>
+                        <li>Firewall rules follow least-privilege</li>
+                    </ul>
+                </div>
+
+                <div class="checklist">
+                    <h4>📋 Logging and Monitoring</h4>
+                    <ul>
+                        <li>Authentication events are logged</li>
+                        <li>Authorization failures are logged</li>
+                        <li>Logs do not contain sensitive data</li>
+                        <li>Alerts are configured for suspicious patterns</li>
+                        <li>Log retention meets regulatory requirements</li>
+                        <li>An incident response plan exists and has been reviewed</li>
+                    </ul>
+                </div>
+
+                <div class="checklist">
+                    <h4>🔏 Data Protection</h4>
+                    <ul>
+                        <li>Only necessary data is collected</li>
+                        <li>Data retention and deletion policies are defined</li>
+                        <li>Applicable regulations (GDPR, HIPAA, PCI) have been reviewed</li>
+                        <li>Privacy policy is accurate and accessible to users</li>
+                        <li>Users can request deletion of their data</li>
+                    </ul>
+                </div>
+
+                <div class="tip-box">
+                    <h4>💡 Further Security Testing</h4>
+                    <ul>
+                        <li><strong>OWASP ZAP:</strong> Free automated web application security scanner</li>
+                        <li><strong>Burp Suite Community:</strong> Web security testing platform</li>
+                        <li><strong>Nmap:</strong> Network port and service scanner</li>
+                        <li><strong>SSL Labs (ssllabs.com/ssltest):</strong> Grade your HTTPS/TLS configuration</li>
+                        <li><strong>Security Headers (securityheaders.com):</strong> Grade your HTTP security headers</li>
+                        <li><strong>Penetration Testing:</strong> Periodic manual security testing by a qualified professional</li>
+                    </ul>
+                </div>
+
+            </div>
+        </div>
+
+    </div><!-- /.content -->
+
+    <div class="footer">
+        <p>&copy; 2024 COP4834 Web Systems II | Client-Server Security Module</p>
+        <p>Security is not a product — it is a process. Build it in from day one.</p>
+    </div>
+
+</div><!-- /.container -->
+
+<script>
+    const collapsibles = document.getElementsByClassName("collapsible");
+
+    for (let i = 0; i < collapsibles.length; i++) {
+        collapsibles[i].addEventListener("click", function () {
+            this.classList.toggle("active");
+            const content = this.nextElementSibling;
+            if (content.style.maxHeight) {
+                content.style.maxHeight = null;
+            } else {
+                content.style.maxHeight = content.scrollHeight + "px";
+            }
+        });
+    }
+
+    // Open first section by default
+    if (collapsibles.length > 0) {
+        collapsibles[0].click();
+    }
+</script>
+</body>
+</html>

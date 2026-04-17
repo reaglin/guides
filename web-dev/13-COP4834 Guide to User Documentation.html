@@ -1,0 +1,1705 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>COP4834 - Guide to End User Documentation</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #1e3a5f 0%, #2c5f8d 50%, #3a7ca5 100%);
+            padding: 20px;
+            line-height: 1.6;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.45);
+            overflow: hidden;
+        }
+
+        /* ── Header ── */
+        .header {
+            background: linear-gradient(135deg, #1e3a5f 0%, #2c5f8d 60%, #3a7ca5 100%);
+            color: white;
+            padding: 45px 40px;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+        }
+        .header::before {
+            content: '📖';
+            position: absolute;
+            font-size: 210px;
+            opacity: 0.05;
+            top: -30px;
+            right: -10px;
+        }
+        .header h1 { font-size: 2.5em; margin-bottom: 10px; text-shadow: 2px 2px 8px rgba(0,0,0,0.5); }
+        .header p  { font-size: 1.2em; opacity: 0.92; }
+
+        .content { padding: 40px; }
+
+        /* ── Intro box ── */
+        .intro-box {
+            background: linear-gradient(135deg, #1e3a5f 0%, #2c5f8d 100%);
+            color: white;
+            padding: 30px;
+            border-radius: 10px;
+            margin-bottom: 30px;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.3);
+            border-left: 6px solid #3a7ca5;
+        }
+        .intro-box h2 { margin-bottom: 12px; font-size: 1.8em; }
+
+        /* ── Collapsibles ── */
+        .collapsible {
+            background: linear-gradient(135deg, #1e3a5f 0%, #2c5f8d 100%);
+            color: white;
+            cursor: pointer;
+            padding: 18px 22px;
+            width: 100%;
+            border: none;
+            text-align: left;
+            outline: none;
+            font-size: 1.15em;
+            font-weight: bold;
+            border-radius: 8px;
+            margin-bottom: 10px;
+            transition: all 0.3s ease;
+            box-shadow: 0 3px 10px rgba(0,0,0,0.2);
+            border-left: 5px solid #3a7ca5;
+        }
+        .collapsible:hover {
+            background: linear-gradient(135deg, #152840 0%, #1e4a6f 100%);
+            transform: translateY(-2px);
+            box-shadow: 0 6px 18px rgba(0,0,0,0.3);
+        }
+        .collapsible.active {
+            background: linear-gradient(135deg, #1a5c3a 0%, #27ae60 100%);
+            border-left-color: #2ecc71;
+        }
+        .collapsible:after { content: '\002B'; float: right; font-size: 1.3em; font-weight: bold; }
+        .collapsible.active:after { content: '\2212'; }
+
+        .collapsible-content {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.35s ease-out;
+            background-color: #f8fbfd;
+            border-radius: 0 0 8px 8px;
+            margin-bottom: 20px;
+        }
+        .collapsible-inner { padding: 28px; }
+
+        /* ── Callout boxes ── */
+        .info-box    { background: #e3f2fd; border-left: 5px solid #2c5f8d; padding: 20px; margin: 20px 0; border-radius: 5px; }
+        .warning-box { background: #fef5e7; border-left: 5px solid #f39c12; padding: 20px; margin: 20px 0; border-radius: 5px; }
+        .success-box { background: #d5f4e6; border-left: 5px solid #27ae60; padding: 20px; margin: 20px 0; border-radius: 5px; }
+        .tip-box     { background: #f0f7fb; border-left: 5px solid #3a7ca5; padding: 20px; margin: 20px 0; border-radius: 5px; }
+        .danger-box  { background: #fdf0f0; border-left: 5px solid #c0392b; padding: 20px; margin: 20px 0; border-radius: 5px; }
+
+        /* ── Typography ── */
+        h3 {
+            color: #1e3a5f;
+            margin: 22px 0 10px 0;
+            font-size: 1.45em;
+            border-bottom: 2px solid #3a7ca5;
+            padding-bottom: 6px;
+            display: inline-block;
+        }
+        h4 { color: #2c5f8d; margin: 15px 0 8px 0; font-size: 1.15em; }
+        ul, ol { margin-left: 25px; margin-top: 10px; }
+        li { margin: 9px 0; }
+        strong { color: #1e3a5f; }
+        p { margin: 8px 0; }
+
+        /* ── Tables ── */
+        .comparison-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 20px 0;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+            border-radius: 8px;
+            overflow: hidden;
+        }
+        .comparison-table th {
+            background: linear-gradient(135deg, #1e3a5f, #2c5f8d);
+            color: white;
+            padding: 14px 16px;
+            text-align: left;
+            font-weight: bold;
+        }
+        .comparison-table td {
+            padding: 12px 16px;
+            border-bottom: 1px solid #d9eaf7;
+        }
+        .comparison-table tr:last-child td { border-bottom: none; }
+        .comparison-table tr:hover td { background: #f0f7fb; }
+
+        /* ── Doc type cards ── */
+        .doc-type-card {
+            background: white;
+            border: 2px solid #2c5f8d;
+            border-radius: 12px;
+            overflow: hidden;
+            margin: 18px 0;
+            box-shadow: 0 4px 14px rgba(0,0,0,0.1);
+        }
+        .doc-type-header {
+            background: linear-gradient(135deg, #1e3a5f, #2c5f8d);
+            color: white;
+            padding: 16px 22px;
+        }
+        .doc-type-header h4 {
+            color: white;
+            font-size: 1.3em;
+            margin: 0;
+        }
+        .doc-type-body { padding: 20px; }
+
+        /* ── Do / Don't ── */
+        .do-dont-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 18px; margin: 18px 0; }
+        .do-box   { background: #d5f4e6; border: 2px solid #27ae60; border-radius: 8px; padding: 18px; }
+        .do-box h4   { color: #1e8449; margin-bottom: 10px; }
+        .dont-box { background: #fdf0f0; border: 2px solid #c0392b; border-radius: 8px; padding: 18px; }
+        .dont-box h4 { color: #c0392b; margin-bottom: 10px; }
+
+        /* ── Feature grid ── */
+        .feature-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+            margin: 18px 0;
+        }
+        .feature-item {
+            background: linear-gradient(135deg, #f8fbfd, #e3f2fd);
+            border: 2px solid #2c5f8d;
+            border-radius: 8px;
+            padding: 18px;
+            text-align: center;
+        }
+        .feature-item h5 { color: #1e3a5f; margin-bottom: 8px; font-size: 1.05em; }
+
+        /* ── Badges ── */
+        .badge {
+            display: inline-block;
+            padding: 3px 10px;
+            border-radius: 20px;
+            font-size: 0.8em;
+            font-weight: bold;
+            margin-left: 6px;
+            vertical-align: middle;
+        }
+        .badge-basic    { background: #27ae60; color: white; }
+        .badge-inter    { background: #e67e22; color: white; }
+        .badge-advanced { background: #c0392b; color: white; }
+        .badge-modern   { background: #3a7ca5; color: white; }
+        .badge-classic  { background: #7f8c8d; color: white; }
+
+        /* ── Step containers ── */
+        .step-container {
+            background: white;
+            border: 2px solid #2c5f8d;
+            border-radius: 8px;
+            padding: 20px;
+            margin: 15px 0;
+        }
+        .step-number {
+            display: inline-block;
+            background: linear-gradient(135deg, #1e3a5f, #3a7ca5);
+            color: white;
+            width: 36px; height: 36px;
+            border-radius: 50%;
+            text-align: center;
+            line-height: 36px;
+            font-weight: bold;
+            margin-right: 10px;
+        }
+        .step-title {
+            display: inline-block;
+            font-size: 1.2em;
+            color: #1e3a5f;
+            font-weight: bold;
+            vertical-align: middle;
+        }
+        .step-content { margin-top: 14px; padding-left: 46px; }
+
+        /* ── Example boxes ── */
+        .example-box {
+            background: #f9fafb;
+            border: 2px solid #3a7ca5;
+            border-left: 5px solid #3a7ca5;
+            border-radius: 6px;
+            padding: 16px;
+            margin: 14px 0;
+            font-family: 'Segoe UI', sans-serif;
+        }
+        .example-label {
+            font-weight: bold;
+            color: #1e3a5f;
+            margin-bottom: 8px;
+            font-size: 0.92em;
+        }
+
+        /* ── Checklist ── */
+        .checklist {
+            background: #e8f4f8;
+            border: 2px solid #2c5f8d;
+            border-radius: 8px;
+            padding: 20px;
+            margin: 15px 0;
+        }
+        .checklist h4 { color: #1e3a5f; margin-bottom: 12px; }
+        .checklist ul { list-style: none; margin-left: 0; }
+        .checklist li { margin: 8px 0; }
+        .checklist li::before { content: "☐ "; color: #2c5f8d; font-weight: bold; }
+
+        /* ── Inline code ── */
+        code {
+            background: #1e3a5f;
+            color: #b8d4e8;
+            padding: 3px 8px;
+            border-radius: 4px;
+            font-family: 'Courier New', monospace;
+            font-size: 0.9em;
+        }
+
+        /* ── Audience persona cards ── */
+        .persona-card {
+            background: linear-gradient(135deg, #f8fbfd, #e3f2fd);
+            border: 2px solid #3a7ca5;
+            border-radius: 10px;
+            padding: 18px;
+            margin: 12px 0;
+        }
+        .persona-card h5 {
+            color: #1e3a5f;
+            font-size: 1.1em;
+            margin-bottom: 8px;
+        }
+
+        /* ── Tool cards ── */
+        .tool-card {
+            background: white;
+            border: 2px solid #2c5f8d;
+            border-radius: 10px;
+            padding: 20px;
+            margin: 15px 0;
+        }
+        .tool-card h4 { color: #2c5f8d; font-size: 1.2em; margin-bottom: 8px; }
+
+        /* ── Footer ── */
+        .footer {
+            background: linear-gradient(135deg, #1e3a5f 0%, #2c5f8d 60%, #3a7ca5 100%);
+            color: white;
+            padding: 25px 20px;
+            text-align: center;
+        }
+        .footer p { opacity: 0.92; margin: 4px 0; }
+
+        @media (max-width: 720px) {
+            .do-dont-grid { grid-template-columns: 1fr; }
+        }
+    </style>
+</head>
+<body>
+<div class="container">
+
+    <div class="header">
+        <h1>📖 COP4834 Web Systems II</h1>
+        <p>Guide to End User Documentation — Creating Helpful, Usable Documentation</p>
+    </div>
+
+    <div class="content">
+
+        <div class="intro-box">
+            <h2>📚 Module Overview</h2>
+            <p>Documentation is how users learn to use your software without calling you at midnight. Good documentation reduces support costs, increases user satisfaction, accelerates onboarding, and extends the useful life of an application. Bad documentation frustrates users, increases support burden, and causes features to go unused. This guide covers everything you need to know about creating end-user documentation that actually helps — from understanding your audience to choosing formats, writing clearly, and leveraging modern tools including AI-assisted documentation. The focus is on <strong>documentation for end users</strong> — not technical API docs or developer guides, but the materials that help real people accomplish real tasks with your software.</p>
+        </div>
+
+
+        <!-- ═══════════════════════════════════════════════════════════════════ -->
+        <!-- SECTION 1 -->
+        <!-- ═══════════════════════════════════════════════════════════════════ -->
+        <button class="collapsible">1. What Is End-User Documentation and Why It Matters</button>
+        <div class="collapsible-content">
+            <div class="collapsible-inner">
+
+                <div class="info-box">
+                    <h4>📖 End-User Documentation vs. Other Documentation Types</h4>
+                    <p><strong>End-user documentation</strong> is written for the people who will use your software to accomplish their work or personal tasks — not for developers, system administrators, or technical implementers. It answers the user's question: <em>"How do I do the thing I need to do?"</em></p>
+                </div>
+
+                <h3>Types of Documentation by Audience</h3>
+
+                <table class="comparison-table">
+                    <thead>
+                        <tr><th>Type</th><th>Audience</th><th>Purpose</th><th>Examples</th></tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td><strong>End-User Documentation</strong></td>
+                            <td>People using the application</td>
+                            <td>How to accomplish tasks</td>
+                            <td>User guides, help articles, tooltips, video tutorials</td>
+                        </tr>
+                        <tr>
+                            <td><strong>API / Developer Docs</strong></td>
+                            <td>Developers integrating with the system</td>
+                            <td>How to call APIs, authentication, data formats</td>
+                            <td>API reference, SDK docs, code examples</td>
+                        </tr>
+                        <tr>
+                            <td><strong>System Admin Docs</strong></td>
+                            <td>People deploying and maintaining the system</td>
+                            <td>Installation, configuration, troubleshooting</td>
+                            <td>Deployment guides, configuration references</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Internal Technical Docs</strong></td>
+                            <td>Development team</td>
+                            <td>How the system is built, how to contribute</td>
+                            <td>Architecture docs, code comments, README files</td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <p>This guide focuses exclusively on <strong>end-user documentation</strong> — the hardest type to write well because users vary widely in technical skill, attention span, and motivation.</p>
+
+                <h3>Why Documentation Matters</h3>
+
+                <div class="feature-grid">
+                    <div class="feature-item">
+                        <h5>🎯 Reduces Support Volume</h5>
+                        <p>Every question answered in documentation is a support ticket you don't have to handle — and a faster resolution for the user.</p>
+                    </div>
+                    <div class="feature-item">
+                        <h5>⚡ Accelerates Onboarding</h5>
+                        <p>New users become productive faster when they can self-serve answers instead of waiting for training or help.</p>
+                    </div>
+                    <div class="feature-item">
+                        <h5>💰 Scales Support Cost-Effectively</h5>
+                        <p>Documentation scales infinitely. A support team does not. Good docs let you support 10,000 users as efficiently as 100.</p>
+                    </div>
+                    <div class="feature-item">
+                        <h5>📈 Increases Feature Adoption</h5>
+                        <p>Users discover and use features they didn't know existed when documentation surfaces them at the right time.</p>
+                    </div>
+                    <div class="feature-item">
+                        <h5>😊 Improves User Satisfaction</h5>
+                        <p>Users feel confident and empowered when they can find answers independently rather than feeling stuck.</p>
+                    </div>
+                    <div class="feature-item">
+                        <h5>🛡️ Reduces Legal and Compliance Risk</h5>
+                        <p>Documentation of correct usage patterns protects against liability and provides evidence of user education.</p>
+                    </div>
+                </div>
+
+                <h3>The Cost of Bad Documentation</h3>
+
+                <div class="danger-box">
+                    <h4>🚨 What Happens When Documentation Fails</h4>
+                    <ul>
+                        <li><strong>Support overload:</strong> Users flood the support team with questions that should be self-serviceable</li>
+                        <li><strong>Low adoption:</strong> Users abandon the software in favor of competitors with better documentation</li>
+                        <li><strong>Feature waste:</strong> Teams build features that go unused because users don't know they exist or how to use them</li>
+                        <li><strong>Training burden:</strong> Organizations must conduct repetitive training sessions that documentation could replace</li>
+                        <li><strong>Errors and misuse:</strong> Users make mistakes that could have been prevented by clear instructions</li>
+                        <li><strong>Poor reputation:</strong> "The software is too hard to learn" becomes the market narrative</li>
+                    </ul>
+                </div>
+
+                <h3>Documentation Is Not Optional</h3>
+
+                <div class="warning-box">
+                    <h4>⚠️ Common Excuses for Skipping Documentation</h4>
+                    <ul>
+                        <li><em>"The UI should be self-explanatory"</em> — No UI is completely self-explanatory for all users. Complex workflows require guidance.</li>
+                        <li><em>"We don't have time to write docs"</em> — You will spend far more time answering the same support questions repeatedly than you would writing documentation once.</li>
+                        <li><em>"Nobody reads documentation anyway"</em> — Users don't read bad documentation. They seek out good documentation when they're stuck.</li>
+                        <li><em>"We'll add documentation later"</em> — Documentation written after the fact by people who no longer remember the context is always worse than docs written alongside development.</li>
+                        <li><em>"We'll do training instead"</em> — Training doesn't scale and users forget. Documentation is available 24/7 and searchable.</li>
+                    </ul>
+                </div>
+
+                <div class="success-box">
+                    <h4>✅ Documentation as a Competitive Advantage</h4>
+                    <p>Companies like Stripe, Twilio, and Notion are famous not just for their products but for their exceptional documentation. Users choose products with great documentation because they know they won't be stuck when they hit a problem. <strong>Documentation quality is a feature that influences purchasing decisions.</strong></p>
+                </div>
+
+            </div>
+        </div>
+
+
+        <!-- ═══════════════════════════════════════════════════════════════════ -->
+        <!-- SECTION 2 -->
+        <!-- ═══════════════════════════════════════════════════════════════════ -->
+        <button class="collapsible">2. Understanding Your Audience — Who Are You Writing For?</button>
+        <div class="collapsible-content">
+            <div class="collapsible-inner">
+
+                <div class="info-box">
+                    <h4>📖 You Cannot Write Effective Documentation Without Knowing Your Readers</h4>
+                    <p>Documentation written for a generic "user" satisfies no one. Effective documentation anticipates the reader's knowledge level, goals, vocabulary, and context. Before writing a single word, define your audience explicitly.</p>
+                </div>
+
+                <h3>Key Audience Dimensions</h3>
+
+                <div class="step-container">
+                    <span class="step-number">1</span>
+                    <span class="step-title">Technical Proficiency</span>
+                    <div class="step-content">
+                        <ul>
+                            <li><strong>Non-technical users:</strong> Assume no prior software knowledge. Define every term. Use screenshots liberally. "Click the blue Save button in the top right corner."</li>
+                            <li><strong>Basic computer literacy:</strong> Familiar with common UI patterns (buttons, menus, forms). Can follow step-by-step instructions. "Navigate to Settings &gt; Profile to update your information."</li>
+                            <li><strong>Power users:</strong> Comfortable with software. Seek efficiency and shortcuts. Appreciate tables, keyboard shortcuts, and concise reference materials.</li>
+                            <li><strong>Technical users:</strong> May include developers or IT professionals using your app. Comfortable with technical terminology. Appreciate API access, automation capabilities, and integration docs.</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <div class="step-container">
+                    <span class="step-number">2</span>
+                    <span class="step-title">Domain Expertise</span>
+                    <div class="step-content">
+                        <ul>
+                            <li><strong>Domain novices:</strong> New to the field your software serves. Require definitions of domain terminology, background context, and explanations of why features exist.</li>
+                            <li><strong>Domain experts:</strong> Know their field deeply but may be new to your software. Want to map their existing mental models to your application. Appreciate comparisons to familiar tools.</li>
+                        </ul>
+                        <div class="example-box">
+                            <div class="example-label">Example: Accounting Software</div>
+                            <p>A CPA (domain expert) needs to know <em>where</em> to enter depreciation but not <em>what</em> depreciation is. A small business owner (domain novice) needs both the software instructions and a brief explanation of the accounting concept.</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="step-container">
+                    <span class="step-number">3</span>
+                    <span class="step-title">User Goals and Context</span>
+                    <div class="step-content">
+                        <ul>
+                            <li><strong>Task-oriented users:</strong> "How do I export a report?" They want the fastest path to completion. Provide quick-reference guides and step-by-step procedures.</li>
+                            <li><strong>Learning-oriented users:</strong> "How does this system work?" They want to understand the application holistically. Provide conceptual overviews, tutorials, and guided walkthroughs.</li>
+                            <li><strong>Problem-solving users:</strong> "Why isn't this working?" They are stuck or facing an error. Provide troubleshooting guides, FAQs, and error message explanations.</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <h3>Creating User Personas for Documentation</h3>
+
+                <div class="persona-card">
+                    <h5>Persona 1: Sarah — Office Administrator (Basic User)</h5>
+                    <ul style="margin-left:20px; font-size:0.9em;">
+                        <li><strong>Technical skill:</strong> Basic — comfortable with email and Microsoft Office</li>
+                        <li><strong>Domain expertise:</strong> Moderate — understands office workflows</li>
+                        <li><strong>Goals:</strong> Complete daily tasks efficiently without errors</li>
+                        <li><strong>Pain points:</strong> Intimidated by unfamiliar software, needs reassurance</li>
+                        <li><strong>Documentation needs:</strong> Step-by-step guides with screenshots, tooltips, simple language</li>
+                    </ul>
+                </div>
+
+                <div class="persona-card">
+                    <h5>Persona 2: David — Department Manager (Power User)</h5>
+                    <ul style="margin-left:20px; font-size:0.9em;">
+                        <li><strong>Technical skill:</strong> High — uses many software tools daily</li>
+                        <li><strong>Domain expertise:</strong> High — deep understanding of business processes</li>
+                        <li><strong>Goals:</strong> Maximize productivity, discover advanced features, automate repetitive tasks</li>
+                        <li><strong>Pain points:</strong> Frustrated by overly simplified instructions, wants efficiency</li>
+                        <li><strong>Documentation needs:</strong> Quick reference tables, keyboard shortcuts, advanced features guide, API access</li>
+                    </ul>
+                </div>
+
+                <div class="persona-card">
+                    <h5>Persona 3: Maria — New Employee (Learning-Oriented)</h5>
+                    <ul style="margin-left:20px; font-size:0.9em;">
+                        <li><strong>Technical skill:</strong> Variable — depends on background</li>
+                        <li><strong>Domain expertise:</strong> Low — learning both the software and the job</li>
+                        <li><strong>Goals:</strong> Understand how the system fits into her role, build confidence</li>
+                        <li><strong>Pain points:</strong> Overwhelmed by too much information at once</li>
+                        <li><strong>Documentation needs:</strong> Getting started guide, interactive tutorial, role-specific workflow examples</li>
+                    </ul>
+                </div>
+
+                <h3>Audience Research Methods</h3>
+
+                <ul>
+                    <li><strong>Support ticket analysis:</strong> What questions do users ask repeatedly? These reveal documentation gaps.</li>
+                    <li><strong>User interviews:</strong> Ask users what they struggle with, what they wish was documented, and how they prefer to learn.</li>
+                    <li><strong>Analytics:</strong> Which help articles get the most views? Which search terms return no results?</li>
+                    <li><strong>Usability testing:</strong> Watch users attempt tasks and note where they get confused or need help.</li>
+                    <li><strong>Surveys:</strong> Ask users to rate documentation usefulness and identify missing topics.</li>
+                </ul>
+
+                <div class="tip-box">
+                    <h4>💡 Write for the Least Technical User First</h4>
+                    <p>When in doubt, write for a less technical audience and provide "skip ahead" links for advanced users. A beginner cannot interpret advanced documentation, but a power user can skim past basics. Layered documentation serves both audiences — start simple, link to depth.</p>
+                </div>
+
+            </div>
+        </div>
+
+
+        <!-- ═══════════════════════════════════════════════════════════════════ -->
+        <!-- SECTION 3 -->
+        <!-- ═══════════════════════════════════════════════════════════════════ -->
+        <button class="collapsible">3. Types of End-User Documentation — Formats and Use Cases</button>
+        <div class="collapsible-content">
+            <div class="collapsible-inner">
+
+                <div class="info-box">
+                    <h4>📖 Different Information Needs Require Different Documentation Formats</h4>
+                    <p>A user trying to complete a specific task has different needs than a user trying to understand a concept or troubleshoot an error. Effective documentation systems provide multiple formats tailored to different use cases. The best documentation strategies combine several of these formats.</p>
+                </div>
+
+                <h3>Quick Reference vs. Learning vs. Troubleshooting</h3>
+
+                <table class="comparison-table">
+                    <thead>
+                        <tr><th>User Need</th><th>Documentation Type</th><th>Characteristics</th></tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td><strong>"How do I do X?"</strong></td>
+                            <td>Quick Reference / How-To</td>
+                            <td>Step-by-step, task-focused, concise, assumes basic familiarity</td>
+                        </tr>
+                        <tr>
+                            <td><strong>"How does this work?"</strong></td>
+                            <td>Conceptual / Learning</td>
+                            <td>Explains why and how systems behave, builds mental models, includes examples</td>
+                        </tr>
+                        <tr>
+                            <td><strong>"Why isn't it working?"</strong></td>
+                            <td>Troubleshooting / FAQ</td>
+                            <td>Problem → solution format, covers common errors, diagnostic steps</td>
+                        </tr>
+                        <tr>
+                            <td><strong>"What does this do?"</strong></td>
+                            <td>Reference / Feature List</td>
+                            <td>Comprehensive, organized by feature, complete but not instructional</td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <h3>Documentation Format Catalog</h3>
+
+                <div class="doc-type-card">
+                    <div class="doc-type-header">
+                        <h4>1. User Manuals / Guides <span class="badge badge-classic">Classic</span></h4>
+                    </div>
+                    <div class="doc-type-body">
+                        <p><strong>What it is:</strong> Comprehensive written documentation covering all features and workflows in a structured document (PDF, web page, or printed book).</p>
+                        <p><strong>Best for:</strong> Complex software, regulated industries requiring formal documentation, offline use, reference material</p>
+                        <p><strong>Strengths:</strong></p>
+                        <ul>
+                            <li>Complete and authoritative</li>
+                            <li>Can be printed or read offline</li>
+                            <li>Good for sequential learning</li>
+                            <li>Meets compliance requirements for documented procedures</li>
+                        </ul>
+                        <p><strong>Weaknesses:</strong></p>
+                        <ul>
+                            <li>Time-consuming to create and maintain</li>
+                            <li>Users rarely read cover-to-cover</li>
+                            <li>Difficult to search in PDF format</li>
+                            <li>Quickly becomes outdated as software changes</li>
+                        </ul>
+                        <p><strong>Format recommendations:</strong> Organized by user role or workflow, not by feature list. Include a detailed table of contents and index. Keep individual sections under 2 pages each.</p>
+                    </div>
+                </div>
+
+                <div class="doc-type-card">
+                    <div class="doc-type-header">
+                        <h4>2. Knowledge Base / Help Center <span class="badge badge-modern">Modern Standard</span></h4>
+                    </div>
+                    <div class="doc-type-body">
+                        <p><strong>What it is:</strong> Searchable online repository of articles organized by topic or category. Users can search or browse to find answers.</p>
+                        <p><strong>Best for:</strong> SaaS applications, web applications, products with frequent updates</p>
+                        <p><strong>Strengths:</strong></p>
+                        <ul>
+                            <li>Searchable and easy to navigate</li>
+                            <li>Can be updated in real-time as software changes</li>
+                            <li>Accessible 24/7 from anywhere</li>
+                            <li>Can track which articles are most viewed (analytics)</li>
+                            <li>Lower maintenance burden than printed manuals</li>
+                        </ul>
+                        <p><strong>Weaknesses:</strong></p>
+                        <ul>
+                            <li>Requires internet access</li>
+                            <li>Search quality depends on article quality and tagging</li>
+                            <li>Can become disorganized without good information architecture</li>
+                        </ul>
+                        <p><strong>Tools:</strong> Zendesk Guide, Intercom Articles, Notion (published), GitBook, HelpDocs, Document360</p>
+                    </div>
+                </div>
+
+                <div class="doc-type-card">
+                    <div class="doc-type-header">
+                        <h4>3. In-App Help / Contextual Help <span class="badge badge-modern">High Value</span></h4>
+                    </div>
+                    <div class="doc-type-body">
+                        <p><strong>What it is:</strong> Help content displayed directly within the application interface — tooltips, info icons, help panels, in-context tutorials.</p>
+                        <p><strong>Best for:</strong> Complex interfaces, features with non-obvious behavior, forms with specific requirements</p>
+                        <p><strong>Strengths:</strong></p>
+                        <ul>
+                            <li>Help arrives exactly when and where the user needs it</li>
+                            <li>Reduces context switching (no need to leave the app)</li>
+                            <li>Higher usage rates than external documentation</li>
+                            <li>Reduces perceived learning curve</li>
+                        </ul>
+                        <p><strong>Weaknesses:</strong></p>
+                        <ul>
+                            <li>More development effort required — must be built into the UI</li>
+                            <li>Limited space for detailed explanations</li>
+                            <li>Must be maintained as part of the codebase</li>
+                        </ul>
+                        <p><strong>Implementation:</strong> Tooltips on hover, "?" icons that open help panels, contextual help text below form fields, inline validation messages that explain requirements</p>
+                        <p><strong>Tools:</strong> React/Vue component libraries with tooltip support, Appcues, Pendo, WalkMe for guided tours</p>
+                    </div>
+                </div>
+
+                <div class="doc-type-card">
+                    <div class="doc-type-header">
+                        <h4>4. Video Tutorials <span class="badge badge-modern">High Engagement</span></h4>
+                    </div>
+                    <div class="doc-type-body">
+                        <p><strong>What it is:</strong> Screen recordings with voiceover or captions demonstrating how to complete tasks or use features.</p>
+                        <p><strong>Best for:</strong> Visual workflows, complex multi-step processes, onboarding new users</p>
+                        <p><strong>Strengths:</strong></p>
+                        <ul>
+                            <li>Show exactly what the user should see and do</li>
+                            <li>High engagement — people watch videos when they won't read text</li>
+                            <li>Excellent for visual learners</li>
+                            <li>Can convey tone and personality</li>
+                        </ul>
+                        <p><strong>Weaknesses:</strong></p>
+                        <ul>
+                            <li>Expensive and time-consuming to produce</li>
+                            <li>Cannot be skimmed or searched like text</li>
+                            <li>Difficult to update — UI changes require re-recording</li>
+                            <li>Not accessible to users who cannot watch videos (must provide transcripts)</li>
+                            <li>Bandwidth requirements for users on slow connections</li>
+                        </ul>
+                        <p><strong>Best practices:</strong> Keep videos under 3 minutes. Provide chapter markers or timestamps. Include captions. Supplement with written equivalents.</p>
+                        <p><strong>Tools:</strong> Loom, Camtasia, ScreenFlow, OBS Studio (free)</p>
+                    </div>
+                </div>
+
+                <div class="doc-type-card">
+                    <div class="doc-type-header">
+                        <h4>5. Interactive Tutorials / Product Tours <span class="badge badge-modern">Onboarding</span></h4>
+                    </div>
+                    <div class="doc-type-body">
+                        <p><strong>What it is:</strong> Guided walkthroughs that overlay the actual interface, prompting users to complete steps and interact with real UI elements.</p>
+                        <p><strong>Best for:</strong> Onboarding new users, introducing new features, teaching multi-step workflows</p>
+                        <p><strong>Strengths:</strong></p>
+                        <ul>
+                            <li>Learning by doing — users practice on the real interface</li>
+                            <li>Higher completion rates than passive tutorials</li>
+                            <li>Builds muscle memory and confidence</li>
+                            <li>Can be personalized based on user role or behavior</li>
+                        </ul>
+                        <p><strong>Weaknesses:</strong></p>
+                        <ul>
+                            <li>Requires specialized tools or significant development effort</li>
+                            <li>Must be updated when UI changes</li>
+                            <li>Can feel intrusive if poorly timed</li>
+                        </ul>
+                        <p><strong>Tools:</strong> Appcues, Pendo, WalkMe, Chameleon, Intro.js (open source library)</p>
+                    </div>
+                </div>
+
+                <div class="doc-type-card">
+                    <div class="doc-type-header">
+                        <h4>6. FAQs (Frequently Asked Questions) <span class="badge badge-basic">Essential</span></h4>
+                    </div>
+                    <div class="doc-type-body">
+                        <p><strong>What it is:</strong> A list of common questions with concise answers, typically organized by topic.</p>
+                        <p><strong>Best for:</strong> Addressing repetitive questions, clarifying confusion, providing quick answers</p>
+                        <p><strong>Strengths:</strong></p>
+                        <ul>
+                            <li>Directly addresses real user questions</li>
+                            <li>Easy to scan and find relevant information</li>
+                            <li>Quick to create and update</li>
+                            <li>Reduces support volume for common issues</li>
+                        </ul>
+                        <p><strong>Weaknesses:</strong></p>
+                        <ul>
+                            <li>Can become disorganized if too long</li>
+                            <li>Not suitable for complex, multi-step procedures</li>
+                            <li>Users must know what question to ask</li>
+                        </ul>
+                        <p><strong>Best practices:</strong> Base FAQs on actual support tickets and user questions. Use clear, specific question titles. Link to detailed articles for complex answers. Keep the list under 20–30 items.</p>
+                    </div>
+                </div>
+
+                <div class="doc-type-card">
+                    <div class="doc-type-header">
+                        <h4>7. Release Notes / Changelog <span class="badge badge-basic">Maintenance</span></h4>
+                    </div>
+                    <div class="doc-type-body">
+                        <p><strong>What it is:</strong> Documentation of what changed in each software update — new features, bug fixes, improvements.</p>
+                        <p><strong>Best for:</strong> Keeping existing users informed, communicating improvements, setting expectations</p>
+                        <p><strong>Strengths:</strong></p>
+                        <ul>
+                            <li>Keeps users aware of changes and new capabilities</li>
+                            <li>Reduces confusion when UI or behavior changes</li>
+                            <li>Demonstrates active development and responsiveness</li>
+                        </ul>
+                        <p><strong>Best practices:</strong> Write for users, not developers — explain impact, not implementation. Use plain language. Categorize by type (new features, improvements, bug fixes). Link to detailed docs for major changes.</p>
+                    </div>
+                </div>
+
+                <div class="doc-type-card">
+                    <div class="doc-type-header">
+                        <h4>8. Quick Start / Getting Started Guides <span class="badge badge-basic">Critical</span></h4>
+                    </div>
+                    <div class="doc-type-body">
+                        <p><strong>What it is:</strong> A streamlined guide designed to get a new user from zero to their first success as quickly as possible.</p>
+                        <p><strong>Best for:</strong> Onboarding new users, trial users evaluating the product, reducing time-to-value</p>
+                        <p><strong>Strengths:</strong></p>
+                        <ul>
+                            <li>Focused on immediate value — gets users productive fast</li>
+                            <li>Reduces early abandonment</li>
+                            <li>Provides a clear starting point for overwhelmed users</li>
+                        </ul>
+                        <p><strong>Best practices:</strong> Focus on a single successful outcome. Limit to 5–10 steps. Use screenshots for every step. Assume zero prior knowledge. End with a clear "what's next" path.</p>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+
+
+        <!-- ═══════════════════════════════════════════════════════════════════ -->
+        <!-- SECTION 4 -->
+        <!-- ═══════════════════════════════════════════════════════════════════ -->
+        <button class="collapsible">4. Writing Effective Documentation — Principles and Best Practices</button>
+        <div class="collapsible-content">
+            <div class="collapsible-inner">
+
+                <div class="info-box">
+                    <h4>📖 Good Documentation Is Clear, Concise, and Actionable</h4>
+                    <p>Documentation quality is not about how much you write — it is about how effectively you help the user accomplish their goal. Every word should earn its place. Every sentence should move the user closer to success.</p>
+                </div>
+
+                <h3>The Cardinal Rules of User Documentation</h3>
+
+                <div class="do-dont-grid">
+                    <div class="do-box">
+                        <h4>✅ DO</h4>
+                        <ul>
+                            <li>Write in second person ("Click the Save button")</li>
+                            <li>Use active voice ("The system sends an email")</li>
+                            <li>Use present tense ("The page displays your results")</li>
+                            <li>Start with the action ("To export data, click Export")</li>
+                            <li>Use concrete, specific language ("Click the blue Save button" not "save your work")</li>
+                            <li>Define terms the first time you use them</li>
+                            <li>Include examples for complex concepts</li>
+                            <li>Use screenshots to show UI elements</li>
+                            <li>Break long procedures into numbered steps</li>
+                            <li>Test your documentation by having someone follow it</li>
+                        </ul>
+                    </div>
+                    <div class="dont-box">
+                        <h4>❌ DON'T</h4>
+                        <ul>
+                            <li>Use passive voice ("The button should be clicked")</li>
+                            <li>Use future tense ("The system will send an email")</li>
+                            <li>Use vague pronouns ("it," "this," "that") without clear antecedents</li>
+                            <li>Assume the user knows jargon or acronyms</li>
+                            <li>Write long, dense paragraphs (break them up)</li>
+                            <li>Bury the important action deep in a sentence</li>
+                            <li>Say "simply" or "just" or "easy" (condescending and often wrong)</li>
+                            <li>Include unnecessary background before the procedure</li>
+                            <li>Forget to explain what success looks like</li>
+                            <li>Use humor or sarcasm (it doesn't translate universally)</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <h3>The Structure of a Good Procedural Document</h3>
+
+                <div class="step-container">
+                    <span class="step-number">1</span>
+                    <span class="step-title">Start With a Clear, Descriptive Title</span>
+                    <div class="step-content">
+                        <p>The title should tell the user exactly what they will accomplish.</p>
+                        <div class="example-box">
+                            <div class="example-label">❌ Bad Titles</div>
+                            <ul style="margin-left:20px;margin-top:8px;">
+                                <li>"Using the System"</li>
+                                <li>"Reports"</li>
+                                <li>"Help"</li>
+                            </ul>
+                        </div>
+                        <div class="example-box">
+                            <div class="example-label">✅ Good Titles</div>
+                            <ul style="margin-left:20px;margin-top:8px;">
+                                <li>"How to Export a Sales Report to Excel"</li>
+                                <li>"Adding a New User Account"</li>
+                                <li>"Troubleshooting Failed Login Attempts"</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="step-container">
+                    <span class="step-number">2</span>
+                    <span class="step-title">Provide Context (Briefly)</span>
+                    <div class="step-content">
+                        <p>In 1–2 sentences, explain why the user would do this or what it accomplishes. Then get to the steps immediately.</p>
+                        <div class="example-box">
+                            <div class="example-label">✅ Example</div>
+                            <p style="margin-top:8px;">"You can export your sales data to Excel for further analysis or to share with your team. The export includes all data from the selected date range."</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="step-container">
+                    <span class="step-number">3</span>
+                    <span class="step-title">State Prerequisites</span>
+                    <div class="step-content">
+                        <p>If the user needs specific permissions, data, or prior setup, state it up front before they start following steps.</p>
+                        <div class="example-box">
+                            <div class="example-label">✅ Example</div>
+                            <p style="margin-top:8px;"><strong>Before you begin:</strong> You must have the "Reports Manager" role to export data. If you don't see the Export button, contact your administrator.</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="step-container">
+                    <span class="step-number">4</span>
+                    <span class="step-title">Write Clear, Numbered Steps</span>
+                    <div class="step-content">
+                        <ul>
+                            <li>One action per step</li>
+                            <li>Start each step with an action verb (Click, Enter, Select, Choose)</li>
+                            <li>Use specific UI element names ("Click the blue <strong>Save</strong> button")</li>
+                            <li>Indicate what happens after an action ("A confirmation dialog appears")</li>
+                            <li>Use sub-steps (a, b, c) for grouped actions within a single step</li>
+                        </ul>
+                        <div class="example-box">
+                            <div class="example-label">✅ Example</div>
+                            <ol style="margin-left:20px;margin-top:8px;">
+                                <li>Navigate to <strong>Reports</strong> &gt; <strong>Sales Summary</strong>.</li>
+                                <li>Select the date range using the calendar dropdown.</li>
+                                <li>Click the <strong>Export</strong> button in the top right corner.</li>
+                                <li>Choose <strong>Excel (.xlsx)</strong> from the format options.</li>
+                                <li>Click <strong>Download</strong>.<br>The file downloads to your default Downloads folder.</li>
+                            </ol>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="step-container">
+                    <span class="step-number">5</span>
+                    <span class="step-title">Confirm Success</span>
+                    <div class="step-content">
+                        <p>Tell the user how to verify the task completed successfully.</p>
+                        <div class="example-box">
+                            <div class="example-label">✅ Example</div>
+                            <p style="margin-top:8px;"><strong>Success:</strong> You will see a "Report downloaded successfully" notification, and the file will appear in your Downloads folder.</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="step-container">
+                    <span class="step-number">6</span>
+                    <span class="step-title">Provide Next Steps or Related Information</span>
+                    <div class="step-content">
+                        <p>Link to related procedures or suggest what the user might want to do next.</p>
+                        <div class="example-box">
+                            <div class="example-label">✅ Example</div>
+                            <p style="margin-top:8px;"><strong>What's next?</strong></p>
+                            <ul style="margin-left:20px;">
+                                <li>Learn how to <a href="#">schedule automated reports</a></li>
+                                <li>Customize your report columns by <a href="#">editing report templates</a></li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+
+                <h3>Using Screenshots Effectively</h3>
+
+                <div class="tip-box">
+                    <h4>💡 Screenshot Best Practices</h4>
+                    <ul>
+                        <li><strong>Annotate screenshots:</strong> Add arrows, boxes, or numbered callouts to highlight the relevant UI element</li>
+                        <li><strong>Crop tightly:</strong> Show only the relevant portion of the screen, not the entire desktop</li>
+                        <li><strong>Use high resolution:</strong> Ensure text is crisp and readable</li>
+                        <li><strong>Keep them current:</strong> Update screenshots immediately when the UI changes</li>
+                        <li><strong>Use alt text:</strong> Describe what's in the screenshot for accessibility and SEO</li>
+                        <li><strong>Don't use screenshots for text:</strong> Text in images is not searchable or translatable</li>
+                        <li><strong>Show the result:</strong> Include a "before" and "after" screenshot when helpful</li>
+                    </ul>
+                </div>
+
+                <h3>Writing for Scannability</h3>
+
+                <p>Users do not read documentation linearly — they scan for the information they need. Structure your documentation to support scanning:</p>
+                <ul>
+                    <li><strong>Use descriptive headings:</strong> Headings should tell users what's in the section without reading the body</li>
+                    <li><strong>Use short paragraphs:</strong> 2–4 sentences maximum</li>
+                    <li><strong>Use bullet points and numbered lists:</strong> Easier to scan than paragraphs</li>
+                    <li><strong>Bold key terms:</strong> Helps users locate important information</li>
+                    <li><strong>Use white space:</strong> Dense text blocks are intimidating and hard to scan</li>
+                    <li><strong>Put important information first:</strong> Front-load each section with the most critical content</li>
+                </ul>
+
+                <h3>Tone and Voice</h3>
+
+                <div class="success-box">
+                    <h4>✅ The Right Tone for User Documentation</h4>
+                    <ul>
+                        <li><strong>Helpful, not condescending:</strong> Assume the user is intelligent but unfamiliar with this specific software</li>
+                        <li><strong>Direct, not chatty:</strong> Be friendly but respect the user's time — get to the point</li>
+                        <li><strong>Confident, not arrogant:</strong> Explain clearly without suggesting the task is "obvious" or "simple"</li>
+                        <li><strong>Professional, not stiff:</strong> Use conversational language without slipping into overly casual or unprofessional phrasing</li>
+                        <li><strong>Reassuring, not patronizing:</strong> Acknowledge complexity without making the user feel incapable</li>
+                    </ul>
+                </div>
+
+                <div class="example-box">
+                    <div class="example-label">❌ Poor Tone Examples</div>
+                    <ul style="margin-left:20px;margin-top:8px;">
+                        <li>"Obviously, you'll want to save your work first." <em>(condescending)</em></li>
+                        <li>"Hey there! Let's dive into this super cool feature!" <em>(overly casual)</em></li>
+                        <li>"Anyone can figure this out — it's easy!" <em>(dismissive of user difficulty)</em></li>
+                        <li>"If you were paying attention, you would have..." <em>(blaming)</em></li>
+                    </ul>
+                </div>
+
+                <div class="example-box">
+                    <div class="example-label">✅ Good Tone Examples</div>
+                    <ul style="margin-left:20px;margin-top:8px;">
+                        <li>"Before you begin, make sure you've saved any unsaved work."</li>
+                        <li>"This feature allows you to automate repetitive tasks."</li>
+                        <li>"If you encounter an error, refer to the Troubleshooting section below."</li>
+                        <li>"To get started, follow these steps:"</li>
+                    </ul>
+                </div>
+
+            </div>
+        </div>
+
+
+        <!-- ═══════════════════════════════════════════════════════════════════ -->
+        <!-- SECTION 5 -->
+        <!-- ═══════════════════════════════════════════════════════════════════ -->
+        <button class="collapsible">5. Modern Documentation Approaches — Dynamic and AI-Powered Help</button>
+        <div class="collapsible-content">
+            <div class="collapsible-inner">
+
+                <div class="info-box">
+                    <h4>📖 Documentation Is Evolving Beyond Static Pages</h4>
+                    <p>Traditional static documentation has significant limitations: it goes out of date, it cannot adapt to individual users, and it requires users to leave their workflow to find answers. Modern approaches use technology to deliver personalized, context-aware help directly when and where users need it.</p>
+                </div>
+
+                <h3>Dynamically Generated Documentation</h3>
+
+                <div class="tool-card">
+                    <h4>What It Is</h4>
+                    <p>Documentation that is generated or personalized in real-time based on the user's role, permissions, data, or current context within the application.</p>
+                    <p><strong>Examples:</strong></p>
+                    <ul>
+                        <li><strong>Role-based help:</strong> Administrators see documentation about admin features; regular users see only features available to them</li>
+                        <li><strong>Contextual examples:</strong> Help articles that reference the user's own data ("Here's how to edit <em>your</em> profile" vs. generic "how to edit profiles")</li>
+                        <li><strong>Feature-flag-aware docs:</strong> Documentation automatically shows or hides features based on what's enabled for the user's account</li>
+                        <li><strong>State-aware guidance:</strong> The help content adapts based on the user's progress ("You haven't set up X yet — here's how")</li>
+                    </ul>
+                    <p><strong>Implementation approaches:</strong></p>
+                    <ul>
+                        <li>Template-based content with variables replaced at render time</li>
+                        <li>API-driven help systems that query user state and permissions</li>
+                        <li>Conditional content blocks that show/hide based on user attributes</li>
+                    </ul>
+                    <p><strong>Benefits:</strong> More relevant, less overwhelming (users only see what applies to them), reduces confusion from seeing unavailable features documented</p>
+                </div>
+
+                <h3>AI-Powered Documentation Assistants</h3>
+
+                <div class="tool-card">
+                    <h4>Conversational AI Help (Chatbots)</h4>
+                    <p>AI chatbots trained on your documentation that can answer user questions in natural language, 24/7.</p>
+                    <p><strong>How it works:</strong></p>
+                    <ul>
+                        <li>User asks a question in plain language ("How do I reset my password?")</li>
+                        <li>AI searches documentation, synthesizes an answer, and responds</li>
+                        <li>Can ask clarifying questions if the query is ambiguous</li>
+                        <li>Can escalate to human support if unable to answer</li>
+                    </ul>
+                    <p><strong>Advantages:</strong></p>
+                    <ul>
+                        <li>Users can ask questions naturally without learning specific search terms</li>
+                        <li>Available 24/7 with no wait time</li>
+                        <li>Can handle variations in how users phrase questions</li>
+                        <li>Reduces support ticket volume for routine questions</li>
+                        <li>Learns which questions are most common (reveals documentation gaps)</li>
+                    </ul>
+                    <p><strong>Challenges:</strong></p>
+                    <ul>
+                        <li>Accuracy depends on documentation quality — AI amplifies existing documentation gaps</li>
+                        <li>Can confidently provide incorrect answers if documentation is ambiguous</li>
+                        <li>Requires ongoing training and refinement</li>
+                        <li>Users may not trust AI answers for critical decisions</li>
+                        <li>Must have a clear escalation path to humans</li>
+                    </ul>
+                    <p><strong>Tools:</strong> Intercom Fin (AI chatbot), Zendesk AI, Ada, custom implementations using OpenAI API with RAG (Retrieval-Augmented Generation)</p>
+                </div>
+
+                <div class="tool-card">
+                    <h4>AI-Assisted Documentation Writing</h4>
+                    <p>Tools that help documentation writers create content faster and with higher quality.</p>
+                    <p><strong>Use cases:</strong></p>
+                    <ul>
+                        <li><strong>First draft generation:</strong> AI generates a skeleton article from a feature description or user story</li>
+                        <li><strong>Screenshot annotation:</strong> AI identifies UI elements in screenshots and suggests annotations</li>
+                        <li><strong>Content improvement:</strong> AI rewrites sections for clarity, conciseness, or reading level</li>
+                        <li><strong>Consistency checking:</strong> AI flags terminology inconsistencies across documentation</li>
+                        <li><strong>Translation:</strong> AI translates documentation into multiple languages (with human review)</li>
+                        <li><strong>Gap identification:</strong> AI analyzes support tickets and identifies missing or inadequate documentation</li>
+                    </ul>
+                    <p><strong>Reality check:</strong> AI is a powerful drafting and editing assistant but should not replace human documentation writers. AI-generated content must always be reviewed, tested, and refined by someone who understands the product and the users. AI can accelerate the process but cannot replace domain expertise.</p>
+                </div>
+
+                <h3>Interactive Documentation</h3>
+
+                <div class="tool-card">
+                    <h4>Runnable Examples / Live Demos</h4>
+                    <p>Documentation that includes interactive elements users can manipulate to see how features work.</p>
+                    <p><strong>Examples:</strong></p>
+                    <ul>
+                        <li><strong>Embedded sandboxes:</strong> Users can edit code or settings directly in the documentation and see results in real-time (common in developer docs but applicable to end-user configuration)</li>
+                        <li><strong>Interactive calculators:</strong> Users input their own values and see calculated results</li>
+                        <li><strong>Form builders:</strong> Users experiment with form configurations and see the output</li>
+                        <li><strong>Preview modes:</strong> Users can try features in a safe demo environment without affecting real data</li>
+                    </ul>
+                    <p><strong>Benefits:</strong> Learning by doing is far more effective than reading. Users understand features faster and retain knowledge better.</p>
+                </div>
+
+                <h3>Documentation Analytics and Continuous Improvement</h3>
+
+                <div class="tool-card">
+                    <h4>Metrics That Drive Better Documentation</h4>
+                    <p>Track documentation performance to understand what's working and what needs improvement.</p>
+                    <p><strong>Key metrics:</strong></p>
+                    <ul>
+                        <li><strong>Page views:</strong> Which articles are most accessed? (indicates common questions)</li>
+                        <li><strong>Search queries:</strong> What are users searching for? Do they find results?</li>
+                        <li><strong>Zero-result searches:</strong> Searches that return no articles (documentation gaps)</li>
+                        <li><strong>Time on page:</strong> Do users read the whole article or bounce immediately?</li>
+                        <li><strong>Helpfulness ratings:</strong> "Was this article helpful?" Yes/No feedback</li>
+                        <li><strong>Support ticket deflection:</strong> Do users who view an article still submit a support ticket?</li>
+                        <li><strong>Completion rate:</strong> For tutorials, how many users finish vs. abandon?</li>
+                    </ul>
+                    <p><strong>Using the data:</strong></p>
+                    <ul>
+                        <li>High-traffic articles with low helpfulness ratings need rewriting</li>
+                        <li>Common zero-result searches indicate missing documentation</li>
+                        <li>Support tickets on topics that have documentation indicate the documentation is hard to find or inadequate</li>
+                        <li>Articles with high bounce rates may have misleading titles or poor content</li>
+                    </ul>
+                </div>
+
+                <h3>Personalized Learning Paths</h3>
+
+                <div class="tool-card">
+                    <h4>Adaptive Documentation Based on User Behavior</h4>
+                    <p>Systems that track what users have learned and suggest next steps personalized to their role and experience level.</p>
+                    <p><strong>How it works:</strong></p>
+                    <ul>
+                        <li>System tracks which tutorials the user has completed</li>
+                        <li>System monitors which features the user has/hasn't used</li>
+                        <li>System suggests documentation or tutorials for unused features relevant to the user's role</li>
+                        <li>Progressive disclosure: advanced documentation unlocks after basics are mastered</li>
+                    </ul>
+                    <p><strong>Example:</strong> "We noticed you haven't created a report yet. Here's a 2-minute guide to get started."</p>
+                </div>
+
+                <h3>Choosing the Right Modern Approach</h3>
+
+                <div class="success-box">
+                    <h4>✅ Decision Framework for Modern Documentation Tools</h4>
+                    <ul>
+                        <li><strong>Start with the basics first:</strong> Modern tools enhance good documentation — they do not fix fundamentally bad documentation. Build a solid knowledge base before investing in AI chatbots.</li>
+                        <li><strong>Prioritize in-app help:</strong> Contextual help (tooltips, guided tours) has the highest ROI because it reaches users at the moment of need.</li>
+                        <li><strong>Add AI chatbots when documentation is mature:</strong> A chatbot trained on poor documentation gives poor answers. Wait until your knowledge base is comprehensive and accurate.</li>
+                        <li><strong>Use analytics to drive improvements:</strong> Measure what users are searching for and which articles are unhelpful. Fix those before building new features.</li>
+                        <li><strong>Personalization scales with user base:</strong> Dynamic/personalized documentation makes the most sense when you have thousands of users with diverse needs. For small user bases, static documentation may suffice.</li>
+                    </ul>
+                </div>
+
+            </div>
+        </div>
+
+
+        <!-- ═══════════════════════════════════════════════════════════════════ -->
+        <!-- SECTION 6 -->
+        <!-- ═══════════════════════════════════════════════════════════════════ -->
+        <button class="collapsible">6. Documentation Tools and Platforms</button>
+        <div class="collapsible-content">
+            <div class="collapsible-inner">
+
+                <h3>Knowledge Base / Help Center Platforms</h3>
+
+                <table class="comparison-table">
+                    <thead>
+                        <tr><th>Platform</th><th>Best For</th><th>Pricing</th><th>Key Features</th></tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td><strong>Zendesk Guide</strong></td>
+                            <td>Medium to large teams, integrated with Zendesk support</td>
+                            <td>$5–$49/agent/month</td>
+                            <td>Powerful search, multilingual support, community forums, AI-powered answers, tight integration with ticketing</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Intercom Articles</strong></td>
+                            <td>SaaS companies, in-app help integration</td>
+                            <td>$74–$395+/month</td>
+                            <td>In-app messenger integration, AI chatbot (Fin), targeted content delivery, user behavior tracking</td>
+                        </tr>
+                        <tr>
+                            <td><strong>GitBook</strong></td>
+                            <td>Developer-focused products, technical documentation</td>
+                            <td>Free–$99+/month</td>
+                            <td>Markdown-based, Git sync, API documentation support, beautiful default theme, version control</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Notion (Public Pages)</strong></td>
+                            <td>Startups, small teams, internal-first docs that can be published</td>
+                            <td>Free–$15/user/month</td>
+                            <td>Flexible content structure, embeds, databases, easy to maintain, doubles as internal wiki</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Document360</strong></td>
+                            <td>Dedicated knowledge base, any size team</td>
+                            <td>$149–$399+/month</td>
+                            <td>Category manager, version control, analytics, private/public knowledge bases, Markdown support</td>
+                        </tr>
+                        <tr>
+                            <td><strong>HelpDocs</strong></td>
+                            <td>Small to medium SaaS companies</td>
+                            <td>$49–$299/month</td>
+                            <td>Fast setup, instant search, embeddable widget, simple analytics, clean UI</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Confluence (Atlassian)</strong></td>
+                            <td>Enterprise, teams already using Jira</td>
+                            <td>$5.75–$11/user/month</td>
+                            <td>Jira integration, powerful permissions, page templates, collaboration features</td>
+                        </tr>
+                        <tr>
+                            <td><strong>ReadMe</strong></td>
+                            <td>API-first companies, developer documentation</td>
+                            <td>$99–$399+/month</td>
+                            <td>Interactive API explorer, OpenAPI spec import, code examples in multiple languages, analytics</td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <h3>Interactive Tutorial / Onboarding Tools</h3>
+
+                <table class="comparison-table">
+                    <thead>
+                        <tr><th>Tool</th><th>Best For</th><th>Pricing</th><th>Capabilities</th></tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td><strong>Appcues</strong></td>
+                            <td>Web apps, onboarding flows</td>
+                            <td>$249–$879+/month</td>
+                            <td>Product tours, tooltips, in-app surveys, segmentation, analytics</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Pendo</strong></td>
+                            <td>Product-led growth, large enterprises</td>
+                            <td>Custom pricing (enterprise)</td>
+                            <td>Guides, surveys, product analytics, user feedback, roadmap communication</td>
+                        </tr>
+                        <tr>
+                            <td><strong>WalkMe</strong></td>
+                            <td>Enterprise software, complex applications</td>
+                            <td>Custom pricing (enterprise)</td>
+                            <td>Guided walkthroughs, task automation, analytics, works on any web application</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Chameleon</strong></td>
+                            <td>SaaS products, growth-focused teams</td>
+                            <td>$279–$999+/month</td>
+                            <td>Product tours, tooltips, launchers, HelpBar, micro-surveys</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Intro.js</strong></td>
+                            <td>Developers, custom implementations</td>
+                            <td>Free (open source)</td>
+                            <td>Lightweight JavaScript library, step-by-step tours, customizable styling</td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <h3>Video Creation Tools</h3>
+
+                <table class="comparison-table">
+                    <thead>
+                        <tr><th>Tool</th><th>Best For</th><th>Pricing</th><th>Features</th></tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td><strong>Loom</strong></td>
+                            <td>Quick screen recordings, async communication</td>
+                            <td>Free–$12.50/user/month</td>
+                            <td>Browser extension, desktop app, instant sharing, transcription, emoji reactions</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Camtasia</strong></td>
+                            <td>Professional tutorials, polished videos</td>
+                            <td>$299.99 one-time</td>
+                            <td>Screen recording, video editing, animations, transitions, effects, quizzes</td>
+                        </tr>
+                        <tr>
+                            <td><strong>ScreenFlow (Mac)</strong></td>
+                            <td>Mac users, high-quality tutorials</td>
+                            <td>$169 one-time</td>
+                            <td>Screen + camera recording, editing, annotations, iOS device recording</td>
+                        </tr>
+                        <tr>
+                            <td><strong>OBS Studio</strong></td>
+                            <td>Free option, technical users</td>
+                            <td>Free (open source)</td>
+                            <td>Screen recording, streaming, scene composition, highly configurable</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Snagit</strong></td>
+                            <td>Screenshots + short videos</td>
+                            <td>$62.99 one-time</td>
+                            <td>Screenshots, annotations, short screen recordings, image editing, templates</td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <h3>AI-Powered Documentation Tools</h3>
+
+                <table class="comparison-table">
+                    <thead>
+                        <tr><th>Tool</th><th>Capability</th><th>Use Case</th></tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td><strong>Intercom Fin</strong></td>
+                            <td>AI chatbot for customer support</td>
+                            <td>Answer user questions based on knowledge base articles</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Zendesk AI</strong></td>
+                            <td>AI-powered answers and suggestions</td>
+                            <td>Suggest articles to support agents and users, auto-categorize tickets</td>
+                        </tr>
+                        <tr>
+                            <td><strong>ChatGPT / OpenAI API</strong></td>
+                            <td>Custom AI implementations</td>
+                            <td>Build custom chatbots trained on your documentation (RAG pattern)</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Scribe</strong></td>
+                            <td>Auto-generate step-by-step guides</td>
+                            <td>Records your clicks and generates written guides with screenshots automatically</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Tango</strong></td>
+                            <td>Auto-capture workflows</td>
+                            <td>Similar to Scribe — captures workflows and generates documentation</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Grammarly / LanguageTool</strong></td>
+                            <td>Writing assistance</td>
+                            <td>Check grammar, clarity, tone, and reading level</td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <h3>Documentation Format Tools</h3>
+
+                <table class="comparison-table">
+                    <thead>
+                        <tr><th>Format</th><th>Tools</th><th>Best For</th></tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td><strong>PDF User Manuals</strong></td>
+                            <td>Adobe InDesign, Microsoft Word, LaTeX, Markdown → PDF</td>
+                            <td>Print documentation, regulated industries, offline distribution</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Web-Based Docs</strong></td>
+                            <td>Platforms listed above, static site generators (Docusaurus, VuePress)</td>
+                            <td>Modern web apps, SaaS, searchable and updatable</td>
+                        </tr>
+                        <tr>
+                            <td><strong>In-App Help Widgets</strong></td>
+                            <td>Intercom, HelpScout Beacon, Custom iframe embeds</td>
+                            <td>Contextual help without leaving the application</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Markdown</strong></td>
+                            <td>Any text editor, GitBook, Docusaurus, MkDocs</td>
+                            <td>Version-controlled documentation, developer-friendly</td>
+                        </tr>
+                    </tbody>
+                </table>
+
+            </div>
+        </div>
+
+
+        <!-- ═══════════════════════════════════════════════════════════════════ -->
+        <!-- SECTION 7 -->
+        <!-- ═══════════════════════════════════════════════════════════════════ -->
+        <button class="collapsible">7. Planning and Maintaining Documentation</button>
+        <div class="collapsible-content">
+            <div class="collapsible-inner">
+
+                <div class="info-box">
+                    <h4>📖 Documentation Is Never "Done" — It Requires Ongoing Maintenance</h4>
+                    <p>Outdated documentation is worse than no documentation — it frustrates users and damages trust. Plan for documentation as an ongoing process, not a one-time project. Budget time and resources for maintenance from day one.</p>
+                </div>
+
+                <h3>When to Create Documentation</h3>
+
+                <div class="step-container">
+                    <span class="step-number">1</span>
+                    <span class="step-title">Before Launch (Minimum Viable Documentation)</span>
+                    <div class="step-content">
+                        <p>Before releasing to users, you must have at minimum:</p>
+                        <ul>
+                            <li><strong>Getting Started guide:</strong> How to log in, basic navigation, completing one core task</li>
+                            <li><strong>FAQ:</strong> Answers to the most predictable questions (pricing, browser requirements, account setup)</li>
+                            <li><strong>Contact support:</strong> How to get help when documentation isn't enough</li>
+                        </ul>
+                        <p>This is the bare minimum. More comprehensive documentation should follow quickly after launch based on actual user questions.</p>
+                    </div>
+                </div>
+
+                <div class="step-container">
+                    <span class="step-number">2</span>
+                    <span class="step-title">Alongside Feature Development</span>
+                    <div class="step-content">
+                        <p>Make documentation part of the Definition of Done. A feature is not complete until documentation exists. Include documentation tasks in sprint planning.</p>
+                        <ul>
+                            <li>Feature developed → Documentation drafted → Feature reviewed → Documentation reviewed → Both shipped</li>
+                            <li>The developer or PM who built the feature should draft the initial documentation while context is fresh</li>
+                            <li>A technical writer or another team member should review and polish</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <div class="step-container">
+                    <span class="step-number">3</span>
+                    <span class="step-title">Based on Support Patterns</span>
+                    <div class="step-content">
+                        <p>Monitor support tickets and user questions. When the same question is asked more than twice, create documentation. Review support tickets monthly and add the top 5 recurring questions to your documentation backlog.</p>
+                    </div>
+                </div>
+
+                <h3>Documentation Maintenance Triggers</h3>
+
+                <div class="warning-box">
+                    <h4>⚠️ When Documentation Must Be Updated</h4>
+                    <ul>
+                        <li><strong>UI changes:</strong> Any change to button labels, menu structures, or page layouts requires screenshot updates</li>
+                        <li><strong>Feature changes:</strong> Modified behavior, removed features, or added options</li>
+                        <li><strong>Workflow changes:</strong> If the steps to accomplish a task change, documentation must be updated immediately</li>
+                        <li><strong>User feedback:</strong> If multiple users report confusion about a specific article, rewrite it</li>
+                        <li><strong>Low helpfulness scores:</strong> Articles with consistent "Not helpful" ratings need revision</li>
+                        <li><strong>High bounce rates:</strong> If users land on a page and immediately leave, the content doesn't match their expectation</li>
+                        <li><strong>Regulatory changes:</strong> Compliance or legal requirements that affect user actions</li>
+                    </ul>
+                </div>
+
+                <h3>Assigning Documentation Ownership</h3>
+
+                <table class="comparison-table">
+                    <thead>
+                        <tr><th>Approach</th><th>Who Writes</th><th>Pros</th><th>Cons</th></tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td><strong>Dedicated Technical Writer</strong></td>
+                            <td>Professional documentation specialist</td>
+                            <td>Highest quality, consistent voice, focused role</td>
+                            <td>Requires dedicated hire, may lack deep product knowledge initially</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Developers Write Drafts</strong></td>
+                            <td>Developers draft, writer/PM polishes</td>
+                            <td>Developer has full context, shared responsibility</td>
+                            <td>Developers may lack writing skills, documentation is often deprioritized</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Product Manager Owns</strong></td>
+                            <td>PM writes or coordinates documentation</td>
+                            <td>PM understands user needs and business context</td>
+                            <td>PM bandwidth is limited, may not be strong writer</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Support Team Writes</strong></td>
+                            <td>Support agents write based on tickets</td>
+                            <td>Direct insight into user confusion and questions</td>
+                            <td>May lack technical depth, reactive rather than proactive</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Hybrid Model</strong></td>
+                            <td>Multiple roles contribute, one person owns quality</td>
+                            <td>Leverages strengths of each role</td>
+                            <td>Requires clear process and ownership, risk of inconsistency</td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <div class="success-box">
+                    <h4>✅ Recommended Model for Small Teams</h4>
+                    <p>Developer/PM drafts documentation as part of feature development → Support or another team member reviews for clarity and user perspective → One person (PM, technical writer, or lead developer) is responsible for maintaining overall quality, consistency, and completeness. Documentation is part of the Definition of Done for every feature.</p>
+                </div>
+
+                <h3>Documentation Review and Update Cadence</h3>
+
+                <ul>
+                    <li><strong>Continuous:</strong> Update documentation immediately when features change</li>
+                    <li><strong>Monthly:</strong> Review analytics — which articles have low helpfulness scores? Which support questions aren't documented?</li>
+                    <li><strong>Quarterly:</strong> Comprehensive audit — are there outdated screenshots? Broken links? Features that are no longer accurate?</li>
+                    <li><strong>Annually:</strong> Major refresh — reorganize information architecture, remove deprecated content, ensure consistency</li>
+                </ul>
+
+                <h3>Versioning and Archiving Documentation</h3>
+
+                <div class="tip-box">
+                    <h4>💡 Handling Multiple Product Versions</h4>
+                    <p>If your application has multiple versions in use (on-premise software, legacy versions, beta features), you need a versioning strategy:</p>
+                    <ul>
+                        <li><strong>Version selector dropdown:</strong> Users choose which version's documentation they're viewing</li>
+                        <li><strong>Separate documentation sites:</strong> v1.docs.example.com, v2.docs.example.com</li>
+                        <li><strong>Clearly label beta/experimental features:</strong> So users know they may change</li>
+                        <li><strong>Archive old versions:</strong> Keep them accessible but clearly mark them as outdated</li>
+                        <li><strong>Default to latest:</strong> Always direct users to the current version unless they explicitly choose an older one</li>
+                    </ul>
+                </div>
+
+                <h3>Documentation Governance</h3>
+
+                <p>For larger teams or enterprise applications, establish documentation standards:</p>
+                <ul>
+                    <li><strong>Style guide:</strong> Tone, voice, terminology, formatting conventions</li>
+                    <li><strong>Template library:</strong> Standardized templates for how-to guides, troubleshooting, FAQs</li>
+                    <li><strong>Review process:</strong> Who approves documentation before it's published?</li>
+                    <li><strong>Terminology glossary:</strong> Agreed-upon terms for features and concepts</li>
+                    <li><strong>Contribution guidelines:</strong> How can team members contribute or request updates?</li>
+                </ul>
+
+            </div>
+        </div>
+
+
+        <!-- ═══════════════════════════════════════════════════════════════════ -->
+        <!-- SECTION 8 -->
+        <!-- ═══════════════════════════════════════════════════════════════════ -->
+        <button class="collapsible">8. Documentation Strategy Checklist — Choosing What's Right for Your Application</button>
+        <div class="collapsible-content">
+            <div class="collapsible-inner">
+
+                <div class="info-box">
+                    <h4>📖 How to Use This Checklist</h4>
+                    <p>Work through each category to determine which documentation formats and approaches fit your application, users, and team. Not every application needs every format. Choose the combination that addresses your specific users' needs and your team's capacity to maintain.</p>
+                </div>
+
+                <div class="checklist">
+                    <h4>🎯 Step 1 — Define Your Users</h4>
+                    <ul>
+                        <li>Identified user personas with different technical skill levels</li>
+                        <li>Documented user goals (task completion, learning, troubleshooting)</li>
+                        <li>Surveyed or interviewed users about their documentation preferences</li>
+                        <li>Analyzed support tickets to understand common confusion points</li>
+                        <li>Determined which users are internal vs. external (different documentation needs)</li>
+                        <li>Identified whether users will be trained or self-service</li>
+                    </ul>
+                </div>
+
+                <div class="checklist">
+                    <h4>📋 Step 2 — Determine Minimum Required Documentation</h4>
+                    <ul>
+                        <li>Getting Started guide exists and is tested with a new user</li>
+                        <li>Core workflows are documented (the 3–5 most common tasks)</li>
+                        <li>FAQ addresses the most predictable questions</li>
+                        <li>Contact/support information is clear and accessible</li>
+                        <li>Error messages link to help articles or explanations</li>
+                        <li>All features visible in the UI have at least a one-sentence description</li>
+                    </ul>
+                </div>
+
+                <div class="checklist">
+                    <h4>📦 Step 3 — Choose Your Documentation Formats</h4>
+                    <ul>
+                        <li><strong>Knowledge base / help center:</strong> If users need searchable self-service help (most web apps)</li>
+                        <li><strong>In-app help (tooltips, help panels):</strong> If features are complex or non-obvious</li>
+                        <li><strong>Interactive tutorial / product tour:</strong> If onboarding new users is critical to retention</li>
+                        <li><strong>Video tutorials:</strong> If workflows are highly visual or users prefer video</li>
+                        <li><strong>PDF user manual:</strong> If compliance requires formal documentation or offline use is needed</li>
+                        <li><strong>Quick reference card / cheat sheet:</strong> If power users need fast lookup (keyboard shortcuts, formulas)</li>
+                        <li><strong>FAQ page:</strong> Always — quick wins for common questions</li>
+                        <li><strong>Release notes / changelog:</strong> If application changes frequently and users need to stay informed</li>
+                    </ul>
+                </div>
+
+                <div class="checklist">
+                    <h4>🤖 Step 4 — Evaluate Modern/AI Approaches</h4>
+                    <ul>
+                        <li>Knowledge base is comprehensive and accurate (prerequisite for AI chatbot)</li>
+                        <li>Support volume justifies investment in AI chatbot (typically 100+ tickets/month)</li>
+                        <li>Application has enough active users to justify personalization (typically 1,000+)</li>
+                        <li>Analytics platform is in place to measure documentation effectiveness</li>
+                        <li>Team has capacity to train and maintain AI chatbot responses</li>
+                        <li>Users would benefit from role-based or context-aware documentation</li>
+                    </ul>
+                </div>
+
+                <div class="checklist">
+                    <h4>🛠️ Step 5 — Select Tools and Platforms</h4>
+                    <ul>
+                        <li>Evaluated knowledge base platforms and selected one that fits budget and needs</li>
+                        <li>Confirmed tool supports search, analytics, and your required features</li>
+                        <li>Tool integrates with existing support system (if applicable)</li>
+                        <li>Team has access to screenshot and video creation tools</li>
+                        <li>Decided on documentation format (Markdown, visual editor, etc.)</li>
+                        <li>Hosting and security requirements are met (SSO, private docs if needed)</li>
+                    </ul>
+                </div>
+
+                <div class="checklist">
+                    <h4>✍️ Step 6 — Establish Writing and Maintenance Process</h4>
+                    <ul>
+                        <li>Assigned ownership — who writes and maintains documentation?</li>
+                        <li>Documentation is part of Definition of Done for every feature</li>
+                        <li>Style guide or writing standards document exists</li>
+                        <li>Template library created for common documentation types</li>
+                        <li>Review process defined (who approves documentation before publishing?)</li>
+                        <li>Update triggers defined (when must docs be updated?)</li>
+                        <li>Scheduled regular audits (monthly analytics review, quarterly comprehensive review)</li>
+                    </ul>
+                </div>
+
+                <div class="checklist">
+                    <h4>📊 Step 7 — Measure and Improve</h4>
+                    <ul>
+                        <li>Analytics tracking implemented (page views, searches, helpfulness ratings)</li>
+                        <li>Process established to review analytics monthly</li>
+                        <li>Support tickets are tagged to identify documentation gaps</li>
+                        <li>User feedback mechanism exists (Was this helpful? Yes/No)</li>
+                        <li>Documentation improvements are prioritized based on data, not guesses</li>
+                        <li>Success metrics defined (support ticket reduction, user satisfaction, time-to-value)</li>
+                    </ul>
+                </div>
+
+                <div class="checklist">
+                    <h4>♿ Step 8 — Ensure Accessibility</h4>
+                    <ul>
+                        <li>All images have descriptive alt text</li>
+                        <li>Videos have captions or transcripts</li>
+                        <li>Text has sufficient color contrast (WCAG AA minimum)</li>
+                        <li>Documentation is navigable by keyboard</li>
+                        <li>Headings are used semantically (not just for styling)</li>
+                        <li>Links have descriptive text (not "click here")</li>
+                        <li>Documentation is tested with screen readers</li>
+                    </ul>
+                </div>
+
+                <div class="checklist">
+                    <h4>🌍 Step 9 — Plan for Localization (If Applicable)</h4>
+                    <ul>
+                        <li>Identified which languages are required</li>
+                        <li>Translation process established (human, machine + review, or hybrid)</li>
+                        <li>Documentation platform supports multiple languages</li>
+                        <li>Screenshots are language-neutral where possible or translated</li>
+                        <li>Terminology is consistent across languages</li>
+                    </ul>
+                </div>
+
+                <h3>Decision Matrix — What Documentation Does Your App Need?</h3>
+
+                <table class="comparison-table">
+                    <thead>
+                        <tr><th>Application Type</th><th>Essential Formats</th><th>High-Value Additions</th></tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td><strong>Simple Web App (1–3 core features)</strong></td>
+                            <td>In-app tooltips, FAQ, 1-page Getting Started</td>
+                            <td>Short video demo, email onboarding sequence</td>
+                        </tr>
+                        <tr>
+                            <td><strong>SaaS Product (Multi-feature)</strong></td>
+                            <td>Knowledge base, Getting Started guide, in-app help, FAQs</td>
+                            <td>Interactive tutorial, video library, AI chatbot, release notes</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Enterprise Software</strong></td>
+                            <td>Comprehensive user manual (PDF), knowledge base, role-based guides, admin docs</td>
+                            <td>Instructor-led training materials, certification program, in-app tours</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Mobile App</strong></td>
+                            <td>In-app onboarding flow, context-sensitive help, FAQ</td>
+                            <td>Short video tutorials, tooltips, app store description as first documentation</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Internal Tool (Company-Specific)</strong></td>
+                            <td>Quick start guide, knowledge base, direct Slack/Teams support</td>
+                            <td>Screen recordings, lunch-and-learn training sessions</td>
+                        </tr>
+                        <tr>
+                            <td><strong>E-Commerce / Content Site</strong></td>
+                            <td>FAQ, How to Order/Return, Contact Us</td>
+                            <td>Live chat, product videos, size guides, comparison tools</td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <div class="success-box">
+                    <h4>✅ Final Recommendation</h4>
+                    <p><strong>Start simple and expand based on evidence.</strong> Begin with the minimum viable documentation (Getting Started + FAQ + in-app tooltips). Launch. Collect data on support questions and user behavior. Invest in additional documentation formats where data shows the highest ROI — typically where users are getting stuck repeatedly. Don't build elaborate documentation systems before you understand what users actually need. Let real usage patterns guide your documentation strategy.</p>
+                </div>
+
+            </div>
+        </div>
+
+    </div><!-- /.content -->
+
+    <div class="footer">
+        <p>&copy; 2024 COP4834 Web Systems II | Guide to End User Documentation</p>
+        <p>Good documentation is invisible when it works — users accomplish their goals without realizing they needed help.</p>
+    </div>
+
+</div><!-- /.container -->
+
+<script>
+    const collapsibles = document.getElementsByClassName("collapsible");
+    for (let i = 0; i < collapsibles.length; i++) {
+        collapsibles[i].addEventListener("click", function () {
+            this.classList.toggle("active");
+            const content = this.nextElementSibling;
+            if (content.style.maxHeight) {
+                content.style.maxHeight = null;
+            } else {
+                content.style.maxHeight = content.scrollHeight + "px";
+            }
+        });
+    }
+    if (collapsibles.length > 0) { collapsibles[0].click(); }
+</script>
+</body>
+</html>

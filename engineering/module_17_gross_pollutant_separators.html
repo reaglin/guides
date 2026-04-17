@@ -1,0 +1,989 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Module 17: Gross Pollutant Separators — BMPFast Learning System</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400&family=Source+Serif+4:ital,opsz,wght@0,8..60,300;0,8..60,400;0,8..60,600;1,8..60,400&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --forest-green: #2d5016;
+    --mid-green: #3d6b1e;
+    --light-green: #5a8a2e;
+    --pale-green: #e8f0dc;
+    --accent-green: #6fa832;
+    --warm-white: #faf7f2;
+    --warm-off: #f2ede4;
+    --ink: #1a1a14;
+    --ink-mid: #3a3a2e;
+    --ink-light: #6b6b55;
+    --rule: #c8d8b0;
+    --sidebar-w: 240px;
+    --content-max: 860px;
+  }
+
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: 'Source Serif 4', Georgia, serif;
+    background: var(--warm-white);
+    color: var(--ink);
+    font-size: 17px;
+    line-height: 1.75;
+  }
+
+  /* ── NAV SIDEBAR ── */
+  .sidebar {
+    position: fixed;
+    top: 0; left: 0;
+    width: var(--sidebar-w);
+    height: 100vh;
+    background: var(--forest-green);
+    color: #fff;
+    overflow-y: auto;
+    z-index: 100;
+    display: flex;
+    flex-direction: column;
+  }
+  .sidebar-brand {
+    padding: 24px 20px 16px;
+    border-bottom: 1px solid rgba(255,255,255,0.15);
+  }
+  .sidebar-brand .module-label {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--accent-green);
+    display: block;
+    margin-bottom: 6px;
+  }
+  .sidebar-brand h2 {
+    font-family: 'Playfair Display', serif;
+    font-size: 15px;
+    font-weight: 600;
+    line-height: 1.35;
+    color: #fff;
+  }
+  .sidebar nav { padding: 16px 0; flex: 1; }
+  .sidebar nav a {
+    display: block;
+    padding: 8px 20px;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    color: rgba(255,255,255,0.72);
+    text-decoration: none;
+    transition: color 0.2s, background 0.2s;
+    line-height: 1.4;
+  }
+  .sidebar nav a:hover,
+  .sidebar nav a.active {
+    color: #fff;
+    background: rgba(255,255,255,0.08);
+  }
+  .sidebar nav a.section-head {
+    color: var(--accent-green);
+    font-size: 10px;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    margin-top: 12px;
+    padding-bottom: 4px;
+    cursor: default;
+    pointer-events: none;
+  }
+
+  /* ── MAIN CONTENT ── */
+  .main {
+    margin-left: var(--sidebar-w);
+    min-height: 100vh;
+  }
+
+  /* ── HERO ── */
+  .hero {
+    background: var(--forest-green);
+    padding: 64px 60px 56px;
+    position: relative;
+    overflow: hidden;
+  }
+  .hero::before {
+    content: '';
+    position: absolute;
+    top: -40px; right: -60px;
+    width: 360px; height: 360px;
+    border-radius: 50%;
+    background: rgba(255,255,255,0.04);
+  }
+  .hero-meta {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--accent-green);
+    margin-bottom: 16px;
+  }
+  .hero h1 {
+    font-family: 'Playfair Display', serif;
+    font-size: 2.8rem;
+    font-weight: 700;
+    color: #fff;
+    line-height: 1.18;
+    max-width: 680px;
+    margin-bottom: 20px;
+  }
+  .hero-byline {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 12px;
+    color: rgba(255,255,255,0.55);
+    letter-spacing: 0.06em;
+  }
+  .hero-byline span { color: rgba(255,255,255,0.8); }
+
+  /* ── CONTENT AREA ── */
+  .content {
+    max-width: var(--content-max);
+    margin: 0 auto;
+    padding: 56px 60px 80px;
+  }
+
+  /* ── SECTION HEADINGS ── */
+  .section-anchor { scroll-margin-top: 24px; }
+
+  h2.section-title {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.75rem;
+    font-weight: 700;
+    color: var(--forest-green);
+    margin-top: 56px;
+    margin-bottom: 6px;
+    padding-bottom: 10px;
+    border-bottom: 2px solid var(--rule);
+  }
+  h2.section-title:first-of-type { margin-top: 0; }
+
+  h3.sub-title {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.2rem;
+    font-weight: 600;
+    color: var(--mid-green);
+    margin-top: 32px;
+    margin-bottom: 8px;
+  }
+
+  p { margin-bottom: 1rem; }
+
+  /* ── CALLOUT BOXES ── */
+  .callout {
+    border-left: 4px solid var(--light-green);
+    background: var(--pale-green);
+    padding: 16px 20px;
+    margin: 24px 0;
+    border-radius: 0 4px 4px 0;
+  }
+  .callout.warning {
+    border-color: #b85c00;
+    background: #fff4ec;
+  }
+  .callout.key {
+    border-color: var(--forest-green);
+    background: var(--pale-green);
+  }
+  .callout p:last-child { margin-bottom: 0; }
+  .callout-label {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--ink-light);
+    margin-bottom: 6px;
+    display: block;
+  }
+  .callout.warning .callout-label { color: #b85c00; }
+  .callout.key .callout-label { color: var(--forest-green); }
+
+  /* ── TABLES ── */
+  .table-wrap {
+    overflow-x: auto;
+    margin: 24px 0;
+  }
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 15px;
+  }
+  thead tr {
+    background: var(--forest-green);
+    color: #fff;
+  }
+  thead th {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    padding: 10px 14px;
+    text-align: center;
+    border: 1px solid rgba(255,255,255,0.2);
+  }
+  thead th.left { text-align: left; }
+  .subhead th {
+    background: var(--mid-green);
+    font-size: 10px;
+    padding: 6px 14px;
+  }
+  tbody tr:nth-child(even) { background: var(--warm-off); }
+  tbody tr:hover { background: var(--pale-green); }
+  tbody td {
+    padding: 9px 14px;
+    border: 1px solid var(--rule);
+    font-size: 14.5px;
+    text-align: center;
+    vertical-align: top;
+  }
+  tbody td.left { text-align: left; }
+  tbody td.bold { font-weight: 600; }
+
+  /* ── FIGURE PLACEHOLDERS ── */
+  .figure {
+    margin: 32px 0;
+    width: 100%;
+  }
+  .figure-box {
+    width: 100%;
+    background: var(--warm-off);
+    border: 2px dashed var(--rule);
+    border-radius: 4px;
+    padding: 32px 24px;
+    display: flex;
+    align-items: center;
+    gap: 20px;
+    min-height: 140px;
+  }
+  .figure-icon {
+    flex-shrink: 0;
+    width: 48px; height: 48px;
+    background: var(--rule);
+    border-radius: 4px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 22px;
+  }
+  .figure-info { flex: 1; }
+  .figure-id {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--ink-light);
+    margin-bottom: 4px;
+  }
+  .figure-desc {
+    font-size: 14px;
+    color: var(--ink-mid);
+    line-height: 1.5;
+  }
+  .figure-caption {
+    margin-top: 8px;
+    font-size: 13.5px;
+    color: var(--ink-light);
+    font-style: italic;
+    line-height: 1.5;
+  }
+
+  /* Two-column figure layout */
+  .figure-pair {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 16px;
+    margin: 32px 0;
+  }
+  .figure-pair .figure { margin: 0; }
+
+  /* ── LIST STYLES ── */
+  ul.body-list, ol.body-list {
+    margin: 8px 0 16px 1.4em;
+  }
+  ul.body-list li, ol.body-list li {
+    margin-bottom: 6px;
+  }
+
+  /* ── STUDY SITES TABLE ── */
+  .sites-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 16px;
+    margin: 20px 0;
+  }
+  .site-card {
+    background: var(--warm-off);
+    border: 1px solid var(--rule);
+    border-radius: 4px;
+    padding: 14px 16px;
+  }
+  .site-card h4 {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--forest-green);
+    margin-bottom: 6px;
+  }
+  .site-card p {
+    font-size: 14px;
+    margin-bottom: 0;
+    line-height: 1.5;
+  }
+
+  /* ── CONCLUSIONS BOX ── */
+  .conclusion-block {
+    background: var(--forest-green);
+    color: #fff;
+    border-radius: 6px;
+    padding: 28px 32px;
+    margin: 32px 0;
+  }
+  .conclusion-block h3 {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.15rem;
+    color: var(--accent-green);
+    margin-bottom: 12px;
+  }
+  .conclusion-block p {
+    color: rgba(255,255,255,0.85);
+    font-size: 15.5px;
+    margin-bottom: 10px;
+  }
+  .conclusion-block p:last-child { margin-bottom: 0; }
+  .conclusion-block ul {
+    margin: 6px 0 12px 1.4em;
+    color: rgba(255,255,255,0.85);
+    font-size: 15px;
+  }
+  .conclusion-block ul li { margin-bottom: 4px; }
+
+  /* ── FOOTER ── */
+  .footer {
+    border-top: 2px solid var(--rule);
+    padding: 28px 60px;
+    max-width: var(--content-max);
+    margin: 0 auto;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    color: var(--ink-light);
+  }
+
+  /* ── REFERENCE LIST AT END ── */
+  .ref-figures {
+    margin-top: 56px;
+    padding-top: 32px;
+    border-top: 2px solid var(--rule);
+  }
+  .ref-figures h2 {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.4rem;
+    color: var(--forest-green);
+    margin-bottom: 24px;
+  }
+  .ref-figure-item {
+    display: flex;
+    gap: 16px;
+    margin-bottom: 20px;
+    padding-bottom: 20px;
+    border-bottom: 1px solid var(--rule);
+  }
+  .ref-figure-item:last-child { border-bottom: none; }
+  .ref-num {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    color: var(--forest-green);
+    flex-shrink: 0;
+    width: 60px;
+    padding-top: 2px;
+  }
+  .ref-box {
+    flex: 1;
+    background: var(--warm-off);
+    border: 2px dashed var(--rule);
+    border-radius: 4px;
+    padding: 18px 20px;
+    min-height: 80px;
+  }
+  .ref-box .figure-id { margin-bottom: 4px; }
+  .ref-box .figure-desc { font-size: 13.5px; }
+
+  @media (max-width: 860px) {
+    .sidebar { display: none; }
+    .main { margin-left: 0; }
+    .content { padding: 32px 24px 60px; }
+    .hero { padding: 40px 24px 36px; }
+    .figure-pair { grid-template-columns: 1fr; }
+    .sites-grid { grid-template-columns: 1fr; }
+  }
+</style>
+</head>
+<body>
+
+<!-- ── SIDEBAR ── -->
+<aside class="sidebar">
+  <div class="sidebar-brand">
+    <span class="module-label">BMPFast Learning System</span>
+    <h2>Module 17: Gross Pollutant Separators</h2>
+  </div>
+  <nav>
+    <a class="section-head">Contents</a>
+    <a href="#overview">Overview</a>
+    <a href="#phosphorus-release">Phosphorus Release from Organic Matter</a>
+    <a href="#device-types">Device Types</a>
+    <a href="#baffle-box">Suntree Nutrient Separating Baffle Box</a>
+    <a href="#ecovault">EcoVault Unit</a>
+    <a href="#swirl">Swirl Separators</a>
+    <a href="#inlet-baskets">Inlet Baskets</a>
+    <a href="#study-sites">GPS Field Study Sites</a>
+    <a href="#drainage-basins">Drainage Basin Characteristics</a>
+    <a href="#monitoring">Monitoring Equipment</a>
+    <a href="#maintenance">Maintenance and Cleanout</a>
+    <a href="#solids-data">Solids Characterization</a>
+    <a href="#performance">Removal Efficiencies and Costs</a>
+    <a href="#conclusions">Conclusions</a>
+    <a href="#ref-figures">Reference Figures</a>
+  </nav>
+</aside>
+
+<!-- ── MAIN ── -->
+<main class="main">
+
+  <div class="hero">
+    <div class="hero-meta">Module 17 · BMPFast Stormwater Toolbox</div>
+    <h1>Gross Pollutant Separators</h1>
+    <div class="hero-byline">Prepared by <span>Harvey H. Harper, Ph.D., P.E.</span> · Environmental Research &amp; Design, Inc. · <span>January 2026</span></div>
+  </div>
+
+  <div class="content">
+
+    <!-- ── 1. OVERVIEW ── -->
+    <h2 class="section-title section-anchor" id="overview">Overview</h2>
+    <p>Gross pollutant separators (GPS) are engineered stormwater treatment devices designed to intercept and remove coarse solids, vegetation debris, litter, and settleable particles from urban stormwater runoff before it enters receiving water bodies. They are installed inline within stormwater conveyance systems — typically at pipe inlets, manholes, or junction structures — and require periodic maintenance to remove accumulated materials.</p>
+    <p>This module examines the principal GPS device categories used in Florida urban stormwater management, presents field monitoring data from a comprehensive study conducted in the Casselberry/Altamonte Springs area of Seminole County, and evaluates the performance and cost-effectiveness of these systems with respect to total nitrogen (TN), total phosphorus (TP), and total suspended solids (TSS) removal.</p>
+
+    <div class="callout key">
+      <span class="callout-label">Key Concept</span>
+      <p>GPS devices are specifically designed for <strong>gross solids removal</strong> — litter, leaves, gravel, and coarse to medium sand. They provide only limited removal of dissolved and fine-particle nutrients, which distinguishes them fundamentally from wet detention ponds and other treatment BMPs.</p>
+    </div>
+
+    <!-- ── 2. PHOSPHORUS RELEASE ── -->
+    <h2 class="section-title section-anchor" id="phosphorus-release">Phosphorus Release from Organic Matter</h2>
+    <p>A critical design consideration for all GPS devices is the behavior of captured organic material — particularly leaves and vegetation debris — once it enters an aquatic environment. Research has demonstrated that leaves and vegetation exhibit a <strong>rapid nutrient release</strong> upon contact with water, driven by microbial decomposition and leaching of intracellular nutrients.</p>
+
+    <div class="figure">
+      <div class="figure-box">
+        <div class="figure-icon">📈</div>
+        <div class="figure-info">
+          <div class="figure-id">Figure 17-1 · Chart</div>
+          <div class="figure-desc">Phosphorus release from saturated leaves over time (0–8 days). Time-series graph showing phosphorus concentration in water (μg/L, y-axis 0–1500) versus time in days (x-axis 0–8) for four species: Sycamore, Pine, Oak, and background lake water. Sycamore exhibits the most rapid and highest release, reaching approximately 1,300 μg/L by day 7. Pine shows a delayed rise beginning around day 3, reaching approximately 500 μg/L. Oak and lake water remain near baseline throughout the observation period.</div>
+        </div>
+      </div>
+      <div class="figure-caption">Figure 17-1. Phosphorus concentration in water as a function of leaf species and saturation time. Data demonstrate that leaf species significantly influences the rate and magnitude of P release upon inundation.</div>
+    </div>
+
+    <p>The practical implications of phosphorus release from captured organic matter are significant for GPS system operation:</p>
+    <ul class="body-list">
+      <li>Timely removal of accumulated vegetation and debris is essential to prevent re-release of nutrients back into stormwater flows.</li>
+      <li>Organic material stored in a dry condition (above the water line) releases substantially less phosphorus than material held submerged in the sump.</li>
+      <li>GPS systems designed to keep captured vegetation dry between storm events — such as the Suntree Nutrient Separating Baffle Box — are engineered specifically to minimize this effect.</li>
+      <li>Anoxic conditions that develop in submerged sumps can promote the release of previously sorbed phosphorus from settled sediments.</li>
+    </ul>
+
+    <!-- ── 3. DEVICE TYPES ── -->
+    <h2 class="section-title section-anchor" id="device-types">Device Types</h2>
+    <p>GPS devices evaluated in Florida stormwater management programs fall into three principal categories: baffle boxes, swirl/vortex separators, and inlet baskets. Each employs a different physical mechanism for solids removal and has distinct advantages and limitations with respect to flow capacity, maintenance requirements, and pollutant removal effectiveness.</p>
+
+    <!-- ── 4. BAFFLE BOX ── -->
+    <h2 class="section-title section-anchor" id="baffle-box">Suntree Nutrient Separating Baffle Box</h2>
+    <p>The Suntree Nutrient Separating Baffle Box is a second-generation baffle box design developed specifically to address the phosphorus re-release problem associated with submerged organic material. The system was designed and patented by Suntree Technologies and has been widely deployed in Florida stormwater management programs, particularly in Seminole County.</p>
+
+    <h3 class="sub-title">Structural Configuration</h3>
+    <p>The unit is a precast concrete structure containing three primary chambers accessible via surface hatches. The structural depth is deliberately limited — the bottom of the concrete structure is only 4 feet below the invert pipe elevation — to facilitate maintenance access and solid material removal.</p>
+    <p>Key internal components include:</p>
+    <ul class="body-list">
+      <li><strong>Filtration Screen System:</strong> A horizontal screen assembly mounted above the static water elevation. During storm events, incoming flow carries vegetation and litter onto the screen surface, where coarse material is retained while water passes through to lower chambers.</li>
+      <li><strong>Boom:</strong> A floating containment boom positioned at the outlet side of the screen zone to capture floating debris.</li>
+      <li><strong>Deflector:</strong> A submerged baffle plate in the lower chambers that redirects flow to promote gravitational settling of heavier sediment particles.</li>
+      <li><strong>Skimmer:</strong> An outlet skimmer that draws water from below the surface, reducing the discharge of floating material.</li>
+    </ul>
+
+    <div class="figure-pair">
+      <div class="figure">
+        <div class="figure-box">
+          <div class="figure-icon">🔧</div>
+          <div class="figure-info">
+            <div class="figure-id">Figure 17-2a · Schematic</div>
+            <div class="figure-desc">Cross-section diagram of Suntree Nutrient Separating Baffle Box during storm event conditions. Shows flow entering from left, nutrient-rich vegetation and litter captured on the filtration screen above the static water level, sediment settling to the bottom of three chambers, deflector baffle, and skimmer arrangement. Three access hatches are visible at the top. Caption states: "Bottom of concrete structure is only 4' below the pipe."</div>
+          </div>
+        </div>
+        <div class="figure-caption">Figure 17-2a. Suntree Baffle Box — during storm event conditions. Vegetation is captured on the filtration screen; sediment settles to lower chambers.</div>
+      </div>
+      <div class="figure">
+        <div class="figure-box">
+          <div class="figure-icon">🔧</div>
+          <div class="figure-info">
+            <div class="figure-id">Figure 17-2b · Schematic</div>
+            <div class="figure-desc">Cross-section diagram of Suntree Nutrient Separating Baffle Box following storm event. Shows vegetation and litter above the static water level, drying out between events. Text note: "With the organic pollutant load separated from the water, the system does not go septic." During servicing, the screen system hinges to the side for access to sediment in lower chambers. Boom position and skimmer arrangement also labeled.</div>
+          </div>
+        </div>
+        <div class="figure-caption">Figure 17-2b. Suntree Baffle Box — following storm event. Captured vegetation dries out above the waterline, minimizing phosphorus leaching and preventing septic conditions.</div>
+      </div>
+    </div>
+
+    <h3 class="sub-title">Operational Design Advantages</h3>
+    <p>The key engineering innovation of the Suntree design is the physical separation of captured organic material from the permanent water pool. Because vegetation and litter accumulate on the screen above the static water elevation, these materials dry out between storm events. This prevents the anaerobic decomposition and nutrient leaching that would otherwise occur if organic matter were submerged continuously. The screen system hinges to one side during maintenance, providing unobstructed access to the sediment-laden lower chambers.</p>
+
+    <!-- ── 5. ECOVAULT ── -->
+    <h2 class="section-title section-anchor" id="ecovault">EcoVault Unit</h2>
+    <p>The EcoVault (also referenced in field documentation as the Ecosense unit) is an underground vault system designed for installation in rights-of-way and other space-constrained urban sites. It employs a combination of sedimentation, screening, and optional media filtration to achieve stormwater pollutant removal.</p>
+
+    <h3 class="sub-title">System Components</h3>
+    <p>The EcoVault configuration includes several integrated treatment elements:</p>
+    <ul class="body-list">
+      <li><strong>F.O.G. Baffle Wall:</strong> A primary baffle at the inlet zone that attenuates incoming flow velocity and promotes the separation of floatables, oils, and grease from the primary flow stream.</li>
+      <li><strong>Ported Baffle Wall:</strong> A secondary baffle with openings near the base, directing flow through the settled solids zone while continuing to reduce turbulence in the main chamber.</li>
+      <li><strong>Bottom Solids Screens:</strong> Removable screen panels installed horizontally on the vault floor. These screens facilitate access during maintenance by hinging open to expose accumulated sediment below.</li>
+      <li><strong>Leaf/Debris Screen:</strong> An inclined screen assembly positioned to intercept coarse organic material and prevent it from reaching the outlet filter media.</li>
+      <li><strong>Outlet Filter with Aluminum Silicate Media (Baffle Buddy Filter):</strong> An optional filter cartridge containing aluminum silicate, a reactive media capable of adsorbing dissolved phosphorus. This component significantly enhances total phosphorus removal beyond what is achievable by sedimentation alone.</li>
+      <li><strong>Vault-Ox Equipment:</strong> An aeration device that introduces dissolved oxygen to the vault environment, counteracting the anoxic conditions that promote phosphorus release from settled sediments.</li>
+    </ul>
+
+    <div class="figure">
+      <div class="figure-box">
+        <div class="figure-icon">🔧</div>
+        <div class="figure-info">
+          <div class="figure-id">Figure 17-3a · Schematic</div>
+          <div class="figure-desc">Plan/section schematic of EcoVault Unit showing flow patterns. Labeled components include: Access Hatches at top, Inlet on left, F.O.G. Baffle Wall, Ported Baffle Wall, Baffle Buddy Filter at outlet, Sediment accumulation zone at bottom, and Filtered Clean Water at the outlet chamber. Flow arrows depict circulation patterns within the main settling chamber and through the outlet filtration zone.</div>
+        </div>
+      </div>
+      <div class="figure-caption">Figure 17-3a. EcoVault Unit — schematic showing internal flow patterns, baffle configuration, and filtration components.</div>
+    </div>
+
+    <!-- ── 6. SWIRL SEPARATORS ── -->
+    <h2 class="section-title section-anchor" id="swirl">Swirl Separators</h2>
+    <p>Swirl separators (also called vortex separators or hydrodynamic separators) use centrifugal force generated by a tangential inlet to separate settleable solids from the main flow stream. Two commercial designs — the CDS Unit and the Stormceptor — represent this technology category in the GPS field study.</p>
+
+    <h3 class="sub-title">CDS Unit</h3>
+    <p>The Continuous Deflection Separation (CDS) unit uses a non-blocking perforated separation screen in combination with a balanced, continuously circulating flow to cause natural separation of solids from the stormwater flow. Storm water enters tangentially through the inlet, creating a swirling motion within the cylindrical body. The continuous low-velocity flow over the separation screen keeps the screen from blocking. An optional sump basket at the base of the unit captures separated solids for periodic removal.</p>
+    <p>High flows that exceed the design capacity bypass over a diversion weir, preventing scouring of previously accumulated materials during peak storm events.</p>
+
+    <h3 class="sub-title">Stormceptor</h3>
+    <p>The Stormceptor is an in-line precast concrete structure in which stormwater enters through a top-mounted inlet pipe. The inlet configuration generates a swirling motion within the central treatment chamber, directing settleable solids to a lower sump region while treated water exits through an outlet riser. Floatable materials are retained by a surface seal created by the outlet riser arrangement.</p>
+
+    <h3 class="sub-title">Performance Considerations</h3>
+    <div class="callout warning">
+      <span class="callout-label">Important Limitation</span>
+      <p>Published pollutant removal efficiencies for swirl separators are typically based on performance at or near the unit's design flow capacity. At lower flow rates, the swirling motion that drives solids separation is proportionally reduced, resulting in diminished removal efficiency. Because a large fraction of annual runoff volume occurs during smaller, more frequent storms — well below design capacity — actual annual average performance may be substantially lower than laboratory or design-capacity test results suggest.</p>
+    </div>
+    <p>An additional consideration for swirl separators with permanent wet sumps is the anoxic environment that develops in the submerged solids storage zone. Under anaerobic conditions, previously sorbed phosphorus can be released from settled sediments back into the water column, potentially converting the device from a net phosphorus sink to a net phosphorus source during low-flow periods between storm events.</p>
+
+    <div class="figure">
+      <div class="figure-box">
+        <div class="figure-icon">🔧</div>
+        <div class="figure-info">
+          <div class="figure-id">Figure 17-4 · Schematics</div>
+          <div class="figure-desc">Three-panel comparative diagram. Left panel: CDS Unit — cutaway illustration showing tangential inlet, cylindrical separation screen, circulating flow pattern, sump basket at base, and bypass weir for high flows. Center panel: Stormceptor — three-dimensional cutaway rendering showing cylindrical precast body with inlet pipe entering from top, swirling flow pattern indicated by yellow arrows, and outlet arrangement with riser. Right panel: Comparative cross-section schematic of Baffle Box versus Other Systems, showing the 4-foot structural depth of baffle boxes compared to 4-to-20-foot deeper sump requirements for swirl separator installations.</div>
+        </div>
+      </div>
+      <div class="figure-caption">Figure 17-4. Swirl separator systems. The CDS Unit (left) and Stormceptor (center) compared with baffle box configuration (right). Note the significant depth difference between baffle box and swirl separator installations.</div>
+    </div>
+
+    <!-- ── 7. INLET BASKETS ── -->
+    <h2 class="section-title section-anchor" id="inlet-baskets">Inlet Baskets</h2>
+    <p>Inlet baskets (also called curb inlet baskets or inlet inserts) are relatively simple devices installed within existing curb inlet structures. They consist of a screen basket that intercepts coarse debris before it enters the storm drain system, and a shelf bracket system that holds the basket in place while allowing bypass flow during high-intensity events.</p>
+
+    <h3 class="sub-title">Suntree High-Capacity Curb Inlet Basket</h3>
+    <p>The Suntree high-capacity inlet basket design employs a tiered filtration approach within a standard concrete catchbasin structure. The shelf system supports a filtration basket containing three screen zones arranged from coarsest to finest (Coarse / Medium / Fine), allowing progressively finer particle removal while a bypass pathway accommodates flows that exceed basket capacity. The underlying concrete catchbasin provides additional sediment settling capacity below the basket assembly.</p>
+    <p>A critical limitation of inlet basket systems is their applicability: they provide meaningful pollutant removal only in watersheds with <strong>significant vegetation debris loading</strong> — primarily residential areas with substantial tree canopy that generates seasonal leaf fall. In areas without this debris input, inlet baskets accumulate relatively little material and contribute negligibly to pollutant load reduction on an annual basis.</p>
+
+    <div class="figure-pair">
+      <div class="figure">
+        <div class="figure-box">
+          <div class="figure-icon">🔧</div>
+          <div class="figure-info">
+            <div class="figure-id">Figure 17-5a · Schematic</div>
+            <div class="figure-desc">Installation schematic of Suntree high-capacity curb inlet basket within a concrete catchbasin. Cross-section shows: Manhole at top, Curb Inlet entry from upper left, Road surface, Shelf System supporting filtration basket, three filter zones labeled Coarse / Medium / Fine from top to bottom, Bypass path for overflow, Filtration Basket, and Concrete Catchbasin structure at base.</div>
+          </div>
+        </div>
+        <div class="figure-caption">Figure 17-5a. Suntree high-capacity curb inlet basket — installation schematic showing tiered filtration media and bypass configuration.</div>
+      </div>
+      <div class="figure">
+        <div class="figure-box">
+          <div class="figure-icon">📷</div>
+          <div class="figure-info">
+            <div class="figure-id">Figure 17-5b · Photograph</div>
+            <div class="figure-desc">Field photograph of a free-standing cylindrical mesh inlet basket filled with collected leaves, sticks, and organic debris. The basket is positioned over a stormwater drain structure visible at the base. A small piece of litter (plastic bottle) is visible among the collected organic material.</div>
+          </div>
+        </div>
+        <div class="figure-caption">Figure 17-5b. Inlet basket filled with collected solids — primarily leaves and organic debris from adjacent tree canopy.</div>
+      </div>
+    </div>
+
+    <!-- ── 8. STUDY SITES ── -->
+    <h2 class="section-title section-anchor" id="study-sites">GPS Field Study Sites</h2>
+    <p>A comprehensive field monitoring study was conducted in the Casselberry and Altamonte Springs area of Seminole County, Florida, to evaluate the stormwater pollutant removal performance and life-cycle costs of multiple GPS device types under actual Florida climatic and land-use conditions. The study encompassed six monitoring locations distributed across two geographic clusters.</p>
+
+    <div class="sites-grid">
+      <div class="site-card">
+        <h4>Baffle Box Sites</h4>
+        <p>Suntree 2nd-generation nutrient separating baffle box (multiple configurations: with EcoVault outlet filter and without)</p>
+      </div>
+      <div class="site-card">
+        <h4>Swirl Concentrator Sites</h4>
+        <p>CDS Unit (San Pablo Road) and Stormceptor installation</p>
+      </div>
+      <div class="site-card">
+        <h4>EcoVault Sites</h4>
+        <p>EcoVault with aluminum silicate outlet filter (Lake Hodge, Gee Creek) and EcoVault without outlet filter (San Pablo)</p>
+      </div>
+      <div class="site-card">
+        <h4>Inlet Insert Sites</h4>
+        <p>Curb inlet Suntree basket installations on San Pablo Road</p>
+      </div>
+    </div>
+
+    <div class="figure">
+      <div class="figure-box">
+        <div class="figure-icon">🗺️</div>
+        <div class="figure-info">
+          <div class="figure-id">Figure 17-6 · Site Map</div>
+          <div class="figure-desc">Aerial satellite location map of Casselberry/Altamonte Springs, Seminole County, Florida showing GPS study site locations. Six monitoring sites are marked with yellow dots: Lake Hodge Baffle Box (upper right), Gee Creek Baffle Box (center right), Lake Concord Baffle Box (center left), San Pablo CDS Unit (lower center), and San Pablo Baffle Box (lower center, adjacent to CDS Unit). Major roads visible include Dog Track Road, North Street, Merritt Street, Altamonte Drive, South Street, Oranole Road, and Derbyshire Road. The city of Casselberry, FL is labeled at center.</div>
+        </div>
+      </div>
+      <div class="figure-caption">Figure 17-6. Location map for GPS study sites in Seminole County, Florida. Sites are clustered in two study areas: the northern cluster (Lake Hodge, Gee Creek, Lake Concord) and the southern cluster (San Pablo Road).</div>
+    </div>
+
+    <!-- ── 9. DRAINAGE BASINS ── -->
+    <h2 class="section-title section-anchor" id="drainage-basins">Drainage Basin Characteristics</h2>
+    <p>The study sites were served by residential drainage basins with varying pre-treatment conditions. Understanding the differences in watershed drainage configurations is important for interpreting the monitoring results, as the degree of pre-treatment influences the pollutant concentrations and particle size distributions entering each GPS unit.</p>
+
+    <h3 class="sub-title">Ecosense Baffle Box Drainage Areas (G-Series)</h3>
+    <p>The Lake Hodge and Gee Creek baffle box sites were served by two distinct sub-basins representing different residential drainage systems:</p>
+    <ul class="body-list">
+      <li><strong>Sub-basin G-1 (20.98 acres):</strong> Curb and gutter drainage from a residential area with no stormwater pre-treatment. Runoff from impervious surfaces travels directly through curb-and-gutter conveyances to the baffle box inlet without passing through any vegetated treatment areas.</li>
+      <li><strong>Sub-basin G-2 (29.98 acres):</strong> Roadside swale drainage from a residential area with swale pre-treatment. Runoff flows through vegetated roadside swales prior to reaching the baffle box, providing some gravitational settling and filtration before the GPS device.</li>
+    </ul>
+
+    <h3 class="sub-title">EcoVault, CDS Unit, and Inlet Insert Sites (H-Series)</h3>
+    <p>Three sub-basins served the EcoVault baffle box, CDS unit, and inlet insert monitoring sites. All three were residential curb-and-gutter systems without pre-treatment:</p>
+    <ul class="body-list">
+      <li><strong>Sub-basin H-3 (21.37 acres):</strong> Residential area with curb and gutter drainage and no runoff pre-treatment.</li>
+      <li><strong>Sub-basin H-4 (2.71 acres):</strong> Smaller residential drainage area with curb and gutter drainage and no pre-treatment.</li>
+      <li><strong>Sub-basin H-5 (4.90 acres):</strong> Residential area with curb and gutter drainage and no pre-treatment.</li>
+    </ul>
+
+    <!-- ── 10. MONITORING ── -->
+    <h2 class="section-title section-anchor" id="monitoring">Monitoring Equipment Configuration</h2>
+    <p>Each study site was equipped with flow measurement devices and automated stormwater samplers to collect time-proportional or flow-proportional composite samples from both the inlet and outlet of each GPS unit during storm events. Monitoring configurations varied by device type and site access conditions.</p>
+
+    <h3 class="sub-title">Suntree Baffle Box Monitoring — Lake Concord Site</h3>
+    <p>The Lake Concord Suntree Baffle Box site provided access to both an internal cutaway model view and field photographs of the installed unit. The Lake Concord installation receives discharge from an 18-inch reinforced concrete pipe (RCP) and discharges to Lake Concord. The unit's three access hatches on the top surface provide maintenance access to the screen assembly and lower sediment chambers.</p>
+
+    <h3 class="sub-title">Gee Creek EcoVault Monitoring Equipment</h3>
+    <p>The Gee Creek EcoVault site was equipped with autosamplers housed in covered enclosures accessible via hatches built into the vault access structure. The monitoring installation included:</p>
+    <ul class="body-list">
+      <li>Dual automated compositing samplers positioned on a wooden support platform within the access chamber</li>
+      <li>Leaf/debris screen assembly visible within the vault interior</li>
+      <li>Outlet filter cartridge containing aluminum silicate media, positioned to intercept the treated effluent stream prior to final discharge</li>
+    </ul>
+
+    <h3 class="sub-title">Lake Hodge EcoVault Monitoring Equipment</h3>
+    <p>The Lake Hodge EcoVault site was a higher-profile installation requiring a more extensive monitoring infrastructure. The site included a fenced compound containing the EcoVault unit and an adjacent autosampler shelter. Key monitoring features included:</p>
+    <ul class="body-list">
+      <li>Insulated equipment shelter housing inflow and outflow automated samplers</li>
+      <li>A 52-inch by 64-inch concrete outflow structure visible in the field</li>
+      <li>The EcoVault unit incorporated both a leaf/debris screen and an outlet filter with aluminum silicate media at this location</li>
+    </ul>
+
+    <!-- ── 11. MAINTENANCE ── -->
+    <h2 class="section-title section-anchor" id="maintenance">Maintenance and Cleanout Procedures</h2>
+    <p>GPS devices require regular maintenance to remove accumulated solids, prevent re-suspension and nutrient release, and maintain hydraulic capacity. The frequency of required maintenance is a direct function of watershed solids loading, the percentage of tree canopy cover in the drainage area, and seasonal leaf fall patterns.</p>
+
+    <h3 class="sub-title">Baffle Box Cleanout — Lake Hodge Site</h3>
+    <p>Cleanout operations at the Lake Hodge baffle box illustrate the typical maintenance sequence for baffle box GPS devices. The four-step process documented during field monitoring included:</p>
+    <ul class="body-list">
+      <li><strong>Vegetation removal from screen:</strong> Accumulated leaves, branches, and organic debris are manually removed from the filtration screen assembly. The collected material includes both recognizable plant debris and miscellaneous litter items such as beverage containers.</li>
+      <li><strong>Water pumping from sump:</strong> Standing water is pumped from the lower sediment chamber to reduce the volume of material requiring vacuum removal and to expose the accumulated sediment layer.</li>
+      <li><strong>Solids vacuum removal:</strong> A Vactor truck (combination jet/vacuum maintenance vehicle) is used to vacuum the accumulated sediment slurry from the lower chambers through the access hatches.</li>
+      <li><strong>Post-cleaning screen inspection:</strong> Following cleanout, screens are inspected for damage and structural integrity before being returned to service.</li>
+    </ul>
+
+    <h3 class="sub-title">Baffle Box Cleanout — Lake Howell Site</h3>
+    <p>The Lake Howell baffle box cleanout sequence follows an equivalent procedure, with the same four operational steps: vacuum truck mobilization to the site, pumping of standing water from the bottom chambers, vacuuming of accumulated solids from the chambers, and post-cleaning screen inspection and assessment.</p>
+
+    <!-- ── 12. SOLIDS DATA ── -->
+    <h2 class="section-title section-anchor" id="solids-data">Solids Characterization</h2>
+    <p>Analysis of the material removed from GPS units during monitoring-period cleanout events provides important information about the composition of captured solids and the relationship between particle size and nutrient content.</p>
+
+    <h3 class="sub-title">Visual Character of Removed Material</h3>
+    <p>Solids removed from the four baffle box study sites had a consistent visual character: a dark gray to black mixed organic and mineral matrix containing fibrous plant material, fine sand, and silt. The material from all four sites (Lake Hodge, Gee Creek, San Pablo, and Lake Concord baffle boxes) appeared comparable in composition, reflecting the similar residential land use and vegetation types in the Seminole County study area.</p>
+
+    <h3 class="sub-title">Particle Size Distribution and Nutrient Content</h3>
+    <p>Sieve analysis of the material removed from GPS units revealed the size distribution profile of captured solids and, critically, the inverse relationship between particle size and phosphorus content:</p>
+
+    <div class="figure">
+      <div class="figure-box">
+        <div class="figure-icon">📊</div>
+        <div class="figure-info">
+          <div class="figure-id">Figure 17-7 · Bar Chart + Box Plot</div>
+          <div class="figure-desc">Two-panel chart. Left panel — bar chart of particle size distribution showing Percent Retained on Sieve (%, y-axis 0–25%) versus particle size in micrometers (x-axis: &gt;2000, 850, 425, 250, 180, 150, 125, 75, &lt;75 μm). Distribution is bimodal, with the highest proportion retained at 250 μm (approximately 23%), followed by 425 μm (approximately 17%), &gt;2000 μm (approximately 16%), and 180 μm (approximately 16%). The finest fractions (&lt;75 μm) account for less than 2% by mass. The boundary between coarse-medium sand and fine sand/silt fractions is marked by a vertical dashed line at approximately 125–150 μm. Right panel — box-and-whisker plot showing Total Phosphorus concentration (μg/g, y-axis 0–25,000) for each particle size fraction. The finest fraction (&lt;75 μm) has the highest median TP concentration (approximately 16,000 μg/g) and the widest distribution. TP concentrations decrease progressively with increasing particle size, with the coarsest fractions (&gt;2000, 850 μm) having median values of approximately 5,000 μg/g.</div>
+        </div>
+      </div>
+      <div class="figure-caption">Figure 17-7. Typical distribution of solids removed from gross pollutant separators. Left: particle size distribution by mass. Right: total phosphorus concentration by particle size fraction. Note the inverse relationship — finest particles carry the highest nutrient loads, while GPS devices preferentially capture the coarser, lower-nutrient fractions.</div>
+    </div>
+
+    <div class="callout key">
+      <span class="callout-label">Key Finding</span>
+      <p>GPS devices are highly effective at removing <strong>large particles with low nutrient content</strong>. The fine particle fractions (&lt;75 μm) that carry the highest phosphorus concentrations (up to 20,000 μg/g) represent less than 2% of the captured mass but would contribute disproportionately to nutrient loads if they could be captured. GPS hydraulics and sedimentation physics favor removal of the coarser, less nutrient-rich fractions.</p>
+    </div>
+
+    <!-- ── 13. PERFORMANCE ── -->
+    <h2 class="section-title section-anchor" id="performance">Removal Efficiencies and Costs</h2>
+    <p>Field monitoring data from the Seminole County GPS study provide mass removal efficiency and life-cycle cost estimates for each device configuration. Costs are expressed as present worth removal cost in dollars per kilogram of pollutant removed, calculated over a 20-year period at a discount rate of 2.5%.</p>
+
+    <div class="table-wrap">
+      <table>
+        <thead>
+          <tr>
+            <th class="left" rowspan="2">Site / Unit</th>
+            <th colspan="3">Mass Removal (%)</th>
+            <th colspan="3">Present Worth Removal Cost ($/kg) <br><small style="font-weight:400; font-size:10px;">(20-yr, i = 2.5%)</small></th>
+          </tr>
+          <tr class="subhead">
+            <th>Total N</th>
+            <th>Total P</th>
+            <th>TSS</th>
+            <th>Total N</th>
+            <th>Total P</th>
+            <th>TSS</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td class="left bold">Concord Suntree Baffle Box</td>
+            <td>2</td>
+            <td>7</td>
+            <td>73</td>
+            <td>6,110</td>
+            <td>15,928</td>
+            <td>11.20</td>
+          </tr>
+          <tr>
+            <td class="left bold">San Pablo CDS Unit</td>
+            <td>5</td>
+            <td>12</td>
+            <td>94</td>
+            <td>5,699</td>
+            <td>23,252</td>
+            <td>43.32</td>
+          </tr>
+          <tr>
+            <td class="left bold">Lake Hodge EcoVault w/ outlet filter</td>
+            <td>14</td>
+            <td>57</td>
+            <td>90</td>
+            <td>3,433</td>
+            <td>1,755</td>
+            <td>4.89</td>
+          </tr>
+          <tr>
+            <td class="left bold">Gee Creek EcoVault w/ outlet filter</td>
+            <td>2</td>
+            <td>41</td>
+            <td>78</td>
+            <td>34,377</td>
+            <td>10,188</td>
+            <td>14.05</td>
+          </tr>
+          <tr>
+            <td class="left bold">San Pablo EcoVault w/o filter</td>
+            <td>14</td>
+            <td>11</td>
+            <td>89</td>
+            <td>3,393</td>
+            <td>25,582</td>
+            <td>14.49</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+    <p style="font-size:13px; color:var(--ink-light); margin-top:-8px;">Table 17-1. GPS removal efficiencies and present worth life-cycle removal costs. Mass removal calculated from paired inlet/outlet storm event monitoring. Costs reflect capital, installation, and 20-year maintenance costs.</p>
+
+    <h3 class="sub-title">Interpretation of Performance Data</h3>
+    <p>Several patterns emerge from the monitoring data:</p>
+    <ul class="body-list">
+      <li><strong>TSS removal is consistently high</strong> across all GPS device types, ranging from 73–94%. This reflects the primary design function of these units — physical separation of settleable and screenable solids.</li>
+      <li><strong>Total nitrogen removal is minimal</strong> (2–14%), consistent with the predominantly dissolved and fine-particle-bound form of nitrogen in urban stormwater runoff. GPS devices do not provide meaningful nitrogen removal.</li>
+      <li><strong>Total phosphorus removal is highly variable</strong> and strongly dependent on the presence of the aluminum silicate outlet filter. The Lake Hodge EcoVault with outlet filter achieved 57% TP removal at a life-cycle cost of $1,755/kg — the most cost-effective configuration. Without the outlet filter, TP removal drops to 7–12% across all other GPS types, with life-cycle costs exceeding $15,000–$25,000 per kilogram removed.</li>
+      <li><strong>Present worth removal costs for nutrients are extremely high</strong>, typically 1–2 orders of magnitude greater than for wet detention ponds, which achieve comparable or superior nutrient removal at costs of $100–$500/kg.</li>
+    </ul>
+
+    <!-- ── 14. CONCLUSIONS ── -->
+    <h2 class="section-title section-anchor" id="conclusions">Conclusions</h2>
+
+    <div class="conclusion-block">
+      <h3>Gross Pollutant Separator Performance Summary</h3>
+      <p>GPS devices effectively remove litter, leaves, gravel, and coarse-to-medium sand from stormwater. However, their nutrient removal performance is limited:</p>
+      <ul>
+        <li>Total N: 10–12% typical removal</li>
+        <li>Total P: 8–12% typical removal (without reactive media filter)</li>
+        <li>TSS: 30–60% typical removal</li>
+      </ul>
+      <p>Life-cycle removal costs for GPS units are <strong>1–2 orders of magnitude greater than wet detention</strong> for equivalent nutrient mass removal.</p>
+    </div>
+
+    <h3 class="sub-title">Appropriate Applications</h3>
+    <p>GPS devices are suited for deployment in specific contexts where gross solids represent a meaningful fraction of the total pollutant loading and where the operational and aesthetic benefits of debris removal justify the cost:</p>
+    <ul class="body-list">
+      <li><strong>Residential areas with large tree canopy</strong> that generate significant seasonal leaf fall and organic debris loads in stormwater</li>
+      <li><strong>Urban areas with documented litter issues</strong>, where gross pollutant management has aesthetic, nuisance, or regulatory significance</li>
+      <li>Locations where downstream infrastructure protection from coarse debris is required</li>
+    </ul>
+
+    <div class="callout warning">
+      <span class="callout-label">Design Guidance</span>
+      <p><strong>GPS devices should not be used as the primary or sole BMP for nutrient removal projects.</strong> For sites where total phosphorus or total nitrogen load reduction is the regulatory objective, wet detention ponds, stormwater wetlands, or other treatment-volume BMPs are substantially more effective and cost-efficient. GPS devices should be considered as pre-treatment or supplemental controls for gross solids only, not as substitutes for properly sized treatment BMPs.</p>
+    </div>
+
+    <h3 class="sub-title">EcoVault with Aluminum Silicate Filter — Exception</h3>
+    <p>The EcoVault configuration with the aluminum silicate outlet filter represents an important exception to the general GPS performance characterization. At the Lake Hodge site, this configuration achieved 57% total phosphorus removal at a present worth cost of $1,755/kg — substantially better than other GPS configurations and approaching the range of some less-efficient conventional BMPs. However, this performance depends on periodic replacement of the reactive filter media, and the long-term cost-effectiveness of media replacement must be factored into project planning.</p>
+
+    <!-- ── REFERENCE FIGURES ── -->
+    <div class="ref-figures" id="ref-figures">
+      <h2>Referenced Figures — Photographic Documentation</h2>
+      <p style="font-size:14px; color:var(--ink-light); margin-bottom:24px;">The following field photographs and additional technical schematics are referenced in the text. Images should be sourced from the original Harvey H. Harper / Environmental Research &amp; Design presentation materials (January 2026).</p>
+
+      <div class="ref-figure-item">
+        <div class="ref-num">Fig. 17-R1</div>
+        <div class="ref-box">
+          <div class="figure-id">Field Photo — Phosphorus Runoff Source</div>
+          <div class="figure-desc">Street-level photograph showing leaves accumulated in gutter and roadway with stormwater carrying debris toward inlet (source of organic phosphorus loading). Paired with a photograph of stormwater conveyance channel with accumulated floating debris and litter at weir structure.</div>
+        </div>
+      </div>
+
+      <div class="ref-figure-item">
+        <div class="ref-num">Fig. 17-R2</div>
+        <div class="ref-box">
+          <div class="figure-id">EcoVault — Bottom Solids Screens (Field Photo)</div>
+          <div class="figure-desc">Overhead photograph looking down into open EcoVault concrete vault interior showing removable bottom screen panels (grid pattern) in place over the sediment accumulation zone.</div>
+        </div>
+      </div>
+
+      <div class="ref-figure-item">
+        <div class="ref-num">Fig. 17-R3</div>
+        <div class="ref-box">
+          <div class="figure-id">EcoVault — Vault-Ox Aeration Equipment (Field Photo)</div>
+          <div class="figure-desc">Field photograph of Vault-Ox aeration unit mounted on exterior wall. Cylindrical white unit approximately 18 inches in height visible against brick wall background.</div>
+        </div>
+      </div>
+
+      <div class="ref-figure-item">
+        <div class="ref-num">Fig. 17-R4</div>
+        <div class="ref-box">
+          <div class="figure-id">EcoVault — Bottom Screens Opened for Cleaning (Field Photo)</div>
+          <div class="figure-desc">Interior photograph of EcoVault vault with hinged bottom screen panels opened downward to expose sediment accumulation zone beneath. Screens are hinged on one side, allowing them to swing open for vacuum maintenance access.</div>
+        </div>
+      </div>
+
+      <div class="ref-figure-item">
+        <div class="ref-num">Fig. 17-R5</div>
+        <div class="ref-box">
+          <div class="figure-id">EcoVault — Outlet Filter (Field Photo)</div>
+          <div class="figure-desc">Photograph of outlet filter panel array containing aluminum silicate reactive media. Multiple dark-colored perforated filter panels (approximately 24 inches × 36 inches each) are arranged in a side-by-side configuration within the outlet chamber frame.</div>
+        </div>
+      </div>
+
+      <div class="ref-figure-item">
+        <div class="ref-num">Fig. 17-R6</div>
+        <div class="ref-box">
+          <div class="figure-id">Curb Inlet Basket Sites — Street View and Interior (Field Photos)</div>
+          <div class="figure-desc">Street-level photograph of residential street showing two curb inlet basket locations marked with arrows. Two close-up photographs show interior view (from above) of the 668 and 669 San Pablo Road inlet baskets, with shelf brackets and screen basket components labeled.</div>
+        </div>
+      </div>
+
+      <div class="ref-figure-item">
+        <div class="ref-num">Fig. 17-R7</div>
+        <div class="ref-box">
+          <div class="figure-id">Suntree Baffle Box Monitoring Site — Lake Concord (Field Photos)</div>
+          <div class="figure-desc">Two photographs: (left) Three-dimensional cutaway rendering of Suntree Baffle Box internal configuration showing inlet pipe, screen assembly, deflector, and sediment chambers. (right) Field photograph of installed Lake Concord Suntree Baffle Box exterior, showing access hatches on top surface, 18-inch RCP inlet, and proximity to Lake Concord with vegetation and bridge structure in background.</div>
+        </div>
+      </div>
+
+      <div class="ref-figure-item">
+        <div class="ref-num">Fig. 17-R8</div>
+        <div class="ref-box">
+          <div class="figure-id">Gee Creek EcoVault Monitoring Equipment (Field Photos)</div>
+          <div class="figure-desc">Three photographs: (1) Interior of Gee Creek EcoVault showing outlet filter cartridge and leaf/debris screen. (2) Surface-level view of autosampler enclosure with hatches open showing two automated composite samplers. (3) Close-up of two automated samplers positioned on wooden support platform within enclosed access vault.</div>
+        </div>
+      </div>
+
+      <div class="ref-figure-item">
+        <div class="ref-num">Fig. 17-R9</div>
+        <div class="ref-box">
+          <div class="figure-id">Lake Hodge EcoVault Monitoring Equipment (Field Photos)</div>
+          <div class="figure-desc">Three photographs: (1) Wide field view showing EcoVault unit and autosampler shelter within fenced compound. (2) Insulated equipment shelter containing inflow sampler and outflow sampler. (3) Equipment shelter and 52-inch × 64-inch concrete outflow structure.</div>
+        </div>
+      </div>
+
+      <div class="ref-figure-item">
+        <div class="ref-num">Fig. 17-R10</div>
+        <div class="ref-box">
+          <div class="figure-id">Lake Hodge Baffle Box Cleanout Sequence (Field Photos)</div>
+          <div class="figure-desc">Four-photo sequence: (a) Captured vegetation debris on filtration screen — leaves, a plastic container, and miscellaneous organic material. (b) Water being pumped from sump area via pump hose. (c) Vacuum hose from Vactor truck removing accumulated sediment slurry. (d) Clean screen mesh following vacuum cleanout, showing intact screen structure.</div>
+        </div>
+      </div>
+
+      <div class="ref-figure-item">
+        <div class="ref-num">Fig. 17-R11</div>
+        <div class="ref-box">
+          <div class="figure-id">Lake Howell Baffle Box Cleanout Sequence (Field Photos)</div>
+          <div class="figure-desc">Four-photo sequence: (a) Vactor truck and crew on residential street during cleanout operations. (b) Pump hose removing standing water from bottom chambers of baffle box. (c) Vacuum hose extracting accumulated organic solids from chamber — material appears dark red-brown with leaf fragments. (d) Screen following cleaning showing clean circular screen surface.</div>
+        </div>
+      </div>
+
+      <div class="ref-figure-item">
+        <div class="ref-num">Fig. 17-R12</div>
+        <div class="ref-box">
+          <div class="figure-id">Solids Removed from Four Baffle Box Sites (Field Photos)</div>
+          <div class="figure-desc">Four photographs of material piles removed from evaluated GPS units: (a) Lake Hodge — dark gray organic/mineral mix, (b) Gee Creek — lighter gray sediment with organic content, (c) San Pablo — dark fibrous organic-dominated material, (d) Lake Concord — pale gray sandy material with organic fragments and litter items visible.</div>
+        </div>
+      </div>
+
+    </div><!-- end ref-figures -->
+
+  </div><!-- end content -->
+
+  <footer class="footer">
+    <span>BMPFast Learning System · Module 17</span>
+    <span>Harvey H. Harper, Environmental Research &amp; Design, Inc. · January 2026</span>
+    <span>Gross Pollutant Separators</span>
+  </footer>
+
+</main>
+
+<script>
+  // Active sidebar link on scroll
+  const sections = document.querySelectorAll('.section-anchor');
+  const links = document.querySelectorAll('.sidebar nav a[href^="#"]');
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach(e => {
+      if (e.isIntersecting) {
+        links.forEach(l => l.classList.remove('active'));
+        const active = document.querySelector(`.sidebar nav a[href="#${e.target.id}"]`);
+        if (active) active.classList.add('active');
+      }
+    });
+  }, { rootMargin: '-20% 0px -70% 0px' });
+  sections.forEach(s => observer.observe(s));
+</script>
+
+</body>
+</html>

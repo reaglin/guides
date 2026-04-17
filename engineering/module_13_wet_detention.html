@@ -1,0 +1,1506 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Module 13 — Analysis of a Wet Detention Pond | BMPFast Learning System</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700&family=Source+Serif+4:ital,wght@0,300;0,400;0,600;1,400&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+<style>
+  /* ── Reset & Base ───────────────────────────────────── */
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  :root {
+    --green-dark:   #1a3a2a;
+    --green-mid:    #2d6247;
+    --green-light:  #4a8c65;
+    --green-pale:   #e8f0eb;
+    --green-accent: #3b7a57;
+    --warm-white:   #faf8f4;
+    --warm-off:     #f2ede5;
+    --warm-border:  #ddd5c5;
+    --text-primary: #1c1a17;
+    --text-secondary:#4a4640;
+    --text-muted:   #7a7268;
+    --mono:         'JetBrains Mono', monospace;
+    --serif:        'Source Serif 4', Georgia, serif;
+    --display:      'Playfair Display', Georgia, serif;
+    --sidebar-w:    260px;
+  }
+  html { scroll-behavior: smooth; }
+  body {
+    font-family: var(--serif);
+    font-size: 17px;
+    line-height: 1.75;
+    color: var(--text-primary);
+    background: var(--warm-white);
+    display: flex;
+  }
+
+  /* ── Sidebar ────────────────────────────────────────── */
+  #sidebar {
+    width: var(--sidebar-w);
+    min-width: var(--sidebar-w);
+    background: var(--green-dark);
+    color: #c8dbd0;
+    position: sticky;
+    top: 0;
+    height: 100vh;
+    overflow-y: auto;
+    padding: 2rem 0;
+    flex-shrink: 0;
+  }
+  #sidebar .sb-logo {
+    font-family: var(--mono);
+    font-size: 0.68rem;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: #7aaa8e;
+    padding: 0 1.4rem 1.2rem;
+    border-bottom: 1px solid #2d4f3c;
+  }
+  #sidebar .sb-module-id {
+    font-family: var(--display);
+    font-size: 1.05rem;
+    color: #e8f4ee;
+    padding: 1rem 1.4rem 0.4rem;
+  }
+  #sidebar nav { padding: 0.6rem 0; }
+  #sidebar nav a {
+    display: block;
+    padding: 0.45rem 1.4rem 0.45rem 1.6rem;
+    font-family: var(--serif);
+    font-size: 0.82rem;
+    color: #a8c8b8;
+    text-decoration: none;
+    border-left: 3px solid transparent;
+    transition: all 0.18s;
+    line-height: 1.4;
+  }
+  #sidebar nav a:hover,
+  #sidebar nav a.active {
+    color: #e8f4ee;
+    background: rgba(255,255,255,0.06);
+    border-left-color: #6abf8e;
+  }
+  #sidebar nav .sb-section {
+    font-family: var(--mono);
+    font-size: 0.62rem;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: #5a8a6e;
+    padding: 1.2rem 1.4rem 0.3rem;
+  }
+
+  /* ── Main Content ───────────────────────────────────── */
+  main {
+    flex: 1;
+    min-width: 0;
+  }
+
+  /* ── Hero ───────────────────────────────────────────── */
+  .hero {
+    background: linear-gradient(135deg, var(--green-dark) 0%, var(--green-mid) 60%, var(--green-accent) 100%);
+    color: white;
+    padding: 4rem 3.5rem 3rem;
+    position: relative;
+    overflow: hidden;
+  }
+  .hero::after {
+    content: '';
+    position: absolute;
+    right: -60px; top: -60px;
+    width: 320px; height: 320px;
+    border-radius: 50%;
+    background: rgba(255,255,255,0.04);
+    pointer-events: none;
+  }
+  .hero .module-label {
+    font-family: var(--mono);
+    font-size: 0.72rem;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    color: #8dd4aa;
+    margin-bottom: 0.8rem;
+  }
+  .hero h1 {
+    font-family: var(--display);
+    font-size: 2.6rem;
+    font-weight: 700;
+    line-height: 1.2;
+    margin-bottom: 0.6rem;
+    color: #fff;
+  }
+  .hero .subtitle {
+    font-size: 1.05rem;
+    color: #b8dfc8;
+    margin-bottom: 1.8rem;
+    font-style: italic;
+  }
+  .hero-meta {
+    display: flex;
+    gap: 2.5rem;
+    flex-wrap: wrap;
+    border-top: 1px solid rgba(255,255,255,0.15);
+    padding-top: 1.4rem;
+    margin-top: 1rem;
+  }
+  .hero-meta .meta-item label {
+    font-family: var(--mono);
+    font-size: 0.62rem;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: #6abf8e;
+    display: block;
+  }
+  .hero-meta .meta-item span {
+    font-size: 0.88rem;
+    color: #d8ede3;
+  }
+
+  /* ── Content Area ───────────────────────────────────── */
+  .content-area {
+    max-width: 900px;
+    padding: 3rem 3.5rem 5rem;
+    margin: 0 auto;
+  }
+
+  /* ── Section headings ───────────────────────────────── */
+  .content-area section { margin-bottom: 3.5rem; }
+  h2 {
+    font-family: var(--display);
+    font-size: 1.75rem;
+    font-weight: 700;
+    color: var(--green-dark);
+    margin-bottom: 1rem;
+    padding-bottom: 0.5rem;
+    border-bottom: 2px solid var(--green-pale);
+    scroll-margin-top: 1.5rem;
+  }
+  h3 {
+    font-family: var(--display);
+    font-size: 1.25rem;
+    font-weight: 600;
+    color: var(--green-mid);
+    margin: 2rem 0 0.75rem;
+    scroll-margin-top: 1.5rem;
+  }
+  h4 {
+    font-family: var(--serif);
+    font-size: 1rem;
+    font-weight: 600;
+    color: var(--green-dark);
+    margin: 1.5rem 0 0.5rem;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+  }
+  p { margin-bottom: 1rem; color: var(--text-primary); }
+
+  /* ── Callout boxes ───────────────────────────────────── */
+  .callout {
+    border-left: 4px solid var(--green-mid);
+    background: var(--green-pale);
+    padding: 1rem 1.3rem;
+    margin: 1.5rem 0;
+    border-radius: 0 4px 4px 0;
+  }
+  .callout.definition { border-color: var(--green-dark); }
+  .callout.formula {
+    border-color: #5a7d6a;
+    background: #eef4f0;
+    font-family: var(--mono);
+    font-size: 0.92rem;
+  }
+  .callout.note {
+    border-color: #8a9a60;
+    background: #f4f6ea;
+  }
+  .callout.warning {
+    border-color: #b08030;
+    background: #fdf6e8;
+  }
+  .callout strong {
+    display: block;
+    font-family: var(--mono);
+    font-size: 0.7rem;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--green-accent);
+    margin-bottom: 0.4rem;
+  }
+  .callout.warning strong { color: #8a6010; }
+
+  /* ── Figure placeholder ─────────────────────────────── */
+  .figure-block {
+    width: 100%;
+    background: var(--warm-off);
+    border: 1.5px dashed var(--warm-border);
+    border-radius: 4px;
+    padding: 2rem 1.5rem;
+    margin: 1.8rem 0;
+    text-align: center;
+  }
+  .figure-block .fig-label {
+    font-family: var(--mono);
+    font-size: 0.7rem;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--green-accent);
+    margin-bottom: 0.5rem;
+  }
+  .figure-block .fig-title {
+    font-family: var(--display);
+    font-size: 1rem;
+    color: var(--text-primary);
+    margin-bottom: 0.4rem;
+  }
+  .figure-block .fig-desc {
+    font-size: 0.85rem;
+    color: var(--text-secondary);
+    font-style: italic;
+    max-width: 580px;
+    margin: 0 auto;
+  }
+
+  /* ── Tables ─────────────────────────────────────────── */
+  .table-wrap { overflow-x: auto; margin: 1.5rem 0; }
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 0.88rem;
+  }
+  thead tr {
+    background: var(--green-dark);
+    color: #e8f4ee;
+  }
+  thead th {
+    padding: 0.7rem 1rem;
+    text-align: left;
+    font-family: var(--mono);
+    font-size: 0.72rem;
+    letter-spacing: 0.07em;
+    text-transform: uppercase;
+    font-weight: 600;
+  }
+  tbody tr:nth-child(even) { background: var(--green-pale); }
+  tbody tr:nth-child(odd)  { background: white; }
+  tbody td {
+    padding: 0.6rem 1rem;
+    border-bottom: 1px solid var(--warm-border);
+    font-family: var(--mono);
+    font-size: 0.84rem;
+    color: var(--text-primary);
+  }
+  tbody td.label-col {
+    font-family: var(--serif);
+    font-size: 0.88rem;
+    color: var(--text-secondary);
+    font-family: var(--serif);
+  }
+  .table-caption {
+    font-family: var(--mono);
+    font-size: 0.72rem;
+    color: var(--text-muted);
+    margin-top: 0.4rem;
+    letter-spacing: 0.04em;
+  }
+
+  /* ── Learning Objectives ────────────────────────────── */
+  .objectives-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+    gap: 1rem;
+    margin: 1.2rem 0;
+  }
+  .obj-card {
+    background: white;
+    border: 1px solid var(--warm-border);
+    border-top: 3px solid var(--green-mid);
+    padding: 1rem 1.2rem;
+    border-radius: 3px;
+  }
+  .obj-card .obj-num {
+    font-family: var(--mono);
+    font-size: 0.68rem;
+    color: var(--green-accent);
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    margin-bottom: 0.3rem;
+  }
+  .obj-card p { font-size: 0.9rem; margin: 0; color: var(--text-primary); }
+
+  /* ── Software workflow steps ────────────────────────── */
+  .workflow-steps { margin: 1.5rem 0; }
+  .workflow-step {
+    display: flex;
+    gap: 1.2rem;
+    margin-bottom: 1.2rem;
+    align-items: flex-start;
+  }
+  .step-num {
+    flex-shrink: 0;
+    width: 2rem; height: 2rem;
+    background: var(--green-mid);
+    color: white;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: var(--mono);
+    font-size: 0.8rem;
+    font-weight: 600;
+    margin-top: 0.1rem;
+  }
+  .step-body h4 { margin: 0 0 0.3rem; font-size: 0.95rem; }
+  .step-body p  { margin: 0; font-size: 0.9rem; color: var(--text-secondary); }
+
+  /* ── Series comparison table ────────────────────────── */
+  .comparison-header {
+    background: var(--green-mid) !important;
+    color: white !important;
+  }
+  .comparison-header td {
+    color: white !important;
+    font-family: var(--mono) !important;
+    font-weight: 600;
+    font-size: 0.8rem !important;
+    letter-spacing: 0.05em;
+  }
+
+  /* ── Load diagram ────────────────────────────────────── */
+  .load-diagram {
+    background: var(--warm-off);
+    border: 1px solid var(--warm-border);
+    border-radius: 4px;
+    padding: 1.5rem 2rem;
+    margin: 1.5rem 0;
+    font-family: var(--mono);
+    font-size: 0.85rem;
+  }
+  .load-diagram .ld-title {
+    font-size: 0.8rem;
+    font-weight: 600;
+    color: var(--green-dark);
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    margin-bottom: 1.2rem;
+  }
+  .ld-flow {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 0.6rem;
+  }
+  .ld-box {
+    border: 1.5px solid var(--green-mid);
+    border-radius: 4px;
+    padding: 0.6rem 1rem;
+    background: white;
+    font-size: 0.82rem;
+    color: var(--text-primary);
+    line-height: 1.4;
+  }
+  .ld-box.treatment {
+    border-color: var(--green-dark);
+    background: var(--green-pale);
+    font-weight: 600;
+  }
+  .ld-arrow {
+    color: var(--green-mid);
+    font-size: 1.2rem;
+    font-weight: bold;
+  }
+  .ld-reduction {
+    font-size: 0.78rem;
+    color: var(--text-muted);
+    text-align: center;
+    margin-top: 0.5rem;
+  }
+
+  /* ── References ─────────────────────────────────────── */
+  .ref-list {
+    list-style: none;
+    padding: 0;
+  }
+  .ref-list li {
+    font-size: 0.88rem;
+    color: var(--text-secondary);
+    padding: 0.5rem 0;
+    border-bottom: 1px solid var(--warm-border);
+    padding-left: 1.2rem;
+    position: relative;
+  }
+  .ref-list li::before {
+    content: '▸';
+    position: absolute;
+    left: 0;
+    color: var(--green-light);
+  }
+
+  /* ── Summary section ────────────────────────────────── */
+  .summary-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1rem;
+    margin: 1.2rem 0;
+  }
+  .summary-card {
+    background: white;
+    border: 1px solid var(--warm-border);
+    padding: 1rem 1.2rem;
+    border-radius: 3px;
+  }
+  .summary-card h4 { margin: 0 0 0.6rem; color: var(--green-mid); }
+  .summary-card p  { font-size: 0.88rem; margin: 0; }
+
+  /* ── Responsive ─────────────────────────────────────── */
+  @media (max-width: 900px) {
+    #sidebar { display: none; }
+    .hero { padding: 2.5rem 1.5rem 2rem; }
+    .content-area { padding: 2rem 1.5rem 4rem; }
+    .hero h1 { font-size: 2rem; }
+    .summary-grid { grid-template-columns: 1fr; }
+  }
+</style>
+</head>
+<body>
+
+<!-- ═══════════════════════════════════ SIDEBAR ═══════════════════════════════════ -->
+<aside id="sidebar">
+  <div class="sb-logo">BMPFast Learning System</div>
+  <div class="sb-module-id">Module 13</div>
+  <nav>
+    <div class="sb-section">Contents</div>
+    <a href="#objectives">Learning Objectives</a>
+    <div class="sb-section">Concepts</div>
+    <a href="#definition">What is a Wet Detention Pond?</a>
+    <a href="#art">Annual Residence Time</a>
+    <a href="#efficiency-curves">Detention Efficiency Curves</a>
+    <a href="#pond-options">Wet Detention Pond Options</a>
+    <a href="#floating-wetlands">Floating Wetlands</a>
+    <div class="sb-section">Series Analysis</div>
+    <a href="#series-principles">BMPs in Series: Principles</a>
+    <a href="#retention-upstream">Upstream Retention Effects</a>
+    <a href="#particulate-removal">Particulate Removal Upstream</a>
+    <a href="#detention-tables">Detention Removal Rate Tables</a>
+    <a href="#double-dipping">Comparison: Double Dipping</a>
+    <a href="#software-comparison">2020 vs. 2025 Software</a>
+    <div class="sb-section">Software Navigation</div>
+    <a href="#project-description">Example Project Description</a>
+    <a href="#site-info">General Site Information</a>
+    <a href="#treatment-options">Treatment Options Worksheet</a>
+    <a href="#stand-alone-results">Stand-Alone Wet Pond Results</a>
+    <a href="#configuration">Catchment Configuration</a>
+    <a href="#add-filter">Adding a Discharge Filter</a>
+    <a href="#series-setup">BMPs in Series Setup</a>
+    <a href="#summary-volume">Summary: Volume Standards</a>
+    <a href="#summary-pollution">Summary: Pollution Control</a>
+    <a href="#loading-detail">Detailed Loading Data</a>
+    <div class="sb-section">Conclusion</div>
+    <a href="#key-takeaways">Key Takeaways</a>
+    <a href="#references">References</a>
+  </nav>
+</aside>
+
+<!-- ═══════════════════════════════════ MAIN ════════════════════════════════════ -->
+<main>
+
+  <!-- Hero -->
+  <div class="hero">
+    <div class="module-label">BMPFast Learning System · Module 13</div>
+    <h1>Analysis of a Wet Detention Pond</h1>
+    <p class="subtitle">Annual Mass Removal, Residence Time, and Treatment Train Configuration</p>
+    <div class="hero-meta">
+      <div class="meta-item"><label>Presenter</label><span>Marty Wanielista</span></div>
+      <div class="meta-item"><label>Date</label><span>January 2026</span></div>
+      <div class="meta-item"><label>Primary Source</label><span>AH Vol. 1, Appendix O · FDEP SO108</span></div>
+      <div class="meta-item"><label>Software</label><span>BMPFast 2025</span></div>
+    </div>
+  </div>
+
+  <div class="content-area">
+
+    <!-- ── 1. Learning Objectives ─────────────────────── -->
+    <section id="objectives">
+      <h2>Learning Objectives</h2>
+      <p>Upon completion of this module, participants will be able to accomplish the following:</p>
+      <div class="objectives-grid">
+        <div class="obj-card">
+          <div class="obj-num">Objective 01</div>
+          <p>Define a wet detention pond and explain its role in stormwater treatment.</p>
+        </div>
+        <div class="obj-card">
+          <div class="obj-num">Objective 02</div>
+          <p>Navigate the BMPFast software worksheets relevant to wet detention pond analysis.</p>
+        </div>
+        <div class="obj-card">
+          <div class="obj-num">Objective 03</div>
+          <p>Demonstrate the use of the Watershed Characteristics and Treatment Options worksheets.</p>
+        </div>
+        <div class="obj-card">
+          <div class="obj-num">Objective 04</div>
+          <p>Evaluate wet detention performance options, including standalone and treatment train configurations.</p>
+        </div>
+        <div class="obj-card">
+          <div class="obj-num">Objective 05</div>
+          <p>Work through example problems involving wet detention ponds and downstream filtration BMPs in series.</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- ── 2. Definition ──────────────────────────────── -->
+    <section id="definition">
+      <h2>What Is a Wet Detention Pond?</h2>
+      <p>A wet detention pond is, simply put, a pond — one that holds water year around. The regulatory definition provides important technical precision:</p>
+
+      <div class="callout definition">
+        <strong>Regulatory Definition</strong>
+        "Wet detention" means the collection and temporary storage of stormwater in a permanently wet impoundment in such a manner as to provide for treatment through physical, chemical, and biological processes with subsequent gradual release of the stormwater.
+      </div>
+
+      <p>Unlike dry retention or infiltration systems, wet detention maintains a permanent pool of water. Incoming stormwater mixes with this pool and is held for a period sufficient for physical settling of particulates, biological uptake of nutrients, and chemical transformation processes. Treated water is then released gradually through a control structure.</p>
+
+      <p>Key structural elements of a wet detention pond include a permanent pool at a defined Normal Water Level (N.W.L.), side slopes (typically 6:1 on the landward side and 2:1 on the pond side), a pollution abatement volume above the permanent pool, peak attenuation volume, a littoral zone (if required), and an outflow control structure consisting of a weir and orifice with an outflow pipe set at a control elevation.</p>
+
+      <div class="figure-block">
+        <div class="fig-label">Figure 13-1</div>
+        <div class="fig-title">Wet Detention Pond — Cross-Sectional Diagram (N.T.S.)</div>
+        <div class="fig-desc">Engineering cross-section showing permanent pool, Normal Water Level (N.W.L.), Groundwater Table (G.W.T.), pollution abatement volume, peak attenuation zone, littoral zone, 6:1 landward slopes, 2:1 pond slopes, weir, orifice, and outflow pipe at control elevation.</div>
+      </div>
+    </section>
+
+    <!-- ── 3. Annual Residence Time ───────────────────── -->
+    <section id="art">
+      <h2>Effectiveness as a Function of Annual Residence Time (ART)</h2>
+      <p>The primary driver of wet detention treatment performance is the <strong>Average Annual Residence Time (ART)</strong> — a measure of how long, on average, stormwater remains in the permanent pool before being discharged. Longer residence times allow more complete physical, chemical, and biological treatment.</p>
+
+      <div class="callout formula">
+        <strong>Formula — Annual Residence Time</strong>
+        ART (days) = [Volume of Permanent Pool (ac-ft) × 365 days/year] ÷ Annual Runoff (ac-ft/year)
+      </div>
+
+      <p>The ART forms the X-axis of the detention efficiency curves. Treatment performance for Total Phosphorus (TP) and Total Nitrogen (TN) are calculated separately using empirically derived regression equations developed from field monitoring of Florida wet detention facilities.</p>
+
+      <h3>Performance Equations</h3>
+
+      <div class="callout formula">
+        <strong>TP Removal Efficiency (R² = 0.897)</strong>
+        Percent Removal = 40.13 + 6.372 · ln(t<sub>d</sub>) + 0.213 · [ln(t<sub>d</sub>)]²
+      </div>
+
+      <div class="callout formula">
+        <strong>TN Removal Efficiency (R² = 0.800)</strong>
+        Percent Removal = (43.75 · t<sub>d</sub>) ÷ (4.38 + t<sub>d</sub>)
+      </div>
+
+      <p>Where <em>t<sub>d</sub></em> = Average Annual Residence Time (days), equivalent to ART.</p>
+
+      <div class="figure-block">
+        <div class="fig-label">Figure 13-2</div>
+        <div class="fig-title">Wet Detention Efficiency Curves — Total Phosphorus (TP)</div>
+        <div class="fig-desc">Scatter plot with regression curve showing removal efficiency (%) on Y-axis versus Average Annual Residence Time in days (ART) on X-axis, ranging 0–500 days. Data points (red dots) show measured field performance. R² = 0.897 indicates strong predictive fit. Curve rises steeply at low ART values and approaches an asymptote near 80–90% removal at high ART values.</div>
+      </div>
+
+      <div class="figure-block">
+        <div class="fig-label">Figure 13-3</div>
+        <div class="fig-title">Wet Detention Efficiency Curves — Total Nitrogen (TN)</div>
+        <div class="fig-desc">Scatter plot with regression curve showing removal efficiency (%) on Y-axis versus Average Annual Residence Time in days (ART) on X-axis, ranging 0–600 days. Data points (red dots) show measured field performance. R² = 0.800. TN curve shows lower maximum efficiency (~40–45%) compared to TP and reaches a plateau at moderate ART values.</div>
+      </div>
+
+      <div class="callout note">
+        <strong>Littoral Zone Requirement</strong>
+        The efficiency curves shown assume the existence of a littoral zone. If no littoral zone is present, the effectiveness is reduced by 10%:<br><br>
+        <code>Rem (no littoral) = Rem (with littoral) ÷ 1.1</code>
+      </div>
+    </section>
+
+    <!-- ── 4. Detention Efficiency Curves ─────────────── -->
+    <section id="efficiency-curves">
+      <h2>Detention Efficiency Plot and Managed Aquatic Plants</h2>
+      <p>BMPFast generates an interactive detention efficiency plot that serves as a discovery tool, allowing practitioners to visually assess the relationship between permanent pool size and treatment performance. The plot displays efficiency curves for both phosphorus (P) and nitrogen (N), along with system efficiency lines for each treatment category (CAT 1 through CAT 4).</p>
+
+      <div class="figure-block">
+        <div class="fig-label">Figure 13-4</div>
+        <div class="fig-title">BMPFast Detention Efficiency Plot — TP and TN with Category Curves</div>
+        <div class="fig-desc">Line chart with Treatment Efficiency (%) on Y-axis (0–100%) and Average Annual Residence Time (days) on X-axis (0–500 days). Displays efficiency curves for phosphorus (P) and nitrogen (N), plus system efficiency lines for Categories 1–4 for each nutrient. Maximum ART credit is capped at 200 days for regulatory purposes.</div>
+      </div>
+
+      <div class="callout note">
+        <strong>ART Upper Limit</strong>
+        For regulatory credit purposes, in some applications the annual residence time cannot exceed an upper limit of <strong>200 days</strong>. Creditable ART is capped at this value regardless of the actual calculated ART.
+      </div>
+
+      <h3>Managed Aquatic Plants (MAP) Credit</h3>
+      <p>Managed Aquatic Plants — including floating wetland mats — can receive up to <strong>20% additional removal credit</strong>, provided there is sufficient area coverage and a documented, more frequent replacement plan. The standard credit for floating wetlands at 5% surface area coverage is 12%, as discussed in the following section.</p>
+    </section>
+
+    <!-- ── 5. Pond Options ────────────────────────────── -->
+    <section id="pond-options">
+      <h2>Wet Detention Pond Options in BMPFast</h2>
+      <p>The BMPFast Wet Detention worksheet requires several key inputs to calculate annual pollutant removal performance. These inputs directly control the ART calculation and applicable efficiency credits.</p>
+
+      <h3>Primary Input Parameters</h3>
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr>
+              <th>Input Parameter</th>
+              <th>Description / Notes</th>
+              <th>Example Value</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td class="label-col">Permanent Pool Volume</td>
+              <td class="label-col">Volume of the permanent pool in acre-feet; drives ART calculation</td>
+              <td>0.7 ac-ft</td>
+            </tr>
+            <tr>
+              <td class="label-col">Littoral Zone Check</td>
+              <td class="label-col">Check box if a littoral zone is present; absence reduces efficiency by 10%</td>
+              <td>Present / Absent</td>
+            </tr>
+            <tr>
+              <td class="label-col">Floating Wetland or MAP Credit (%)</td>
+              <td class="label-col">Additional credit for floating wetland mats; 12% for 5% area coverage (AH Vol. 1, App. O, item 12)</td>
+              <td>12%</td>
+            </tr>
+            <tr>
+              <td class="label-col">Input Pond TP (µg/l)</td>
+              <td class="label-col">Enter measured pond TP concentration if data are available; used for anoxic zone depth calculations</td>
+              <td>0 (if unavailable)</td>
+            </tr>
+          </tbody>
+        </table>
+        <div class="table-caption">Source: AH Vol. 1, Appendix O; AH Vol. 2</div>
+      </div>
+
+      <div class="callout note">
+        <strong>Anoxic Zone Calculation</strong>
+        The Input Pond TP field activates the anoxic zone depth calculation feature in BMPFast. This is used to evaluate the depth of anaerobic conditions at the bottom of the permanent pool, which can influence internal phosphorus loading dynamics.
+      </div>
+    </section>
+
+    <!-- ── 6. Floating Wetlands ───────────────────────── -->
+    <section id="floating-wetlands">
+      <h2>Floating Wetlands and MAP Credits</h2>
+      <p>Floating wetland systems — buoyant platforms supporting emergent aquatic vegetation — can be installed within the permanent pool of a wet detention pond to enhance nutrient removal through additional biological uptake pathways. Research has demonstrated that floating wetlands with 5% surface area coverage provide a 12% additional removal credit.</p>
+
+      <div class="figure-block">
+        <div class="fig-label">Figure 13-5</div>
+        <div class="fig-title">Floating Wetland Systems in Stormwater Ponds</div>
+        <div class="fig-desc">Photographic examples showing floating wetland mat installations in stormwater detention ponds. Images depict circular and elongated mat configurations with emergent vegetation including rushes and flowering plants, illustrating various coverage levels from small isolated mats to more extensive coverage approaching 5–10% of pond surface area.</div>
+      </div>
+
+      <div class="callout note">
+        <strong>Enhanced MAP Credit Conditions</strong>
+        With a formal maintenance plan and 10% area coverage, a 20% removal credit has been approved, provided that an alternative BMP is available and activated if the 20% target is not achieved in practice.
+      </div>
+
+      <p>The regulatory basis for floating wetland credits is established in:</p>
+      <ul style="margin: 0.5rem 0 1rem 1.5rem; color: var(--text-secondary); font-size: 0.95rem;">
+        <li>Wanielista, et al., <em>Floating Wetland Systems for Nutrient Removal in Stormwater Ponds</em>, FDOT Project BDK78 985-01, 2012.</li>
+        <li>Applicant's Handbook, Vol. 1, Appendix O, FDEP, June 28, 2024.</li>
+      </ul>
+    </section>
+
+    <!-- ── 7. Series Principles ───────────────────────── -->
+    <section id="series-principles">
+      <h2>BMPs in Series: Fundamental Principles</h2>
+      <p>When two or more wet detention ponds are configured in series — each with, for example, a 50-day residence time — a critical misconception must be avoided: the removal efficiencies of the individual ponds <strong>cannot be simply added together</strong>.</p>
+
+      <div class="callout warning">
+        <strong>Common Error</strong>
+        Doubling the permanent pool does not double the removal. You cannot remove the same pollutants more than once. A general rule applies: upstream BMPs do impact downstream effectiveness when the removal mechanisms are the same.
+      </div>
+
+      <h3>Why Simple Addition Fails</h3>
+      <p>Consider two detention BMPs in series, each with a 50-day ART, producing individual efficiencies of approximately 40% for TN and 70% for TP:</p>
+
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr>
+              <th>Approach</th>
+              <th>TN Efficiency</th>
+              <th>TP Efficiency</th>
+              <th>Valid?</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td class="label-col">Incorrect: Add individual efficiencies</td>
+              <td>40% + 40% = 80%</td>
+              <td>70% + 70% = 140%</td>
+              <td>✗ Invalid</td>
+            </tr>
+            <tr>
+              <td class="label-col">Correct: Sum ART, read combined curve</td>
+              <td>50d + 50d = 100d → ~43%</td>
+              <td>50d + 50d = 100d → ~74%</td>
+              <td>✓ Valid</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="callout note">
+        <strong>Regulatory Constraint</strong>
+        Equation 9-5 from AH Vol. 1, Appendix O cannot be used for two detention BMPs in series because the upstream detention BMP does affect the pollutant concentrations entering the downstream pond, violating the equation's independence assumption.
+      </div>
+
+      <h3>Series Efficiency Using Equation 9-5 (Mixed-Mechanism BMPs)</h3>
+      <p>Equation 9-5 from AH Vol. 1 <em>can</em> be applied when the removal mechanisms of the upstream and downstream BMPs are fundamentally different — for example, wet detention followed by a sorption media filter. The equation assumes each downstream BMP acts independently of upstream BMPs in terms of pollutant removal mechanisms:</p>
+
+      <div class="callout formula">
+        <strong>Equation 9-5 — Overall Treatment Train Efficiency</strong>
+        Eff<sub>total</sub> = 1 − [(1 − E₁) × (1 − E₂) × (1 − E₃) × … × (1 − E<sub>n</sub>)]<br><br>
+        Simplified for two BMPs:<br>
+        Eff<sub>total</sub> = Eff₁ + [(1 − Eff₁) × Eff₂]
+      </div>
+
+      <h3>Worked Example: Wet Detention + Floating Wetland Filter</h3>
+      <p>Consider a wet detention pond (BMP 1) achieving 43% TN removal at 100-day ART, followed by a floating wetland providing 12% additional credit (BMP 2):</p>
+
+      <div class="load-diagram">
+        <div class="ld-title">Load Flow Diagram — Wet Detention + Floating Wetland (TN)</div>
+        <div class="ld-flow">
+          <div class="ld-box">Inflow<br>100 mg</div>
+          <div class="ld-arrow">→</div>
+          <div class="ld-box treatment">BMP 1: Wet Detention<br>43% removal</div>
+          <div class="ld-arrow">→</div>
+          <div class="ld-box">57 mg remaining</div>
+          <div class="ld-arrow">→</div>
+          <div class="ld-box treatment">BMP 2: Floating Wetland<br>12% removal</div>
+          <div class="ld-arrow">→</div>
+          <div class="ld-box">50.16 mg discharged</div>
+        </div>
+        <div class="ld-reduction">
+          Mass reduction BMP 2: 57 mg × 0.12 = 6.84 mg<br>
+          Combined efficiency = 0.43 + [0.57 × 0.12] = 0.43 + 0.0684 = <strong>49.84%</strong><br>
+          Note: This is NOT 43% + 12% = 55%
+        </div>
+      </div>
+    </section>
+
+    <!-- ── 8. Upstream Retention Effects ─────────────── -->
+    <section id="retention-upstream">
+      <h2>Wet Detention Effectiveness When Preceded by Upstream Retention</h2>
+      <p>When a retention BMP (which infiltrates water and removes particulates) is located upstream of a wet detention pond, a more complex interaction occurs. Upstream retention removes a fraction of particulate-bound nutrients from the runoff before it reaches the wet pond. This has two important consequences:</p>
+
+      <ol style="margin: 0.5rem 0 1rem 1.5rem; color: var(--text-primary); line-height: 2;">
+        <li>The overall system efficiency is enhanced relative to a standalone wet pond.</li>
+        <li>The effective removal efficiency of the wet pond itself is <em>reduced</em> because the particulate nutrients that the pond would have settled out have already been removed upstream.</li>
+      </ol>
+
+      <div class="callout note">
+        <strong>Key Principle</strong>
+        When there are BMPs in series and the upstream BMP is retention, particulates are removed first. When followed by a wet pond, the wet pond's percent removal is reduced by the fraction of particulate nutrients removed upstream — at a maximum of 20% for phosphorus and 10% for nitrogen. The fraction removed upstream is proportional to the treatment depth, and the maximum adjustment is scaled proportionally to the upstream annual removal percentage.
+      </div>
+
+      <p>This adjustment mechanism prevents "double counting" of particulate removal credit across both the upstream retention and downstream wet detention systems.</p>
+
+      <h3>Example Calculation — Series with 50% Upstream TN Retention</h3>
+      <p>For a standalone system with 50% TN retention upstream and 38% wet detention downstream at ART = 31 days:</p>
+
+      <div class="load-diagram">
+        <div class="ld-title">Load Flow — Upstream Retention + Downstream Wet Detention (TN)</div>
+        <div class="ld-flow">
+          <div class="ld-box">Inflow<br>100 mg</div>
+          <div class="ld-arrow">→</div>
+          <div class="ld-box treatment">Upstream Retention<br>50% removal</div>
+          <div class="ld-arrow">→</div>
+          <div class="ld-box">50 mg remaining</div>
+          <div class="ld-arrow">→</div>
+          <div class="ld-box treatment">Wet Detention<br>33% removal (adjusted)</div>
+          <div class="ld-arrow">→</div>
+          <div class="ld-box">33.5 mg discharged</div>
+        </div>
+        <div class="ld-reduction">
+          The wet pond removal is adjusted from 38% (standalone) to 33% (accounting for upstream particulate capture).<br>
+          Overall: Eff = 1 − [(1 − 0.50) × (1 − 0.33)] = 1 − 0.335 = <strong>66.5% combined TN removal</strong>
+        </div>
+      </div>
+
+      <div class="figure-block">
+        <div class="fig-label">Figure 13-6</div>
+        <div class="fig-title">Wet Detention Efficiency Plot — System Efficiency by Treatment Category (CAT 1–4) for TP and TN</div>
+        <div class="fig-desc">Line chart showing Treatment Efficiency (%) on Y-axis (0–100%) and Average Annual Residence Time (days) on X-axis (0–500 days). Displays the base efficiency curves for P and N plus system efficiency curves for each of four treatment categories, illustrating how total system performance varies with ART and upstream conditions. Horizontal reference lines at 40% TN and 20% TP indicate maximum upstream particulate adjustment limits.</div>
+      </div>
+    </section>
+
+    <!-- ── 9. Particulate Removal ─────────────────────── -->
+    <section id="particulate-removal">
+      <h2>Particulate Removal Upstream — Calculating Adjustments</h2>
+      <p>To properly account for the interaction between upstream retention and downstream wet detention, the fraction of nutrients in particulate form must be known. The following procedure applies:</p>
+
+      <h3>Inputs Required</h3>
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr>
+              <th>Parameter</th>
+              <th>Description</th>
+              <th>Example Value</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td class="label-col">% particulates in runoff</td>
+              <td class="label-col">Fraction of total nutrient load in particulate form</td>
+              <td>50%</td>
+            </tr>
+            <tr>
+              <td class="label-col">% annual TN load of particles removed upstream</td>
+              <td class="label-col">Read from TN removal charts for the upstream retention system</td>
+              <td>20%</td>
+            </tr>
+            <tr>
+              <td class="label-col">% annual TP load of particles removed upstream</td>
+              <td class="label-col">Read from TP removal charts for the upstream retention system</td>
+              <td>40%</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <h3>Calculating Maximum Adjustments</h3>
+      <div class="callout formula">
+        <strong>Maximum TN Reduction (M<sub>TN</sub>)</strong>
+        M<sub>TN</sub> = (% particles in runoff) × (fraction annual TN load removed upstream)<br>
+        M<sub>TN</sub> = 50% × 20% = <strong>10%</strong> maximum reduction in TN wet pond credit
+      </div>
+
+      <div class="callout formula">
+        <strong>Maximum TP Reduction (M<sub>TP</sub>)</strong>
+        M<sub>TP</sub> = (% particles in runoff) × (fraction annual TP load removed upstream)<br>
+        M<sub>TP</sub> = 50% × 40% = <strong>20%</strong> maximum reduction in TP wet pond credit
+      </div>
+
+      <div class="figure-block">
+        <div class="fig-label">Figure 13-7</div>
+        <div class="fig-title">Particulate Removal Efficiency Curves — Total Nitrogen and Total Phosphorus</div>
+        <div class="fig-desc">Two scatter plots with regression curves. Left panel shows Total Nitrogen removal efficiency (%) versus Detention Time t<sub>d</sub> (days, 0–400); equation: Efficiency = (5.46 · t<sub>d</sub>) / (44.72 + t<sub>d</sub>); R² = 0.808. Right panel shows Total Phosphorus removal efficiency (%) versus Detention Time (days, 0–500); equation: Percent Removal = 40.15 + 6.366 · ln(t<sub>d</sub>) + 0.214 · [ln(t<sub>d</sub>)]²; R² = 0.8941. Both curves show individual data points and fitted regression lines.</div>
+      </div>
+    </section>
+
+    <!-- ── 10. Detention Tables ───────────────────────── -->
+    <section id="detention-tables">
+      <h2>Detention Removal Rates After Upstream Retention</h2>
+      <p>The following tables present calculated removal performance for combined retention + wet detention treatment trains, showing how the downstream wet pond removal is adjusted based on upstream retention efficiency (ER). Two ART scenarios are shown: ART = 200 days and ART = 31 days.</p>
+
+      <h3>Combined Performance Table — ART = 200 Days</h3>
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr>
+              <th>Upstream Retention ER (%)</th>
+              <th>TN: Detention Component</th>
+              <th>TN: Total System</th>
+              <th>TP: Detention Component</th>
+              <th>TP: Total System</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr><td>90</td><td>3.40</td><td>93.40</td><td>6.20</td><td>96.20</td></tr>
+            <tr><td>80</td><td>7.00</td><td>87.00</td><td>12.80</td><td>92.80</td></tr>
+            <tr><td>70</td><td>10.80</td><td>80.80</td><td>19.80</td><td>89.80</td></tr>
+            <tr><td>60</td><td>14.80</td><td>74.80</td><td>27.20</td><td>87.20</td></tr>
+            <tr><td>50</td><td>19.00</td><td>69.00</td><td>35.00</td><td>85.00</td></tr>
+            <tr><td>40</td><td>23.40</td><td>63.40</td><td>43.20</td><td>83.20</td></tr>
+            <tr><td>30</td><td>28.00</td><td>58.00</td><td>51.80</td><td>81.80</td></tr>
+            <tr><td>20</td><td>32.80</td><td>52.80</td><td>60.80</td><td>80.80</td></tr>
+            <tr><td>0 (standalone)</td><td>43.00</td><td>43.00</td><td>80.00</td><td>80.00</td></tr>
+          </tbody>
+        </table>
+        <div class="table-caption">EDTN (standalone) = 43%; MTN = 10%. EDTP (standalone) = 80%; MTP = 20%.</div>
+      </div>
+
+      <h3>Combined Performance Table — ART = 31 Days</h3>
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr>
+              <th>Upstream Retention ER (%)</th>
+              <th>TN: Detention Component</th>
+              <th>TN: Total System</th>
+              <th>TP: Detention Component</th>
+              <th>TP: Total System</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr><td>90</td><td>2.90</td><td>92.90</td><td>4.70</td><td>94.70</td></tr>
+            <tr><td>80</td><td>6.00</td><td>86.00</td><td>9.80</td><td>89.80</td></tr>
+            <tr><td>70</td><td>9.30</td><td>79.30</td><td>15.30</td><td>85.30</td></tr>
+            <tr><td>60</td><td>12.80</td><td>72.80</td><td>21.20</td><td>81.20</td></tr>
+            <tr><td>50</td><td>16.50</td><td>66.50</td><td>27.50</td><td>77.50</td></tr>
+            <tr><td>40</td><td>20.40</td><td>60.40</td><td>34.20</td><td>74.20</td></tr>
+            <tr><td>30</td><td>24.50</td><td>54.50</td><td>41.30</td><td>71.30</td></tr>
+            <tr><td>20</td><td>28.80</td><td>48.80</td><td>48.80</td><td>68.80</td></tr>
+            <tr><td>0 (standalone)</td><td>38.00</td><td>38.00</td><td>65.00</td><td>65.00</td></tr>
+          </tbody>
+        </table>
+        <div class="table-caption">EDTN (standalone) = 38%; MTN = 10%. EDTP (standalone) = 65%; MTP = 20%.</div>
+      </div>
+
+      <h3>Calculation Formula for Adjusted Detention Efficiency</h3>
+      <div class="callout formula">
+        <strong>Detention Efficiency After Upstream Retention (Example: TN at ART = 31 days, ER = 80%)</strong>
+        E<sub>detention after retention</sub> = (100 − ER) × [(ED<sub>TN</sub>/100) − (M<sub>TN</sub>/100) × (ER/100)]<br><br>
+        E = (100 − 80) × [(38/100) − (10/100) × (80/100)]<br>
+        E = 20 × [0.38 − 0.08] = 20 × 0.30 = <strong>6%</strong> (detention component at ER = 80%)
+      </div>
+    </section>
+
+    <!-- ── 11. Double Dipping ─────────────────────────── -->
+    <section id="double-dipping">
+      <h2>Comparison: "Double Dipping" vs. Adjusted Method</h2>
+      <p>The BMPFast software implements a methodology that prevents double counting of particulate removal — a practice sometimes called "double dipping." Two approaches are compared below for the ART = 31-day scenario, both using Equation 9-5 (AH Vol. 1):</p>
+
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr>
+              <th>Upstream Retention ER (%)</th>
+              <th colspan="2">Double Dipping (particles removed in both BMPs)</th>
+              <th colspan="2">Adjusted (particles removed once upstream only)</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr class="comparison-header">
+              <td></td>
+              <td>TN Total (%)</td>
+              <td>TP Total (%)</td>
+              <td>TN Total (%)</td>
+              <td>TP Total (%)</td>
+            </tr>
+            <tr><td>90</td><td>93.80</td><td>96.50</td><td>92.90</td><td>94.70</td></tr>
+            <tr><td>80</td><td>87.60</td><td>93.00</td><td>86.00</td><td>89.80</td></tr>
+            <tr><td>70</td><td>81.40</td><td>89.50</td><td>79.30</td><td>85.30</td></tr>
+            <tr><td>60</td><td>75.20</td><td>86.00</td><td>72.80</td><td>81.20</td></tr>
+            <tr><td>50</td><td>69.00</td><td>82.50</td><td>66.50</td><td>77.50</td></tr>
+            <tr><td>40</td><td>62.80</td><td>79.00</td><td>60.40</td><td>74.20</td></tr>
+            <tr><td>30</td><td>56.60</td><td>75.50</td><td>54.50</td><td>71.30</td></tr>
+            <tr><td>20</td><td>50.40</td><td>72.00</td><td>48.80</td><td>68.80</td></tr>
+            <tr><td>0</td><td>38.00</td><td>65.00</td><td>38.00</td><td>65.00</td></tr>
+          </tbody>
+        </table>
+        <div class="table-caption">Both approaches use Equation 9-5: Eff₁ + [(1 − Eff₁) × Eff₂]. The adjusted method (right columns) is the technically correct approach implemented in BMPFast 2025.</div>
+      </div>
+    </section>
+
+    <!-- ── 12. Software Comparison ───────────────────── -->
+    <section id="software-comparison">
+      <h2>2020 vs. 2025 Software: Methodological Differences</h2>
+      <p>The 2025 version of BMPFast introduced an important refinement to how upstream retention interacts with downstream wet detention removal, particularly for low-effectiveness upstream LID retention systems such as tree wells and rain gardens. The table below compares TN removal performance at ART = 31 days:</p>
+
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr>
+              <th>Upstream Retention ER (%)</th>
+              <th>2020 Software — TN Total (%)</th>
+              <th>2025 Software — TN Total (%)</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr><td>90</td><td>93.17</td><td>92.90</td></tr>
+            <tr><td>80</td><td>86.60</td><td>86.00</td></tr>
+            <tr><td>70</td><td>79.90</td><td>79.30</td></tr>
+            <tr><td>60</td><td>73.20</td><td>72.80</td></tr>
+            <tr><td>50</td><td>66.50</td><td>66.50</td></tr>
+            <tr><td>40</td><td>59.80</td><td>60.40</td></tr>
+            <tr><td>30</td><td>53.10</td><td>54.50</td></tr>
+            <tr><td>20</td><td>46.40</td><td>48.80</td></tr>
+            <tr><td>0</td><td>38.00</td><td>38.00</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="callout note">
+        <strong>Key Methodological Difference</strong>
+        In the 2020 software, the wet pond removal is reduced by a constant amount regardless of the upstream retention efficiency. In the 2025 software, the decrease in wet pond removal is a function of upstream retention efficiency — making it more physically accurate. The 2025 methodology also supports use of upstream LID retention systems with low effectiveness (such as tree wells and rain gardens) that were not properly handled in the 2020 version.
+      </div>
+    </section>
+
+    <!-- ── 13. Project Description ───────────────────── -->
+    <section id="project-description">
+      <h2>Example Project Description</h2>
+      <p>The following worked example demonstrates the complete workflow for calculating average annual mass removal using BMPFast, first for a standalone wet detention pond and then for a BMP treatment train within the same catchment. All software navigation steps are illustrated with screen captures from BMPFast.</p>
+
+      <div class="callout definition">
+        <strong>Project Parameters</strong>
+        <strong>Project Name:</strong> Detention Examples<br>
+        <strong>Location:</strong> Southwest coastal area of Florida (Florida Meteorological Zone 4)<br>
+        <strong>Average Annual Rainfall:</strong> 52 inches<br>
+        <strong>Pre-Development:</strong> General agriculture, 2-acre watershed<br>
+        <strong>Post-Development:</strong> High-intensity commercial, 2-acre watershed<br>
+        <strong>DCIA:</strong> 30.5%<br>
+        <strong>Wet Pond Area:</strong> 0.2 acres (excluded from loading calculations)<br>
+        <strong>Permanent Pool Volume:</strong> 0.30 acre-feet<br>
+        <strong>Littoral Zone:</strong> Not present<br>
+        <strong>Pre-Development CN:</strong> 70 (pervious area)<br>
+        <strong>Post-Development Non-DCIA CN:</strong> 77.8 (includes disconnected impervious areas)<br>
+        <strong>Discharge Location:</strong> Does not discharge to OFW or impaired water body<br>
+        <strong>Performance Standard:</strong> All sites non-exempted (55% TN, 80% TP required)
+      </div>
+    </section>
+
+    <!-- ── 14. Site Info Worksheet ───────────────────── -->
+    <section id="site-info">
+      <h2>Step 1 — General Site Information Worksheet</h2>
+      <p>Open BMPFast and complete the General Site Information worksheet with the project parameters. This establishes the meteorological zone, rainfall, performance standard, and groundwater analysis settings. The software calculates and displays the required removal efficiencies for nitrogen and phosphorus based on the performance standard and project location.</p>
+
+      <div class="figure-block">
+        <div class="fig-label">Figure 13-8</div>
+        <div class="fig-title">BMPFast General Site Information Worksheet — Example Input</div>
+        <div class="fig-desc">Screenshot of the General Site Information dialog showing: Project Name = "detention examples"; Meteorological Zone = Florida Zone 4; Mean Annual Rainfall = 52 inches; Performance Standard = "All sites non-exempted"; Conduct Groundwater Discharge Analysis = No. Calculated results shown: Nitrogen Removal Efficiency = 55%; Phosphorus Removal Efficiency = 80%. Navigation buttons visible: (1) Enter Catchment [arrow pointing here]; (2) Enter Treatment.</div>
+      </div>
+
+      <p>Next, navigate to the Watershed Characteristics worksheet (Button 1 — Enter Catchment) and enter the land use, area, and curve number data for the pre- and post-development conditions. The software automatically calculates Event Mean Concentrations (EMC), Annual Runoff Coefficients (Annual ROC), annual runoff volumes, and nitrogen and phosphorus loadings.</p>
+
+      <div class="figure-block">
+        <div class="fig-label">Figure 13-9</div>
+        <div class="fig-title">BMPFast Watershed Characteristics Worksheet — Southwest Catchment Data</div>
+        <div class="fig-desc">Screenshot of the Watershed Characteristics Worksheet dialog. Catchment Name = "southwest catchment". Pre land use = Agricultural - General (TN=2.290, TP=0.381 mg/L). Post land use = High-Intensity Commercial (TN=2.400, TP=0.345 mg/L). Input fields shown: Total Pre-Development Catchment Area = 2.00 ac; Total Post-Development Catchment Area = 2.00 ac; Pre-Development Non DCIA Curve Number = 70.00; Pre-Development DCIA Percentage = 0.00%; Post-Development Non DCIA Curve Number = 77.80; Post-Development DCIA Percentage = 30.50%; Wet Pond Area = 0.20 ac. Calculated outputs (right panel): EMC(N) = Pre 2.290, Post 2.400 mg/L; EMC(P) = Pre 0.381, Post 0.345 mg/L; Annual ROC = Pre 0.071, Post 0.331; Runoff = Pre 0.615, Post 2.581 ac-ft/yr; N Loading = Pre 1.737, Post 7.638 kg/yr; P Loading = Pre 0.289, Post 1.098 kg/yr. Calculate button visible.</div>
+      </div>
+
+      <h3>Calculated Watershed Results Summary</h3>
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr>
+              <th>Parameter</th>
+              <th>Pre-Development</th>
+              <th>Post-Development</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr><td class="label-col">Land Use</td><td>Agricultural - General</td><td>High-Intensity Commercial</td></tr>
+            <tr><td class="label-col">EMC (N) mg/L</td><td>2.290</td><td>2.400</td></tr>
+            <tr><td class="label-col">EMC (P) mg/L</td><td>0.381</td><td>0.345</td></tr>
+            <tr><td class="label-col">Annual ROC</td><td>0.071</td><td>0.331</td></tr>
+            <tr><td class="label-col">Runoff (ac-ft/yr)</td><td>0.615</td><td>2.581</td></tr>
+            <tr><td class="label-col">N Loading (kg/yr)</td><td>1.737</td><td>7.638</td></tr>
+            <tr><td class="label-col">P Loading (kg/yr)</td><td>0.289</td><td>1.098</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <!-- ── 15. Treatment Options ──────────────────────── -->
+    <section id="treatment-options">
+      <h2>Step 2 — Treatment Options Worksheet</h2>
+      <p>Navigate to the Treatment Options worksheet (Button 2 — Enter Treatment) to select the BMP for the catchment. The worksheet displays all available BMP types in a grid. Color coding indicates BMP status: green highlighting indicates a BMP that has been defined and is active in the analysis.</p>
+
+      <div class="figure-block">
+        <div class="fig-label">Figure 13-10</div>
+        <div class="fig-title">BMPFast Treatment Options Worksheet — Available BMP Types</div>
+        <div class="fig-desc">Screenshot of the Treatment Options worksheet for Catchment 1 (southwest catchment). Grid displays all available BMP options in two columns: Retention Basin, Greenroof, Wet Detention (highlighted green — active), Rainwater Harvesting, Exfiltration Trench/Vault, Vegetated Buffer, Permeable Pavement (highlighted orange — defined), Vegetated Filter Strip, Stormwater Harvesting, Rain Garden, Surface Discharge Filter (highlighted orange — defined), Tree Well, Swale, User Defined, BMPs in Series (highlighted orange — defined). Legend at bottom: BMP is Defined / BMP is Used.</div>
+      </div>
+
+      <p>For the initial standalone analysis, select <strong>Wet Detention</strong> as the active BMP. The green highlighting confirms the BMP is defined and will be used in the routing.</p>
+    </section>
+
+    <!-- ── 16. Stand-Alone Results ───────────────────── -->
+    <section id="stand-alone-results">
+      <h2>Step 3 — Stand-Alone Wet Detention Analysis Results</h2>
+      <p>After entering the permanent pool volume (0.3 ac-ft) and the absence of a littoral zone, click Calculate to run the wet detention analysis. The results are displayed as a load diagram showing the incoming load, treatment efficiency, surface discharge, and mass reduction.</p>
+
+      <div class="figure-block">
+        <div class="fig-label">Figure 13-11</div>
+        <div class="fig-title">BMPFast Wet Detention Worksheet — Stand-Alone Results</div>
+        <div class="fig-desc">Screenshot of the Wet Detention Analysis worksheet for "All sites non-exempted." Note at top: "For credit, in some applications, annual residence times cannot exceed an upper limit. Pond must include a littoral zone. If no littoral zone, the credit is reduced by 10%." Checkbox "Check if there is a littoral zone" is checked (with arrow indicator). Permanent Pool Volume = 0.3 ac-ft (arrow indicator). Floating Wetland or other MAPs Credit = 0. Input Pond TP = 0. Action buttons: Calculate, Anoxic Depth, Cost, Print, Plot, Back (with arrow indicators). Load Diagram for Wet Detention (stand-alone): Load box shows N: 7.64 kg/yr, P: 1.10 kg/yr, Q: 2.58 ac-ft/yr → Treatment box shows N: 40%, P: 67% → Surface Discharge box shows N: 4.88 kg/yr, P: 0.43 kg/yr. Mass Reduction box shows N: 2.75 kg/yr, P: 0.67 kg/yr. At bottom: Nitrogen Removal Efficiency = 55%; Phosphorus Removal Efficiency = 80%.</div>
+      </div>
+
+      <h3>Stand-Alone Performance Assessment</h3>
+      <div class="callout warning">
+        <strong>Performance Shortfall — Stand-Alone Wet Detention</strong>
+        The standalone wet detention pond achieves only 40% TN removal and 67% TP removal against required standards of 55% TN and 80% TP. The removal does NOT meet the required performance standard. A treatment train configuration with an additional downstream BMP is required.
+      </div>
+
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr>
+              <th>Parameter</th>
+              <th>Required</th>
+              <th>Provided (Standalone Wet Pond)</th>
+              <th>Meets Standard?</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td class="label-col">TN Removal Efficiency</td>
+              <td>55%</td>
+              <td>40%</td>
+              <td>✗ No</td>
+            </tr>
+            <tr>
+              <td class="label-col">TP Removal Efficiency</td>
+              <td>80%</td>
+              <td>67%</td>
+              <td>✗ No</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <!-- ── 17. Configuration ──────────────────────────── -->
+    <section id="configuration">
+      <h2>Step 4 — Set Catchment Configuration (Topology / Routing)</h2>
+      <p>The Select Catchment Configuration screen defines the spatial routing of catchments and BMPs. Each catchment is assigned a "From" number (the source catchment) and a "To" destination (either another catchment or the outlet, designated as 0). The BMP assigned to each catchment is shown in the table. The Routing Diagram panel provides a visual representation of the flow topology.</p>
+
+      <div class="figure-block">
+        <div class="fig-label">Figure 13-12</div>
+        <div class="fig-title">BMPFast Catchment Configuration — Single Catchment Routing to Outlet</div>
+        <div class="fig-desc">Screenshot of the Select Catchment Configuration dialog. Table shows: From = 1, To = 0 (Outlet), Area = 2.00 ac, BMP Used = Wet Detention, Edit button. "0 is Outlet" label and "Add Catchment" button visible. Routing Diagram panel shows: box "ID 1 — southwest catchment — Wet Detention" with downward arrow connecting to "Outlet (0)" box. This is a simple single-catchment topology.</div>
+      </div>
+    </section>
+
+    <!-- ── 18. Add Filter ─────────────────────────────── -->
+    <section id="add-filter">
+      <h2>Step 5 — Add a Surface Sorption Media Discharge Filter</h2>
+      <p>To improve performance, a surface discharge filtration system using a sorption media (B&amp;G CTS24) is added as a second treatment element. Navigating to the Filtration System Worksheet allows selection of the media type and treatment depth. The standalone filtration results are calculated for comparison.</p>
+
+      <div class="figure-block">
+        <div class="fig-label">Figure 13-13</div>
+        <div class="fig-title">BMPFast Filtration System Worksheet — Stand-Alone Surface Discharge Filter Results</div>
+        <div class="fig-desc">Screenshot of Filtration System Worksheet Analysis for "All sites non-exempted." Input fields: Click Button to Select Media = B&amp;G CTS24 (arrow indicator); Treatment Depth (0.0–4.0 inches) = 1.5 (arrow indicator). Calculated outputs: TP Mass Load = 0.074 kg/yr; TP Concentration = 0.026 mg/L. Load Diagram for Surface Discharge Filtration (stand-alone): Load box shows N: 7.64 kg/yr, P: 1.10 kg/yr, Q: 2.58 ac-ft/yr → Treatment box (outlined in red) shows N: 65%, P: 83% → Surface Discharge box shows N: 1.69 kg/yr, P: 0.07 kg/yr, Q: 0.33 ac-ft/yr. Mass Reduction box shows N: 5.95 kg/yr, P: 1.02 kg/yr, Q: 2.25 ac-ft/yr. Action buttons: Cost, Calculate, Print, Plot, Copy, Back.</div>
+      </div>
+
+      <h3>Stand-Alone Filtration Performance</h3>
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr>
+              <th>Parameter</th>
+              <th>Media Type</th>
+              <th>Treatment Depth</th>
+              <th>TN Removal</th>
+              <th>TP Removal</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td class="label-col">Surface Discharge Filter (standalone)</td>
+              <td>B&amp;G CTS24</td>
+              <td>1.5 inches</td>
+              <td>65%</td>
+              <td>83%</td>
+            </tr>
+          </tbody>
+        </table>
+        <div class="table-caption">Hydraulic Capture Efficiency = 87.24%; Media N Reduction = 75%; Media P Reduction = 95%</div>
+      </div>
+    </section>
+
+    <!-- ── 19. Series Setup ───────────────────────────── -->
+    <section id="series-setup">
+      <h2>Step 6 — BMPs in Series Configuration</h2>
+      <p>To configure the wet detention pond and filtration system in series within a single catchment (with no additional inflow between them), use the "BMPs in Series" option in the Treatment Options worksheet. This allows up to four BMPs to be stacked in sequence within a single catchment routing path.</p>
+
+      <div class="workflow-steps">
+        <div class="workflow-step">
+          <div class="step-num">1</div>
+          <div class="step-body">
+            <h4>Select "BMPs in Series" from Treatment Options</h4>
+            <p>Click the "BMPs in Series" button (highlighted) in the Treatment Options worksheet. This opens the Multiple BMP Worksheet for the catchment.</p>
+          </div>
+        </div>
+        <div class="workflow-step">
+          <div class="step-num">2</div>
+          <div class="step-body">
+            <h4>Assign BMP Sequence</h4>
+            <p>BMP 1: Wet Detention. BMP 2: Filtration. Up to 4 BMPs may be added in order of routing. Click "Open" next to each BMP slot to configure its parameters.</p>
+          </div>
+        </div>
+        <div class="workflow-step">
+          <div class="step-num">3</div>
+          <div class="step-body">
+            <h4>Configure Catchments (Step 3)</h4>
+            <p>In the Configure Catchments screen (accessed from the main menu), set Catchment 1 to route to Outlet, and select "Multiple BMP" as the BMP to use in routing. Click "Edit BMP" to access the Multiple BMP Worksheet.</p>
+          </div>
+        </div>
+        <div class="workflow-step">
+          <div class="step-num">4</div>
+          <div class="step-body">
+            <h4>Calculate and Review</h4>
+            <p>Click Calculate to run the treatment train analysis. The combined load diagram for the multiple BMP series is displayed.</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="figure-block">
+        <div class="fig-label">Figure 13-14</div>
+        <div class="fig-title">BMPFast Multiple BMP Worksheet — Wet Detention + Filtration in Series</div>
+        <div class="fig-desc">Screenshot showing two panels. Left panel — Multiple BMP Worksheet for Catchment 1: "Add up to 4 BMPs in series to the catchment in order of routing." BMP 1: Wet Detention (green highlighted), Open button. BMP 2: Filtration (green highlighted), Open button. BMP 3 and BMP 4: empty. Calculate and Print buttons. Back button. Right panel — BMP in Series details for BMP 2 (Filtration): Treatment Depth = 1.50 in; Hydraulic Capture Efficiency = 87.24%; Type of Media Mix = B&amp;G CTS24; Media N Reduction = 75.00%; Media P Reduction = 95.00%. Load Diagram for Multiple BMP in Series: Load box shows N: 7.64 kg/yr, P: 1.10 kg/yr, Q: 2.58 ac-ft/yr → Treatment box shows N: 78%, P: 93% → Surface Discharge box shows N: 1.69 kg/yr, P: 0.07 kg/yr, Q: 0.57 ac-ft/yr. Mass Reduction box shows N: 5.95 kg/yr, P: 1.02 kg/yr, Q: 2.01 ac-ft/yr.</div>
+      </div>
+
+      <div class="figure-block">
+        <div class="fig-label">Figure 13-15</div>
+        <div class="fig-title">BMPFast Configure Catchments Screen — Multiple BMP Routing</div>
+        <div class="fig-desc">Screenshot of routing configuration screen labeled "Routing Catchment From: 1." Fields shown: From Catchment 1: "Edit Catchment 1" button; Select Catchment to Route to: "Outlet" dropdown; Select BMP to use in routing: "Multiple BMP" dropdown (highlighted blue) with "Edit BMP" button; Catchment Active: "Disable Catchment" button; Catchment used in Routing: "Remove Catchment" button. Back button at bottom right.</div>
+      </div>
+
+      <h3>Series Treatment Performance</h3>
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr>
+              <th>Treatment Train Configuration</th>
+              <th>TN Removal (%)</th>
+              <th>TP Removal (%)</th>
+              <th>Meets 55%/80% Standard?</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td class="label-col">Wet Detention (standalone)</td>
+              <td>40%</td>
+              <td>67%</td>
+              <td>✗ No</td>
+            </tr>
+            <tr>
+              <td class="label-col">Surface Discharge Filter (standalone)</td>
+              <td>65%</td>
+              <td>83%</td>
+              <td>TN: ✓ / TP: ✓</td>
+            </tr>
+            <tr>
+              <td class="label-col">Wet Detention + Filtration (series)</td>
+              <td>78%</td>
+              <td>93%</td>
+              <td>✓ Yes — Both met</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <!-- ── 20. Summary Volume ─────────────────────────── -->
+    <section id="summary-volume">
+      <h2>Summary Report — Volume Standards</h2>
+      <p>The BMPFast Summary Treatment Report provides a comprehensive overview of the project configuration, catchment routing, and volume of runoff results. The example below shows the output for the detention and filtration treatment train.</p>
+
+      <div class="figure-block">
+        <div class="fig-label">Figure 13-16</div>
+        <div class="fig-title">BMPFast Summary Treatment Report — Volume of Runoff Summary</div>
+        <div class="fig-desc">Screenshot of Summary Treatment Report. Project: "detention examples." File: "2025 wet detention example.bmpt." Date: 02/10/2026; Generated by: martinw. Section "Catchments and Associated BMP Types" shows table: ID=1, Catchment Name="southwest catchment", Catchment BMP="Multiple BMP 1: Wet Detention 2: Filtration", Routing Destination="Routed to Outlet." Section "Volume of Runoff Summary" shows table: Pre-Condition: Area=2.00 ac, Runoff=0.62 ac-ft/yr, Depth=3.69 in/yr. System Post-Condition (with BMPs): Area=1.80 ac, Runoff=2.58 ac-ft/yr, Depth=17.21 in/yr. Post-Condition (no BMP): Area=1.80 ac, Runoff=2.58 ac-ft/yr, Depth=17.21 in/yr. Note: "Runoff volumes shown in acre-feet per year and converted to depth (inches/year) by dividing by area and multiplying by 12."</div>
+      </div>
+
+      <h3>Volume of Runoff Summary</h3>
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr>
+              <th>Scenario</th>
+              <th>Catchment Area (acres)</th>
+              <th>Runoff Volume (ac-ft/yr)</th>
+              <th>Runoff Depth (in/yr)</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td class="label-col">Pre-Condition</td>
+              <td>2.00</td>
+              <td>0.62</td>
+              <td>3.69</td>
+            </tr>
+            <tr>
+              <td class="label-col">System Post-Condition (with BMPs)</td>
+              <td>1.80</td>
+              <td>2.58</td>
+              <td>17.21</td>
+            </tr>
+            <tr>
+              <td class="label-col">Post-Condition (no BMP)</td>
+              <td>1.80</td>
+              <td>2.58</td>
+              <td>17.21</td>
+            </tr>
+          </tbody>
+        </table>
+        <div class="table-caption">Note: The 0.20-acre wet pond area is excluded from the 2.00-acre total catchment area in post-development loading calculations, yielding an effective area of 1.80 acres.</div>
+      </div>
+    </section>
+
+    <!-- ── 21. Summary Pollution ──────────────────────── -->
+    <section id="summary-pollution">
+      <h2>Summary Report — Pollution Control Standards</h2>
+      <p>The Summary Loading Analysis section of the BMPFast report evaluates whether the treatment train meets the required performance standards under both target removal efficiency and pre/post comparison methods.</p>
+
+      <div class="figure-block">
+        <div class="fig-label">Figure 13-17</div>
+        <div class="fig-title">BMPFast Summary Report — Pollution Control Standards: Wet Pond + Filter Meets Performance Standard</div>
+        <div class="fig-desc">Screenshot of Summary Loading Analysis. % Target Removals: Is system total nitrogen target removal met? Yes. Required/Provided (N): 55% / 77.89% (highlighted in red box). Is system total phosphorus target removal met? Yes. Required/Provided (P): 80% / 93.31% (highlighted in red box). Pre vs. Post Removals: Is % less than predevelopment system loading for TN met? Yes. Required/Provided (TN): 77.26% / 77.89% (red box). Is % less than predevelopment system loading for TP met? Yes. Required/Provided (TP): 73.68% / 93.31% (red box). Right side shows: Nitrogen Removal Efficiency = 55%; Phosphorus Removal Efficiency = 80%. Nitrogen &amp; Phosphorus Loading table follows.</div>
+      </div>
+
+      <div class="callout definition">
+        <strong>Performance Standard Met — Treatment Train Result</strong>
+        The wet detention pond combined with the surface discharge filtration system meets both the target removal standards and the pre/post comparison requirements. TN provided removal (77.89%) exceeds both the 55% target and the 77.26% pre/post requirement. TP provided removal (93.31%) far exceeds both the 80% target and the 73.68% pre/post requirement.
+      </div>
+
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr>
+              <th>Compliance Check</th>
+              <th>Required</th>
+              <th>Provided</th>
+              <th>Met?</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td class="label-col">TN target removal</td>
+              <td>55.00%</td>
+              <td>77.89%</td>
+              <td>✓ Yes</td>
+            </tr>
+            <tr>
+              <td class="label-col">TP target removal</td>
+              <td>80.00%</td>
+              <td>93.31%</td>
+              <td>✓ Yes</td>
+            </tr>
+            <tr>
+              <td class="label-col">TN pre/post comparison</td>
+              <td>77.26%</td>
+              <td>77.89%</td>
+              <td>✓ Yes</td>
+            </tr>
+            <tr>
+              <td class="label-col">TP pre/post comparison</td>
+              <td>73.68%</td>
+              <td>93.31%</td>
+              <td>✓ Yes</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <!-- ── 22. Detailed Loading ───────────────────────── -->
+    <section id="loading-detail">
+      <h2>Detailed Nitrogen and Phosphorus Loading Summary</h2>
+      <p>The Nitrogen and Phosphorus Loading section of the BMPFast summary report presents the complete surface water and groundwater loading data for the project, including pre- and post-development loads, percent reductions, and discharge loads.</p>
+
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr>
+              <th>Parameter</th>
+              <th>Nitrogen (N)</th>
+              <th>Phosphorus (P)</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td class="label-col">Total pre load</td>
+              <td>1.74 kg/yr</td>
+              <td>0.289 kg/yr</td>
+            </tr>
+            <tr>
+              <td class="label-col">Total post load</td>
+              <td>7.64 kg/yr</td>
+              <td>1.098 kg/yr</td>
+            </tr>
+            <tr>
+              <td class="label-col">Percent load reduction</td>
+              <td>77.89%</td>
+              <td>93.31%</td>
+            </tr>
+            <tr>
+              <td class="label-col">Provided discharge load</td>
+              <td>7.64 kg/yr (16.84 lb/yr)</td>
+              <td>1.098 kg/yr (2.421 lb/yr)</td>
+            </tr>
+            <tr>
+              <td class="label-col">Provided load removed (surface)</td>
+              <td>— kg/yr (lb/yr)</td>
+              <td>— kg/yr (lb/yr)</td>
+            </tr>
+          </tbody>
+        </table>
+        <div class="table-caption">Values are project totals. Surface units = kg/yr; groundwater recharge in MG/yr and concentrations in mg/L. Values formatted to appropriate precision.</div>
+      </div>
+    </section>
+
+    <!-- ── 23. Key Takeaways ──────────────────────────── -->
+    <section id="key-takeaways">
+      <h2>Key Takeaways</h2>
+      <div class="summary-grid">
+        <div class="summary-card">
+          <h4>Definition</h4>
+          <p>A wet detention pond is a permanently wet impoundment that treats stormwater through physical, chemical, and biological processes with gradual controlled discharge.</p>
+        </div>
+        <div class="summary-card">
+          <h4>Annual Residence Time</h4>
+          <p>ART drives performance: ART = (Pool Volume × 365) ÷ Annual Runoff. Longer ART yields better pollutant removal. Regulatory cap is 200 days for credit purposes.</p>
+        </div>
+        <div class="summary-card">
+          <h4>Littoral Zone Effect</h4>
+          <p>A littoral zone is required for full efficiency credit. Without one, removal is reduced by 10%: Rem(no lit) = Rem(lit) ÷ 1.1.</p>
+        </div>
+        <div class="summary-card">
+          <h4>BMPs in Series</h4>
+          <p>Do not add efficiencies from ponds in series — sum the ART values instead. Equation 9-5 applies only when removal mechanisms differ between upstream and downstream BMPs.</p>
+        </div>
+        <div class="summary-card">
+          <h4>Upstream Retention Interaction</h4>
+          <p>Upstream retention reduces downstream wet pond efficiency by the fraction of particulates already removed. Maximum adjustments: 10% for TN and 20% for TP.</p>
+        </div>
+        <div class="summary-card">
+          <h4>Treatment Train Requirement</h4>
+          <p>Wet detention alone frequently does not meet performance standards. In this example, adding a surface discharge filter raised combined TN to 78% and TP to 93%, satisfying all requirements.</p>
+        </div>
+        <div class="summary-card">
+          <h4>Software Navigation</h4>
+          <p>Workflow: (1) General Site Info → (2) Watershed Characteristics → (3) Treatment Options → (4) Wet Detention Worksheet → (5) Add BMPs in Series → (6) Configure Catchments → (7) Review Summary Report.</p>
+        </div>
+        <div class="summary-card">
+          <h4>2025 Software Refinement</h4>
+          <p>The 2025 BMPFast version adjusts wet pond removal as a function of upstream retention efficiency (not a constant reduction), and properly handles LID retention systems with low effectiveness.</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- ── 24. References ────────────────────────────── -->
+    <section id="references">
+      <h2>References</h2>
+      <ul class="ref-list">
+        <li>Harper, H.H. and Baker, D.M. (2007). <em>Evaluation of Current Stormwater Design Criteria within the State of Florida</em>. FDEP Report No. SO108. Environmental Research &amp; Design, Inc., Orlando, FL.</li>
+        <li>Florida Department of Environmental Protection (2024). <em>Applicant's Handbook, Volume 1: Regulation of Stormwater Management Systems</em>, Chapter 2, Appendix O. FDEP, Tallahassee, FL. June 28, 2024.</li>
+        <li>Florida Department of Environmental Protection (2024). <em>Applicant's Handbook, Volume 2</em>. FDEP, Tallahassee, FL.</li>
+        <li>Wanielista, M., et al. (2012). <em>Floating Wetland Systems for Nutrient Removal in Stormwater Ponds</em>. FDOT Project BDK78 985-01. University of Central Florida, Orlando, FL.</li>
+        <li>BMPFast Software, Version 2025. Environmental Research &amp; Design, Inc. / University of Central Florida / Daytona State College.</li>
+      </ul>
+
+      <!-- Figures referenced in text, end of document -->
+      <h3 style="margin-top: 3rem;">Figures Referenced in This Module</h3>
+      <p style="font-size: 0.9rem; color: var(--text-secondary);">The following figures are referenced within the module text and should be sourced from the indicated materials for final document production.</p>
+      <ul class="ref-list">
+        <li><strong>Fig. 13-1:</strong> Wet Detention cross-section diagram — Source: AH Vol. 1, Appendix O (engineering drawing, N.T.S.)</li>
+        <li><strong>Fig. 13-2:</strong> TP Efficiency curve — Source: Harper and Baker (2007), FDEP SO108</li>
+        <li><strong>Fig. 13-3:</strong> TN Efficiency curve — Source: Harper and Baker (2007), FDEP SO108</li>
+        <li><strong>Fig. 13-4:</strong> BMPFast Detention Efficiency Plot (TP &amp; TN, CAT 1–4) — Source: BMPFast software screenshot</li>
+        <li><strong>Fig. 13-5:</strong> Floating wetland installation photographs — Source: Wanielista et al. (2012), FDOT BDK78 985-01</li>
+        <li><strong>Fig. 13-6:</strong> System Efficiency Plot (series with retention) — Source: BMPFast software screenshot</li>
+        <li><strong>Fig. 13-7:</strong> Particulate removal regression curves (TN and TP) — Source: BMPFast documentation</li>
+        <li><strong>Fig. 13-8:</strong> General Site Information worksheet screenshot — Source: BMPFast software</li>
+        <li><strong>Fig. 13-9:</strong> Watershed Characteristics worksheet screenshot — Source: BMPFast software</li>
+        <li><strong>Fig. 13-10:</strong> Treatment Options worksheet screenshot — Source: BMPFast software</li>
+        <li><strong>Fig. 13-11:</strong> Wet Detention stand-alone results screenshot — Source: BMPFast software</li>
+        <li><strong>Fig. 13-12:</strong> Catchment Configuration / Routing screenshot — Source: BMPFast software</li>
+        <li><strong>Fig. 13-13:</strong> Filtration System worksheet screenshot — Source: BMPFast software</li>
+        <li><strong>Fig. 13-14:</strong> Multiple BMP Worksheet screenshot — Source: BMPFast software</li>
+        <li><strong>Fig. 13-15:</strong> Configure Catchments screenshot — Source: BMPFast software</li>
+        <li><strong>Fig. 13-16:</strong> Summary Report — Volume Standards screenshot — Source: BMPFast software</li>
+        <li><strong>Fig. 13-17:</strong> Summary Report — Pollution Control Standards screenshot — Source: BMPFast software</li>
+      </ul>
+    </section>
+
+  </div><!-- /content-area -->
+</main>
+</body>
+</html>

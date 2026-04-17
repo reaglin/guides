@@ -1,0 +1,1547 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>COP4709 - Basic Guide to Data Analysis</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.6;
+            color: #2c2c2c;
+            background: linear-gradient(135deg, #2d1b00 0%, #7c4a00 50%, #c47a00 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1000px;
+            margin: 0 auto;
+            background: #fff;
+            border-radius: 15px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.4);
+            overflow: hidden;
+        }
+
+        header {
+            background: linear-gradient(135deg, #2d1b00 0%, #7c4a00 100%);
+            color: white;
+            padding: 40px;
+            text-align: center;
+            border-bottom: 4px solid #e8940a;
+        }
+
+        header h1 { font-size: 2.5em; margin-bottom: 10px; text-shadow: 2px 2px 6px rgba(0,0,0,0.4); }
+        header p  { font-size: 1.2em; opacity: 0.9; }
+
+        .content { padding: 40px; }
+
+        .intro {
+            background: linear-gradient(135deg, #fff8ec 0%, #ffe8b0 100%);
+            padding: 25px;
+            border-radius: 10px;
+            margin-bottom: 30px;
+            border-left: 5px solid #e8940a;
+        }
+        .intro h2 { color: #7c4a00; margin-bottom: 15px; }
+
+        /* Collapsible */
+        .section { margin-bottom: 25px; }
+
+        .collapsible {
+            background: #fafafa;
+            border: 2px solid #e8e8e8;
+            border-radius: 10px;
+            margin-bottom: 15px;
+            overflow: hidden;
+            transition: all 0.3s ease;
+        }
+
+        .collapsible:hover {
+            border-color: #e8940a;
+            box-shadow: 0 4px 12px rgba(232,148,10,0.2);
+        }
+
+        .collapsible-header {
+            background: linear-gradient(135deg, #2d1b00 0%, #7c4a00 100%);
+            color: white;
+            padding: 20px;
+            cursor: pointer;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-weight: 600;
+            font-size: 1.15em;
+            user-select: none;
+            text-shadow: 1px 1px 2px rgba(0,0,0,0.3);
+        }
+
+        .collapsible-header:hover { background: linear-gradient(135deg, #3d2500 0%, #9c5a00 100%); }
+
+        .collapsible-header::after { content: '▼'; font-size: 0.8em; transition: transform 0.3s ease; }
+
+        .collapsible-content {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.4s ease;
+            padding: 0 20px;
+        }
+
+        .collapsible.active .collapsible-content { max-height: 14000px; padding: 20px; }
+        .collapsible.active .collapsible-header::after { transform: rotate(180deg); }
+
+        /* Info boxes */
+        .highlight-box { background: #fff8e1; border-left: 5px solid #f39c12; padding: 15px; margin: 15px 0; border-radius: 5px; }
+        .success-box   { background: #d4edda; border-left: 5px solid #27ae60; padding: 15px; margin: 15px 0; border-radius: 5px; }
+        .info-box      { background: #e8f4f8; border-left: 5px solid #2980b9; padding: 15px; margin: 15px 0; border-radius: 5px; }
+        .danger-box    { background: #fdecea; border-left: 5px solid #c0392b; padding: 15px; margin: 15px 0; border-radius: 5px; }
+        .amber-box     { background: #fff8ec; border-left: 5px solid #e8940a; padding: 15px; margin: 15px 0; border-radius: 5px; }
+
+        /* Code blocks */
+        .code-block {
+            background: #1e1e1e;
+            color: #d4d4d4;
+            padding: 20px;
+            border-radius: 8px;
+            overflow-x: auto;
+            margin: 15px 0;
+            font-family: 'Courier New', monospace;
+            font-size: 0.92em;
+            line-height: 1.65;
+            white-space: pre;
+        }
+
+        .code-block .keyword { color: #569cd6; }
+        .code-block .func    { color: #dcdcaa; }
+        .code-block .string  { color: #ce9178; }
+        .code-block .comment { color: #6a9955; font-style: italic; }
+        .code-block .alias   { color: #9cdcfe; }
+        .code-block .number  { color: #b5cea8; }
+        .code-block .sys     { color: #c586c0; }
+
+        /* Result tables */
+        .result-label {
+            background: #7c4a00;
+            color: white;
+            padding: 6px 14px;
+            font-size: 0.8em;
+            font-weight: 700;
+            border-radius: 5px 5px 0 0;
+            display: inline-block;
+            letter-spacing: 0.05em;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            background: white;
+            border-radius: 0 8px 8px 8px;
+            overflow: hidden;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+            margin-bottom: 15px;
+        }
+
+        th {
+            background: linear-gradient(135deg, #2d1b00, #7c4a00);
+            color: white;
+            padding: 12px 15px;
+            text-align: left;
+            font-weight: 600;
+            font-size: 0.9em;
+        }
+
+        td { padding: 10px 15px; border-bottom: 1px solid #f0e8d8; font-size: 0.92em; }
+        tr:last-child td { border-bottom: none; }
+        tr:nth-child(even) { background: #fffaf2; }
+        tr:hover { background: #fff3d6; }
+
+        /* Grids */
+        .two-col   { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin: 20px 0; }
+        .three-col { display: grid; grid-template-columns: repeat(3, 1fr); gap: 15px; margin: 20px 0; }
+        .four-col  { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; margin: 20px 0; }
+
+        .card {
+            padding: 18px;
+            border-radius: 10px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+        }
+
+        .card.amber   { background: linear-gradient(135deg, #fff8ec, #ffebc0); border: 2px solid #e8940a; }
+        .card.good    { background: linear-gradient(135deg, #d4edda, #c3e6cb); border: 2px solid #27ae60; }
+        .card.bad     { background: linear-gradient(135deg, #fdecea, #fcc); border: 2px solid #c0392b; }
+        .card.blue    { background: linear-gradient(135deg, #e8f4f8, #c8e6f5); border: 2px solid #2980b9; }
+        .card.neutral { background: linear-gradient(135deg, #f5f0e8, #ede0c8); border: 2px solid #7c4a00; }
+        .card.dark    { background: linear-gradient(135deg, #2d1b00, #4a2d00); color: #ffd080; border: 2px solid #e8940a; }
+        .card.dark h4 { color: #ffc040; }
+        .card.dark p  { color: #ffd090; }
+
+        /* Data type badges */
+        .badge {
+            display: inline-block;
+            padding: 3px 12px;
+            border-radius: 12px;
+            font-size: 0.78em;
+            font-weight: 700;
+            margin: 3px 3px 3px 0;
+            letter-spacing: 0.04em;
+        }
+
+        .badge-amber  { background: #e8940a; color: white; }
+        .badge-green  { background: #27ae60; color: white; }
+        .badge-blue   { background: #2980b9; color: white; }
+        .badge-purple { background: #8e44ad; color: white; }
+        .badge-red    { background: #c0392b; color: white; }
+        .badge-teal   { background: #16a085; color: white; }
+        .badge-gray   { background: #7f8c8d; color: white; }
+
+        /* KPI cards */
+        .kpi-row { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; margin: 20px 0; }
+
+        .kpi-card {
+            background: linear-gradient(135deg, #2d1b00, #7c4a00);
+            color: white;
+            padding: 18px 15px;
+            border-radius: 10px;
+            text-align: center;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+        }
+
+        .kpi-card .kpi-val   { font-size: 1.8em; font-weight: 700; color: #ffd080; }
+        .kpi-card .kpi-label { font-size: 0.78em; opacity: 0.9; margin-top: 4px; }
+        .kpi-card .kpi-trend { font-size: 0.82em; margin-top: 6px; }
+        .kpi-card .up   { color: #6eff9e; }
+        .kpi-card .down { color: #ff8080; }
+
+        /* Pipeline step */
+        .pipeline {
+            display: flex;
+            align-items: stretch;
+            gap: 0;
+            margin: 20px 0;
+            flex-wrap: wrap;
+        }
+
+        .pipeline-step {
+            flex: 1;
+            background: linear-gradient(135deg, #fff8ec, #ffebc0);
+            border: 2px solid #e8940a;
+            border-right: none;
+            padding: 15px;
+            text-align: center;
+            position: relative;
+            min-width: 140px;
+        }
+
+        .pipeline-step:last-child { border-right: 2px solid #e8940a; border-radius: 0 8px 8px 0; }
+        .pipeline-step:first-child { border-radius: 8px 0 0 8px; }
+
+        .pipeline-step::after {
+            content: '▶';
+            position: absolute;
+            right: -14px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #e8940a;
+            font-size: 1.1em;
+            z-index: 1;
+            background: white;
+            padding: 2px;
+        }
+
+        .pipeline-step:last-child::after { display: none; }
+
+        .pipeline-step .step-num {
+            background: #e8940a;
+            color: white;
+            width: 26px;
+            height: 26px;
+            border-radius: 50%;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+            font-size: 0.85em;
+            margin-bottom: 8px;
+        }
+
+        .pipeline-step h5 { color: #7c4a00; font-size: 0.9em; margin-bottom: 4px; }
+        .pipeline-step p  { font-size: 0.8em; color: #5a3a00; }
+
+        /* Typography */
+        h3 {
+            color: #7c4a00;
+            margin: 22px 0 10px;
+            font-size: 1.35em;
+            border-bottom: 2px solid #ffebc0;
+            padding-bottom: 5px;
+        }
+
+        h4 { color: #4a2d00; margin: 15px 0 8px; font-size: 1.05em; }
+
+        strong { color: #7c4a00; }
+
+        code {
+            background: #fff8ec;
+            color: #c47a00;
+            padding: 2px 6px;
+            border-radius: 4px;
+            font-family: 'Courier New', monospace;
+            font-size: 0.9em;
+        }
+
+        ul, ol { margin: 12px 0 12px 28px; }
+        li { margin: 7px 0; }
+
+        footer {
+            background: #2d1b00;
+            color: #ffd080;
+            text-align: center;
+            padding: 20px;
+            border-top: 4px solid #e8940a;
+        }
+    </style>
+</head>
+<body>
+<div class="container">
+
+    <header>
+        <h1>📊 Basic Guide to Data Analysis</h1>
+        <p>COP4709 — Database Management</p>
+    </header>
+
+    <div class="content">
+
+        <!-- ═══════ INTRO ═══════ -->
+        <div class="intro">
+            <h2>🔍 Databases as the Foundation of Data Analysis</h2>
+            <p>Data analysis is the process of <strong>inspecting, cleaning, transforming, and modelling data</strong> to discover useful information, draw conclusions, and support decision making. Databases are the primary system of record for organisational data — they store it, structure it, and make it queryable at scale.</p>
+            <p style="margin-top:12px;">While dedicated analytics platforms (Power BI, Tableau, Python pandas) are commonly used for visualisation and advanced modelling, the core data extraction and preparation work almost always originates with SQL against a relational database. Understanding how to use a database analytically is a fundamental skill for any role that deals with data-driven decisions.</p>
+            <p style="margin-top:12px;">This guide focuses on the <strong>SQL-based analytical work</strong> that feeds regular business reporting: the types of data involved, how to prepare it for analysis, and the patterns of queries that produce the cyclic reports organisations run every day.</p>
+        </div>
+
+        <!-- ═══════════════════════════════════════════════════ -->
+        <!-- SECTION 1 — WHERE DATABASES ARE USED FOR ANALYSIS  -->
+        <!-- ═══════════════════════════════════════════════════ -->
+        <div class="section">
+            <div class="collapsible active">
+                <div class="collapsible-header">1. Where Databases Are Used for Data Analysis</div>
+                <div class="collapsible-content">
+
+                    <h3>Analytical vs Transactional Use</h3>
+                    <p>Databases serve two fundamentally different roles. Understanding the distinction is important because the same database that powers a business application often also serves as the source for its reports.</p>
+
+                    <div class="two-col">
+                        <div class="card blue">
+                            <h4>🔄 Transactional (OLTP)</h4>
+                            <p><strong>Purpose:</strong> Record and process live business events<br>
+                            <strong>Queries:</strong> Many short INSERT/UPDATE/SELECT<br>
+                            <strong>Data:</strong> Current state, high concurrency<br>
+                            <strong>Examples:</strong> Order entry, banking, healthcare records, e-commerce checkout<br>
+                            <strong>Optimised for:</strong> Write speed, data integrity, concurrency</p>
+                        </div>
+                        <div class="card amber">
+                            <h4>📊 Analytical (OLAP)</h4>
+                            <p><strong>Purpose:</strong> Aggregate and summarise data for insight<br>
+                            <strong>Queries:</strong> Complex SELECT over large row counts<br>
+                            <strong>Data:</strong> Historical snapshots, often denormalised<br>
+                            <strong>Examples:</strong> Revenue reports, trend analysis, dashboards, forecasting<br>
+                            <strong>Optimised for:</strong> Read speed, large aggregations, flexibility</p>
+                        </div>
+                    </div>
+
+                    <div class="amber-box">
+                        <strong>In practice, most organisations run analytical queries directly against their OLTP database</strong> — especially during off-peak hours or using read replicas. Larger organisations separate the two into a dedicated data warehouse. Either way, the SQL skills for analysis are the same.
+                    </div>
+
+                    <h3>Common Business Domains Using Database Analysis</h3>
+
+                    <table>
+                        <tr><th>Domain</th><th>Typical Data Stored</th><th>Regular Analyses</th></tr>
+                        <tr>
+                            <td><strong>Retail / E-Commerce</strong></td>
+                            <td>Orders, products, customers, inventory, returns</td>
+                            <td>Daily sales totals, product performance, customer LTV, stock levels</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Finance / Banking</strong></td>
+                            <td>Accounts, transactions, balances, loan records</td>
+                            <td>Daily transaction volume, account balance trends, delinquency rates</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Healthcare</strong></td>
+                            <td>Patient visits, diagnoses, procedures, billing</td>
+                            <td>Admissions per week, bed occupancy, treatment outcomes, billing cycles</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Human Resources</strong></td>
+                            <td>Employees, departments, salaries, attendance, performance</td>
+                            <td>Headcount by department, turnover rate, payroll totals, absenteeism</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Education</strong></td>
+                            <td>Students, enrolments, grades, attendance, courses</td>
+                            <td>Enrolment trends, grade distributions, pass/fail rates, attendance patterns</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Logistics / Supply Chain</strong></td>
+                            <td>Shipments, warehouses, suppliers, delivery times</td>
+                            <td>On-time delivery rate, supplier performance, stock turnover</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Marketing</strong></td>
+                            <td>Campaigns, clicks, conversions, customer segments</td>
+                            <td>Conversion rates, cost per acquisition, channel performance, ROI</td>
+                        </tr>
+                    </table>
+
+                    <h3>The Analysis Pipeline — From Raw Data to Decision</h3>
+
+                    <div class="pipeline">
+                        <div class="pipeline-step">
+                            <div class="step-num">1</div>
+                            <h5>Source Data</h5>
+                            <p>OLTP tables, external imports, APIs</p>
+                        </div>
+                        <div class="pipeline-step">
+                            <div class="step-num">2</div>
+                            <h5>Extract</h5>
+                            <p>SQL queries pull relevant rows and columns</p>
+                        </div>
+                        <div class="pipeline-step">
+                            <div class="step-num">3</div>
+                            <h5>Clean &amp; Prepare</h5>
+                            <p>Handle NULLs, fix formats, remove duplicates</p>
+                        </div>
+                        <div class="pipeline-step">
+                            <div class="step-num">4</div>
+                            <h5>Transform</h5>
+                            <p>Aggregate, join, calculate derived values</p>
+                        </div>
+                        <div class="pipeline-step">
+                            <div class="step-num">5</div>
+                            <h5>Analyse</h5>
+                            <p>Apply aggregations, comparisons, segmentation</p>
+                        </div>
+                        <div class="pipeline-step">
+                            <div class="step-num">6</div>
+                            <h5>Report</h5>
+                            <p>Deliver to stakeholders via dashboard or report</p>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+
+        <!-- ═══════════════════════════════════════════════════ -->
+        <!-- SECTION 2 — TYPES OF DATA                          -->
+        <!-- ═══════════════════════════════════════════════════ -->
+        <div class="section">
+            <div class="collapsible">
+                <div class="collapsible-header">2. Types of Data Used in Analysis</div>
+                <div class="collapsible-content">
+
+                    <div class="info-box">
+                        Before analysing data, you need to understand <strong>what kind of data you are working with</strong>. Different data types support different analytical operations. Applying the wrong analysis to a data type (for example, averaging a categorical field) produces meaningless results.
+                    </div>
+
+                    <h3>Quantitative vs Qualitative Data</h3>
+
+                    <div class="two-col">
+                        <div class="card amber">
+                            <h4>📐 Quantitative (Numeric)</h4>
+                            <p>Data that represents a measurable quantity. Mathematical operations (SUM, AVG, MIN, MAX) are meaningful.</p>
+                            <ul>
+                                <li><strong>Continuous</strong> — any value in a range (price: $42.75, temperature: 98.6°F)</li>
+                                <li><strong>Discrete</strong> — whole number counts (order qty: 3, employees: 147)</li>
+                            </ul>
+                            <p style="margin-top:8px;"><span class="badge badge-green">SUM</span> <span class="badge badge-green">AVG</span> <span class="badge badge-green">MIN/MAX</span> <span class="badge badge-green">STDDEV</span></p>
+                        </div>
+                        <div class="card blue">
+                            <h4>🏷️ Qualitative (Categorical)</h4>
+                            <p>Data that represents categories, labels, or descriptions. COUNT operations are meaningful; arithmetic is not.</p>
+                            <ul>
+                                <li><strong>Nominal</strong> — no natural order (colour, region, product category)</li>
+                                <li><strong>Ordinal</strong> — ordered categories (rating: Low/Medium/High, survey: 1–5)</li>
+                            </ul>
+                            <p style="margin-top:8px;"><span class="badge badge-blue">COUNT</span> <span class="badge badge-blue">COUNT DISTINCT</span> <span class="badge badge-blue">GROUP BY</span></p>
+                        </div>
+                    </div>
+
+                    <h3>Structured, Semi-Structured, and Unstructured Data</h3>
+
+                    <table>
+                        <tr><th>Type</th><th>Description</th><th>Database Storage</th><th>Analytical Use</th></tr>
+                        <tr>
+                            <td><strong>Structured</strong></td>
+                            <td>Rows and columns with defined schema</td>
+                            <td>Regular relational tables</td>
+                            <td>Direct SQL queries — the primary focus of this guide</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Semi-Structured</strong></td>
+                            <td>Has some structure but flexible schema</td>
+                            <td>JSON/XML columns, key-value stores</td>
+                            <td>Parse and extract fields before analysis</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Unstructured</strong></td>
+                            <td>Free-form content with no defined schema</td>
+                            <td>BLOBs, file paths, text columns</td>
+                            <td>External NLP/text analysis tools; SQL handles metadata</td>
+                        </tr>
+                    </table>
+
+                    <h3>Time-Series Data</h3>
+                    <p>One of the most important data types for business analysis. A time series is a sequence of values recorded at regular time intervals. Most business metrics are time-series in nature — revenue by day, users by month, inventory by week.</p>
+
+                    <div class="three-col">
+                        <div class="card neutral">
+                            <h4>📅 Event Timestamps</h4>
+                            <p>A datetime column recording when something happened: <code>order_date</code>, <code>login_time</code>, <code>created_at</code>. Used to group events into time buckets.</p>
+                        </div>
+                        <div class="card neutral">
+                            <h4>📆 Snapshot Records</h4>
+                            <p>A record taken at a regular interval: daily stock price, end-of-day inventory count, monthly account balance. One row per entity per period.</p>
+                        </div>
+                        <div class="card neutral">
+                            <h4>⏱️ Duration Data</h4>
+                            <p>Records a start and end time: <code>session_start</code> / <code>session_end</code>, ticket open/close. Analysed for duration, frequency, and concurrency.</p>
+                        </div>
+                    </div>
+
+                    <h3>Dimensions and Measures</h3>
+                    <p>In analytical thinking, every column in a dataset is either a <strong>dimension</strong> or a <strong>measure</strong>. This framing guides how you write GROUP BY queries.</p>
+
+                    <div class="two-col">
+                        <div class="card blue">
+                            <h4>📦 Dimensions (Grouping Attributes)</h4>
+                            <p>Categorical columns you <em>slice and dice</em> data by. They answer "which?" and "what kind?"</p>
+                            <ul>
+                                <li>Region, country, city</li>
+                                <li>Product name, category, brand</li>
+                                <li>Customer segment, age group</li>
+                                <li>Date, month, quarter, year</li>
+                                <li>Department, team, employee</li>
+                            </ul>
+                        </div>
+                        <div class="card amber">
+                            <h4>📏 Measures (Numeric Values)</h4>
+                            <p>Numeric columns you <em>aggregate</em>. They answer "how much?" and "how many?"</p>
+                            <ul>
+                                <li>Revenue, cost, profit, margin</li>
+                                <li>Quantity sold, units returned</li>
+                                <li>Session duration, page views</li>
+                                <li>Headcount, absences</li>
+                                <li>Score, rating, temperature</li>
+                            </ul>
+                        </div>
+                    </div>
+
+                    <div class="amber-box">
+                        <strong>The core analytical query pattern:</strong> <code>SELECT dimension, AGGREGATE(measure) FROM table GROUP BY dimension</code> — choose which dimension to slice by, choose which measure to aggregate. This pattern generates the majority of business reports.
+                    </div>
+
+                    <h3>Common Data Types in Analytical Tables</h3>
+
+                    <div class="code-block"><span class="comment">-- Example: a typical sales fact table with common analytical data types</span>
+<span class="keyword">CREATE TABLE</span>  fact_sales (
+    sale_id          <span class="keyword">INT PRIMARY KEY</span>,
+
+    <span class="comment">-- Date/time dimensions — used for time-series grouping</span>
+    sale_date        <span class="keyword">DATE</span>            <span class="keyword">NOT NULL</span>,
+    sale_timestamp   <span class="keyword">DATETIME</span>        <span class="keyword">NOT NULL</span>,
+
+    <span class="comment">-- Categorical dimensions — used in GROUP BY</span>
+    region           <span class="keyword">VARCHAR</span>(<span class="number">50</span>),
+    product_category <span class="keyword">VARCHAR</span>(<span class="number">100</span>),
+    sales_channel    <span class="keyword">VARCHAR</span>(<span class="number">30</span>),    <span class="comment">-- 'Online', 'In-Store', 'Wholesale'</span>
+    customer_segment <span class="keyword">VARCHAR</span>(<span class="number">30</span>),    <span class="comment">-- 'Retail', 'Corporate', 'Government'</span>
+
+    <span class="comment">-- Ordinal dimension (ordered categories)</span>
+    satisfaction_score  <span class="keyword">TINYINT</span>,     <span class="comment">-- 1-5 rating</span>
+
+    <span class="comment">-- Numeric measures — aggregated with SUM, AVG, MIN, MAX</span>
+    quantity         <span class="keyword">INT</span>             <span class="keyword">NOT NULL</span>,
+    unit_price       <span class="keyword">DECIMAL</span>(<span class="number">8,2</span>)   <span class="keyword">NOT NULL</span>,
+    discount_pct     <span class="keyword">DECIMAL</span>(<span class="number">5,2</span>),
+    revenue          <span class="keyword">DECIMAL</span>(<span class="number">10,2</span>),  <span class="comment">-- pre-calculated: qty * unit_price * (1 - discount)</span>
+    cost             <span class="keyword">DECIMAL</span>(<span class="number">10,2</span>),
+    profit           <span class="keyword">DECIMAL</span>(<span class="number">10,2</span>)   <span class="comment">-- revenue - cost</span>
+);</div>
+
+                </div>
+            </div>
+        </div>
+
+        <!-- ═══════════════════════════════════════════════════ -->
+        <!-- SECTION 3 — PREPARING & CLEANING DATA              -->
+        <!-- ═══════════════════════════════════════════════════ -->
+        <div class="section">
+            <div class="collapsible">
+                <div class="collapsible-header">3. Preparing &amp; Cleaning Data for Analysis</div>
+                <div class="collapsible-content">
+
+                    <div class="info-box">
+                        Raw data from operational systems is rarely clean enough to analyse directly. Studies consistently report that <strong>data preparation takes 60–80% of the time</strong> in a typical analysis project. Skipping this step produces misleading results. The rule of thumb: <em>garbage in, garbage out</em>.
+                    </div>
+
+                    <h3>Common Data Quality Problems</h3>
+
+                    <div class="three-col">
+                        <div class="card bad">
+                            <h4>❌ NULL / Missing Values</h4>
+                            <p>A column has no recorded value. Aggregations that ignore NULLs silently change the denominator. Must decide: exclude, substitute zero, or substitute a default.</p>
+                        </div>
+                        <div class="card bad">
+                            <h4>❌ Duplicate Rows</h4>
+                            <p>The same event recorded twice — from re-imports, system errors, or ETL bugs. Causes counts and sums to be overstated. Must deduplicate before aggregating.</p>
+                        </div>
+                        <div class="card bad">
+                            <h4>❌ Inconsistent Formats</h4>
+                            <p>Same value represented differently: 'USA', 'US', 'United States', 'U.S.A.' — all refer to the same country but will create four separate groups in a GROUP BY.</p>
+                        </div>
+                        <div class="card bad">
+                            <h4>❌ Wrong Data Types</h4>
+                            <p>Dates stored as strings ('2025-01-15' in a VARCHAR column). Prevents date arithmetic and range filtering. Must convert before use.</p>
+                        </div>
+                        <div class="card bad">
+                            <h4>❌ Outliers</h4>
+                            <p>Extreme values that distort averages: a $1,000,000 test order inflating the mean order value. Must identify and decide: exclude, cap, or investigate.</p>
+                        </div>
+                        <div class="card bad">
+                            <h4>❌ Out-of-Range Values</h4>
+                            <p>Values that fail a logical sanity check: a negative quantity, a birth date in the future, a discount of 150%. Indicate data entry errors or system bugs.</p>
+                        </div>
+                    </div>
+
+                    <h3>Handling NULL Values</h3>
+
+                    <div class="code-block"><span class="comment">-- Scenario: discount_pct is NULL when no discount was applied
+-- NULL means "unknown" — not zero. Different treatments have different meanings.</span>
+
+<span class="comment">-- ❌ AVG(discount_pct) silently excludes NULLs from the count
+--    giving the average discount among orders THAT HAD a discount</span>
+<span class="keyword">SELECT</span>  <span class="func">AVG</span>(discount_pct)  <span class="keyword">AS</span>  <span class="alias">avg_discount</span>
+<span class="keyword">FROM</span>    fact_sales;
+
+<span class="comment">-- ✅ COALESCE replaces NULL with 0, giving the average across ALL orders
+--    (treating no discount as a 0% discount — often what we want)</span>
+<span class="keyword">SELECT</span>  <span class="func">AVG</span>(<span class="func">COALESCE</span>(discount_pct, <span class="number">0</span>))  <span class="keyword">AS</span>  <span class="alias">avg_discount_all_orders</span>
+<span class="keyword">FROM</span>    fact_sales;
+
+<span class="comment">-- Check for NULL prevalence before deciding how to handle it</span>
+<span class="keyword">SELECT</span>  <span class="func">COUNT</span>(*)                                    <span class="keyword">AS</span>  <span class="alias">total_rows</span>,
+        <span class="func">COUNT</span>(discount_pct)                         <span class="keyword">AS</span>  <span class="alias">non_null_discount</span>,
+        <span class="func">COUNT</span>(*) - <span class="func">COUNT</span>(discount_pct)              <span class="keyword">AS</span>  <span class="alias">null_count</span>,
+        <span class="func">ROUND</span>(
+            (<span class="func">COUNT</span>(*) - <span class="func">COUNT</span>(discount_pct)) * <span class="number">100.0</span>
+            / <span class="func">COUNT</span>(*), <span class="number">1</span>)                          <span class="keyword">AS</span>  <span class="alias">null_pct</span>
+<span class="keyword">FROM</span>    fact_sales;</div>
+
+                    <h3>Removing Duplicates</h3>
+
+                    <div class="code-block"><span class="comment">-- Identify exact duplicate rows</span>
+<span class="keyword">SELECT</span>  sale_date,
+        customer_id,
+        product_id,
+        quantity,
+        revenue,
+        <span class="func">COUNT</span>(*)  <span class="keyword">AS</span>  <span class="alias">occurrences</span>
+<span class="keyword">FROM</span>    fact_sales
+<span class="keyword">GROUP BY</span> sale_date, customer_id, product_id, quantity, revenue
+<span class="keyword">HAVING</span>  <span class="func">COUNT</span>(*) > <span class="number">1</span>
+<span class="keyword">ORDER BY</span> occurrences <span class="keyword">DESC</span>;
+
+<span class="comment">-- Deduplicate using ROW_NUMBER — keep the first occurrence</span>
+<span class="keyword">WITH</span>  <span class="alias">ranked_sales</span>  <span class="keyword">AS</span> (
+    <span class="keyword">SELECT</span>  *,
+            <span class="func">ROW_NUMBER</span>() <span class="keyword">OVER</span> (
+                <span class="keyword">PARTITION BY</span> sale_date, customer_id, product_id, quantity
+                <span class="keyword">ORDER BY</span>     sale_id
+            )  <span class="keyword">AS</span>  <span class="alias">row_num</span>
+    <span class="keyword">FROM</span>  fact_sales
+)
+<span class="keyword">SELECT</span>  *
+<span class="keyword">FROM</span>    ranked_sales
+<span class="keyword">WHERE</span>   row_num = <span class="number">1</span>;   <span class="comment">-- only the first row per duplicate group</span></div>
+
+                    <h3>Standardising Inconsistent Category Values</h3>
+
+                    <div class="code-block"><span class="comment">-- Problem: same country stored with different spellings/formats</span>
+<span class="keyword">SELECT</span>  region, <span class="func">COUNT</span>(*)  <span class="keyword">AS</span>  <span class="alias">row_count</span>
+<span class="keyword">FROM</span>    fact_sales
+<span class="keyword">GROUP BY</span> region
+<span class="keyword">ORDER BY</span> region;
+<span class="comment">-- Returns: 'US', 'USA', 'United States', 'united states', 'U.S.' — 5 separate groups</span>
+
+<span class="comment">-- Fix with CASE to normalise on the fly</span>
+<span class="keyword">SELECT</span>
+    <span class="keyword">CASE</span>
+        <span class="keyword">WHEN</span> <span class="func">UPPER</span>(<span class="func">TRIM</span>(region)) <span class="keyword">IN</span> (<span class="string">'US'</span>, <span class="string">'USA'</span>, <span class="string">'UNITED STATES'</span>, <span class="string">'U.S.'</span>, <span class="string">'U.S.A.'</span>)
+             <span class="keyword">THEN</span> <span class="string">'United States'</span>
+        <span class="keyword">WHEN</span> <span class="func">UPPER</span>(<span class="func">TRIM</span>(region)) <span class="keyword">IN</span> (<span class="string">'UK'</span>, <span class="string">'UNITED KINGDOM'</span>, <span class="string">'GREAT BRITAIN'</span>, <span class="string">'GB'</span>)
+             <span class="keyword">THEN</span> <span class="string">'United Kingdom'</span>
+        <span class="keyword">WHEN</span> <span class="func">UPPER</span>(<span class="func">TRIM</span>(region)) <span class="keyword">IN</span> (<span class="string">'CA'</span>, <span class="string">'CAN'</span>, <span class="string">'CANADA'</span>)
+             <span class="keyword">THEN</span> <span class="string">'Canada'</span>
+        <span class="keyword">ELSE</span> <span class="func">TRIM</span>(region)
+    <span class="keyword">END</span>                    <span class="keyword">AS</span>  <span class="alias">region_standardised</span>,
+    <span class="func">COUNT</span>(*)              <span class="keyword">AS</span>  <span class="alias">row_count</span>,
+    <span class="func">SUM</span>(revenue)          <span class="keyword">AS</span>  <span class="alias">total_revenue</span>
+<span class="keyword">FROM</span>    fact_sales
+<span class="keyword">GROUP BY</span>
+    <span class="keyword">CASE</span>
+        <span class="keyword">WHEN</span> <span class="func">UPPER</span>(<span class="func">TRIM</span>(region)) <span class="keyword">IN</span> (<span class="string">'US'</span>, <span class="string">'USA'</span>, <span class="string">'UNITED STATES'</span>, <span class="string">'U.S.'</span>, <span class="string">'U.S.A.'</span>)
+             <span class="keyword">THEN</span> <span class="string">'United States'</span>
+        <span class="keyword">WHEN</span> <span class="func">UPPER</span>(<span class="func">TRIM</span>(region)) <span class="keyword">IN</span> (<span class="string">'UK'</span>, <span class="string">'UNITED KINGDOM'</span>, <span class="string">'GREAT BRITAIN'</span>, <span class="string">'GB'</span>)
+             <span class="keyword">THEN</span> <span class="string">'United Kingdom'</span>
+        <span class="keyword">WHEN</span> <span class="func">UPPER</span>(<span class="func">TRIM</span>(region)) <span class="keyword">IN</span> (<span class="string">'CA'</span>, <span class="string">'CAN'</span>, <span class="string">'CANADA'</span>)
+             <span class="keyword">THEN</span> <span class="string">'Canada'</span>
+        <span class="keyword">ELSE</span> <span class="func">TRIM</span>(region)
+    <span class="keyword">END</span>
+<span class="keyword">ORDER BY</span> total_revenue <span class="keyword">DESC</span>;</div>
+
+                    <h3>Converting and Formatting Dates</h3>
+
+                    <div class="code-block"><span class="comment">-- Problem: dates stored as strings in a VARCHAR column</span>
+<span class="keyword">SELECT</span>  sale_date_raw,             <span class="comment">-- '20250115'  or  '15/01/2025'  or  'Jan 15 2025'</span>
+        <span class="func">CONVERT</span>(<span class="keyword">DATE</span>, sale_date_raw, <span class="number">112</span>)   <span class="keyword">AS</span>  <span class="alias">as_date_yyyymmdd</span>,
+        <span class="func">CONVERT</span>(<span class="keyword">DATE</span>, sale_date_raw, <span class="number">103</span>)   <span class="keyword">AS</span>  <span class="alias">as_date_ddmmyyyy</span>,
+        <span class="func">TRY_CONVERT</span>(<span class="keyword">DATE</span>, sale_date_raw)    <span class="keyword">AS</span>  <span class="alias">safe_convert</span>   <span class="comment">-- NULL on failure vs error</span>
+<span class="keyword">FROM</span>    raw_imports;
+
+<span class="comment">-- Useful date parts to extract for grouping</span>
+<span class="keyword">SELECT</span>  sale_date,
+        <span class="func">YEAR</span>(sale_date)              <span class="keyword">AS</span>  <span class="alias">year</span>,
+        <span class="func">MONTH</span>(sale_date)             <span class="keyword">AS</span>  <span class="alias">month_num</span>,
+        <span class="func">DATENAME</span>(<span class="keyword">MONTH</span>, sale_date)  <span class="keyword">AS</span>  <span class="alias">month_name</span>,
+        <span class="func">DATEPART</span>(<span class="keyword">QUARTER</span>, sale_date) <span class="keyword">AS</span>  <span class="alias">quarter</span>,
+        <span class="func">DATEPART</span>(<span class="keyword">WEEK</span>, sale_date)    <span class="keyword">AS</span>  <span class="alias">week_number</span>,
+        <span class="func">DATENAME</span>(<span class="keyword">WEEKDAY</span>, sale_date) <span class="keyword">AS</span>  <span class="alias">day_of_week</span>,
+        <span class="func">EOMONTH</span>(sale_date)            <span class="keyword">AS</span>  <span class="alias">last_day_of_month</span>
+<span class="keyword">FROM</span>    fact_sales;</div>
+
+                    <h3>Detecting and Handling Outliers</h3>
+
+                    <div class="code-block"><span class="comment">-- Find statistical outliers using mean and standard deviation
+-- Values more than 3 standard deviations from the mean are candidate outliers</span>
+<span class="keyword">WITH</span>  <span class="alias">stats</span>  <span class="keyword">AS</span> (
+    <span class="keyword">SELECT</span>  <span class="func">AVG</span>(revenue)              <span class="keyword">AS</span>  <span class="alias">mean_rev</span>,
+            <span class="func">STDEV</span>(revenue)            <span class="keyword">AS</span>  <span class="alias">stdev_rev</span>
+    <span class="keyword">FROM</span>  fact_sales
+    <span class="keyword">WHERE</span> revenue > <span class="number">0</span>
+)
+<span class="keyword">SELECT</span>   fs.sale_id,
+         fs.sale_date,
+         fs.revenue,
+         <span class="func">ROUND</span>((fs.revenue - s.mean_rev) / s.stdev_rev, <span class="number">2</span>)  <span class="keyword">AS</span>  <span class="alias">z_score</span>
+<span class="keyword">FROM</span>     fact_sales  <span class="keyword">AS</span>  <span class="alias">fs</span>
+<span class="keyword">CROSS JOIN</span>  stats    <span class="keyword">AS</span>  <span class="alias">s</span>
+<span class="keyword">WHERE</span>    <span class="func">ABS</span>(fs.revenue - s.mean_rev) > (<span class="number">3</span> * s.stdev_rev)
+<span class="keyword">ORDER BY</span> <span class="func">ABS</span>(fs.revenue - s.mean_rev) <span class="keyword">DESC</span>;</div>
+
+                    <div class="highlight-box">
+                        <strong>💡 Data Profiling — Know Your Data Before You Analyse It:</strong> Before writing analytical queries, run a quick profile of your dataset. Check row counts, NULL rates, min/max values, and distinct value counts for key columns. This prevents surprises that invalidate your analysis results.
+                    </div>
+
+                    <div class="code-block"><span class="comment">-- Quick data profile — run this before any analysis</span>
+<span class="keyword">SELECT</span>
+    <span class="func">COUNT</span>(*)                               <span class="keyword">AS</span>  <span class="alias">total_rows</span>,
+    <span class="func">COUNT</span>(<span class="keyword">DISTINCT</span> customer_id)           <span class="keyword">AS</span>  <span class="alias">unique_customers</span>,
+    <span class="func">COUNT</span>(<span class="keyword">DISTINCT</span> product_category)      <span class="keyword">AS</span>  <span class="alias">unique_categories</span>,
+    <span class="func">MIN</span>(sale_date)                         <span class="keyword">AS</span>  <span class="alias">earliest_date</span>,
+    <span class="func">MAX</span>(sale_date)                         <span class="keyword">AS</span>  <span class="alias">latest_date</span>,
+    <span class="func">MIN</span>(revenue)                           <span class="keyword">AS</span>  <span class="alias">min_revenue</span>,
+    <span class="func">MAX</span>(revenue)                           <span class="keyword">AS</span>  <span class="alias">max_revenue</span>,
+    <span class="func">ROUND</span>(<span class="func">AVG</span>(revenue), <span class="number">2</span>)               <span class="keyword">AS</span>  <span class="alias">avg_revenue</span>,
+    <span class="func">COUNT</span>(*) - <span class="func">COUNT</span>(revenue)            <span class="keyword">AS</span>  <span class="alias">null_revenue_count</span>,
+    <span class="func">SUM</span>(<span class="keyword">CASE WHEN</span> revenue <= <span class="number">0</span>
+             <span class="keyword">THEN</span> <span class="number">1</span> <span class="keyword">ELSE</span> <span class="number">0</span> <span class="keyword">END</span>)          <span class="keyword">AS</span>  <span class="alias">zero_or_negative_revenue</span>
+<span class="keyword">FROM</span>    fact_sales;</div>
+
+                </div>
+            </div>
+        </div>
+
+        <!-- ═══════════════════════════════════════════════════ -->
+        <!-- SECTION 4 — DESCRIPTIVE / SUMMARY ANALYSIS         -->
+        <!-- ═══════════════════════════════════════════════════ -->
+        <div class="section">
+            <div class="collapsible">
+                <div class="collapsible-header">4. Descriptive Analysis — Summarising What Happened</div>
+                <div class="collapsible-content">
+
+                    <div class="info-box">
+                        <strong>Descriptive analysis</strong> answers the question: <em>What happened?</em> It uses aggregation to compress large volumes of raw events into meaningful summary numbers. It is the most common type of analysis in business reporting — the foundation of every dashboard and weekly report.
+                    </div>
+
+                    <h3>The Standard Summary Report</h3>
+                    <p>Most daily and weekly reports are built on a small set of aggregation patterns. Here is a complete monthly sales summary using all standard descriptive measures:</p>
+
+                    <div class="code-block"><span class="comment">-- Monthly sales performance summary report</span>
+<span class="keyword">SELECT</span>   <span class="func">YEAR</span>(sale_date)                         <span class="keyword">AS</span>  <span class="alias">year</span>,
+         <span class="func">MONTH</span>(sale_date)                        <span class="keyword">AS</span>  <span class="alias">month</span>,
+         <span class="func">DATENAME</span>(<span class="keyword">MONTH</span>, sale_date)             <span class="keyword">AS</span>  <span class="alias">month_name</span>,
+
+         <span class="comment">-- Volume metrics</span>
+         <span class="func">COUNT</span>(*)                                <span class="keyword">AS</span>  <span class="alias">total_transactions</span>,
+         <span class="func">COUNT</span>(<span class="keyword">DISTINCT</span> customer_id)            <span class="keyword">AS</span>  <span class="alias">unique_customers</span>,
+         <span class="func">SUM</span>(quantity)                           <span class="keyword">AS</span>  <span class="alias">units_sold</span>,
+
+         <span class="comment">-- Revenue metrics</span>
+         <span class="func">ROUND</span>(<span class="func">SUM</span>(revenue), <span class="number">2</span>)                <span class="keyword">AS</span>  <span class="alias">total_revenue</span>,
+         <span class="func">ROUND</span>(<span class="func">SUM</span>(cost), <span class="number">2</span>)                   <span class="keyword">AS</span>  <span class="alias">total_cost</span>,
+         <span class="func">ROUND</span>(<span class="func">SUM</span>(profit), <span class="number">2</span>)                 <span class="keyword">AS</span>  <span class="alias">total_profit</span>,
+
+         <span class="comment">-- Average metrics</span>
+         <span class="func">ROUND</span>(<span class="func">AVG</span>(revenue), <span class="number">2</span>)                <span class="keyword">AS</span>  <span class="alias">avg_transaction_value</span>,
+         <span class="func">ROUND</span>(<span class="func">AVG</span>(quantity), <span class="number">1</span>)              <span class="keyword">AS</span>  <span class="alias">avg_units_per_transaction</span>,
+
+         <span class="comment">-- Margin (profit as a % of revenue)</span>
+         <span class="func">ROUND</span>(
+             <span class="func">SUM</span>(profit) * <span class="number">100.0</span> / <span class="func">NULLIF</span>(<span class="func">SUM</span>(revenue), <span class="number">0</span>),
+         <span class="number">1</span>)                                     <span class="keyword">AS</span>  <span class="alias">profit_margin_pct</span>
+
+<span class="keyword">FROM</span>     fact_sales
+<span class="keyword">WHERE</span>    sale_date >= <span class="string">'2025-01-01'</span>
+<span class="keyword">GROUP BY</span> <span class="func">YEAR</span>(sale_date),
+         <span class="func">MONTH</span>(sale_date),
+         <span class="func">DATENAME</span>(<span class="keyword">MONTH</span>, sale_date)
+<span class="keyword">ORDER BY</span> year, month;</div>
+
+                    <div class="result-table-wrap">
+                        <div class="result-label">▶ RESULT — Monthly Summary</div>
+                        <table>
+                            <tr><th>year</th><th>month</th><th>month_name</th><th>total_transactions</th><th>unique_customers</th><th>total_revenue</th><th>total_profit</th><th>profit_margin_pct</th></tr>
+                            <tr><td>2025</td><td>1</td><td>January</td><td>4,218</td><td>2,103</td><td>187,420.50</td><td>52,477.74</td><td>28.0%</td></tr>
+                            <tr><td>2025</td><td>2</td><td>February</td><td>3,891</td><td>1,987</td><td>172,340.80</td><td>47,494.72</td><td>27.6%</td></tr>
+                            <tr><td>2025</td><td>3</td><td>March</td><td>4,504</td><td>2,241</td><td>203,680.20</td><td>58,666.30</td><td>28.8%</td></tr>
+                        </table>
+                    </div>
+
+                    <h3>Breaking Down by Category (Slice by Dimension)</h3>
+
+                    <div class="code-block"><span class="comment">-- Revenue breakdown by product category for a given month</span>
+<span class="keyword">SELECT</span>   product_category,
+         <span class="func">COUNT</span>(*)               <span class="keyword">AS</span>  <span class="alias">transactions</span>,
+         <span class="func">SUM</span>(quantity)          <span class="keyword">AS</span>  <span class="alias">units_sold</span>,
+         <span class="func">ROUND</span>(<span class="func">SUM</span>(revenue), <span class="number">2</span>) <span class="keyword">AS</span>  <span class="alias">revenue</span>,
+         <span class="func">ROUND</span>(
+             <span class="func">SUM</span>(revenue) * <span class="number">100.0</span>
+             / <span class="func">SUM</span>(<span class="func">SUM</span>(revenue)) <span class="keyword">OVER</span>(),   <span class="comment">-- window function: % of total</span>
+         <span class="number">1</span>)                     <span class="keyword">AS</span>  <span class="alias">revenue_share_pct</span>
+<span class="keyword">FROM</span>     fact_sales
+<span class="keyword">WHERE</span>    sale_date >= <span class="string">'2025-03-01'</span>
+  <span class="keyword">AND</span>    sale_date  < <span class="string">'2025-04-01'</span>
+<span class="keyword">GROUP BY</span> product_category
+<span class="keyword">ORDER BY</span> revenue <span class="keyword">DESC</span>;</div>
+
+                    <div class="result-table-wrap">
+                        <div class="result-label">▶ RESULT — Category Breakdown (March 2025)</div>
+                        <table>
+                            <tr><th>product_category</th><th>transactions</th><th>units_sold</th><th>revenue</th><th>revenue_share_pct</th></tr>
+                            <tr><td>Electronics</td><td>1,102</td><td>1,340</td><td>88,420.10</td><td>43.4%</td></tr>
+                            <tr><td>Clothing</td><td>1,847</td><td>3,201</td><td>62,180.40</td><td>30.5%</td></tr>
+                            <tr><td>Home &amp; Garden</td><td>901</td><td>1,100</td><td>34,620.90</td><td>17.0%</td></tr>
+                            <tr><td>Books</td><td>654</td><td>1,050</td><td>18,458.80</td><td>9.1%</td></tr>
+                        </table>
+                    </div>
+
+                    <h3>Conditional Counting with CASE WHEN</h3>
+                    <p>One of the most powerful descriptive analysis patterns — pivot a column of values into separate count columns in a single query.</p>
+
+                    <div class="code-block"><span class="comment">-- Order status breakdown — count each status as its own column</span>
+<span class="keyword">SELECT</span>   <span class="func">YEAR</span>(sale_date)                             <span class="keyword">AS</span>  <span class="alias">year</span>,
+         <span class="func">MONTH</span>(sale_date)                            <span class="keyword">AS</span>  <span class="alias">month</span>,
+         <span class="func">COUNT</span>(*)                                    <span class="keyword">AS</span>  <span class="alias">total_orders</span>,
+         <span class="func">SUM</span>(<span class="keyword">CASE WHEN</span> status = <span class="string">'Completed'</span>  <span class="keyword">THEN</span> <span class="number">1</span> <span class="keyword">ELSE</span> <span class="number">0</span> <span class="keyword">END</span>)
+                                                     <span class="keyword">AS</span>  <span class="alias">completed</span>,
+         <span class="func">SUM</span>(<span class="keyword">CASE WHEN</span> status = <span class="string">'Cancelled'</span>  <span class="keyword">THEN</span> <span class="number">1</span> <span class="keyword">ELSE</span> <span class="number">0</span> <span class="keyword">END</span>)
+                                                     <span class="keyword">AS</span>  <span class="alias">cancelled</span>,
+         <span class="func">SUM</span>(<span class="keyword">CASE WHEN</span> status = <span class="string">'Returned'</span>   <span class="keyword">THEN</span> <span class="number">1</span> <span class="keyword">ELSE</span> <span class="number">0</span> <span class="keyword">END</span>)
+                                                     <span class="keyword">AS</span>  <span class="alias">returned</span>,
+         <span class="func">ROUND</span>(
+             <span class="func">SUM</span>(<span class="keyword">CASE WHEN</span> status = <span class="string">'Cancelled'</span> <span class="keyword">THEN</span> <span class="number">1</span> <span class="keyword">ELSE</span> <span class="number">0</span> <span class="keyword">END</span>) * <span class="number">100.0</span>
+             / <span class="func">COUNT</span>(*), <span class="number">1</span>)                          <span class="keyword">AS</span>  <span class="alias">cancellation_rate_pct</span>
+<span class="keyword">FROM</span>     fact_sales
+<span class="keyword">GROUP BY</span> <span class="func">YEAR</span>(sale_date), <span class="func">MONTH</span>(sale_date)
+<span class="keyword">ORDER BY</span> year, month;</div>
+
+                </div>
+            </div>
+        </div>
+
+        <!-- ═══════════════════════════════════════════════════ -->
+        <!-- SECTION 5 — TREND & TIME-SERIES ANALYSIS           -->
+        <!-- ═══════════════════════════════════════════════════ -->
+        <div class="section">
+            <div class="collapsible">
+                <div class="collapsible-header">5. Trend &amp; Time-Series Analysis — Understanding Change Over Time</div>
+                <div class="collapsible-content">
+
+                    <div class="info-box">
+                        <strong>Trend analysis</strong> answers: <em>Is this metric going up, down, or staying flat?</em> Most business decisions require understanding not just the current state, but whether the current state is better or worse than before — and by how much. Period-over-period comparison is the most commonly requested analysis in any reporting context.
+                    </div>
+
+                    <h3>Period-Over-Period Comparison (Month vs Prior Month)</h3>
+
+                    <div class="code-block"><span class="comment">-- Month-over-month revenue with absolute and percentage change
+-- LAG() retrieves the value from the previous row (window function)</span>
+<span class="keyword">WITH</span>  <span class="alias">monthly</span>  <span class="keyword">AS</span> (
+    <span class="keyword">SELECT</span>   <span class="func">YEAR</span>(sale_date)   <span class="keyword">AS</span>  <span class="alias">yr</span>,
+             <span class="func">MONTH</span>(sale_date)  <span class="keyword">AS</span>  <span class="alias">mo</span>,
+             <span class="func">ROUND</span>(<span class="func">SUM</span>(revenue), <span class="number">2</span>)  <span class="keyword">AS</span>  <span class="alias">revenue</span>
+    <span class="keyword">FROM</span>     fact_sales
+    <span class="keyword">GROUP BY</span> <span class="func">YEAR</span>(sale_date), <span class="func">MONTH</span>(sale_date)
+)
+<span class="keyword">SELECT</span>   yr,
+         mo,
+         revenue                                         <span class="keyword">AS</span>  <span class="alias">this_month_revenue</span>,
+         <span class="func">LAG</span>(revenue) <span class="keyword">OVER</span> (<span class="keyword">ORDER BY</span> yr, mo)          <span class="keyword">AS</span>  <span class="alias">prior_month_revenue</span>,
+         revenue - <span class="func">LAG</span>(revenue) <span class="keyword">OVER</span> (<span class="keyword">ORDER BY</span> yr, mo) <span class="keyword">AS</span>  <span class="alias">mom_change</span>,
+         <span class="func">ROUND</span>(
+             (revenue - <span class="func">LAG</span>(revenue) <span class="keyword">OVER</span> (<span class="keyword">ORDER BY</span> yr, mo))
+             * <span class="number">100.0</span>
+             / <span class="func">NULLIF</span>(<span class="func">LAG</span>(revenue) <span class="keyword">OVER</span> (<span class="keyword">ORDER BY</span> yr, mo), <span class="number">0</span>),
+         <span class="number">1</span>)                                               <span class="keyword">AS</span>  <span class="alias">mom_change_pct</span>
+<span class="keyword">FROM</span>     monthly
+<span class="keyword">ORDER BY</span> yr, mo;</div>
+
+                    <div class="result-table-wrap">
+                        <div class="result-label">▶ RESULT — Month-over-Month Revenue</div>
+                        <table>
+                            <tr><th>yr</th><th>mo</th><th>this_month_revenue</th><th>prior_month_revenue</th><th>mom_change</th><th>mom_change_pct</th></tr>
+                            <tr><td>2025</td><td>1</td><td>187,420.50</td><td>NULL</td><td>NULL</td><td>NULL</td></tr>
+                            <tr><td>2025</td><td>2</td><td>172,340.80</td><td>187,420.50</td><td>-15,079.70</td><td>-8.0%</td></tr>
+                            <tr><td>2025</td><td>3</td><td>203,680.20</td><td>172,340.80</td><td>+31,339.40</td><td>+18.2%</td></tr>
+                        </table>
+                    </div>
+
+                    <h3>Year-Over-Year Comparison (Same Month, Prior Year)</h3>
+
+                    <div class="code-block"><span class="comment">-- YoY: compare each month to the same month 12 months ago
+-- LAG() with offset of 12 skips back one full year of monthly rows</span>
+<span class="keyword">WITH</span>  <span class="alias">monthly</span>  <span class="keyword">AS</span> (
+    <span class="keyword">SELECT</span>   <span class="func">YEAR</span>(sale_date)            <span class="keyword">AS</span>  <span class="alias">yr</span>,
+             <span class="func">MONTH</span>(sale_date)           <span class="keyword">AS</span>  <span class="alias">mo</span>,
+             <span class="func">ROUND</span>(<span class="func">SUM</span>(revenue), <span class="number">2</span>)   <span class="keyword">AS</span>  <span class="alias">revenue</span>
+    <span class="keyword">FROM</span>     fact_sales
+    <span class="keyword">GROUP BY</span> <span class="func">YEAR</span>(sale_date),
+             <span class="func">MONTH</span>(sale_date)
+)
+<span class="keyword">SELECT</span>   yr,
+         mo,
+         revenue                                          <span class="keyword">AS</span>  <span class="alias">this_year_revenue</span>,
+         <span class="func">LAG</span>(revenue, <span class="number">12</span>) <span class="keyword">OVER</span> (<span class="keyword">ORDER BY</span> yr, mo)        <span class="keyword">AS</span>  <span class="alias">prior_year_revenue</span>,
+         <span class="func">ROUND</span>(
+             (revenue - <span class="func">LAG</span>(revenue, <span class="number">12</span>) <span class="keyword">OVER</span> (<span class="keyword">ORDER BY</span> yr, mo))
+             * <span class="number">100.0</span>
+             / <span class="func">NULLIF</span>(<span class="func">LAG</span>(revenue, <span class="number">12</span>) <span class="keyword">OVER</span> (<span class="keyword">ORDER BY</span> yr, mo), <span class="number">0</span>),
+         <span class="number">1</span>)                                               <span class="keyword">AS</span>  <span class="alias">yoy_growth_pct</span>
+<span class="keyword">FROM</span>     monthly
+<span class="keyword">ORDER BY</span> yr, mo;</div>
+
+                    <h3>Running Totals (Cumulative Sum)</h3>
+                    <p>A running total accumulates values over time — useful for tracking year-to-date (YTD) progress against a target.</p>
+
+                    <div class="code-block"><span class="comment">-- Daily cumulative (running total) revenue for the current year
+-- SUM() OVER with ROWS UNBOUNDED PRECEDING accumulates from the start</span>
+<span class="keyword">SELECT</span>   sale_date,
+         <span class="func">ROUND</span>(<span class="func">SUM</span>(revenue), <span class="number">2</span>)   <span class="keyword">AS</span>  <span class="alias">daily_revenue</span>,
+         <span class="func">ROUND</span>(
+             <span class="func">SUM</span>(<span class="func">SUM</span>(revenue)) <span class="keyword">OVER</span> (
+                 <span class="keyword">ORDER BY</span> sale_date
+                 <span class="keyword">ROWS BETWEEN UNBOUNDED PRECEDING AND CURRENT ROW</span>
+             ), <span class="number">2</span>)              <span class="keyword">AS</span>  <span class="alias">ytd_revenue</span>
+<span class="keyword">FROM</span>     fact_sales
+<span class="keyword">WHERE</span>    <span class="func">YEAR</span>(sale_date) = <span class="number">2025</span>
+<span class="keyword">GROUP BY</span> sale_date
+<span class="keyword">ORDER BY</span> sale_date;</div>
+
+                    <h3>Rolling Average (Moving Average)</h3>
+                    <p>A moving average smooths out day-to-day volatility to reveal the underlying trend. A 7-day moving average is standard for daily data.</p>
+
+                    <div class="code-block"><span class="comment">-- 7-day rolling average of daily revenue
+-- Smooths weekly seasonality (weekends vs weekdays patterns)</span>
+<span class="keyword">SELECT</span>   sale_date,
+         <span class="func">ROUND</span>(<span class="func">SUM</span>(revenue), <span class="number">2</span>)   <span class="keyword">AS</span>  <span class="alias">daily_revenue</span>,
+         <span class="func">ROUND</span>(
+             <span class="func">AVG</span>(<span class="func">SUM</span>(revenue)) <span class="keyword">OVER</span> (
+                 <span class="keyword">ORDER BY</span> sale_date
+                 <span class="keyword">ROWS BETWEEN</span> <span class="number">6</span> <span class="keyword">PRECEDING AND CURRENT ROW</span>
+             ), <span class="number">2</span>)              <span class="keyword">AS</span>  <span class="alias">rolling_7day_avg</span>
+<span class="keyword">FROM</span>     fact_sales
+<span class="keyword">WHERE</span>    <span class="func">YEAR</span>(sale_date) = <span class="number">2025</span>
+<span class="keyword">GROUP BY</span> sale_date
+<span class="keyword">ORDER BY</span> sale_date;</div>
+
+                    <div class="amber-box">
+                        <strong>💡 Common Time-Series Patterns to Watch For:</strong>
+                        <ul>
+                            <li><strong>Seasonality</strong> — repeating patterns tied to the calendar (holiday spikes, summer slowdowns, month-end surges)</li>
+                            <li><strong>Trends</strong> — sustained directional movement over multiple periods (growing or declining baseline)</li>
+                            <li><strong>Spikes / Anomalies</strong> — single-period deviations that break the pattern (system outages, promotions, data errors)</li>
+                            <li><strong>Day-of-week effects</strong> — many metrics behave differently on weekends; a 7-day rolling average smooths this out</li>
+                        </ul>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+
+        <!-- ═══════════════════════════════════════════════════ -->
+        <!-- SECTION 6 — SEGMENTATION & RANKING ANALYSIS        -->
+        <!-- ═══════════════════════════════════════════════════ -->
+        <div class="section">
+            <div class="collapsible">
+                <div class="collapsible-header">6. Segmentation &amp; Ranking Analysis</div>
+                <div class="collapsible-content">
+
+                    <div class="info-box">
+                        <strong>Segmentation analysis</strong> divides a population into meaningful sub-groups to reveal which segments drive the most value. <strong>Ranking analysis</strong> orders entities by a measure to identify top performers, bottom performers, and where to focus attention.
+                    </div>
+
+                    <h3>Top-N Analysis</h3>
+                    <p>Finding the top or bottom N records by a measure is one of the most requested report types — top products, top customers, worst-performing regions.</p>
+
+                    <div class="code-block"><span class="comment">-- Top 10 products by revenue this quarter</span>
+<span class="keyword">SELECT</span>   <span class="keyword">TOP</span> <span class="number">10</span>
+         product_id,
+         product_category,
+         <span class="func">COUNT</span>(*)               <span class="keyword">AS</span>  <span class="alias">transactions</span>,
+         <span class="func">SUM</span>(quantity)          <span class="keyword">AS</span>  <span class="alias">units_sold</span>,
+         <span class="func">ROUND</span>(<span class="func">SUM</span>(revenue), <span class="number">2</span>) <span class="keyword">AS</span>  <span class="alias">total_revenue</span>,
+         <span class="func">ROUND</span>(<span class="func">AVG</span>(revenue), <span class="number">2</span>) <span class="keyword">AS</span>  <span class="alias">avg_transaction_value</span>
+<span class="keyword">FROM</span>     fact_sales
+<span class="keyword">WHERE</span>    sale_date >= <span class="string">'2025-01-01'</span>
+  <span class="keyword">AND</span>    sale_date  < <span class="string">'2025-04-01'</span>
+<span class="keyword">GROUP BY</span> product_id, product_category
+<span class="keyword">ORDER BY</span> total_revenue <span class="keyword">DESC</span>;</div>
+
+                    <h3>Ranking Within Groups (RANK and DENSE_RANK)</h3>
+
+                    <div class="code-block"><span class="comment">-- Rank products within each category by revenue
+-- Useful for category-level reporting: "top product per category"</span>
+<span class="keyword">WITH</span>  <span class="alias">product_revenue</span>  <span class="keyword">AS</span> (
+    <span class="keyword">SELECT</span>   product_category,
+             product_id,
+             <span class="func">ROUND</span>(<span class="func">SUM</span>(revenue), <span class="number">2</span>)  <span class="keyword">AS</span>  <span class="alias">revenue</span>
+    <span class="keyword">FROM</span>     fact_sales
+    <span class="keyword">GROUP BY</span> product_category, product_id
+)
+<span class="keyword">SELECT</span>   product_category,
+         product_id,
+         revenue,
+         <span class="func">RANK</span>() <span class="keyword">OVER</span> (
+             <span class="keyword">PARTITION BY</span> product_category
+             <span class="keyword">ORDER BY</span>     revenue <span class="keyword">DESC</span>
+         )  <span class="keyword">AS</span>  <span class="alias">rank_in_category</span>
+<span class="keyword">FROM</span>     product_revenue
+<span class="keyword">ORDER BY</span> product_category,
+         rank_in_category;</div>
+
+                    <h3>Customer Value Segmentation</h3>
+                    <p>Group customers into value tiers based on their purchase behaviour. This informs which customers should receive loyalty programmes, re-engagement campaigns, or premium support.</p>
+
+                    <div class="code-block"><span class="comment">-- Customer value segmentation based on total spend</span>
+<span class="keyword">WITH</span>  <span class="alias">customer_totals</span>  <span class="keyword">AS</span> (
+    <span class="keyword">SELECT</span>   customer_id,
+             <span class="func">COUNT</span>(*)                   <span class="keyword">AS</span>  <span class="alias">order_count</span>,
+             <span class="func">ROUND</span>(<span class="func">SUM</span>(revenue), <span class="number">2</span>)   <span class="keyword">AS</span>  <span class="alias">lifetime_value</span>
+    <span class="keyword">FROM</span>     fact_sales
+    <span class="keyword">GROUP BY</span> customer_id
+)
+<span class="keyword">SELECT</span>   customer_id,
+         order_count,
+         lifetime_value,
+         <span class="keyword">CASE</span>
+             <span class="keyword">WHEN</span> lifetime_value >= <span class="number">5000</span>  <span class="keyword">THEN</span> <span class="string">'Platinum'</span>
+             <span class="keyword">WHEN</span> lifetime_value >= <span class="number">1000</span>  <span class="keyword">THEN</span> <span class="string">'Gold'</span>
+             <span class="keyword">WHEN</span> lifetime_value >= <span class="number">250</span>   <span class="keyword">THEN</span> <span class="string">'Silver'</span>
+             <span class="keyword">ELSE</span>                               <span class="string">'Bronze'</span>
+         <span class="keyword">END</span>                                <span class="keyword">AS</span>  <span class="alias">customer_tier</span>
+<span class="keyword">FROM</span>     customer_totals
+<span class="keyword">ORDER BY</span> lifetime_value <span class="keyword">DESC</span>;
+
+<span class="comment">-- Then summarise the tier distribution</span>
+<span class="keyword">WITH</span>  <span class="alias">customer_totals</span>  <span class="keyword">AS</span> (
+    <span class="keyword">SELECT</span>   customer_id,
+             <span class="func">SUM</span>(revenue)   <span class="keyword">AS</span>  <span class="alias">lifetime_value</span>
+    <span class="keyword">FROM</span>     fact_sales
+    <span class="keyword">GROUP BY</span> customer_id
+),
+<span class="alias">tiered</span>  <span class="keyword">AS</span> (
+    <span class="keyword">SELECT</span>
+        <span class="keyword">CASE</span>
+            <span class="keyword">WHEN</span> lifetime_value >= <span class="number">5000</span>  <span class="keyword">THEN</span> <span class="string">'Platinum'</span>
+            <span class="keyword">WHEN</span> lifetime_value >= <span class="number">1000</span>  <span class="keyword">THEN</span> <span class="string">'Gold'</span>
+            <span class="keyword">WHEN</span> lifetime_value >= <span class="number">250</span>   <span class="keyword">THEN</span> <span class="string">'Silver'</span>
+            <span class="keyword">ELSE</span>                               <span class="string">'Bronze'</span>
+        <span class="keyword">END</span>  <span class="keyword">AS</span>  <span class="alias">tier</span>,
+        lifetime_value
+    <span class="keyword">FROM</span>  customer_totals
+)
+<span class="keyword">SELECT</span>   tier,
+         <span class="func">COUNT</span>(*)                    <span class="keyword">AS</span>  <span class="alias">customer_count</span>,
+         <span class="func">ROUND</span>(<span class="func">SUM</span>(lifetime_value), <span class="number">2</span>) <span class="keyword">AS</span>  <span class="alias">total_revenue_from_tier</span>,
+         <span class="func">ROUND</span>(
+             <span class="func">SUM</span>(lifetime_value) * <span class="number">100.0</span>
+             / <span class="func">SUM</span>(<span class="func">SUM</span>(lifetime_value)) <span class="keyword">OVER</span>(),
+         <span class="number">1</span>)                           <span class="keyword">AS</span>  <span class="alias">pct_of_total_revenue</span>
+<span class="keyword">FROM</span>     tiered
+<span class="keyword">GROUP BY</span> tier
+<span class="keyword">ORDER BY</span> total_revenue_from_tier <span class="keyword">DESC</span>;</div>
+
+                    <div class="result-table-wrap">
+                        <div class="result-label">▶ RESULT — Customer Tier Revenue Distribution</div>
+                        <table>
+                            <tr><th>tier</th><th>customer_count</th><th>total_revenue_from_tier</th><th>pct_of_total_revenue</th></tr>
+                            <tr><td>Platinum</td><td>142</td><td>892,400.00</td><td>42.1%</td></tr>
+                            <tr><td>Gold</td><td>876</td><td>641,200.00</td><td>30.2%</td></tr>
+                            <tr><td>Silver</td><td>3,241</td><td>438,800.00</td><td>20.7%</td></tr>
+                            <tr><td>Bronze</td><td>11,840</td><td>148,600.00</td><td>7.0%</td></tr>
+                        </table>
+                    </div>
+
+                    <div class="amber-box">
+                        <strong>The 80/20 Rule in Data:</strong> In most business datasets, roughly 20% of customers, products, or sales reps generate 80% of the revenue. Segmentation analysis makes this pattern visible and actionable — the Platinum tier above (1.2% of customers) generates 42% of revenue.
+                    </div>
+
+                    <h3>Percentile / Quartile Segmentation (NTILE)</h3>
+
+                    <div class="code-block"><span class="comment">-- Divide customers into 4 equal-sized groups (quartiles) by spend
+-- Q4 = top 25% spenders; Q1 = bottom 25%</span>
+<span class="keyword">WITH</span>  <span class="alias">customer_spend</span>  <span class="keyword">AS</span> (
+    <span class="keyword">SELECT</span>   customer_id,
+             <span class="func">SUM</span>(revenue)   <span class="keyword">AS</span>  <span class="alias">total_spend</span>
+    <span class="keyword">FROM</span>     fact_sales
+    <span class="keyword">GROUP BY</span> customer_id
+)
+<span class="keyword">SELECT</span>   customer_id,
+         total_spend,
+         <span class="func">NTILE</span>(<span class="number">4</span>) <span class="keyword">OVER</span> (<span class="keyword">ORDER BY</span> total_spend)   <span class="keyword">AS</span>  <span class="alias">spend_quartile</span>,
+         <span class="func">NTILE</span>(<span class="number">10</span>) <span class="keyword">OVER</span> (<span class="keyword">ORDER BY</span> total_spend)  <span class="keyword">AS</span>  <span class="alias">spend_decile</span>
+<span class="keyword">FROM</span>     customer_spend
+<span class="keyword">ORDER BY</span> total_spend <span class="keyword">DESC</span>;</div>
+
+                </div>
+            </div>
+        </div>
+
+        <!-- ═══════════════════════════════════════════════════ -->
+        <!-- SECTION 7 — KPI AND RATE METRICS                   -->
+        <!-- ═══════════════════════════════════════════════════ -->
+        <div class="section">
+            <div class="collapsible">
+                <div class="collapsible-header">7. KPIs &amp; Rate Metrics — Measuring What Matters</div>
+                <div class="collapsible-content">
+
+                    <div class="info-box">
+                        <strong>Key Performance Indicators (KPIs)</strong> are the specific metrics that an organisation tracks to evaluate progress towards its goals. Most KPIs are <em>rate metrics</em> — ratios that normalise a measure against a base — rather than raw totals.
+                    </div>
+
+                    <h3>Example KPI Dashboard Values</h3>
+
+                    <div class="kpi-row">
+                        <div class="kpi-card">
+                            <div class="kpi-val">$203.7K</div>
+                            <div class="kpi-label">Monthly Revenue</div>
+                            <div class="kpi-trend up">▲ +18.2% vs prior month</div>
+                        </div>
+                        <div class="kpi-card">
+                            <div class="kpi-val">28.8%</div>
+                            <div class="kpi-label">Profit Margin</div>
+                            <div class="kpi-trend up">▲ +1.2pp vs prior month</div>
+                        </div>
+                        <div class="kpi-card">
+                            <div class="kpi-val">4,504</div>
+                            <div class="kpi-label">Orders This Month</div>
+                            <div class="kpi-trend up">▲ +15.8% vs prior month</div>
+                        </div>
+                        <div class="kpi-card">
+                            <div class="kpi-val">3.2%</div>
+                            <div class="kpi-label">Cancellation Rate</div>
+                            <div class="kpi-trend down">▼ -0.4pp vs prior month</div>
+                        </div>
+                    </div>
+
+                    <h3>Computing Rate KPIs in SQL</h3>
+
+                    <div class="code-block"><span class="comment">-- A set of common rate KPIs computed in a single query</span>
+<span class="keyword">SELECT</span>
+    <span class="comment">-- Conversion rate: what % of visits resulted in a purchase?</span>
+    <span class="func">ROUND</span>(
+        <span class="func">COUNT</span>(<span class="keyword">DISTINCT</span> o.customer_id) * <span class="number">100.0</span>
+        / <span class="func">NULLIF</span>(<span class="func">COUNT</span>(<span class="keyword">DISTINCT</span> v.visitor_id), <span class="number">0</span>),
+    <span class="number">2</span>)  <span class="keyword">AS</span>  <span class="alias">conversion_rate_pct</span>,
+
+    <span class="comment">-- Average Order Value (AOV)</span>
+    <span class="func">ROUND</span>(<span class="func">SUM</span>(o.revenue) / <span class="func">NULLIF</span>(<span class="func">COUNT</span>(o.order_id), <span class="number">0</span>), <span class="number">2</span>)
+        <span class="keyword">AS</span>  <span class="alias">avg_order_value</span>,
+
+    <span class="comment">-- Return rate: what % of items sold were returned?</span>
+    <span class="func">ROUND</span>(
+        <span class="func">SUM</span>(<span class="keyword">CASE WHEN</span> o.status = <span class="string">'Returned'</span> <span class="keyword">THEN</span> <span class="number">1</span> <span class="keyword">ELSE</span> <span class="number">0</span> <span class="keyword">END</span>) * <span class="number">100.0</span>
+        / <span class="func">NULLIF</span>(<span class="func">COUNT</span>(*), <span class="number">0</span>),
+    <span class="number">2</span>)  <span class="keyword">AS</span>  <span class="alias">return_rate_pct</span>,
+
+    <span class="comment">-- Revenue per visitor</span>
+    <span class="func">ROUND</span>(
+        <span class="func">SUM</span>(o.revenue) / <span class="func">NULLIF</span>(<span class="func">COUNT</span>(<span class="keyword">DISTINCT</span> v.visitor_id), <span class="number">0</span>),
+    <span class="number">2</span>)  <span class="keyword">AS</span>  <span class="alias">revenue_per_visitor</span>
+
+<span class="keyword">FROM</span>     website_visits  <span class="keyword">AS</span>  <span class="alias">v</span>
+<span class="keyword">LEFT JOIN</span> orders         <span class="keyword">AS</span>  <span class="alias">o</span>
+         <span class="keyword">ON</span>  v.visitor_id = o.visitor_id
+         <span class="keyword">AND</span> <span class="func">CAST</span>(v.visit_date <span class="keyword">AS</span> <span class="keyword">DATE</span>) = <span class="func">CAST</span>(o.order_date <span class="keyword">AS</span> <span class="keyword">DATE</span>)
+<span class="keyword">WHERE</span>    v.visit_date >= <span class="string">'2025-03-01'</span>
+  <span class="keyword">AND</span>    v.visit_date  < <span class="string">'2025-04-01'</span>;</div>
+
+                    <div class="highlight-box">
+                        <strong>⚠️ Always use NULLIF() when dividing</strong> to prevent division-by-zero errors. <code>NULLIF(denominator, 0)</code> returns NULL when the denominator is zero, causing the result to be NULL rather than throwing an error — which is the correct behaviour for a rate with no base data.
+                    </div>
+
+                    <h3>Common Business KPIs and Their SQL Patterns</h3>
+
+                    <table>
+                        <tr><th>KPI</th><th>Formula</th><th>SQL Pattern</th></tr>
+                        <tr>
+                            <td><strong>Conversion Rate</strong></td>
+                            <td>Conversions ÷ Visitors × 100</td>
+                            <td><code>COUNT(orders) * 100.0 / NULLIF(COUNT(visits), 0)</code></td>
+                        </tr>
+                        <tr>
+                            <td><strong>Average Order Value (AOV)</strong></td>
+                            <td>Revenue ÷ Order Count</td>
+                            <td><code>SUM(revenue) / NULLIF(COUNT(order_id), 0)</code></td>
+                        </tr>
+                        <tr>
+                            <td><strong>Customer Lifetime Value (CLV)</strong></td>
+                            <td>Total revenue per customer</td>
+                            <td><code>SUM(revenue) GROUP BY customer_id</code></td>
+                        </tr>
+                        <tr>
+                            <td><strong>Churn Rate</strong></td>
+                            <td>Lost customers ÷ Start-of-period customers</td>
+                            <td><code>COUNT(churned) * 100.0 / NULLIF(COUNT(active_start), 0)</code></td>
+                        </tr>
+                        <tr>
+                            <td><strong>Gross Margin %</strong></td>
+                            <td>(Revenue − Cost) ÷ Revenue × 100</td>
+                            <td><code>SUM(revenue - cost) * 100.0 / NULLIF(SUM(revenue), 0)</code></td>
+                        </tr>
+                        <tr>
+                            <td><strong>Growth Rate</strong></td>
+                            <td>(This period − Prior period) ÷ Prior period × 100</td>
+                            <td><code>(current - LAG(current)) * 100.0 / NULLIF(LAG(current), 0)</code></td>
+                        </tr>
+                        <tr>
+                            <td><strong>Error / Defect Rate</strong></td>
+                            <td>Failed ÷ Total × 100</td>
+                            <td><code>SUM(CASE WHEN status = 'Failed' THEN 1 ELSE 0 END) * 100.0 / COUNT(*)</code></td>
+                        </tr>
+                        <tr>
+                            <td><strong>Occupancy / Utilisation Rate</strong></td>
+                            <td>Used capacity ÷ Total capacity × 100</td>
+                            <td><code>SUM(used) * 100.0 / NULLIF(SUM(total_capacity), 0)</code></td>
+                        </tr>
+                    </table>
+
+                </div>
+            </div>
+        </div>
+
+        <!-- ═══════════════════════════════════════════════════ -->
+        <!-- SECTION 8 — CYCLIC REPORTING PATTERNS              -->
+        <!-- ═══════════════════════════════════════════════════ -->
+        <div class="section">
+            <div class="collapsible">
+                <div class="collapsible-header">8. Cyclic Reporting — Regular Reports That Drive Decisions</div>
+                <div class="collapsible-content">
+
+                    <div class="info-box">
+                        <strong>Cyclic reports</strong> are reports that run on a regular schedule — daily, weekly, monthly, quarterly — and feed into recurring business decisions. They are the backbone of operational and management reporting. The queries for cyclic reports are typically standardised and parameterised by date so the same query produces the right data for any period.
+                    </div>
+
+                    <h3>Designing a Parameterised Cyclic Report Query</h3>
+                    <p>A well-designed cyclic report query uses date parameters so the same query works for any reporting period without modification.</p>
+
+                    <div class="code-block"><span class="comment">-- Parameterised weekly operations report
+-- Substitute @start and @end with any Monday–Sunday range</span>
+<span class="keyword">DECLARE</span>  @report_start  <span class="keyword">DATE</span> = <span class="string">'2025-03-17'</span>;   <span class="comment">-- Monday</span>
+<span class="keyword">DECLARE</span>  @report_end    <span class="keyword">DATE</span> = <span class="string">'2025-03-23'</span>;   <span class="comment">-- Sunday</span>
+
+<span class="keyword">SELECT</span>   <span class="func">DATENAME</span>(<span class="keyword">WEEKDAY</span>, sale_date)              <span class="keyword">AS</span>  <span class="alias">day_of_week</span>,
+         sale_date,
+         <span class="func">COUNT</span>(*)                                   <span class="keyword">AS</span>  <span class="alias">orders</span>,
+         <span class="func">COUNT</span>(<span class="keyword">DISTINCT</span> customer_id)               <span class="keyword">AS</span>  <span class="alias">unique_customers</span>,
+         <span class="func">SUM</span>(quantity)                              <span class="keyword">AS</span>  <span class="alias">units_sold</span>,
+         <span class="func">ROUND</span>(<span class="func">SUM</span>(revenue), <span class="number">2</span>)                   <span class="keyword">AS</span>  <span class="alias">revenue</span>,
+         <span class="func">ROUND</span>(<span class="func">AVG</span>(revenue), <span class="number">2</span>)                   <span class="keyword">AS</span>  <span class="alias">avg_order_value</span>
+<span class="keyword">FROM</span>     fact_sales
+<span class="keyword">WHERE</span>    sale_date  <span class="keyword">BETWEEN</span>  @report_start  <span class="keyword">AND</span>  @report_end
+<span class="keyword">GROUP BY</span> sale_date,
+         <span class="func">DATENAME</span>(<span class="keyword">WEEKDAY</span>, sale_date)
+<span class="keyword">ORDER BY</span> sale_date;</div>
+
+                    <h3>Typical Cyclic Report Types</h3>
+
+                    <table>
+                        <tr><th>Frequency</th><th>Report Type</th><th>Typical Metrics</th><th>Primary Audience</th></tr>
+                        <tr>
+                            <td><strong>Daily</strong></td>
+                            <td>Operations Dashboard</td>
+                            <td>Orders, revenue, units sold, errors/exceptions, system uptime</td>
+                            <td>Operations managers, team leads</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Weekly</strong></td>
+                            <td>Performance Review</td>
+                            <td>Week-over-week trends, SLA adherence, top/bottom performers</td>
+                            <td>Department heads, supervisors</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Monthly</strong></td>
+                            <td>Business Review</td>
+                            <td>Revenue, costs, profit margin, customer counts, MoM growth</td>
+                            <td>Senior management, finance</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Quarterly</strong></td>
+                            <td>Executive Report</td>
+                            <td>QoQ and YoY trends, KPI performance vs targets, strategic goals</td>
+                            <td>Executives, board, investors</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Annual</strong></td>
+                            <td>Year-End Summary</td>
+                            <td>Full-year totals, year-over-year comparison, forecast vs actual</td>
+                            <td>Executives, board, regulators</td>
+                        </tr>
+                    </table>
+
+                    <h3>Stored Procedure for a Scheduled Monthly Report</h3>
+                    <p>Wrapping the report query in a stored procedure makes it callable by a scheduler (SQL Server Agent job) with automatic date calculation — no manual parameter entry required.</p>
+
+                    <div class="code-block"><span class="comment">-- Monthly summary report procedure — automatically calculates
+-- prior month start/end from the current date when called</span>
+<span class="keyword">CREATE PROCEDURE</span>  usp_MonthlySalesReport
+    @year   <span class="keyword">INT</span> = <span class="keyword">NULL</span>,
+    @month  <span class="keyword">INT</span> = <span class="keyword">NULL</span>
+<span class="keyword">AS</span>
+<span class="keyword">BEGIN</span>
+    <span class="keyword">SET NOCOUNT ON</span>;
+
+    <span class="comment">-- Default to prior month if no parameters passed</span>
+    <span class="keyword">IF</span>  @year  <span class="keyword">IS NULL</span>  <span class="keyword">SET</span> @year  = <span class="func">YEAR</span>(<span class="func">DATEADD</span>(<span class="keyword">MONTH</span>, -<span class="number">1</span>, <span class="func">GETDATE</span>()));
+    <span class="keyword">IF</span>  @month <span class="keyword">IS NULL</span>  <span class="keyword">SET</span> @month = <span class="func">MONTH</span>(<span class="func">DATEADD</span>(<span class="keyword">MONTH</span>, -<span class="number">1</span>, <span class="func">GETDATE</span>()));
+
+    <span class="keyword">DECLARE</span>  @start  <span class="keyword">DATE</span> = <span class="func">DATEFROMPARTS</span>(@year, @month, <span class="number">1</span>);
+    <span class="keyword">DECLARE</span>  @end    <span class="keyword">DATE</span> = <span class="func">EOMONTH</span>(@start);
+
+    <span class="comment">-- Report result set</span>
+    <span class="keyword">SELECT</span>   @year                                  <span class="keyword">AS</span>  <span class="alias">report_year</span>,
+             @month                                 <span class="keyword">AS</span>  <span class="alias">report_month</span>,
+             <span class="func">DATENAME</span>(<span class="keyword">MONTH</span>, @start)              <span class="keyword">AS</span>  <span class="alias">month_name</span>,
+             product_category,
+             <span class="func">COUNT</span>(*)                             <span class="keyword">AS</span>  <span class="alias">transactions</span>,
+             <span class="func">COUNT</span>(<span class="keyword">DISTINCT</span> customer_id)         <span class="keyword">AS</span>  <span class="alias">unique_customers</span>,
+             <span class="func">SUM</span>(quantity)                        <span class="keyword">AS</span>  <span class="alias">units_sold</span>,
+             <span class="func">ROUND</span>(<span class="func">SUM</span>(revenue), <span class="number">2</span>)             <span class="keyword">AS</span>  <span class="alias">revenue</span>,
+             <span class="func">ROUND</span>(<span class="func">SUM</span>(profit), <span class="number">2</span>)              <span class="keyword">AS</span>  <span class="alias">profit</span>,
+             <span class="func">ROUND</span>(
+                 <span class="func">SUM</span>(profit) * <span class="number">100.0</span>
+                 / <span class="func">NULLIF</span>(<span class="func">SUM</span>(revenue), <span class="number">0</span>),
+             <span class="number">1</span>)                                   <span class="keyword">AS</span>  <span class="alias">margin_pct</span>
+    <span class="keyword">FROM</span>     fact_sales
+    <span class="keyword">WHERE</span>    sale_date  <span class="keyword">BETWEEN</span>  @start  <span class="keyword">AND</span>  @end
+    <span class="keyword">GROUP BY</span> product_category
+    <span class="keyword">ORDER BY</span> revenue <span class="keyword">DESC</span>;
+<span class="keyword">END</span>;
+
+<span class="comment">-- Execute for a specific month:</span>
+<span class="keyword">EXEC</span>  usp_MonthlySalesReport  @year = <span class="number">2025</span>, @month = <span class="number">3</span>;
+
+<span class="comment">-- Execute for the prior month (default behaviour — scheduled job calls this):</span>
+<span class="keyword">EXEC</span>  usp_MonthlySalesReport;</div>
+
+                    <h3>Year-to-Date (YTD) Summary</h3>
+
+                    <div class="code-block"><span class="comment">-- YTD performance: cumulative totals for the current year up to today
+-- Compare against the same period last year (SPLY) for context</span>
+<span class="keyword">DECLARE</span>  @this_year   <span class="keyword">INT</span>  = <span class="func">YEAR</span>(<span class="func">GETDATE</span>());
+<span class="keyword">DECLARE</span>  @prior_year  <span class="keyword">INT</span>  = <span class="func">YEAR</span>(<span class="func">GETDATE</span>()) - <span class="number">1</span>;
+<span class="keyword">DECLARE</span>  @day_of_year <span class="keyword">INT</span>  = <span class="func">DATEPART</span>(<span class="keyword">DAYOFYEAR</span>, <span class="func">GETDATE</span>());
+
+<span class="keyword">SELECT</span>
+    <span class="comment">-- Current year YTD</span>
+    <span class="func">SUM</span>(<span class="keyword">CASE WHEN</span> <span class="func">YEAR</span>(sale_date) = @this_year
+             <span class="keyword">THEN</span> revenue <span class="keyword">ELSE</span> <span class="number">0</span> <span class="keyword">END</span>)              <span class="keyword">AS</span>  <span class="alias">ytd_revenue</span>,
+
+    <span class="comment">-- Prior year for the same elapsed days</span>
+    <span class="func">SUM</span>(<span class="keyword">CASE WHEN</span> <span class="func">YEAR</span>(sale_date) = @prior_year
+              <span class="keyword">AND</span>  <span class="func">DATEPART</span>(<span class="keyword">DAYOFYEAR</span>, sale_date) <= @day_of_year
+             <span class="keyword">THEN</span> revenue <span class="keyword">ELSE</span> <span class="number">0</span> <span class="keyword">END</span>)              <span class="keyword">AS</span>  <span class="alias">prior_ytd_revenue</span>,
+
+    <span class="comment">-- YoY growth rate</span>
+    <span class="func">ROUND</span>(
+        (<span class="func">SUM</span>(<span class="keyword">CASE WHEN</span> <span class="func">YEAR</span>(sale_date) = @this_year
+                  <span class="keyword">THEN</span> revenue <span class="keyword">ELSE</span> <span class="number">0</span> <span class="keyword">END</span>)
+         - <span class="func">SUM</span>(<span class="keyword">CASE WHEN</span> <span class="func">YEAR</span>(sale_date) = @prior_year
+                      <span class="keyword">AND</span> <span class="func">DATEPART</span>(<span class="keyword">DAYOFYEAR</span>, sale_date) <= @day_of_year
+                     <span class="keyword">THEN</span> revenue <span class="keyword">ELSE</span> <span class="number">0</span> <span class="keyword">END</span>)
+        ) * <span class="number">100.0</span>
+        / <span class="func">NULLIF</span>(
+            <span class="func">SUM</span>(<span class="keyword">CASE WHEN</span> <span class="func">YEAR</span>(sale_date) = @prior_year
+                         <span class="keyword">AND</span> <span class="func">DATEPART</span>(<span class="keyword">DAYOFYEAR</span>, sale_date) <= @day_of_year
+                        <span class="keyword">THEN</span> revenue <span class="keyword">ELSE</span> <span class="number">0</span> <span class="keyword">END</span>), <span class="number">0</span>),
+    <span class="number">1</span>)                                               <span class="keyword">AS</span>  <span class="alias">ytd_yoy_growth_pct</span>
+
+<span class="keyword">FROM</span>  fact_sales
+<span class="keyword">WHERE</span> <span class="func">YEAR</span>(sale_date) <span class="keyword">IN</span> (@this_year, @prior_year);</div>
+
+                </div>
+            </div>
+        </div>
+
+        <!-- ═══════════════════════════════════════════════════ -->
+        <!-- SECTION 9 — SUMMARY & QUICK REFERENCE              -->
+        <!-- ═══════════════════════════════════════════════════ -->
+        <div class="section">
+            <div class="collapsible">
+                <div class="collapsible-header">9. Summary — Analysis Patterns Quick Reference</div>
+                <div class="collapsible-content">
+
+                    <h3>Core SQL Patterns for Data Analysis</h3>
+
+                    <table>
+                        <tr><th>Analysis Type</th><th>Question Answered</th><th>Key SQL Technique</th></tr>
+                        <tr>
+                            <td><strong>Descriptive Summary</strong></td>
+                            <td>What happened in this period?</td>
+                            <td><code>GROUP BY</code> + <code>SUM / COUNT / AVG</code></td>
+                        </tr>
+                        <tr>
+                            <td><strong>Category Breakdown</strong></td>
+                            <td>Which dimension drives the most value?</td>
+                            <td><code>GROUP BY dimension ORDER BY measure DESC</code></td>
+                        </tr>
+                        <tr>
+                            <td><strong>Percentage Share</strong></td>
+                            <td>What proportion does each group represent?</td>
+                            <td><code>SUM(x) * 100.0 / SUM(SUM(x)) OVER()</code></td>
+                        </tr>
+                        <tr>
+                            <td><strong>Conditional Count</strong></td>
+                            <td>How many rows meet specific criteria?</td>
+                            <td><code>SUM(CASE WHEN condition THEN 1 ELSE 0 END)</code></td>
+                        </tr>
+                        <tr>
+                            <td><strong>Period-over-Period</strong></td>
+                            <td>How did this period compare to last period?</td>
+                            <td><code>LAG(measure) OVER (ORDER BY period)</code></td>
+                        </tr>
+                        <tr>
+                            <td><strong>Running Total</strong></td>
+                            <td>What is the cumulative value to date?</td>
+                            <td><code>SUM(SUM(x)) OVER (ORDER BY date ROWS UNBOUNDED PRECEDING)</code></td>
+                        </tr>
+                        <tr>
+                            <td><strong>Moving Average</strong></td>
+                            <td>What is the smoothed trend?</td>
+                            <td><code>AVG(SUM(x)) OVER (ORDER BY date ROWS BETWEEN N PRECEDING AND CURRENT ROW)</code></td>
+                        </tr>
+                        <tr>
+                            <td><strong>Top-N Ranking</strong></td>
+                            <td>Who are the top performers?</td>
+                            <td><code>TOP N ... ORDER BY measure DESC</code></td>
+                        </tr>
+                        <tr>
+                            <td><strong>Rank Within Groups</strong></td>
+                            <td>Who ranks first in each category?</td>
+                            <td><code>RANK() OVER (PARTITION BY group ORDER BY measure DESC)</code></td>
+                        </tr>
+                        <tr>
+                            <td><strong>Segmentation</strong></td>
+                            <td>Which tier or group does each entity fall into?</td>
+                            <td><code>CASE WHEN measure >= threshold THEN 'Tier'</code></td>
+                        </tr>
+                        <tr>
+                            <td><strong>Rate / KPI</strong></td>
+                            <td>What is the efficiency or ratio?</td>
+                            <td><code>measure_a * 100.0 / NULLIF(measure_b, 0)</code></td>
+                        </tr>
+                        <tr>
+                            <td><strong>Deduplication</strong></td>
+                            <td>How do I remove duplicate records?</td>
+                            <td><code>ROW_NUMBER() OVER (PARTITION BY key ORDER BY id)</code></td>
+                        </tr>
+                        <tr>
+                            <td><strong>NULL Handling</strong></td>
+                            <td>How do I treat missing values?</td>
+                            <td><code>COALESCE(column, default_value)</code></td>
+                        </tr>
+                    </table>
+
+                    <h3>Analytical Thinking Framework</h3>
+
+                    <div class="three-col">
+                        <div class="card amber">
+                            <h4>📊 What Happened?</h4>
+                            <p><em>Descriptive</em> — Summarise the past. Aggregations, counts, totals. Answers: "We had 4,504 orders in March generating $203K revenue."</p>
+                        </div>
+                        <div class="card amber">
+                            <h4>📈 Is It Getting Better?</h4>
+                            <p><em>Comparative</em> — Period-over-period trends. LAG, running totals, growth rates. Answers: "March revenue grew 18.2% vs February."</p>
+                        </div>
+                        <div class="card amber">
+                            <h4>🎯 Where to Focus?</h4>
+                            <p><em>Segmentation</em> — Rank and group. Top-N, CASE tiers, RANK within groups. Answers: "42% of revenue comes from just 1.2% of customers."</p>
+                        </div>
+                    </div>
+
+                    <div class="success-box">
+                        <strong>📌 Building a Regular Reporting Practice:</strong>
+                        <ol>
+                            <li><strong>Define the question first</strong> — know what decision the report will inform before writing any SQL</li>
+                            <li><strong>Profile the data</strong> — check for NULLs, duplicates, and outliers before trusting your aggregations</li>
+                            <li><strong>Standardise category values</strong> — inconsistent labels create phantom groups in GROUP BY</li>
+                            <li><strong>Parameterise by date</strong> — reports that hardcode dates require manual editing every period</li>
+                            <li><strong>Add context</strong> — a raw number means nothing; a number with a prior-period comparison tells a story</li>
+                            <li><strong>Wrap in a stored procedure</strong> — schedule it so the report runs automatically every cycle</li>
+                            <li><strong>Document your definitions</strong> — "revenue" means different things to different teams; define it in a comment in the query</li>
+                        </ol>
+                    </div>
+
+                    <div class="amber-box">
+                        <strong>🔗 Connecting to Visualisation Tools:</strong> The SQL queries in this guide produce structured result sets that can be directly consumed by reporting tools. Excel via ODBC/PowerQuery, Power BI, Tableau, Looker, and similar tools connect to a database and run these queries on a schedule — the SQL does the heavy lifting of preparation and aggregation, and the visualisation tool handles charts and formatting. Understanding the SQL layer makes you more effective with any downstream tool.
+                    </div>
+
+                </div>
+            </div>
+        </div>
+
+    </div><!-- /content -->
+
+    <footer>
+        <p>COP4709 — Database Management Systems</p>
+        <p>&copy; 2025 Course Materials &nbsp;|&nbsp; Last Updated: February 2025</p>
+    </footer>
+
+</div><!-- /container -->
+
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        const headers = document.querySelectorAll('.collapsible-header');
+        headers.forEach(header => {
+            header.addEventListener('click', function () {
+                this.parentElement.classList.toggle('active');
+            });
+        });
+        document.querySelector('.collapsible').classList.add('active');
+    });
+</script>
+</body>
+</html>

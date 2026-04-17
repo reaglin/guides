@@ -1,0 +1,1338 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Module 6: Runoff Generation — BMPFast Stormwater Training</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700&family=Source+Serif+4:ital,wght@0,300;0,400;0,600;1,400&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --forest:     #2d5016;
+    --forest-mid: #3d6b1f;
+    --forest-lt:  #5a8a35;
+    --forest-pale:#e8f0df;
+    --warm-white: #faf8f3;
+    --warm-off:   #f2ede3;
+    --ink:        #1a1a18;
+    --muted:      #5c5c52;
+    --rule:       #c8c0aa;
+    --accent:     #8b6914;
+    --accent-lt:  #f5e6c0;
+    --code-bg:    #f0ede5;
+    --sidebar-w:  260px;
+  }
+
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: 'Source Serif 4', Georgia, serif;
+    font-size: 17px;
+    line-height: 1.75;
+    color: var(--ink);
+    background: var(--warm-white);
+  }
+
+  /* ── Sidebar ── */
+  .sidebar {
+    position: fixed;
+    top: 0; left: 0;
+    width: var(--sidebar-w);
+    height: 100vh;
+    background: var(--forest);
+    overflow-y: auto;
+    z-index: 100;
+    padding: 0 0 2rem;
+  }
+  .sidebar-brand {
+    padding: 1.5rem 1.2rem 1rem;
+    border-bottom: 1px solid rgba(255,255,255,0.12);
+  }
+  .sidebar-brand .module-label {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.68rem;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: rgba(255,255,255,0.55);
+    display: block;
+    margin-bottom: 0.3rem;
+  }
+  .sidebar-brand .module-title {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.05rem;
+    font-weight: 600;
+    color: #fff;
+    line-height: 1.3;
+  }
+  .sidebar nav { padding: 1rem 0; }
+  .sidebar nav a {
+    display: block;
+    padding: 0.45rem 1.2rem;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.72rem;
+    color: rgba(255,255,255,0.72);
+    text-decoration: none;
+    line-height: 1.4;
+    transition: background 0.15s, color 0.15s;
+    border-left: 3px solid transparent;
+  }
+  .sidebar nav a:hover {
+    background: rgba(255,255,255,0.08);
+    color: #fff;
+    border-left-color: var(--forest-lt);
+  }
+  .sidebar nav .nav-section {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.6rem;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: rgba(255,255,255,0.35);
+    padding: 1rem 1.2rem 0.3rem;
+  }
+
+  /* ── Main ── */
+  .main {
+    margin-left: var(--sidebar-w);
+    min-height: 100vh;
+  }
+
+  /* ── Hero ── */
+  .hero {
+    background: linear-gradient(135deg, var(--forest) 0%, var(--forest-mid) 60%, var(--forest-lt) 100%);
+    color: #fff;
+    padding: 4rem 3.5rem 3rem;
+    position: relative;
+    overflow: hidden;
+  }
+  .hero::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23ffffff' fill-opacity='0.04'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
+    pointer-events: none;
+  }
+  .hero-eyebrow {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.75rem;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    color: rgba(255,255,255,0.6);
+    margin-bottom: 0.8rem;
+  }
+  .hero h1 {
+    font-family: 'Playfair Display', serif;
+    font-size: 2.8rem;
+    font-weight: 700;
+    line-height: 1.15;
+    margin-bottom: 1rem;
+    position: relative;
+    z-index: 1;
+  }
+  .hero-meta {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.78rem;
+    color: rgba(255,255,255,0.65);
+    letter-spacing: 0.05em;
+    position: relative;
+    z-index: 1;
+  }
+  .hero-desc {
+    margin-top: 1.2rem;
+    font-size: 1.05rem;
+    color: rgba(255,255,255,0.85);
+    max-width: 680px;
+    line-height: 1.7;
+    position: relative;
+    z-index: 1;
+  }
+
+  /* ── Content layout ── */
+  .content {
+    max-width: 900px;
+    margin: 0 auto;
+    padding: 3rem 3.5rem 5rem;
+  }
+
+  /* ── Sections ── */
+  .section { margin-bottom: 3.5rem; scroll-margin-top: 2rem; }
+
+  h2 {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.75rem;
+    font-weight: 700;
+    color: var(--forest);
+    border-bottom: 2px solid var(--forest-pale);
+    padding-bottom: 0.5rem;
+    margin-bottom: 1.4rem;
+    line-height: 1.25;
+  }
+  h3 {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.2rem;
+    font-weight: 600;
+    color: var(--forest-mid);
+    margin: 1.8rem 0 0.7rem;
+  }
+  h4 {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.82rem;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--accent);
+    margin: 1.4rem 0 0.5rem;
+  }
+
+  p { margin-bottom: 1rem; }
+
+  /* ── Callout / key-point ── */
+  .callout {
+    background: var(--forest-pale);
+    border-left: 4px solid var(--forest);
+    padding: 1rem 1.3rem;
+    border-radius: 0 6px 6px 0;
+    margin: 1.5rem 0;
+  }
+  .callout p { margin: 0; }
+  .callout-warn {
+    background: var(--accent-lt);
+    border-left-color: var(--accent);
+  }
+
+  /* ── Formula box ── */
+  .formula-box {
+    background: var(--code-bg);
+    border: 1px solid var(--rule);
+    border-radius: 6px;
+    padding: 1.2rem 1.5rem;
+    margin: 1.3rem 0;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.95rem;
+    line-height: 1.9;
+  }
+  .formula-box .formula-title {
+    font-size: 0.7rem;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--muted);
+    margin-bottom: 0.5rem;
+  }
+  .formula-main {
+    font-size: 1.15rem;
+    color: var(--forest);
+    font-weight: 500;
+    display: block;
+    margin: 0.3rem 0;
+  }
+  .formula-def {
+    font-size: 0.82rem;
+    color: var(--muted);
+    margin-top: 0.4rem;
+  }
+
+  /* ── Tables ── */
+  .table-wrap { overflow-x: auto; margin: 1.5rem 0; }
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 0.88rem;
+    font-family: 'Source Serif 4', serif;
+  }
+  thead th {
+    background: var(--forest);
+    color: #fff;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.75rem;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    padding: 0.65rem 0.9rem;
+    text-align: left;
+  }
+  thead th.center { text-align: center; }
+  tbody tr:nth-child(even) { background: var(--warm-off); }
+  tbody tr:nth-child(odd)  { background: var(--warm-white); }
+  tbody td {
+    padding: 0.55rem 0.9rem;
+    border-bottom: 1px solid var(--rule);
+    vertical-align: top;
+  }
+  tbody td.center { text-align: center; }
+  tbody tr:hover { background: var(--forest-pale); }
+  .table-caption {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.72rem;
+    color: var(--muted);
+    letter-spacing: 0.05em;
+    margin-bottom: 0.4rem;
+    text-transform: uppercase;
+  }
+  .subrow td { background: var(--forest-pale) !important; font-style: italic; }
+  .group-header td {
+    background: #dce8cc !important;
+    font-weight: 600;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.78rem;
+    letter-spacing: 0.04em;
+  }
+
+  /* ── Image placeholder ── */
+  .img-placeholder {
+    width: 100%;
+    background: var(--warm-off);
+    border: 2px dashed var(--rule);
+    border-radius: 6px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    padding: 2.5rem 1rem;
+    margin: 1.5rem 0;
+    color: var(--muted);
+  }
+  .img-placeholder .ph-icon {
+    font-size: 2rem;
+    opacity: 0.4;
+  }
+  .img-placeholder .ph-label {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.78rem;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    text-align: center;
+  }
+  .img-placeholder .ph-caption {
+    font-size: 0.85rem;
+    color: var(--muted);
+    text-align: center;
+    max-width: 480px;
+  }
+
+  /* ── Step / numbered list ── */
+  .step-list { list-style: none; counter-reset: steps; padding: 0; margin: 1rem 0; }
+  .step-list li {
+    counter-increment: steps;
+    display: flex;
+    gap: 1rem;
+    margin-bottom: 1rem;
+    align-items: flex-start;
+  }
+  .step-list li::before {
+    content: counter(steps);
+    flex-shrink: 0;
+    width: 1.8rem; height: 1.8rem;
+    background: var(--forest);
+    color: #fff;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.8rem;
+    font-weight: 500;
+    margin-top: 0.15rem;
+  }
+
+  /* ── Bullet list styled ── */
+  ul.styled { padding-left: 1.4rem; margin: 0.5rem 0 1rem; }
+  ul.styled li { margin-bottom: 0.4rem; }
+  ul.styled ul { margin-top: 0.3rem; }
+
+  /* ── Example block ── */
+  .example-block {
+    background: #f7f4ee;
+    border: 1px solid var(--rule);
+    border-top: 3px solid var(--accent);
+    border-radius: 0 0 6px 6px;
+    padding: 1.4rem 1.6rem;
+    margin: 1.5rem 0;
+  }
+  .example-block .ex-label {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.7rem;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--accent);
+    margin-bottom: 0.7rem;
+  }
+  .example-block .calc-line {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.88rem;
+    padding: 0.25rem 0;
+    border-bottom: 1px dashed var(--rule);
+    margin-bottom: 0.3rem;
+  }
+  .example-block .calc-result {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 1rem;
+    font-weight: 600;
+    color: var(--forest);
+    margin-top: 0.6rem;
+  }
+
+  /* ── Summary grid ── */
+  .summary-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    gap: 1rem;
+    margin: 1.5rem 0;
+  }
+  .summary-card {
+    background: var(--forest-pale);
+    border: 1px solid #c4d8a8;
+    border-radius: 6px;
+    padding: 1rem 1.2rem;
+  }
+  .summary-card .sc-label {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.68rem;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--forest-mid);
+    margin-bottom: 0.35rem;
+  }
+  .summary-card p { margin: 0; font-size: 0.9rem; }
+
+  /* ── Dev impact grid ── */
+  .dev-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1rem;
+    margin: 1.5rem 0;
+  }
+  .dev-card {
+    background: var(--warm-off);
+    border: 1px solid var(--rule);
+    border-radius: 6px;
+    padding: 1rem 1.2rem;
+  }
+  .dev-card .dev-header {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.75rem;
+    letter-spacing: 0.06em;
+    color: var(--forest);
+    font-weight: 600;
+    margin-bottom: 0.6rem;
+    text-transform: uppercase;
+  }
+  .dev-metric { display: flex; justify-content: space-between; padding: 0.2rem 0; font-size: 0.88rem; }
+  .dev-metric .dm-label { color: var(--muted); }
+  .dev-metric .dm-val { font-family: 'JetBrains Mono', monospace; font-weight: 600; color: var(--forest); }
+  .dm-runoff .dm-val { color: #b84a2f; }
+
+  /* ── Ref section ── */
+  .references {
+    background: var(--warm-off);
+    border: 1px solid var(--rule);
+    border-radius: 6px;
+    padding: 1.5rem 1.8rem;
+    margin-top: 3rem;
+  }
+  .references h2 {
+    font-size: 1.2rem;
+    margin-bottom: 1rem;
+    border-bottom-color: var(--rule);
+  }
+  .references ol { padding-left: 1.4rem; }
+  .references li {
+    font-size: 0.88rem;
+    margin-bottom: 0.6rem;
+    color: var(--muted);
+  }
+  .references li strong { color: var(--ink); }
+
+  /* ── Footer ── */
+  footer {
+    margin-left: var(--sidebar-w);
+    background: var(--forest);
+    color: rgba(255,255,255,0.55);
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.72rem;
+    letter-spacing: 0.06em;
+    padding: 1.2rem 3.5rem;
+    display: flex;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+  }
+
+  @media (max-width: 820px) {
+    .sidebar { display: none; }
+    .main, footer { margin-left: 0; }
+    .hero { padding: 2.5rem 1.5rem 2rem; }
+    .hero h1 { font-size: 2rem; }
+    .content { padding: 2rem 1.5rem 3rem; }
+    .dev-grid { grid-template-columns: 1fr; }
+  }
+</style>
+</head>
+<body>
+
+<!-- ══════════════════════════════════════
+     SIDEBAR
+════════════════════════════════════════ -->
+<aside class="sidebar">
+  <div class="sidebar-brand">
+    <span class="module-label">BMPFast · Module 6</span>
+    <span class="module-title">Runoff Generation</span>
+  </div>
+  <nav>
+    <span class="nav-section">Overview</span>
+    <a href="#intro">1. Runoff Generation</a>
+    <a href="#dev-impacts">2. Development Impacts</a>
+    <a href="#volume-estimation">3. Volume Estimation</a>
+    <a href="#runoff-coefficients">4. Runoff Coefficients</a>
+
+    <span class="nav-section">SCS Methodology</span>
+    <a href="#scs-overview">5. SCS Curve Number Method</a>
+    <a href="#hsg">6. Hydrologic Soil Groups</a>
+    <a href="#cn-tables">7. Curve Number Tables</a>
+    <a href="#hydro-conditions">8. Hydrologic Conditions</a>
+    <a href="#scs-equations">9. SCS Equations</a>
+
+    <span class="nav-section">DCIA Analysis</span>
+    <a href="#cn-dcia-relationship">10. CN–DCIA Relationship</a>
+    <a href="#dcia-def">11. DCIA Definition</a>
+    <a href="#nondcia">12. Non-DCIA Calculations</a>
+    <a href="#runoff-volumes">13. Runoff Volume Calculations</a>
+    <a href="#amc">14. Antecedent Moisture</a>
+
+    <span class="nav-section">Hydrologic Modeling</span>
+    <a href="#modeling">15. Hydrologic Modeling</a>
+    <a href="#met-sites">16. Meteorological Sites</a>
+    <a href="#roc-tables">17. Modeled ROC Values</a>
+    <a href="#rainfall-impacts">18. Rainfall Characteristics</a>
+    <a href="#met-zones">19. Meteorological Zones</a>
+    <a href="#roc-data">20. Runoff Calculation Data</a>
+    <a href="#dcia-disconnect">21. Disconnecting DCIA</a>
+
+    <span class="nav-section">Example</span>
+    <a href="#example">22. Example Calculations</a>
+    <a href="#summary">23. Summary</a>
+    <a href="#references">References &amp; Figures</a>
+  </nav>
+</aside>
+
+<!-- ══════════════════════════════════════
+     MAIN
+════════════════════════════════════════ -->
+<main class="main">
+
+  <!-- Hero -->
+  <header class="hero">
+    <p class="hero-eyebrow">BMPFast Stormwater Training Series · Module 6</p>
+    <h1>Runoff Generation</h1>
+    <p class="hero-meta">Harvey H. Harper &nbsp;·&nbsp; January 2026 &nbsp;·&nbsp; Environmental Research &amp; Design, Inc.</p>
+    <p class="hero-desc">This module presents the theoretical basis and computational methodology for estimating stormwater runoff volumes from developed catchments in Florida, with particular emphasis on the SCS Curve Number methodology as implemented in the BMPFast model and Florida's 2024 Stormwater Rule.</p>
+  </header>
+
+  <div class="content">
+
+    <!-- ═══ 1. RUNOFF GENERATION ═══ -->
+    <section class="section" id="intro">
+      <h2>1. Runoff Generation</h2>
+
+      <p>Runoff is one component of the <strong>hydrologic cycle</strong> — the continuous movement of water through the environment via precipitation, infiltration, evapotranspiration, and streamflow. Understanding how precipitation translates into surface runoff is fundamental to stormwater management design.</p>
+
+      <p>Runoff generation is governed by three primary factors:</p>
+      <ul class="styled">
+        <li><strong>Precipitation</strong> — depth, intensity, and temporal distribution of rainfall events</li>
+        <li><strong>Soil types</strong> — the infiltration capacity and permeability of soils in a watershed</li>
+        <li><strong>Land cover</strong> — the degree to which the land surface is vegetated, paved, or otherwise modified</li>
+      </ul>
+
+      <div class="img-placeholder">
+        <span class="ph-icon">🌊</span>
+        <span class="ph-label">Figure 1 — Components of Runoff</span>
+        <span class="ph-caption">Hydrologic cycle diagram illustrating the components of runoff: precipitation, evaporation, transpiration, depression storage, overland flow, infiltration, percolation, interflow, groundwater, baseflow, and stream flow.</span>
+      </div>
+    </section>
+
+    <!-- ═══ 2. DEVELOPMENT IMPACTS ═══ -->
+    <section class="section" id="dev-impacts">
+      <h2>2. Development Impacts on Hydrology</h2>
+
+      <p>Land development dramatically alters the natural partitioning of precipitation between evapotranspiration (ET), infiltration, and surface runoff. As impervious surface coverage increases, the infiltration capacity of a watershed decreases and runoff volumes rise proportionally.</p>
+
+      <div class="dev-grid">
+        <div class="dev-card">
+          <div class="dev-header">Natural Ground Cover</div>
+          <div class="dev-metric"><span class="dm-label">Evapotranspiration (ET)</span><span class="dm-val">40%</span></div>
+          <div class="dev-metric dm-runoff"><span class="dm-label">Runoff</span><span class="dm-val">10%</span></div>
+          <div class="dev-metric"><span class="dm-label">Infiltration</span><span class="dm-val">50%</span></div>
+        </div>
+        <div class="dev-card">
+          <div class="dev-header">10–20% Paved Surfaces</div>
+          <div class="dev-metric"><span class="dm-label">Evapotranspiration (ET)</span><span class="dm-val">38%</span></div>
+          <div class="dev-metric dm-runoff"><span class="dm-label">Runoff</span><span class="dm-val">20%</span></div>
+          <div class="dev-metric"><span class="dm-label">Infiltration</span><span class="dm-val">42%</span></div>
+        </div>
+        <div class="dev-card">
+          <div class="dev-header">35–50% Paved Surfaces</div>
+          <div class="dev-metric"><span class="dm-label">Evapotranspiration (ET)</span><span class="dm-val">35%</span></div>
+          <div class="dev-metric dm-runoff"><span class="dm-label">Runoff</span><span class="dm-val">30%</span></div>
+          <div class="dev-metric"><span class="dm-label">Infiltration</span><span class="dm-val">35%</span></div>
+        </div>
+        <div class="dev-card">
+          <div class="dev-header">75–100% Paved Surfaces</div>
+          <div class="dev-metric"><span class="dm-label">Evapotranspiration (ET)</span><span class="dm-val">30%</span></div>
+          <div class="dev-metric dm-runoff"><span class="dm-label">Runoff</span><span class="dm-val">55%</span></div>
+          <div class="dev-metric"><span class="dm-label">Infiltration</span><span class="dm-val">15%</span></div>
+        </div>
+      </div>
+
+      <div class="callout">
+        <p>At maximum imperviousness (75–100% paved), runoff increases more than fivefold compared to natural conditions — from 10% to 55% of rainfall — while infiltration drops from 50% to just 15%.</p>
+      </div>
+
+      <div class="img-placeholder">
+        <span class="ph-icon">📊</span>
+        <span class="ph-label">Figure 2 — Development Impacts on Hydrology</span>
+        <span class="ph-caption">Comparative diagram showing ET, runoff, and infiltration percentages for four land cover scenarios ranging from natural ground cover to 75–100% paved surfaces.</span>
+      </div>
+    </section>
+
+    <!-- ═══ 3. VOLUME ESTIMATION ═══ -->
+    <section class="section" id="volume-estimation">
+      <h2>3. Runoff Volume Estimation</h2>
+
+      <p>Accurate estimation of runoff volume requires a model that can incorporate all of the factors that influence the rainfall–runoff relationship within a watershed. These factors include:</p>
+
+      <ul class="styled">
+        <li><strong>Land use</strong> — the type and density of development</li>
+        <li><strong>Impervious surfaces</strong> — the fraction of the basin covered by impervious materials</li>
+        <li><strong>Soil types</strong> — classified into Hydrologic Soil Groups (A, B, C, D)</li>
+        <li><strong>Topography</strong>
+          <ul>
+            <li>Basin slope — affects the rate of overland flow</li>
+            <li>Depressional areas — areas that store water and reduce runoff</li>
+          </ul>
+        </li>
+        <li><strong>Precipitation depth and event characteristics</strong> — the size and distribution of individual storm events</li>
+      </ul>
+
+      <div class="callout">
+        <p>A runoff model must be capable of incorporating each of these factors into event-based runoff depths in order to yield reliable volume estimates for stormwater treatment design.</p>
+      </div>
+    </section>
+
+    <!-- ═══ 4. RUNOFF COEFFICIENTS ═══ -->
+    <section class="section" id="runoff-coefficients">
+      <h2>4. Runoff Coefficients (C Values)</h2>
+
+      <p>Runoff coefficients reflect the proportion of rainfall that becomes runoff under specified conditions. Tabular C values are widely used to size drainage pipes through application of the <strong>Rational Formula</strong>:</p>
+
+      <div class="formula-box">
+        <div class="formula-title">Rational Formula — Peak Flow</div>
+        <span class="formula-main">Q = C × i × A</span>
+        <div class="formula-def">
+          Q = peak flow rate (cfs)<br>
+          C = runoff coefficient (dimensionless) — estimated for a design storm event, typically 10-year<br>
+          i = rainfall intensity (in/hr) for the design storm<br>
+          A = drainage area (acres)
+        </div>
+      </div>
+
+      <div class="callout callout-warn">
+        <p><strong>Important limitation:</strong> Rational Formula runoff coefficients are calibrated for peak-flow design storm conditions and <em>cannot</em> be used for estimation of runoff volumes for non-design storm conditions or for evaluating average annual pollutant loadings.</p>
+      </div>
+    </section>
+
+    <!-- ═══ 5. SCS OVERVIEW ═══ -->
+    <section class="section" id="scs-overview">
+      <h2>5. SCS Curve Number Methodology</h2>
+
+      <p>Multiple runoff models were evaluated for use in the BMPFast methodology, including the SCS Curve Number method, ICPR, and SWIM. The <strong>SCS Curve Number (CN) methodology</strong> was selected based on the following considerations:</p>
+
+      <ul class="styled">
+        <li>It is the most common methodology used by civil engineers and is embedded in many proprietary hydrologic models throughout Florida.</li>
+        <li>The methodology is documented in NRCS Technical Release TR-55, <em>Urban Hydrology for Small Watersheds</em> (June 1986).</li>
+        <li>Curve numbers (CN values) are <strong>empirically derived values</strong> used to predict runoff volume as a function of soil type and land cover.</li>
+        <li>The method predicts event-specific runoff depths and volumes from individual storm events.</li>
+        <li>The model was used to calculate annual runoff coefficients (C values) for meteorological sites throughout Florida.</li>
+      </ul>
+
+      <div class="img-placeholder">
+        <span class="ph-icon">📄</span>
+        <span class="ph-label">Reference — NRCS TR-55 Cover</span>
+        <span class="ph-caption">USDA Natural Resources Conservation Service, Technical Release TR-55: "Urban Hydrology for Small Watersheds," June 1986. This document provides the foundational CN methodology used in the BMPFast model.</span>
+      </div>
+    </section>
+
+    <!-- ═══ 6. HSG ═══ -->
+    <section class="section" id="hsg">
+      <h2>6. Hydrologic Soil Groups</h2>
+
+      <p>The SCS method is based on <strong>Hydrologic Soil Groups (HSG)</strong>, which classify soils by their minimum infiltration rate for bare soils after thorough wetting. Four groups are defined:</p>
+
+      <div class="table-wrap">
+        <p class="table-caption">Table 1 — Hydrologic Soil Group Definitions</p>
+        <table>
+          <thead>
+            <tr>
+              <th style="width:80px">HSG</th>
+              <th>Description</th>
+              <th class="center">Soil Infiltration Rate</th>
+              <th class="center">Runoff Potential</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><strong>A</strong></td>
+              <td>Deep, well to excessively drained sands with a high rate of water transmission.</td>
+              <td class="center">Very High</td>
+              <td class="center">Very Low</td>
+            </tr>
+            <tr>
+              <td><strong>B</strong></td>
+              <td>Moderately deep to deep, moderately well to well drained soils with moderately fine to moderately coarse textures.</td>
+              <td class="center">High</td>
+              <td class="center">Low</td>
+            </tr>
+            <tr>
+              <td><strong>C</strong></td>
+              <td>Soils with a layer that impedes downward movement of water and soils with moderately fine to fine structure.</td>
+              <td class="center">Low</td>
+              <td class="center">High</td>
+            </tr>
+            <tr>
+              <td><strong>D</strong></td>
+              <td>Clay soils, soils with a permanent high water table, soils with a hardpan or clay layer at or near the surface.</td>
+              <td class="center">Very Low</td>
+              <td class="center">Very High</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <!-- ═══ 7. CN TABLES ═══ -->
+    <section class="section" id="cn-tables">
+      <h2>7. Typical Curve Numbers (TR-55)</h2>
+
+      <p>Curve numbers are tabulated in TR-55 for a wide range of cover types and hydrologic conditions, organized by Hydrologic Soil Group. Higher CN values indicate greater runoff potential.</p>
+
+      <div class="table-wrap">
+        <p class="table-caption">Table 2 — Curve Numbers for Selected Cover Types by Hydrologic Soil Group</p>
+        <table>
+          <thead>
+            <tr>
+              <th>Cover Type and Hydrologic Condition</th>
+              <th class="center">A</th>
+              <th class="center">B</th>
+              <th class="center">C</th>
+              <th class="center">D</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr class="group-header"><td colspan="5">Open Space (lawns, parks, golf courses, cemeteries, etc.)</td></tr>
+            <tr><td>Poor condition (grass cover &lt; 50%)</td><td class="center">68</td><td class="center">79</td><td class="center">86</td><td class="center">89</td></tr>
+            <tr><td>Fair condition (grass cover 50%–75%)</td><td class="center">49</td><td class="center">69</td><td class="center">79</td><td class="center">84</td></tr>
+            <tr><td>Good condition (grass cover &gt; 75%)</td><td class="center">39</td><td class="center">61</td><td class="center">74</td><td class="center">80</td></tr>
+
+            <tr class="group-header"><td colspan="5">Impervious Areas</td></tr>
+            <tr><td>Paved parking lots, roofs, driveways, etc. (excl. ROW)</td><td class="center">98</td><td class="center">98</td><td class="center">98</td><td class="center">98</td></tr>
+
+            <tr class="group-header"><td colspan="5">Streets and Roads</td></tr>
+            <tr><td>Paved; curbs and storm sewer (excl. ROW)</td><td class="center">98</td><td class="center">98</td><td class="center">98</td><td class="center">98</td></tr>
+            <tr><td>Paved; open ditches (including right-of-way)</td><td class="center">83</td><td class="center">89</td><td class="center">92</td><td class="center">93</td></tr>
+            <tr><td>Gravel (including right-of-way)</td><td class="center">76</td><td class="center">85</td><td class="center">89</td><td class="center">91</td></tr>
+            <tr><td>Dirt (including right-of-way)</td><td class="center">72</td><td class="center">82</td><td class="center">87</td><td class="center">89</td></tr>
+
+            <tr class="group-header"><td colspan="5">Pasture, Grassland, or Range</td></tr>
+            <tr><td>Poor condition</td><td class="center">68</td><td class="center">79</td><td class="center">86</td><td class="center">89</td></tr>
+            <tr><td>Fair condition</td><td class="center">49</td><td class="center">69</td><td class="center">79</td><td class="center">84</td></tr>
+            <tr><td>Good condition</td><td class="center">39</td><td class="center">61</td><td class="center">74</td><td class="center">80</td></tr>
+
+            <tr class="group-header"><td colspan="5">Brush — Brush-Weed-Grass Mixture</td></tr>
+            <tr><td>Poor</td><td class="center">48</td><td class="center">67</td><td class="center">77</td><td class="center">83</td></tr>
+            <tr><td>Fair</td><td class="center">35</td><td class="center">56</td><td class="center">70</td><td class="center">77</td></tr>
+            <tr><td>Good</td><td class="center">30</td><td class="center">48</td><td class="center">65</td><td class="center">73</td></tr>
+
+            <tr class="group-header"><td colspan="5">Woods</td></tr>
+            <tr><td>Poor</td><td class="center">45</td><td class="center">66</td><td class="center">77</td><td class="center">83</td></tr>
+            <tr><td>Fair</td><td class="center">36</td><td class="center">60</td><td class="center">73</td><td class="center">79</td></tr>
+            <tr><td>Good</td><td class="center">30</td><td class="center">55</td><td class="center">70</td><td class="center">77</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <h3>Residential and Urban Areas</h3>
+
+      <p>General curve numbers are available for residential land uses based on average lot size and corresponding typical impervious percentage. These general CN values reflect the runoff potential for the <em>combined</em> pervious and impervious areas.</p>
+
+      <div class="table-wrap">
+        <p class="table-caption">Table 3 — Curve Numbers for Residential Uses (TR-55)</p>
+        <table>
+          <thead>
+            <tr>
+              <th>Cover Type</th>
+              <th class="center">Imp. (%)</th>
+              <th class="center">A</th>
+              <th class="center">B</th>
+              <th class="center">C</th>
+              <th class="center">D</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr class="group-header"><td colspan="6">Residential</td></tr>
+            <tr><td>Lot size: 1/8 acre or less</td><td class="center">65</td><td class="center">77</td><td class="center">85</td><td class="center">90</td><td class="center">92</td></tr>
+            <tr><td>Lot size: 1/4 acre</td><td class="center">38</td><td class="center">61</td><td class="center">75</td><td class="center">83</td><td class="center">87</td></tr>
+            <tr><td>Lot size: 1/3 acre</td><td class="center">30</td><td class="center">57</td><td class="center">72</td><td class="center">81</td><td class="center">86</td></tr>
+            <tr><td>Lot size: 1/2 acre</td><td class="center">25</td><td class="center">54</td><td class="center">70</td><td class="center">80</td><td class="center">85</td></tr>
+            <tr><td>Lot size: 1 acre</td><td class="center">20</td><td class="center">51</td><td class="center">68</td><td class="center">79</td><td class="center">84</td></tr>
+            <tr><td>Lot size: 2 acres</td><td class="center">12</td><td class="center">46</td><td class="center">65</td><td class="center">77</td><td class="center">82</td></tr>
+            <tr><td>Water / wetlands</td><td class="center">0</td><td class="center">0</td><td class="center">0</td><td class="center">0</td><td class="center">0</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="callout callout-warn">
+        <p><strong>BMPFast Methodology Note:</strong> General CN values for residential areas combine pervious and impervious runoff and are <em>not</em> suitable for the BMPFast methodology. BMPFast calculates runoff <em>separately</em> for DCIA and non-DCIA areas to avoid the statistical errors introduced by CN averaging. Because the methodology evaluates loadings on an average annual basis, water areas receive a CN and C-value of zero (since precipitation and evaporation are approximately equal over an annual cycle). Wetlands are assigned a CN value of 87.</p>
+      </div>
+    </section>
+
+    <!-- ═══ 8. HYDROLOGIC CONDITIONS ═══ -->
+    <section class="section" id="hydro-conditions">
+      <h2>8. Hydrologic Conditions</h2>
+
+      <p>Each Hydrologic Soil Group has sub-sets for varying <strong>hydrologic conditions</strong> (poor, fair, and good), defined based on a combination of factors that affect infiltration and runoff:</p>
+
+      <ul class="styled">
+        <li>Density and canopy of vegetative areas</li>
+        <li>Amount of year-round cover</li>
+        <li>Amount of grass or close-seeded legumes</li>
+        <li>Percent of residue cover on the land surface (good condition ≥ 20%)</li>
+        <li>Degree of surface roughness</li>
+      </ul>
+
+      <h4>Poor Condition</h4>
+      <p>Factors impair infiltration and tend to increase runoff. Typical examples include heavily grazed or compacted soils with sparse vegetative cover.</p>
+
+      <h4>Fair Condition</h4>
+      <p>Typical or average runoff conditions. Represents moderate vegetative cover with some limitations to infiltration.</p>
+
+      <h4>Good Condition</h4>
+      <p>Factors encourage average and better-than-average infiltration and tend to decrease runoff. Dense, healthy vegetative cover with minimal soil disturbance.</p>
+    </section>
+
+    <!-- ═══ 9. SCS EQUATIONS ═══ -->
+    <section class="section" id="scs-equations">
+      <h2>9. SCS Method of Calculating Runoff</h2>
+
+      <p>The SCS method estimates runoff depth for individual storm events through a two-step process. First, soil storage capacity is computed from the weighted-average CN value based on land use and soil type. Then, runoff depth is calculated using the standard SCS equation.</p>
+
+      <h3>Step 1 — Soil Storage Capacity</h3>
+
+      <div class="formula-box">
+        <div class="formula-title">Soil Storage Parameter</div>
+        <span class="formula-main">S = (1000 / CN) − 10</span>
+        <div class="formula-def">
+          S = potential maximum retention after runoff begins (inches)<br>
+          CN = weighted-average curve number for the drainage area
+        </div>
+      </div>
+
+      <h3>Step 2 — Runoff Depth</h3>
+
+      <div class="formula-box">
+        <div class="formula-title">SCS Runoff Equation</div>
+        <span class="formula-main">Q = (Pᵢ − 0.2S)² / (Pᵢ + 0.8S)</span>
+        <div class="formula-def">
+          Q = runoff depth for event i (inches)<br>
+          Pᵢ = rainfall depth for event i (inches)<br>
+          S = soil storage parameter (inches)<br>
+          Note: Q = 0 when Pᵢ ≤ 0.2S (no runoff generated below this threshold)
+        </div>
+      </div>
+
+      <div class="callout callout-warn">
+        <p><strong>Limitation of standard SCS:</strong> The standard SCS method can be subject to large errors when CN values are averaged across areas with widely different characteristics. To reduce this error, the BMPFast methodology modifies the SCS method to calculate separate runoff volumes for the Directly Connected Impervious Area (DCIA) and the non-DCIA area.</p>
+      </div>
+    </section>
+
+    <!-- ═══ 10. CN-DCIA RELATIONSHIP ═══ -->
+    <section class="section" id="cn-dcia-relationship">
+      <h2>10. Relationship Between Curve Number, DCIA, and C Value</h2>
+
+      <p>The relationship between CN values, percent DCIA, and the resulting annual runoff coefficient (C value) is not linear — this has important implications for the way runoff calculations should be structured.</p>
+
+      <ul class="styled">
+        <li><strong>Linear relationship</strong> exists between C Value and percent DCIA — doubling DCIA approximately doubles the runoff contribution from impervious surfaces.</li>
+        <li><strong>Exponential relationship</strong> exists between C Value and CN value — small increases in CN at the high end of the scale produce disproportionately large increases in runoff.</li>
+        <li>This exponential behavior implies that <strong>averaging CN values across areas with different characteristics is statistically invalid</strong> and leads to significant overestimation of runoff volume.</li>
+      </ul>
+
+      <div class="img-placeholder">
+        <span class="ph-icon">📈</span>
+        <span class="ph-label">Figure 3 — 3D Relationship: CN, Percent DCIA, and C Value</span>
+        <span class="ph-caption">Three-dimensional surface plot showing the relationship between Curve Number (x-axis, 30–90), Percent DCIA (y-axis, 0–100%), and the resulting annual C Value (z-axis, 0.0–1.0). The surface demonstrates the linear relationship with DCIA and the exponential relationship with CN value.</span>
+      </div>
+
+      <h3>Impacts of Averaging Curve Numbers</h3>
+
+      <p>The error introduced by averaging CN values is small at low CN values but becomes substantial when high CN values are involved. The following examples illustrate this effect:</p>
+
+      <div class="table-wrap">
+        <p class="table-caption">Table 4 — Error Resulting from Averaging Curve Numbers</p>
+        <table>
+          <thead>
+            <tr>
+              <th>Parameter</th>
+              <th class="center">Area 1</th>
+              <th class="center">Area 2</th>
+              <th class="center">Combined (Averaged)</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr class="group-header"><td colspan="4">Low CN Scenario (small error)</td></tr>
+            <tr><td>CN Value</td><td class="center">40</td><td class="center">60</td><td class="center">50</td></tr>
+            <tr><td>Modeled C Value</td><td class="center">0.016</td><td class="center">0.048</td><td class="center">0.029</td></tr>
+            <tr><td>Mean C Value (averaged)</td><td class="center">—</td><td class="center">—</td><td class="center">0.032 (+10%)</td></tr>
+            <tr class="group-header"><td colspan="4">High CN Scenario (large error)</td></tr>
+            <tr><td>CN Value</td><td class="center">40</td><td class="center">90</td><td class="center">65</td></tr>
+            <tr><td>Modeled C Value</td><td class="center">0.016</td><td class="center">0.252</td><td class="center">0.061</td></tr>
+            <tr><td>Mean C Value (averaged)</td><td class="center">—</td><td class="center">—</td><td class="center">0.134 (+120%)</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="callout callout-warn">
+        <p>When one area has a high CN value (such as an impervious surface at CN = 98), averaging it with a low-CN pervious area produces an overestimate of runoff of more than 120%. <strong>Eliminating DCIA from the averaged CN calculation is the primary mechanism by which the BMPFast methodology reduces this error.</strong></p>
+      </div>
+
+      <div class="img-placeholder">
+        <span class="ph-icon">📈</span>
+        <span class="ph-label">Figure 4 — Impacts of Averaging Curve Numbers</span>
+        <span class="ph-caption">3D surface plot identical to Figure 3, annotated to show the positions of the two example scenarios on the CN-DCIA-C surface, illustrating why high-CN averaging produces disproportionate overestimates.</span>
+      </div>
+    </section>
+
+    <!-- ═══ 11. DCIA ═══ -->
+    <section class="section" id="dcia-def">
+      <h2>11. Directly Connected Impervious Areas (DCIA)</h2>
+
+      <p>The definition of <strong>Directly Connected Impervious Area (DCIA)</strong> varies depending on the purpose of the hydrologic analysis:</p>
+
+      <h3>Flood Routing — Major Events</h3>
+      <p>For flood design purposes, DCIA includes all impervious areas from which runoff discharges directly into the drainage system. Areas where runoff discharges as concentrated shallow flow over pervious areas and then into the drainage system (e.g., shallow roadside swales) are also considered DCIA. This definition is often generously estimated to provide a safety factor in design.</p>
+
+      <h3>Annual Runoff Estimation — Common Daily Events</h3>
+      <p>For annual runoff volume calculations used in stormwater treatment sizing, DCIA is defined more narrowly: it includes only impervious areas from which runoff discharges directly into the drainage system during small, common rainfall events. Shallow vegetated swales are <em>not</em> included under this definition. As a result, this approach generally yields a <strong>lower DCIA value</strong> than the flood routing definition.</p>
+
+      <div class="callout">
+        <p>The BMPFast methodology uses the annual runoff estimation definition of DCIA, which yields more conservative (lower) impervious area values and thus avoids overestimating required treatment system sizes.</p>
+      </div>
+    </section>
+
+    <!-- ═══ 12. NON-DCIA ═══ -->
+    <section class="section" id="nondcia">
+      <h2>12. Non-DCIA Area Calculations</h2>
+
+      <p><strong>Non-Directly Connected Impervious Area (non-DCIA)</strong> includes all pervious areas plus any impervious areas that are not classified as DCIA. Runoff from these areas must pass over or through vegetated or pervious surfaces before reaching the drainage system.</p>
+
+      <h3>Non-DCIA Curve Number</h3>
+      <p>A composite curve number is calculated for the non-DCIA area using an area-weighted average of the pervious CN and the impervious non-DCIA CN (using 98 for all impervious surfaces):</p>
+
+      <div class="formula-box">
+        <div class="formula-title">Non-DCIA Composite Curve Number</div>
+        <span class="formula-main">nDCIA CN = [(Area<sub>perv</sub> × CN<sub>perv</sub>) + (Area<sub>non-DCIA</sub> × 98)] / (Area<sub>perv</sub> + Area<sub>non-DCIA</sub>)</span>
+      </div>
+
+      <h3>Non-DCIA Soil Storage</h3>
+      <p>The composite non-DCIA CN value is then used to calculate soil storage for the non-DCIA area:</p>
+
+      <div class="formula-box">
+        <div class="formula-title">Non-DCIA Soil Storage</div>
+        <span class="formula-main">S = (1000 / nDCIA CN) − 10</span>
+      </div>
+    </section>
+
+    <!-- ═══ 13. RUNOFF VOLUMES ═══ -->
+    <section class="section" id="runoff-volumes">
+      <h2>13. Calculation of Runoff Volumes</h2>
+
+      <p>The BMPFast methodology calculates runoff volumes separately for the DCIA and non-DCIA areas. Using a single overall CN value for the entire drainage basin would lead to significant errors in annual runoff estimation due to the nonlinear relationship between CN and C values.</p>
+
+      <h3>1. Runoff from Non-DCIA Areas</h3>
+      <p>Runoff from the non-DCIA area is calculated using the modified SCS equation with the composite non-DCIA curve number:</p>
+
+      <div class="formula-box">
+        <div class="formula-title">Non-DCIA Runoff per Event</div>
+        <span class="formula-main">Q<sub>nDCIA,i</sub> = (Pᵢ − 0.2S)² / (Pᵢ + 0.8S)</span>
+        <div class="formula-def">
+          CN = curve number for pervious area<br>
+          Imp. = percent impervious area<br>
+          DCIA = percent directly connected impervious area<br>
+          non-DCIA CN = composite curve number for non-DCIA area<br>
+          Pᵢ = rainfall depth for event i (inches)<br>
+          Q<sub>nDCIA,i</sub> = runoff depth from non-DCIA area for event i (inches)
+        </div>
+      </div>
+
+      <h3>2. Runoff from DCIA</h3>
+      <p>DCIA runoff is calculated using a simplified linear relationship that accounts for the initial abstraction on impervious surfaces:</p>
+
+      <div class="formula-box">
+        <div class="formula-title">DCIA Runoff per Event</div>
+        <span class="formula-main">Q<sub>DCIA,i</sub> = Pᵢ − 0.1</span>
+        <div class="formula-def">
+          When Pᵢ is less than 0.1 inches, Q<sub>DCIA,i</sub> = 0 (no runoff generated from very small events).<br>
+          The 0.1-inch initial abstraction accounts for depression storage on paved surfaces.
+        </div>
+      </div>
+    </section>
+
+    <!-- ═══ 14. AMC ═══ -->
+    <section class="section" id="amc">
+      <h2>14. Curve Number Adjustments — Antecedent Moisture Condition</h2>
+
+      <p>CN values from TR-55 are tabulated for <strong>Antecedent Moisture Condition (AMC) II</strong> (normal conditions). When running event-by-event simulations using historical rainfall records, CN values must be adjusted for the antecedent moisture condition preceding each storm event.</p>
+
+      <p>AMC is classified based on the total antecedent 5-day rainfall depth, with different thresholds for the dormant and growing seasons:</p>
+
+      <div class="table-wrap">
+        <p class="table-caption">Table 5 — Antecedent Moisture Condition Classification</p>
+        <table>
+          <thead>
+            <tr>
+              <th>AMC Condition</th>
+              <th class="center">Dormant Season (Oct–Feb) — 5-Day Rainfall (in)</th>
+              <th class="center">Growing Season (Mar–Sep) — 5-Day Rainfall (in)</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr><td><strong>I — Dry Conditions</strong></td><td class="center">&lt; 0.5</td><td class="center">&lt; 1.4</td></tr>
+            <tr><td><strong>II — Normal</strong></td><td class="center">0.5 – 1.1</td><td class="center">1.4 – 2.1</td></tr>
+            <tr><td><strong>III — Wet Conditions</strong></td><td class="center">&gt; 1.1</td><td class="center">&gt; 2.1</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <p>Once the AMC is classified, CN values are adjusted from the base AMC II values using the following conversion table:</p>
+
+      <div class="table-wrap">
+        <p class="table-caption">Table 6 — CN Adjustments for Antecedent Moisture Conditions</p>
+        <table>
+          <thead>
+            <tr>
+              <th class="center">CN for Condition II</th>
+              <th class="center">Corresponding CN — Condition I (Dry)</th>
+              <th class="center">Corresponding CN — Condition III (Wet)</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr><td class="center">100</td><td class="center">100</td><td class="center">100</td></tr>
+            <tr><td class="center">90</td><td class="center">78</td><td class="center">98</td></tr>
+            <tr><td class="center">80</td><td class="center">63</td><td class="center">94</td></tr>
+            <tr><td class="center">70</td><td class="center">51</td><td class="center">87</td></tr>
+            <tr><td class="center">60</td><td class="center">40</td><td class="center">79</td></tr>
+            <tr><td class="center">50</td><td class="center">31</td><td class="center">70</td></tr>
+            <tr><td class="center">40</td><td class="center">23</td><td class="center">60</td></tr>
+            <tr><td class="center">30</td><td class="center">15</td><td class="center">50</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <!-- ═══ 15. HYDROLOGIC MODELING ═══ -->
+    <section class="section" id="modeling">
+      <h2>15. Hydrologic Modeling</h2>
+
+      <p>To develop annual runoff coefficient tables for use in the BMPFast methodology, a continuous simulation of runoff from a hypothetical 1-acre site was conducted using the SCS curve number methodology applied to historical hourly rainfall records from 45 meteorological sites across Florida.</p>
+
+      <p>The scope of the modeling effort was extensive:</p>
+      <ul class="styled">
+        <li>Historical data ranged from 13 to 64 years per site, with most sites containing 30+ years of record (mean of 4,685 rain events per site).</li>
+        <li>Runoff was modeled for all individual rain events at each site.</li>
+        <li>DCIA percentages were varied from 0% to 100% in 5-unit intervals.</li>
+        <li>Non-DCIA curve numbers were varied from 25 to 95 in 5-unit intervals.</li>
+        <li>This produced 350 combinations per rainfall site × 45 sites = <strong>15,750 total model runs</strong>.</li>
+      </ul>
+
+      <p>The total generated runoff depth was compared with the total rainfall depth over the simulation period to calculate the <strong>mean annual runoff coefficient (ROC)</strong> for each combination of site, DCIA, and non-DCIA CN:</p>
+
+      <div class="formula-box">
+        <div class="formula-title">Mean Annual Runoff Coefficient</div>
+        <span class="formula-main">ROC = Total Runoff Depth Over Simulation Period / Total Rainfall Depth Over Simulation Period</span>
+      </div>
+    </section>
+
+    <!-- ═══ 16. MET SITES ═══ -->
+    <section class="section" id="met-sites">
+      <h2>16. Meteorological Sites</h2>
+
+      <p>The 45 hourly rainfall sites used for runoff modeling were distributed throughout the state of Florida to capture the full range of climatic variability across the state. Sites span from the Panhandle region in the northwest to Key West in the south.</p>
+
+      <div class="img-placeholder">
+        <span class="ph-icon">🗺️</span>
+        <span class="ph-label">Figure 5 — Meteorological Sites Included in Runoff Modeling</span>
+        <span class="ph-caption">Map of Florida showing the locations of 45 meteorological sites used in the runoff modeling analysis, including stations at Blackman, Graceville, Crestview, Vernon, Woodruff Dam, Niceville, Pensacola, Panama City, Panacea, Apalachicola, Tallahassee, Lamont, Dowling Park, Raiford, Jacksonville, Branford, Cross City, Gainesville, Marineland, Lynne, Inglis, Daytona Beach, Leesburg, Deland, Brooksville, Orlando, Kissimmee, Melbourne, St. Leo, Tampa, St. Petersburg, Lakeland, Parrish, Avon Park, Vero Beach, Venice, Venus, St. Lucie New Lock 1, Moore Haven Lock 1, Clewiston, Fort Myers, W. Palm Beach, Boca Raton, Tamiami Trail 40 Mi, Miami, Homestead Exp Stn, Lignumvitae Key, and Key West.</span>
+      </div>
+    </section>
+
+    <!-- ═══ 17. ROC TABLES ═══ -->
+    <section class="section" id="roc-tables">
+      <h2>17. Modeled ROC Values</h2>
+
+      <p>The continuous simulation modeling produced ROC value tables for each meteorological site and each combination of non-DCIA CN (rows) and percent DCIA (columns). The table below is an example for Miami, representing 64 years of record from 1942 through 2005.</p>
+
+      <div class="img-placeholder">
+        <span class="ph-icon">📊</span>
+        <span class="ph-label">Figure 6 — Modeled ROC Values for Miami (1942–2005)</span>
+        <span class="ph-caption">Full ROC value matrix for Miami — 64 years of hourly rainfall data. Rows represent non-DCIA curve numbers from CN=30 to CN=98. Columns represent Percent DCIA from 0% to 100% in 5-unit intervals. Values range from 0.008 (CN=30, DCIA=0%) to 0.808 (all cases at DCIA=100%).</span>
+      </div>
+
+      <p>Key observations from the modeled ROC data include:</p>
+      <ul class="styled">
+        <li>At 100% DCIA, the ROC value converges to approximately 0.808 for Miami regardless of the non-DCIA CN, since the entire site is impervious and the non-DCIA area does not contribute runoff.</li>
+        <li>At low DCIA values, the non-DCIA CN has a strong influence on the resulting ROC.</li>
+        <li>The exponential relationship between CN and ROC is clearly visible across the table.</li>
+      </ul>
+
+      <h3>Annual ROC as a Function of DCIA and CN — Regional Comparison</h3>
+      <p>Contour plots of annual ROC values as a function of DCIA and non-DCIA curve number reveal significant differences between Florida's meteorological regions. The Panhandle (represented by Pensacola/Tallahassee) produces substantially higher ROC values for a given combination of DCIA and CN than does the South Florida region (represented by Key West), primarily due to the higher proportion of large rainfall events in northern Florida.</p>
+
+      <div class="img-placeholder">
+        <span class="ph-icon">📈</span>
+        <span class="ph-label">Figure 7 — Annual ROC Values as a Function of DCIA and Non-DCIA CN</span>
+        <span class="ph-caption">Side-by-side contour plots for Pensacola/Tallahassee (Zone 1) and Key West (Zone 3). Each plot shows DCIA (y-axis, 0–100%) versus Curve Number (x-axis, 30–100) with color contours representing annual runoff coefficients from 0.0 (dark blue/purple) to 0.9 (red). The Pensacola/Tallahassee plot shows significantly higher ROC values across the CN-DCIA space compared to Key West.</span>
+      </div>
+    </section>
+
+    <!-- ═══ 18. RAINFALL IMPACTS ═══ -->
+    <section class="section" id="rainfall-impacts">
+      <h2>18. Impacts of Rainfall Characteristics on Runoff Generation</h2>
+
+      <p>The proportion of annual rainfall volume delivered in events greater than 1.0 inch varies significantly across Florida's meteorological stations. This distribution of event sizes — rather than total annual rainfall depth — is the primary driver of differences in annual ROC values between regions.</p>
+
+      <ul class="styled">
+        <li><strong>Key West and Melbourne</strong> have a large percentage of small events and a relatively low percentage of large events (greater than 1 inch). This results in <em>less annual runoff volume</em> despite substantial total annual rainfall, because small events generate proportionally less runoff.</li>
+        <li><strong>Pensacola and Tallahassee</strong> have a low percentage of small events and a higher percentage of large events. This results in <em>more annual runoff volume</em> because larger events exceed the initial abstraction threshold more frequently and generate disproportionately greater runoff depths.</li>
+      </ul>
+
+      <div class="img-placeholder">
+        <span class="ph-icon">📊</span>
+        <span class="ph-label">Figure 8 — Percent of Annual Rainfall Volume from Events &gt; 1.0 Inch</span>
+        <span class="ph-caption">Bar chart comparing the percentage of annual rainfall volume delivered in events greater than 1.0 inch for 11 representative Florida meteorological stations: Branford (~47%), Cross City (~51%), Fort Myers (~51%), Jacksonville (~51%), Key West (~44%), Melbourne (~43%), Miami (~49%), Orlando (~48%), Pensacola (~59%), Tallahassee (~58%), and Tampa (~49%). A dashed horizontal line indicates the mean value across all stations.</span>
+      </div>
+    </section>
+
+    <!-- ═══ 19. MET ZONES ═══ -->
+    <section class="section" id="met-zones">
+      <h2>19. Similar Meteorological Zones</h2>
+
+      <p>A cluster analysis was conducted to group the 45 meteorological sites into regions with similar annual rainfall/runoff relationships (ROC values). The analysis identified <strong>five significantly different meteorological zones</strong> across Florida. Importantly, differences between zones are due to <em>rainfall distribution characteristics</em> (i.e., the proportion of large versus small events) rather than total annual rainfall depth.</p>
+
+      <ul class="styled">
+        <li><strong>Zone 1</strong> — Panhandle: Pensacola, Panama City, Tallahassee area — high ROC values due to large event proportion</li>
+        <li><strong>Zone 2</strong> — North/Central Florida: Jacksonville, Gainesville, Ocala area</li>
+        <li><strong>Zone 3</strong> — Central Florida: Orlando, Tampa area</li>
+        <li><strong>Zone 4</strong> — Southwest/South Florida: Fort Myers, Miami area</li>
+        <li><strong>Zone 5</strong> — Keys/Southeast: Key West, South Florida — lowest ROC values</li>
+      </ul>
+
+      <div class="img-placeholder">
+        <span class="ph-icon">🗺️</span>
+        <span class="ph-label">Figure 9 — Florida Meteorological Zones (Cluster Analysis)</span>
+        <span class="ph-caption">Map of Florida with counties color-coded by meteorological zone (1 through 5), with meteorological station locations marked. Zone 1 (red/pink) covers the western Panhandle; Zone 2 (light green) covers the northern peninsula and Big Bend; Zone 3 (blue/lavender) covers the central peninsula; Zone 4 (teal/cyan) covers the southwest and south-central regions; Zone 5 (pink/rose) covers the extreme southern peninsula and Keys. Scale bar: 50–100 miles.</span>
+      </div>
+    </section>
+
+    <!-- ═══ 20. ROC DATA ═══ -->
+    <section class="section" id="roc-data">
+      <h2>20. Runoff Calculation Data</h2>
+
+      <p>The complete ROC value tables for all five meteorological zones are provided in Appendix C of Harper and Baker (2007). BMPFast uses these tables as lookup references and performs interpolation for combinations of DCIA and CN that fall between the tabulated values.</p>
+
+      <p>Required input data for runoff calculations include:</p>
+      <ul class="styled">
+        <li>Rainfall meteorological zone (determined from the rainfall zone map, Figure 9)</li>
+        <li>Annual rainfall depth from isopleth maps</li>
+        <li>Basin DCIA percentage</li>
+        <li>Non-DCIA curve number (composite, as calculated per Section 12)</li>
+      </ul>
+
+      <p>BMPFast conducts iterations for uneven values of DCIA and CN, interpolating between tabulated values to calculate the annual runoff coefficient (ROC value) and annual runoff volume.</p>
+
+      <div class="img-placeholder">
+        <span class="ph-icon">📊</span>
+        <span class="ph-label">Figure 10 — Zone 1 (Panhandle) ROC Value Table</span>
+        <span class="ph-caption">Full ROC value matrix for Meteorological Zone 1 (Panhandle region). Rows represent non-DCIA curve numbers from CN=30 to CN=98. Columns represent Percent DCIA from 0% to 100% in 5-unit intervals. Values range from 0.006 (CN=30, DCIA=0%) to 0.849 (CN=98, DCIA=100%). Source: Appendix C, Harper and Baker (2007).</span>
+      </div>
+    </section>
+
+    <!-- ═══ 21. DCIA DISCONNECT ═══ -->
+    <section class="section" id="dcia-disconnect">
+      <h2>21. Impacts of Disconnecting DCIA on Annual C Values</h2>
+
+      <p>A key design strategy for reducing stormwater runoff volumes is to <strong>minimize DCIA</strong> — directing roof and driveway drainage to pervious areas (lawns, swales) rather than directly to the storm drain system. This approach can significantly reduce the annual runoff coefficient and, consequently, the required treatment system size.</p>
+
+      <div class="img-placeholder">
+        <span class="ph-icon">🏗️</span>
+        <span class="ph-label">Figure 11 — DCIA Maximizing vs. Minimizing Site Designs</span>
+        <span class="ph-caption">Side-by-side cross-section diagrams illustrating two residential drainage approaches. Left (Design Which Maximizes DCIA): Roof drains discharge to street via downspouts; driveway drains to street via curb and gutter — all impervious runoff enters the storm drain directly. Right (Design Which Minimizes DCIA): Roof drains discharge to lawn via splash blocks; driveway drains to lawn via grassed swale — impervious runoff passes over pervious areas before reaching the drainage system.</span>
+      </div>
+
+      <p>The table below compares annual ROC values for a standard design (20% DCIA) versus a disconnected design (0% DCIA) for a site with 40% total impervious area and HSG D soils across all five meteorological zones:</p>
+
+      <div class="table-wrap">
+        <p class="table-caption">Table 7 — Annual ROC Values: Standard vs. Disconnected DCIA Design</p>
+        <table>
+          <thead>
+            <tr>
+              <th>Parameter</th>
+              <th class="center">Standard Design</th>
+              <th class="center">Disconnect DCIA</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr><td>% Impervious</td><td class="center">40</td><td class="center">40</td></tr>
+            <tr><td>DCIA (%)</td><td class="center">20</td><td class="center">0</td></tr>
+            <tr><td>Hydrologic Soil Group (HSG)</td><td class="center">D</td><td class="center">D</td></tr>
+            <tr><td>Pervious CN</td><td class="center">80</td><td class="center">80</td></tr>
+            <tr><td>Non-DCIA CN</td><td class="center">84.5</td><td class="center">87.2</td></tr>
+            <tr class="group-header"><td colspan="3">ROC Value by Zone</td></tr>
+            <tr><td>Zone 1 — Panhandle</td><td class="center">0.341</td><td class="center">0.261 (−23%)</td></tr>
+            <tr><td>Zone 2</td><td class="center">0.286</td><td class="center">0.196 (−31%)</td></tr>
+            <tr><td>Zone 3</td><td class="center">0.297</td><td class="center">0.210 (−29%)</td></tr>
+            <tr><td>Zone 4</td><td class="center">0.306</td><td class="center">0.219 (−28%)</td></tr>
+            <tr><td>Zone 5 — Keys/SE</td><td class="center">0.325</td><td class="center">0.245 (−25%)</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="callout">
+        <p>Disconnecting DCIA reduces annual runoff volumes by <strong>23% to 31%</strong> depending on the meteorological zone — a proportional reduction in the required treatment system size and associated construction costs.</p>
+      </div>
+    </section>
+
+    <!-- ═══ 22. EXAMPLE ═══ -->
+    <section class="section" id="example">
+      <h2>22. Example Calculations</h2>
+
+      <p>The following example demonstrates the step-by-step calculation of annual runoff volume for a 100-acre mixed-use development site using the BMPFast methodology.</p>
+
+      <h3>Site Description</h3>
+
+      <div class="example-block">
+        <div class="ex-label">Step 1 — Land Use</div>
+        <p><strong>Total site area: 100 acres</strong></p>
+        <ul class="styled">
+          <li>90 acres of single-family residential development</li>
+          <li>5 acres of stormwater management systems</li>
+          <li>5 acres of preserved wetlands</li>
+        </ul>
+        <p style="margin-top:0.6rem; font-size:0.88rem; color:var(--muted);">Note: The 5-acre stormwater management area is excluded from runoff volume calculations because runoff generated in these areas is incorporated into the performance efficiency estimates for the stormwater system.</p>
+      </div>
+
+      <div class="example-block">
+        <div class="ex-label">Step 2 — Ground Cover and Soil Types</div>
+        <p>A. Residential areas will be covered with lawns in good condition.<br>
+        B. Soil types are in Hydrologic Soil Group D.</p>
+      </div>
+
+      <div class="example-block">
+        <div class="ex-label">Step 3 — Impervious and DCIA Areas</div>
+        <p>Residential areas will be 25% impervious, 75% of which will be DCIA.</p>
+        <div class="calc-line">Impervious Area = 25% of developed site = 90 ac × 0.25 = <strong>22.50 acres</strong></div>
+        <div class="calc-line">DCIA Area = 22.50 ac × 0.75 = <strong>16.88 acres</strong></div>
+        <div class="calc-result">DCIA Percentage = (16.88 ac / 90.0 ac) × 100 = <strong>18.75%</strong> of developed area</div>
+      </div>
+
+      <div class="example-block">
+        <div class="ex-label">Step 4 — Composite Non-DCIA Curve Number</div>
+        <p>Curve number for lawns in good condition in HSG D = <strong>80</strong></p>
+        <div class="calc-line">Pervious area = 90 ac total − 22.50 ac impervious = <strong>67.50 acres</strong></div>
+        <div class="calc-line">Non-DCIA impervious area = 22.50 ac − 16.88 ac DCIA = <strong>5.62 acres</strong></div>
+        <div class="calc-line">CN for impervious areas = 98</div>
+        <div class="calc-line">Non-DCIA CN = [67.50 ac (80) + 5.62 ac (98)] / (67.50 ac + 5.62 ac)</div>
+        <div class="calc-result">Non-DCIA CN = <strong>81.4</strong></div>
+      </div>
+
+      <div class="example-block">
+        <div class="ex-label">Step 5a — Annual Runoff Volume (Pensacola, Zone 1)</div>
+        <p>The model calculates the annual runoff coefficient based on the meteorological zone and the hydrologic characteristics:</p>
+        <div class="calc-line">Location: Pensacola = Zone 1</div>
+        <div class="calc-line">DCIA = 18.75%,  non-DCIA CN = 81.4</div>
+        <div class="calc-line">Annual C value (from Zone 1 ROC table) = <strong>0.304</strong></div>
+        <div class="calc-line">Annual rainfall for Pensacola = 65.5 inches (from Isopleth Map)</div>
+        <div class="calc-line">Annual runoff volume = 90 ac × 65.5 in/yr × (1 ft / 12 in) × 0.304</div>
+        <div class="calc-result">Annual generated runoff volume = <strong>149.3 ac-ft/yr</strong></div>
+      </div>
+
+      <div class="example-block">
+        <div class="ex-label">Step 5b — Annual Runoff Volume (Key West, Zone 3)</div>
+        <p>Same site parameters applied in a different meteorological zone:</p>
+        <div class="calc-line">Location: Key West = Zone 3</div>
+        <div class="calc-line">DCIA = 18.75%,  non-DCIA CN = 81.4</div>
+        <div class="calc-line">Annual C value (from Zone 3 ROC table) = <strong>0.266</strong></div>
+        <div class="calc-line">Annual rainfall for Key West = 40.0 inches (from Isopleth Map)</div>
+        <div class="calc-line">Annual runoff volume = 90 ac × 40.0 in/yr × (1 ft / 12 in) × 0.266</div>
+        <div class="calc-result">Annual generated runoff volume = <strong>79.8 ac-ft/yr</strong></div>
+      </div>
+
+      <div class="callout">
+        <p>This example illustrates that despite identical site characteristics, a project in Pensacola generates nearly <strong>twice the annual runoff volume</strong> of an equivalent project in Key West — a direct consequence of the differences in rainfall event distribution between the two meteorological zones.</p>
+      </div>
+    </section>
+
+    <!-- ═══ 23. SUMMARY ═══ -->
+    <section class="section" id="summary">
+      <h2>23. Summary</h2>
+
+      <p>Like rainfall, runoff generation in Florida is highly variable across the state and is driven by three interacting factors:</p>
+
+      <div class="summary-grid">
+        <div class="summary-card">
+          <div class="sc-label">Impervious Area</div>
+          <p>A direct (linear) relationship exists between impervious percentage and annual runoff volume. Minimizing DCIA is the most effective design strategy for reducing runoff generation.</p>
+        </div>
+        <div class="summary-card">
+          <div class="sc-label">Non-DCIA CN Value</div>
+          <p>An exponential relationship exists between CN value and runoff. This makes CN averaging statistically invalid and necessitates the separate DCIA/non-DCIA calculation approach used in BMPFast.</p>
+        </div>
+        <div class="summary-card">
+          <div class="sc-label">Rainfall Characteristics</div>
+          <p>The distribution of event sizes — not total annual rainfall — drives regional differences in annual ROC values. The Panhandle generates substantially more runoff per inch of rain than South Florida.</p>
+        </div>
+      </div>
+
+      <div class="callout">
+        <p>Florida's 2024 Stormwater Rule and the BMPFast model use the <strong>Harper and Baker (2007)</strong> report methodology for calculating runoff volumes, applying the modified SCS CN approach with separate DCIA and non-DCIA calculations and zone-specific ROC lookup tables.</p>
+      </div>
+    </section>
+
+    <!-- ═══ REFERENCES ═══ -->
+    <div class="references" id="references">
+      <h2>References and Figure Index</h2>
+      <ol>
+        <li><strong>Harper, H.H. and Baker, D.M. (2007).</strong> <em>Evaluation of Current Stormwater Design Criteria within the State of Florida.</em> Prepared for the Florida Department of Environmental Protection. Environmental Research &amp; Design, Inc., Orlando, FL.</li>
+        <li><strong>USDA Natural Resources Conservation Service (1986).</strong> <em>Urban Hydrology for Small Watersheds,</em> Technical Release TR-55. USDA Engineering Division, Washington, D.C.</li>
+        <li><strong>Florida Department of Environmental Protection (2024).</strong> Florida Stormwater Rule — June 2024 Update. Tallahassee, FL.</li>
+      </ol>
+
+      <h4 style="margin-top:1.2rem;">Figure Index</h4>
+      <ol>
+        <li>Figure 1 — Components of Runoff (hydrologic cycle diagram)</li>
+        <li>Figure 2 — Development Impacts on Hydrology (four-quadrant diagram)</li>
+        <li>Figure 3 — 3D Relationship: Curve Number, Percent DCIA, and C Value</li>
+        <li>Figure 4 — Impacts of Averaging Curve Numbers (annotated 3D surface)</li>
+        <li>Figure 5 — Meteorological Sites Included in Runoff Modeling (Florida map)</li>
+        <li>Figure 6 — Modeled ROC Values for Miami, 1942–2005 (full matrix table)</li>
+        <li>Figure 7 — Annual ROC Values as a Function of DCIA and CN: Pensacola/Tallahassee vs. Key West</li>
+        <li>Figure 8 — Percent of Annual Rainfall Volume from Events &gt; 1.0 Inch (bar chart, 11 stations)</li>
+        <li>Figure 9 — Florida Meteorological Zones — Cluster Analysis (county map)</li>
+        <li>Figure 10 — Zone 1 (Panhandle) ROC Value Table</li>
+        <li>Figure 11 — DCIA Maximizing vs. Minimizing Site Designs (cross-section diagram)</li>
+      </ol>
+    </div>
+
+  </div><!-- /content -->
+</main>
+
+<footer>
+  <span>BMPFast Stormwater Training Series · Module 6: Runoff Generation</span>
+  <span>Harvey H. Harper · Environmental Research &amp; Design, Inc. · January 2026</span>
+</footer>
+
+</body>
+</html>

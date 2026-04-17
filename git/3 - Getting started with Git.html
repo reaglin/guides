@@ -1,0 +1,1559 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>COP4834 - Git & GitHub Module</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            padding: 20px;
+            line-height: 1.6;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            overflow: hidden;
+        }
+
+        .header {
+            background: linear-gradient(135deg, #2c3e50 0%, #34495e 100%);
+            color: white;
+            padding: 40px;
+            text-align: center;
+        }
+
+        .header h1 {
+            font-size: 2.5em;
+            margin-bottom: 10px;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+        }
+
+        .header p {
+            font-size: 1.2em;
+            opacity: 0.9;
+        }
+
+        .content {
+            padding: 40px;
+        }
+
+        .intro-box {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 30px;
+            border-radius: 10px;
+            margin-bottom: 30px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+        }
+
+        .intro-box h2 {
+            margin-bottom: 15px;
+            font-size: 1.8em;
+        }
+
+        .collapsible {
+            background-color: #3498db;
+            color: white;
+            cursor: pointer;
+            padding: 18px;
+            width: 100%;
+            border: none;
+            text-align: left;
+            outline: none;
+            font-size: 1.2em;
+            font-weight: bold;
+            border-radius: 8px;
+            margin-bottom: 10px;
+            transition: all 0.3s ease;
+            box-shadow: 0 3px 10px rgba(0,0,0,0.2);
+        }
+
+        .collapsible:hover {
+            background-color: #2980b9;
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+        }
+
+        .collapsible.active {
+            background-color: #27ae60;
+        }
+
+        .collapsible:after {
+            content: '\002B';
+            color: white;
+            font-weight: bold;
+            float: right;
+            margin-left: 5px;
+            font-size: 1.3em;
+        }
+
+        .collapsible.active:after {
+            content: "\2212";
+        }
+
+        .collapsible-content {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.3s ease-out;
+            background-color: #f8f9fa;
+            border-radius: 0 0 8px 8px;
+            margin-bottom: 20px;
+        }
+
+        .collapsible-inner {
+            padding: 25px;
+        }
+
+        .info-box {
+            background: #e3f2fd;
+            border-left: 5px solid #2196F3;
+            padding: 20px;
+            margin: 20px 0;
+            border-radius: 5px;
+        }
+
+        .warning-box {
+            background: #fff3cd;
+            border-left: 5px solid #ffc107;
+            padding: 20px;
+            margin: 20px 0;
+            border-radius: 5px;
+        }
+
+        .success-box {
+            background: #d4edda;
+            border-left: 5px solid #28a745;
+            padding: 20px;
+            margin: 20px 0;
+            border-radius: 5px;
+        }
+
+        .tip-box {
+            background: #e8daef;
+            border-left: 5px solid #8e44ad;
+            padding: 20px;
+            margin: 20px 0;
+            border-radius: 5px;
+        }
+
+        .step-container {
+            background: white;
+            border: 2px solid #3498db;
+            border-radius: 8px;
+            padding: 20px;
+            margin: 15px 0;
+        }
+
+        .step-number {
+            display: inline-block;
+            background: #3498db;
+            color: white;
+            width: 35px;
+            height: 35px;
+            border-radius: 50%;
+            text-align: center;
+            line-height: 35px;
+            font-weight: bold;
+            margin-right: 10px;
+        }
+
+        .step-title {
+            display: inline-block;
+            font-size: 1.3em;
+            color: #2c3e50;
+            font-weight: bold;
+            vertical-align: middle;
+        }
+
+        .step-content {
+            margin-top: 15px;
+            padding-left: 45px;
+        }
+
+        code {
+            background: #2c3e50;
+            color: #f8f8f2;
+            padding: 3px 8px;
+            border-radius: 4px;
+            font-family: 'Courier New', monospace;
+        }
+
+        .code-block {
+            background: #2c3e50;
+            color: #f8f8f2;
+            padding: 20px;
+            border-radius: 8px;
+            margin: 15px 0;
+            overflow-x: auto;
+            font-family: 'Courier New', monospace;
+            line-height: 1.5;
+            white-space: pre-wrap;
+        }
+
+        .screenshot-placeholder {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 40px;
+            text-align: center;
+            border-radius: 8px;
+            margin: 15px 0;
+            font-style: italic;
+        }
+
+        ul, ol {
+            margin-left: 25px;
+            margin-top: 10px;
+        }
+
+        li {
+            margin: 10px 0;
+        }
+
+        h3 {
+            color: #2c3e50;
+            margin: 20px 0 10px 0;
+            font-size: 1.5em;
+        }
+
+        h4 {
+            color: #34495e;
+            margin: 15px 0 10px 0;
+            font-size: 1.2em;
+        }
+
+        .tools-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+            margin: 20px 0;
+        }
+
+        .tool-card {
+            background: white;
+            border: 2px solid #3498db;
+            border-radius: 10px;
+            padding: 20px;
+            text-align: center;
+            transition: transform 0.3s ease;
+        }
+
+        .tool-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 20px rgba(0,0,0,0.2);
+        }
+
+        .tool-card h4 {
+            color: #3498db;
+            margin-bottom: 10px;
+        }
+
+        .footer {
+            background: #2c3e50;
+            color: white;
+            padding: 20px;
+            text-align: center;
+        }
+
+        strong {
+            color: #2c3e50;
+        }
+
+        .highlight {
+            background: #fff3cd;
+            padding: 2px 5px;
+            border-radius: 3px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🚀 COP4834 Web Systems II</h1>
+            <p>Git & GitHub Integration Module</p>
+        </div>
+
+        <div class="content">
+            <div class="intro-box">
+                <h2>📚 Module Overview</h2>
+                <p>This module covers the essential skills for using Git version control and GitHub in modern software development. You'll learn how to manage your code using visual tools integrated into popular IDEs, enabling you to work efficiently on individual and team projects without touching the command line.</p>
+            </div>
+
+            <!-- Section 1: Introduction -->
+            <button class="collapsible">1. Understanding Version Control & Git</button>
+            <div class="collapsible-content">
+                <div class="collapsible-inner">
+                    <h3>What is Version Control?</h3>
+                    <p>Version control is a system that records changes to files over time, allowing you to:</p>
+                    <ul>
+                        <li>Track every modification made to your code</li>
+                        <li>Revert to previous versions if something breaks</li>
+                        <li>Collaborate with team members without overwriting each other's work</li>
+                        <li>Understand who made what changes and when</li>
+                        <li>Maintain multiple versions of your project simultaneously (branches)</li>
+                    </ul>
+
+                    <div class="info-box">
+                        <strong>💡 Why Git?</strong>
+                        <p>Git is the most popular version control system used by over 95% of professional developers. It's distributed, fast, and integrates seamlessly with modern development tools.</p>
+                    </div>
+
+                    <h3>Key Git Concepts</h3>
+                    
+                    <div class="step-container">
+                        <h4>Repository (Repo)</h4>
+                        <p>A repository is like a project folder that Git tracks. It contains all your files and the complete history of changes.</p>
+                    </div>
+
+                    <div class="step-container">
+                        <h4>Commit</h4>
+                        <p>A commit is a snapshot of your project at a specific point in time. Think of it as saving a checkpoint in a video game - you can always come back to it.</p>
+                    </div>
+
+                    <div class="step-container">
+                        <h4>Branch</h4>
+                        <p>A branch is a parallel version of your code. The main branch (often called "main" or "master") is your production code, while feature branches let you work on new features without affecting the main code.</p>
+                    </div>
+
+                    <div class="step-container">
+                        <h4>Remote</h4>
+                        <p>A remote is a version of your repository hosted on the internet (like GitHub). It allows you to back up your work and collaborate with others.</p>
+                    </div>
+
+                    <h3>The Git Workflow</h3>
+                    <ol>
+                        <li><strong>Clone/Create:</strong> Start with a repository (either create new or clone existing)</li>
+                        <li><strong>Branch:</strong> Create a branch for your new feature or bug fix</li>
+                        <li><strong>Edit:</strong> Make changes to your files</li>
+                        <li><strong>Stage:</strong> Select which changes to include in your next commit</li>
+                        <li><strong>Commit:</strong> Save your staged changes with a descriptive message</li>
+                        <li><strong>Push:</strong> Upload your commits to GitHub</li>
+                        <li><strong>Pull Request:</strong> Request to merge your changes into the main branch</li>
+                        <li><strong>Merge:</strong> Combine your changes with the main branch</li>
+                    </ol>
+                </div>
+            </div>
+
+            <!-- Section 2: Tools -->
+            <button class="collapsible">2. Git Integration Tools</button>
+            <div class="collapsible-content">
+                <div class="collapsible-inner">
+                    <h3>Popular IDEs with Git Integration</h3>
+                    <p>Modern development environments provide visual interfaces for Git, making version control intuitive and accessible. Here are the most popular tools:</p>
+
+                    <div class="tools-grid">
+                        <div class="tool-card">
+                            <h4>Visual Studio 2022</h4>
+                            <p>Full-featured IDE with excellent Git support for C#, .NET, C++, and web development.</p>
+                        </div>
+
+                        <div class="tool-card">
+                            <h4>Visual Studio Code</h4>
+                            <p>Lightweight, powerful editor with built-in Git support and extensive extensions.</p>
+                        </div>
+
+                        <div class="tool-card">
+                            <h4>JetBrains IDEs</h4>
+                            <p>IntelliJ IDEA, WebStorm, PyCharm, and others with unified Git interface.</p>
+                        </div>
+
+                        <div class="tool-card">
+                            <h4>GitHub Desktop</h4>
+                            <p>Standalone Git client with simple, visual interface specifically for GitHub.</p>
+                        </div>
+                    </div>
+
+                    <div class="info-box">
+                        <strong>📌 For This Course</strong>
+                        <p>We'll focus primarily on <strong>Visual Studio 2022</strong> and <strong>Visual Studio Code</strong>, as they're the most commonly used tools for web development. The concepts translate directly to other IDEs.</p>
+                    </div>
+
+                    <h3>Prerequisites</h3>
+                    <div class="step-container">
+                        <span class="step-number">1</span>
+                        <span class="step-title">Install Git</span>
+                        <div class="step-content">
+                            <p>Download and install Git from <code>https://git-scm.com</code></p>
+                            <div class="tip-box">
+                                <strong>💡 Tip:</strong> During installation, choose "Use Git from the Windows Command Prompt" and "Use the OpenSSL library" for best compatibility with IDEs.
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="step-container">
+                        <span class="step-number">2</span>
+                        <span class="step-title">Create a GitHub Account</span>
+                        <div class="step-content">
+                            <p>Sign up for free at <code>https://github.com</code></p>
+                            <p>GitHub provides unlimited public and private repositories for students and developers.</p>
+                        </div>
+                    </div>
+
+                    <div class="step-container">
+                        <span class="step-number">3</span>
+                        <span class="step-title">Configure Git Identity</span>
+                        <div class="step-content">
+                            <p>This only needs to be done once. Your IDE will help you set this up the first time you use Git:</p>
+                            <ul>
+                                <li><strong>Name:</strong> Your full name (appears in commit history)</li>
+                                <li><strong>Email:</strong> The email associated with your GitHub account</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Section 3: Visual Studio 2022 -->
+            <button class="collapsible">3. Using Git in Visual Studio 2022</button>
+            <div class="collapsible-content">
+                <div class="collapsible-inner">
+                    <h3>Initial Setup</h3>
+                    
+                    <div class="step-container">
+                        <span class="step-number">1</span>
+                        <span class="step-title">Sign in to GitHub</span>
+                        <div class="step-content">
+                            <ol>
+                                <li>Open Visual Studio 2022</li>
+                                <li>Go to <code>File → Account Settings</code></li>
+                                <li>Click <strong>"Add"</strong> under <strong>"All Accounts"</strong></li>
+                                <li>Select <strong>"GitHub"</strong> and sign in with your credentials</li>
+                            </ol>
+                            <div class="success-box">
+                                <strong>✅ Success!</strong> Visual Studio can now access your GitHub repositories.
+                            </div>
+                        </div>
+                    </div>
+
+                    <h3>Starting a New Project with Git</h3>
+
+                    <div class="step-container">
+                        <span class="step-number">2</span>
+                        <span class="step-title">Create New Project</span>
+                        <div class="step-content">
+                            <ol>
+                                <li>Click <strong>"Create a new project"</strong></li>
+                                <li>Choose your project template (e.g., ASP.NET Core Web App)</li>
+                                <li>Configure your project name and location</li>
+                                <li>On the final screen, check <strong>"Create a new Git repository"</strong></li>
+                                <li>Choose <strong>"GitHub"</strong> as the hosting service</li>
+                                <li>Configure repository settings:
+                                    <ul>
+                                        <li><strong>Account:</strong> Your GitHub account</li>
+                                        <li><strong>Repository name:</strong> Choose a descriptive name</li>
+                                        <li><strong>Description:</strong> Brief description of your project</li>
+                                        <li><strong>Visibility:</strong> Public or Private</li>
+                                    </ul>
+                                </li>
+                                <li>Click <strong>"Create and Push"</strong></li>
+                            </ol>
+                            <div class="success-box">
+                                <strong>🎉 Project Created!</strong> Your project is now on GitHub and tracked by Git.
+                            </div>
+                        </div>
+                    </div>
+
+                    <h3>Cloning an Existing Repository</h3>
+
+                    <div class="step-container">
+                        <span class="step-number">3</span>
+                        <span class="step-title">Clone from GitHub</span>
+                        <div class="step-content">
+                            <ol>
+                                <li>Open Visual Studio 2022</li>
+                                <li>Click <strong>"Clone a repository"</strong></li>
+                                <li>In the <strong>"GitHub"</strong> section, you'll see your repositories</li>
+                                <li>Select the repository you want to clone</li>
+                                <li>Choose a local path where you want to save it</li>
+                                <li>Click <strong>"Clone"</strong></li>
+                            </ol>
+                            <div class="tip-box">
+                                <strong>💡 Alternative:</strong> You can also paste the repository URL directly to clone any GitHub repository.
+                            </div>
+                        </div>
+                    </div>
+
+                    <h3>The Git Changes Window</h3>
+                    <p>This is your primary interface for Git operations in Visual Studio.</p>
+
+                    <div class="step-container">
+                        <span class="step-number">4</span>
+                        <span class="step-title">Open Git Changes</span>
+                        <div class="step-content">
+                            <ol>
+                                <li>Go to <code>View → Git Changes</code> (or press <code>Ctrl + 0, Ctrl + G</code>)</li>
+                                <li>The window appears on the right side by default</li>
+                            </ol>
+                            <p><strong>The Git Changes window shows:</strong></p>
+                            <ul>
+                                <li><strong>Changes:</strong> Files you've modified</li>
+                                <li><strong>Commit message box:</strong> Where you describe your changes</li>
+                                <li><strong>Current branch:</strong> Which branch you're working on</li>
+                                <li><strong>Actions:</strong> Commit, Push, Pull, Fetch options</li>
+                            </ul>
+                        </div>
+                    </div>
+
+                    <h3>Making Your First Commit</h3>
+
+                    <div class="step-container">
+                        <span class="step-number">5</span>
+                        <span class="step-title">Modify Files and Commit</span>
+                        <div class="step-content">
+                            <ol>
+                                <li>Make changes to your project (edit a file, add a new file, etc.)</li>
+                                <li>Open the <strong>Git Changes</strong> window</li>
+                                <li>You'll see modified files listed under <strong>"Changes"</strong></li>
+                                <li>Review your changes by clicking on a file (shows a diff view)</li>
+                                <li>Enter a <strong>commit message</strong> in the text box:
+                                    <div class="code-block">
+Add user registration form
+
+- Created registration.html
+- Added form validation
+- Styled with Bootstrap
+                                    </div>
+                                </li>
+                                <li>Click <strong>"Commit All"</strong> button</li>
+                            </ol>
+                            
+                            <div class="warning-box">
+                                <strong>⚠️ Important:</strong> <strong>"Commit All"</strong> saves changes locally. To upload to GitHub, you must also <strong>"Push"</strong>.
+                            </div>
+
+                            <div class="tip-box">
+                                <strong>💡 Commit Message Best Practices:</strong>
+                                <ul>
+                                    <li>First line: Brief summary (50 characters or less)</li>
+                                    <li>Blank line</li>
+                                    <li>Detailed description of what and why (if needed)</li>
+                                    <li>Use present tense: "Add feature" not "Added feature"</li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+
+                    <h3>Pushing Changes to GitHub</h3>
+
+                    <div class="step-container">
+                        <span class="step-number">6</span>
+                        <span class="step-title">Push Commits</span>
+                        <div class="step-content">
+                            <p>After committing, your changes are saved locally but not yet on GitHub.</p>
+                            <ol>
+                                <li>In the <strong>Git Changes</strong> window, look for the upward arrow with a number (indicates commits to push)</li>
+                                <li>Click the <strong>"Push"</strong> button or arrow</li>
+                                <li>Visual Studio uploads your commits to GitHub</li>
+                            </ol>
+                            <div class="success-box">
+                                <strong>✅ Pushed!</strong> Your changes are now safely backed up on GitHub and visible to collaborators.
+                            </div>
+                        </div>
+                    </div>
+
+                    <h3>Working with Branches</h3>
+
+                    <div class="step-container">
+                        <span class="step-number">7</span>
+                        <span class="step-title">Create a New Branch</span>
+                        <div class="step-content">
+                            <p>Branches let you work on features without affecting the main code.</p>
+                            <ol>
+                                <li>In the <strong>Git Changes</strong> window, click the branch dropdown (shows current branch)</li>
+                                <li>Click <strong>"New Branch"</strong></li>
+                                <li>Enter a descriptive branch name:
+                                    <ul>
+                                        <li><code>feature/user-authentication</code></li>
+                                        <li><code>bugfix/login-error</code></li>
+                                        <li><code>enhancement/improve-ui</code></li>
+                                    </ul>
+                                </li>
+                                <li>Check <strong>"Checkout branch"</strong> to switch to it immediately</li>
+                                <li>Click <strong>"Create"</strong></li>
+                            </ol>
+                            <div class="info-box">
+                                <strong>📌 Branch Naming Convention:</strong>
+                                <p>Use prefixes like <code>feature/</code>, <code>bugfix/</code>, or <code>hotfix/</code> followed by a descriptive name. This makes it clear what each branch is for.</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="step-container">
+                        <span class="step-number">8</span>
+                        <span class="step-title">Switch Between Branches</span>
+                        <div class="step-content">
+                            <ol>
+                                <li>Click the branch dropdown in <strong>Git Changes</strong></li>
+                                <li>Select any branch from the list to switch to it</li>
+                                <li>Your files will update to reflect that branch's state</li>
+                            </ol>
+                            <div class="warning-box">
+                                <strong>⚠️ Warning:</strong> Commit or stash your changes before switching branches, or Visual Studio will warn you about uncommitted changes.
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="step-container">
+                        <span class="step-number">9</span>
+                        <span class="step-title">Push Your Branch</span>
+                        <div class="step-content">
+                            <p>After creating a new branch and making commits:</p>
+                            <ol>
+                                <li>Click <strong>"Push"</strong> in the Git Changes window</li>
+                                <li>If it's a new branch, Visual Studio will ask to publish it to GitHub</li>
+                                <li>Click <strong>"Publish Branch"</strong></li>
+                            </ol>
+                        </div>
+                    </div>
+
+                    <h3>Merging Branches</h3>
+
+                    <div class="step-container">
+                        <span class="step-number">10</span>
+                        <span class="step-title">Merge Using Pull Requests (Recommended)</span>
+                        <div class="step-content">
+                            <ol>
+                                <li>Push your feature branch to GitHub</li>
+                                <li>In Visual Studio, go to <code>Git → GitHub → Create Pull Request</code></li>
+                                <li>Or visit your repository on GitHub.com</li>
+                                <li>Click <strong>"Compare & pull request"</strong> (appears after pushing)</li>
+                                <li>Review the changes being merged</li>
+                                <li>Add a description of what the pull request does</li>
+                                <li>Click <strong>"Create pull request"</strong></li>
+                                <li>After review, click <strong>"Merge pull request"</strong></li>
+                                <li>Click <strong>"Confirm merge"</strong></li>
+                            </ol>
+                            <div class="success-box">
+                                <strong>🎊 Merged!</strong> Your feature is now part of the main branch.
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="step-container">
+                        <span class="step-number">11</span>
+                        <span class="step-title">Merge Locally (Alternative)</span>
+                        <div class="step-content">
+                            <ol>
+                                <li>Right-click on the target branch (e.g., main) in the Git Changes window</li>
+                                <li>Select <strong>"Checkout"</strong> to switch to it</li>
+                                <li>Right-click on your feature branch</li>
+                                <li>Select <strong>"Merge 'branch-name' into 'main'"</strong></li>
+                                <li>Resolve any conflicts if they appear</li>
+                                <li>Push the merged changes to GitHub</li>
+                            </ol>
+                        </div>
+                    </div>
+
+                    <h3>Updating Your Local Repository</h3>
+
+                    <div class="step-container">
+                        <span class="step-number">12</span>
+                        <span class="step-title">Pull Latest Changes</span>
+                        <div class="step-content">
+                            <p>When working with others, regularly pull updates from GitHub:</p>
+                            <ol>
+                                <li>In <strong>Git Changes</strong>, click the downward arrow (Pull)</li>
+                                <li>Or click <code>Git → Pull</code> from the menu</li>
+                                <li>Visual Studio downloads and merges the latest changes</li>
+                            </ol>
+                            <div class="tip-box">
+                                <strong>💡 Best Practice:</strong> Always pull before starting new work to ensure you have the latest code.
+                            </div>
+                        </div>
+                    </div>
+
+                    <h3>Handling Conflicts</h3>
+
+                    <div class="step-container">
+                        <span class="step-number">13</span>
+                        <span class="step-title">Resolve Merge Conflicts</span>
+                        <div class="step-content">
+                            <p>Conflicts occur when two people edit the same lines of code. Visual Studio helps resolve them:</p>
+                            <ol>
+                                <li>After a pull or merge with conflicts, Visual Studio shows conflicted files</li>
+                                <li>Click on a conflicted file</li>
+                                <li>Visual Studio opens the <strong>Merge Editor</strong> with three panes:
+                                    <ul>
+                                        <li><strong>Incoming:</strong> Changes from GitHub</li>
+                                        <li><strong>Current:</strong> Your local changes</li>
+                                        <li><strong>Result:</strong> The final merged version</li>
+                                    </ul>
+                                </li>
+                                <li>Choose which changes to keep by clicking checkboxes</li>
+                                <li>Or manually edit the Result pane</li>
+                                <li>Click <strong>"Accept Merge"</strong></li>
+                                <li>Commit the resolved conflicts</li>
+                            </ol>
+                        </div>
+                    </div>
+
+                    <h3>Viewing History</h3>
+
+                    <div class="step-container">
+                        <span class="step-number">14</span>
+                        <span class="step-title">Explore Commit History</span>
+                        <div class="step-content">
+                            <ol>
+                                <li>Go to <code>View → Git Repository</code></li>
+                                <li>The <strong>Git Repository</strong> window shows a visual graph of commits</li>
+                                <li>Click any commit to see:
+                                    <ul>
+                                        <li>What changed</li>
+                                        <li>Who made the change</li>
+                                        <li>When it was made</li>
+                                        <li>The commit message</li>
+                                    </ul>
+                                </li>
+                                <li>Right-click a commit for options like:
+                                    <ul>
+                                        <li><strong>View Commit Details</strong></li>
+                                        <li><strong>Reset to this commit</strong> (use carefully!)</li>
+                                        <li><strong>Create branch from commit</strong></li>
+                                    </ul>
+                                </li>
+                            </ol>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Section 4: Visual Studio Code -->
+            <button class="collapsible">4. Using Git in Visual Studio Code</button>
+            <div class="collapsible-content">
+                <div class="collapsible-inner">
+                    <h3>Initial Setup</h3>
+
+                    <div class="step-container">
+                        <span class="step-number">1</span>
+                        <span class="step-title">Sign in to GitHub</span>
+                        <div class="step-content">
+                            <ol>
+                                <li>Open Visual Studio Code</li>
+                                <li>Click the account icon in the bottom-left corner</li>
+                                <li>Click <strong>"Sign in with GitHub"</strong></li>
+                                <li>Authorize VS Code in your browser</li>
+                            </ol>
+                        </div>
+                    </div>
+
+                    <h3>Cloning a Repository</h3>
+
+                    <div class="step-container">
+                        <span class="step-number">2</span>
+                        <span class="step-title">Clone from GitHub</span>
+                        <div class="step-content">
+                            <ol>
+                                <li>Press <code>Ctrl + Shift + P</code> to open Command Palette</li>
+                                <li>Type <strong>"Git: Clone"</strong> and press Enter</li>
+                                <li>Select <strong>"Clone from GitHub"</strong></li>
+                                <li>Choose a repository from the list or paste a URL</li>
+                                <li>Select a local folder to save the repository</li>
+                                <li>Click <strong>"Open"</strong> when prompted</li>
+                            </ol>
+                        </div>
+                    </div>
+
+                    <h3>The Source Control Panel</h3>
+
+                    <div class="step-container">
+                        <span class="step-number">3</span>
+                        <span class="step-title">Open Source Control</span>
+                        <div class="step-content">
+                            <ol>
+                                <li>Click the Source Control icon in the left sidebar (looks like a branch)</li>
+                                <li>Or press <code>Ctrl + Shift + G</code></li>
+                            </ol>
+                            <p><strong>The Source Control panel shows:</strong></p>
+                            <ul>
+                                <li><strong>Changes:</strong> Modified files</li>
+                                <li><strong>Staged Changes:</strong> Files ready to commit</li>
+                                <li><strong>Commit message box:</strong> Where you describe changes</li>
+                                <li><strong>Branch indicator:</strong> Current branch at the bottom</li>
+                            </ul>
+                        </div>
+                    </div>
+
+                    <h3>Making Commits</h3>
+
+                    <div class="step-container">
+                        <span class="step-number">4</span>
+                        <span class="step-title">Stage and Commit Changes</span>
+                        <div class="step-content">
+                            <ol>
+                                <li>Make changes to your files</li>
+                                <li>Open <strong>Source Control</strong> panel</li>
+                                <li>Modified files appear under <strong>"Changes"</strong></li>
+                                <li>Click the <strong>+</strong> icon next to a file to stage it</li>
+                                <li>Or click <strong>+</strong> next to "Changes" to stage all files</li>
+                                <li>Enter a commit message in the text box</li>
+                                <li>Click the <strong>✓</strong> (checkmark) button to commit</li>
+                            </ol>
+
+                            <div class="tip-box">
+                                <strong>💡 Quick Stage & Commit:</strong> Type your message and press <code>Ctrl + Enter</code> to commit all changes at once.
+                            </div>
+                        </div>
+                    </div>
+
+                    <h3>Pushing and Pulling</h3>
+
+                    <div class="step-container">
+                        <span class="step-number">5</span>
+                        <span class="step-title">Sync with GitHub</span>
+                        <div class="step-content">
+                            <p><strong>To Push:</strong></p>
+                            <ol>
+                                <li>After committing, click the <strong>...</strong> (more actions) in Source Control</li>
+                                <li>Select <strong>"Push"</strong></li>
+                                <li>Or click the cloud icon with an arrow in the status bar</li>
+                            </ol>
+
+                            <p><strong>To Pull:</strong></p>
+                            <ol>
+                                <li>Click <strong>...</strong> in Source Control</li>
+                                <li>Select <strong>"Pull"</strong></li>
+                            </ol>
+
+                            <div class="info-box">
+                                <strong>📌 Sync:</strong> The <strong>"Sync Changes"</strong> option pulls and then pushes in one action.
+                            </div>
+                        </div>
+                    </div>
+
+                    <h3>Working with Branches</h3>
+
+                    <div class="step-container">
+                        <span class="step-number">6</span>
+                        <span class="step-title">Create and Switch Branches</span>
+                        <div class="step-content">
+                            <p><strong>Create a Branch:</strong></p>
+                            <ol>
+                                <li>Click the branch name in the bottom-left corner of the status bar</li>
+                                <li>Select <strong>"Create new branch"</strong></li>
+                                <li>Enter a branch name</li>
+                                <li>Press Enter (automatically switches to the new branch)</li>
+                            </ol>
+
+                            <p><strong>Switch Branches:</strong></p>
+                            <ol>
+                                <li>Click the branch name in the status bar</li>
+                                <li>Select the branch you want to switch to from the list</li>
+                            </ol>
+
+                            <p><strong>Publish a Branch:</strong></p>
+                            <ol>
+                                <li>After creating a branch, the cloud icon appears in status bar</li>
+                                <li>Click it to publish the branch to GitHub</li>
+                            </ol>
+                        </div>
+                    </div>
+
+                    <h3>Using GitLens Extension (Optional but Recommended)</h3>
+
+                    <div class="step-container">
+                        <span class="step-number">7</span>
+                        <span class="step-title">Install GitLens</span>
+                        <div class="step-content">
+                            <p>GitLens supercharges Git in VS Code with powerful visualizations.</p>
+                            <ol>
+                                <li>Click the Extensions icon in the sidebar (or press <code>Ctrl + Shift + X</code>)</li>
+                                <li>Search for <strong>"GitLens"</strong></li>
+                                <li>Click <strong>"Install"</strong></li>
+                            </ol>
+
+                            <p><strong>GitLens Features:</strong></p>
+                            <ul>
+                                <li><strong>Inline blame:</strong> See who changed each line of code</li>
+                                <li><strong>File history:</strong> Visual timeline of file changes</li>
+                                <li><strong>Compare branches:</strong> See differences between branches</li>
+                                <li><strong>Repository view:</strong> Browse commits, branches, and tags</li>
+                            </ul>
+                        </div>
+                    </div>
+
+                    <h3>Viewing History and Diffs</h3>
+
+                    <div class="step-container">
+                        <span class="step-number">8</span>
+                        <span class="step-title">Compare Changes</span>
+                        <div class="step-content">
+                            <p><strong>View file changes:</strong></p>
+                            <ol>
+                                <li>In Source Control, click on any modified file</li>
+                                <li>VS Code opens a diff view showing old vs. new</li>
+                            </ol>
+
+                            <p><strong>View commit history:</strong></p>
+                            <ol>
+                                <li>Right-click on a file in Explorer</li>
+                                <li>Select <strong>"View Timeline"</strong></li>
+                                <li>Or use GitLens to see full repository history</li>
+                            </ol>
+                        </div>
+                    </div>
+
+                    <h3>Resolving Conflicts</h3>
+
+                    <div class="step-container">
+                        <span class="step-number">9</span>
+                        <span class="step-title">Handle Merge Conflicts</span>
+                        <div class="step-content">
+                            <ol>
+                                <li>When a conflict occurs, VS Code highlights the conflicted files</li>
+                                <li>Click on a conflicted file to open it</li>
+                                <li>VS Code shows conflict markers with options:
+                                    <ul>
+                                        <li><strong>Accept Current Change:</strong> Keep your version</li>
+                                        <li><strong>Accept Incoming Change:</strong> Use the GitHub version</li>
+                                        <li><strong>Accept Both Changes:</strong> Keep both versions</li>
+                                        <li><strong>Compare Changes:</strong> See side-by-side diff</li>
+                                    </ul>
+                                </li>
+                                <li>Click the option that makes sense for your situation</li>
+                                <li>Remove any remaining conflict markers</li>
+                                <li>Stage and commit the resolved file</li>
+                            </ol>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Section 5: Common Workflows -->
+            <button class="collapsible">5. Common Git Workflows</button>
+            <div class="collapsible-content">
+                <div class="collapsible-inner">
+                    <h3>Workflow 1: Feature Development</h3>
+                    
+                    <div class="step-container">
+                        <span class="step-number">1</span>
+                        <span class="step-title">Start: Pull Latest Changes</span>
+                        <div class="step-content">
+                            <p>Always start by getting the latest code from the main branch.</p>
+                        </div>
+                    </div>
+
+                    <div class="step-container">
+                        <span class="step-number">2</span>
+                        <span class="step-title">Create Feature Branch</span>
+                        <div class="step-content">
+                            <p>Create a new branch with a descriptive name like <code>feature/shopping-cart</code></p>
+                        </div>
+                    </div>
+
+                    <div class="step-container">
+                        <span class="step-number">3</span>
+                        <span class="step-title">Develop and Commit Regularly</span>
+                        <div class="step-content">
+                            <p>Make small, logical commits as you work. Each commit should represent a complete thought.</p>
+                        </div>
+                    </div>
+
+                    <div class="step-container">
+                        <span class="step-number">4</span>
+                        <span class="step-title">Push to GitHub Daily</span>
+                        <div class="step-content">
+                            <p>Push your branch at least once per day to back up your work.</p>
+                        </div>
+                    </div>
+
+                    <div class="step-container">
+                        <span class="step-number">5</span>
+                        <span class="step-title">Create Pull Request</span>
+                        <div class="step-content">
+                            <p>When the feature is complete, create a pull request to merge into main.</p>
+                        </div>
+                    </div>
+
+                    <div class="step-container">
+                        <span class="step-number">6</span>
+                        <span class="step-title">Code Review and Merge</span>
+                        <div class="step-content">
+                            <p>Have a teammate review your code, make requested changes, then merge.</p>
+                        </div>
+                    </div>
+
+                    <div class="step-container">
+                        <span class="step-number">7</span>
+                        <span class="step-title">Delete Feature Branch</span>
+                        <div class="step-content">
+                            <p>After merging, delete the feature branch to keep your repository clean.</p>
+                        </div>
+                    </div>
+
+                    <h3>Workflow 2: Hotfix (Urgent Bug Fix)</h3>
+
+                    <div class="step-container">
+                        <span class="step-number">1</span>
+                        <span class="step-title">Create Hotfix Branch from Main</span>
+                        <div class="step-content">
+                            <p>Branch directly from main: <code>hotfix/login-crash</code></p>
+                        </div>
+                    </div>
+
+                    <div class="step-container">
+                        <span class="step-number">2</span>
+                        <span class="step-title">Fix and Test</span>
+                        <div class="step-content">
+                            <p>Make the minimal changes needed to fix the issue and test thoroughly.</p>
+                        </div>
+                    </div>
+
+                    <div class="step-container">
+                        <span class="step-number">3</span>
+                        <span class="step-title">Merge Immediately</span>
+                        <div class="step-content">
+                            <p>Create pull request and merge as soon as the fix is verified.</p>
+                        </div>
+                    </div>
+
+                    <h3>Workflow 3: Team Collaboration</h3>
+
+                    <div class="step-container">
+                        <span class="step-number">1</span>
+                        <span class="step-title">Start Each Day with Pull</span>
+                        <div class="step-content">
+                            <p>Pull changes from main to get your teammates' latest work.</p>
+                        </div>
+                    </div>
+
+                    <div class="step-container">
+                        <span class="step-number">2</span>
+                        <span class="step-title">Communicate About Work</span>
+                        <div class="step-content">
+                            <p>Let teammates know which files you're working on to minimize conflicts.</p>
+                        </div>
+                    </div>
+
+                    <div class="step-container">
+                        <span class="step-number">3</span>
+                        <span class="step-title">Pull Before Pushing</span>
+                        <div class="step-content">
+                            <p>Always pull before pushing to catch and resolve conflicts locally.</p>
+                        </div>
+                    </div>
+
+                    <div class="step-container">
+                        <span class="step-number">4</span>
+                        <span class="step-title">Use Pull Requests for Review</span>
+                        <div class="step-content">
+                            <p>Never push directly to main. Always use pull requests for code review.</p>
+                        </div>
+                    </div>
+
+                    <h3>Daily Git Routine</h3>
+
+                    <div class="success-box">
+                        <h4>Morning Routine</h4>
+                        <ol>
+                            <li>Open your project</li>
+                            <li>Pull latest changes</li>
+                            <li>Review any merge conflicts</li>
+                            <li>Start working on your branch</li>
+                        </ol>
+                    </div>
+
+                    <div class="info-box">
+                        <h4>Throughout the Day</h4>
+                        <ol>
+                            <li>Make logical changes</li>
+                            <li>Commit frequently (every 30-60 minutes of work)</li>
+                            <li>Write clear commit messages</li>
+                            <li>Test your changes</li>
+                        </ol>
+                    </div>
+
+                    <div class="success-box">
+                        <h4>End of Day</h4>
+                        <ol>
+                            <li>Commit any remaining work</li>
+                            <li>Push to GitHub</li>
+                            <li>Create or update pull request if feature is ready</li>
+                        </ol>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Section 6: Best Practices -->
+            <button class="collapsible">6. Best Practices & Tips</button>
+            <div class="collapsible-content">
+                <div class="collapsible-inner">
+                    <h3>Commit Best Practices</h3>
+
+                    <div class="success-box">
+                        <h4>✅ Good Commits</h4>
+                        <ul>
+                            <li><strong>Small and focused:</strong> Each commit does one thing</li>
+                            <li><strong>Complete:</strong> The code works after the commit</li>
+                            <li><strong>Clear message:</strong> Anyone can understand what changed and why</li>
+                            <li><strong>Frequent:</strong> Commit often to save your progress</li>
+                        </ul>
+                    </div>
+
+                    <div class="warning-box">
+                        <h4>❌ Bad Commits</h4>
+                        <ul>
+                            <li><strong>Too large:</strong> Changing 20 files at once</li>
+                            <li><strong>Broken code:</strong> Code doesn't work after the commit</li>
+                            <li><strong>Vague messages:</strong> "Fixed stuff" or "Updates"</li>
+                            <li><strong>Rare:</strong> Committing only once per day</li>
+                        </ul>
+                    </div>
+
+                    <h3>Commit Message Format</h3>
+
+                    <div class="code-block">
+Add user authentication system
+
+- Implemented login and registration forms
+- Added password hashing with bcrypt
+- Created user session management
+- Added "Remember me" functionality
+                    </div>
+
+                    <div class="tip-box">
+                        <strong>💡 Template:</strong>
+                        <ul>
+                            <li><strong>Line 1:</strong> Summary in present tense (50 chars max)</li>
+                            <li><strong>Line 2:</strong> Blank line</li>
+                            <li><strong>Lines 3+:</strong> Detailed bullet points explaining what and why</li>
+                        </ul>
+                    </div>
+
+                    <h3>Branch Naming Conventions</h3>
+
+                    <div class="step-container">
+                        <h4>Use Prefixes</h4>
+                        <ul>
+                            <li><code>feature/</code> - New features: <code>feature/user-dashboard</code></li>
+                            <li><code>bugfix/</code> - Bug fixes: <code>bugfix/payment-error</code></li>
+                            <li><code>hotfix/</code> - Urgent production fixes: <code>hotfix/security-patch</code></li>
+                            <li><code>enhancement/</code> - Improvements: <code>enhancement/faster-loading</code></li>
+                            <li><code>refactor/</code> - Code restructuring: <code>refactor/database-layer</code></li>
+                        </ul>
+                    </div>
+
+                    <h3>What NOT to Commit</h3>
+
+                    <div class="warning-box">
+                        <h4>⚠️ Never Commit These Files:</h4>
+                        <ul>
+                            <li><strong>Passwords and API keys</strong> - Use environment variables instead</li>
+                            <li><strong>Generated files</strong> - Build outputs, compiled code</li>
+                            <li><strong>Dependencies</strong> - node_modules, packages (use package managers)</li>
+                            <li><strong>Personal settings</strong> - IDE configuration files</li>
+                            <li><strong>Large binary files</strong> - Videos, large datasets</li>
+                            <li><strong>Temporary files</strong> - Cache, logs, temp folders</li>
+                        </ul>
+                    </div>
+
+                    <h3>Using .gitignore</h3>
+
+                    <div class="step-container">
+                        <span class="step-number">1</span>
+                        <span class="step-title">Create .gitignore File</span>
+                        <div class="step-content">
+                            <p>Create a file named <code>.gitignore</code> in your project root to tell Git which files to ignore.</p>
+                            
+                            <p><strong>Example .gitignore for web projects:</strong></p>
+                            <div class="code-block">
+# Dependencies
+node_modules/
+vendor/
+
+# Environment variables
+.env
+.env.local
+
+# Build outputs
+dist/
+build/
+*.min.js
+*.min.css
+
+# IDE files
+.vscode/
+.idea/
+*.suo
+
+# Operating system files
+.DS_Store
+Thumbs.db
+
+# Logs
+*.log
+logs/
+
+# Temporary files
+tmp/
+temp/
+                            </div>
+                        </div>
+                    </div>
+
+                    <h3>Merge Conflict Prevention</h3>
+
+                    <div class="tip-box">
+                        <h4>💡 Strategies to Minimize Conflicts:</h4>
+                        <ul>
+                            <li><strong>Pull frequently:</strong> Get updates from main daily</li>
+                            <li><strong>Keep branches short-lived:</strong> Merge features within a few days</li>
+                            <li><strong>Communicate with team:</strong> Coordinate who works on what files</li>
+                            <li><strong>Small commits:</strong> Easier to identify conflict sources</li>
+                            <li><strong>Consistent formatting:</strong> Use auto-formatters to avoid style conflicts</li>
+                        </ul>
+                    </div>
+
+                    <h3>Security Best Practices</h3>
+
+                    <div class="warning-box">
+                        <h4>🔒 Protect Your Credentials:</h4>
+                        <ul>
+                            <li><strong>Use environment variables:</strong> Never hardcode passwords or API keys</li>
+                            <li><strong>Enable 2FA on GitHub:</strong> Secure your account</li>
+                            <li><strong>Use SSH keys or tokens:</strong> More secure than passwords</li>
+                            <li><strong>Review before pushing:</strong> Check for accidental secrets</li>
+                            <li><strong>Use GitHub Secrets:</strong> For CI/CD pipelines</li>
+                        </ul>
+                    </div>
+
+                    <h3>Repository Hygiene</h3>
+
+                    <div class="step-container">
+                        <h4>Keep Your Repository Clean</h4>
+                        <ul>
+                            <li><strong>Delete merged branches:</strong> Reduces clutter</li>
+                            <li><strong>Write a good README:</strong> Explain what the project does</li>
+                            <li><strong>Use meaningful folder structure:</strong> Organize code logically</li>
+                            <li><strong>Tag releases:</strong> Mark important versions</li>
+                            <li><strong>Close stale issues:</strong> Keep issue tracker relevant</li>
+                        </ul>
+                    </div>
+
+                    <h3>Collaboration Etiquette</h3>
+
+                    <div class="success-box">
+                        <h4>✅ Be a Good Team Member:</h4>
+                        <ul>
+                            <li><strong>Review pull requests promptly:</strong> Don't leave teammates waiting</li>
+                            <li><strong>Write constructive reviews:</strong> Be helpful, not critical</li>
+                            <li><strong>Test before merging:</strong> Make sure changes work</li>
+                            <li><strong>Update documentation:</strong> Keep docs in sync with code</li>
+                            <li><strong>Ask questions:</strong> Better to clarify than assume</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Section 7: Troubleshooting -->
+            <button class="collapsible">7. Common Issues & Solutions</button>
+            <div class="collapsible-content">
+                <div class="collapsible-inner">
+                    <h3>Issue: Can't Push to GitHub</h3>
+                    
+                    <div class="step-container">
+                        <h4>Problem: "Permission Denied" or "Authentication Failed"</h4>
+                        <p><strong>Solution:</strong></p>
+                        <ol>
+                            <li>Verify you're signed in to GitHub in your IDE</li>
+                            <li>Check that you have push access to the repository</li>
+                            <li>If using tokens, ensure the token hasn't expired</li>
+                            <li>Try signing out and back in to refresh credentials</li>
+                        </ol>
+                    </div>
+
+                    <h3>Issue: Merge Conflicts Are Scary</h3>
+
+                    <div class="step-container">
+                        <h4>Problem: Don't Know How to Resolve Conflicts</h4>
+                        <p><strong>Solution:</strong></p>
+                        <ol>
+                            <li>Don't panic - conflicts are normal!</li>
+                            <li>Understand what conflicted:
+                                <ul>
+                                    <li>Read both versions carefully</li>
+                                    <li>Ask the other developer if unsure</li>
+                                </ul>
+                            </li>
+                            <li>Use your IDE's merge tool - it shows three panels</li>
+                            <li>Test the resolved code before committing</li>
+                            <li>If completely stuck, create a backup and ask for help</li>
+                        </ol>
+                    </div>
+
+                    <h3>Issue: Accidentally Committed Wrong Files</h3>
+
+                    <div class="step-container">
+                        <h4>Problem: Committed .env File or Build Artifacts</h4>
+                        <p><strong>Solution:</strong></p>
+                        <ol>
+                            <li><strong>Before pushing:</strong>
+                                <ul>
+                                    <li>Open Git Changes/Source Control</li>
+                                    <li>Right-click the last commit</li>
+                                    <li>Select "Undo Last Commit" (VS) or "Undo Commit" (VS Code)</li>
+                                    <li>Remove the files you don't want</li>
+                                    <li>Add to .gitignore</li>
+                                    <li>Commit again without those files</li>
+                                </ul>
+                            </li>
+                            <li><strong>After pushing:</strong>
+                                <ul>
+                                    <li>Contact your instructor or team lead</li>
+                                    <li>May need to use advanced Git commands</li>
+                                    <li>Consider if the repository needs to be made private</li>
+                                </ul>
+                            </li>
+                        </ol>
+                    </div>
+
+                    <h3>Issue: Lost Work</h3>
+
+                    <div class="step-container">
+                        <h4>Problem: Deleted Files or Lost Changes</h4>
+                        <p><strong>Solution:</strong></p>
+                        <ol>
+                            <li>Check Git history - your work is probably there!</li>
+                            <li>In VS Code/Visual Studio:
+                                <ul>
+                                    <li>Right-click the file</li>
+                                    <li>Select "Timeline" or "View History"</li>
+                                    <li>Find the version you want</li>
+                                    <li>Restore it</li>
+                                </ul>
+                            </li>
+                            <li>If you committed but didn't push, look in local commits</li>
+                            <li>If pushed, the code is safe on GitHub - just pull it</li>
+                        </ol>
+                    </div>
+
+                    <h3>Issue: Can't Switch Branches</h3>
+
+                    <div class="step-container">
+                        <h4>Problem: "Please commit your changes or stash them"</h4>
+                        <p><strong>Solution:</strong></p>
+                        <ol>
+                            <li><strong>Option 1 - Commit:</strong>
+                                <ul>
+                                    <li>Commit your current work</li>
+                                    <li>Then switch branches</li>
+                                </ul>
+                            </li>
+                            <li><strong>Option 2 - Stash:</strong>
+                                <ul>
+                                    <li>In VS: Right-click in Git Changes → Stash</li>
+                                    <li>In VS Code: Click ... → Stash → Stash (Include Untracked)</li>
+                                    <li>Switch branches</li>
+                                    <li>Come back and "Apply Stash" to restore your work</li>
+                                </ul>
+                            </li>
+                        </ol>
+                    </div>
+
+                    <h3>Issue: Pushed to Wrong Branch</h3>
+
+                    <div class="step-container">
+                        <h4>Problem: Committed to Main Instead of Feature Branch</h4>
+                        <p><strong>Solution:</strong></p>
+                        <div class="warning-box">
+                            <strong>⚠️ Prevention is Best:</strong> Always check which branch you're on before committing!
+                        </div>
+                        <ol>
+                            <li>Create the correct branch</li>
+                            <li>Ask your instructor for help moving the commits</li>
+                            <li>This involves cherry-picking or reset commands</li>
+                        </ol>
+                    </div>
+
+                    <h3>Issue: Repository is Broken</h3>
+
+                    <div class="step-container">
+                        <h4>Problem: Everything Seems Messed Up</h4>
+                        <p><strong>Solution:</strong></p>
+                        <ol>
+                            <li><strong>Don't delete the repository!</strong></li>
+                            <li>Make a copy of your current work folder (just in case)</li>
+                            <li>Clone a fresh copy from GitHub to a new location</li>
+                            <li>Manually copy your recent changes to the fresh clone</li>
+                            <li>Commit and push from the clean copy</li>
+                        </ol>
+                    </div>
+
+                    <h3>Getting Help</h3>
+
+                    <div class="info-box">
+                        <h4>📌 When to Ask for Help:</h4>
+                        <ul>
+                            <li>You've tried the solutions above and they don't work</li>
+                            <li>You're about to do something that might delete code</li>
+                            <li>Error messages you don't understand</li>
+                            <li>Merge conflicts involving critical files</li>
+                            <li>You accidentally pushed sensitive information</li>
+                        </ul>
+                        <p><strong>Better to ask than to make things worse!</strong></p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Section 8: Additional Resources -->
+            <button class="collapsible">8. Additional Resources & Practice</button>
+            <div class="collapsible-content">
+                <div class="collapsible-inner">
+                    <h3>Learning Resources</h3>
+
+                    <div class="tools-grid">
+                        <div class="tool-card">
+                            <h4>📖 GitHub Docs</h4>
+                            <p>Official documentation with guides and tutorials</p>
+                            <code>docs.github.com</code>
+                        </div>
+
+                        <div class="tool-card">
+                            <h4>🎓 GitHub Skills</h4>
+                            <p>Interactive courses on Git and GitHub</p>
+                            <code>skills.github.com</code>
+                        </div>
+
+                        <div class="tool-card">
+                            <h4>🎮 Learn Git Branching</h4>
+                            <p>Visual, interactive Git tutorial</p>
+                            <code>learngitbranching.js.org</code>
+                        </div>
+
+                        <div class="tool-card">
+                            <h4>📚 Pro Git Book</h4>
+                            <p>Comprehensive free book on Git</p>
+                            <code>git-scm.com/book</code>
+                        </div>
+                    </div>
+
+                    <h3>Practice Exercises</h3>
+
+                    <div class="step-container">
+                        <span class="step-number">1</span>
+                        <span class="step-title">Personal Portfolio Project</span>
+                        <div class="step-content">
+                            <ul>
+                                <li>Create a repository for your portfolio website</li>
+                                <li>Use branches for each new page you add</li>
+                                <li>Practice committing, pushing, and merging</li>
+                                <li>Build your Git history organically</li>
+                            </ul>
+                        </div>
+                    </div>
+
+                    <div class="step-container">
+                        <span class="step-number">2</span>
+                        <span class="step-title">Team Project Simulation</span>
+                        <div class="step-content">
+                            <ul>
+                                <li>Partner with a classmate</li>
+                                <li>Create a shared repository</li>
+                                <li>Work on different branches simultaneously</li>
+                                <li>Practice resolving merge conflicts</li>
+                                <li>Review each other's pull requests</li>
+                            </ul>
+                        </div>
+                    </div>
+
+                    <div class="step-container">
+                        <span class="step-number">3</span>
+                        <span class="step-title">Contribute to Open Source</span>
+                        <div class="step-content">
+                            <ul>
+                                <li>Find beginner-friendly projects on GitHub</li>
+                                <li>Look for issues tagged "good first issue"</li>
+                                <li>Fork the repository</li>
+                                <li>Make improvements and submit pull requests</li>
+                                <li>Build real-world experience</li>
+                            </ul>
+                        </div>
+                    </div>
+
+                    <h3>Git Cheat Sheet</h3>
+
+                    <div class="info-box">
+                        <h4>📋 Essential IDE Actions</h4>
+                        <ul>
+                            <li><strong>Clone:</strong> Get repository from GitHub</li>
+                            <li><strong>Pull:</strong> Download latest changes</li>
+                            <li><strong>Stage:</strong> Select files for commit</li>
+                            <li><strong>Commit:</strong> Save a checkpoint</li>
+                            <li><strong>Push:</strong> Upload commits to GitHub</li>
+                            <li><strong>Branch:</strong> Create parallel version</li>
+                            <li><strong>Merge:</strong> Combine branches</li>
+                            <li><strong>Pull Request:</strong> Propose changes for review</li>
+                        </ul>
+                    </div>
+
+                    <h3>GitHub Student Developer Pack</h3>
+
+                    <div class="success-box">
+                        <h4>🎁 Free Tools for Students</h4>
+                        <p>GitHub offers students free access to premium developer tools:</p>
+                        <ul>
+                            <li>GitHub Pro (with unlimited private repos)</li>
+                            <li>Free domain name</li>
+                            <li>Cloud hosting credits</li>
+                            <li>Premium developer tools</li>
+                        </ul>
+                        <p>Apply at: <code>education.github.com/pack</code></p>
+                    </div>
+
+                    <h3>Next Steps</h3>
+
+                    <div class="tip-box">
+                        <h4>💡 Continue Your Git Journey</h4>
+                        <ol>
+                            <li><strong>Use Git daily:</strong> Make it a habit for all projects</li>
+                            <li><strong>Explore GitHub Actions:</strong> Automate testing and deployment</li>
+                            <li><strong>Learn advanced Git:</strong> Rebasing, cherry-picking, and more</li>
+                            <li><strong>Understand GitFlow:</strong> Professional branching strategies</li>
+                            <li><strong>Build your profile:</strong> Showcase projects on GitHub</li>
+                        </ol>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+
+        <div class="footer">
+            <p>&copy; 2024 COP4834 Web Systems II | Git & GitHub Module</p>
+            <p>Remember: Commit often, push regularly, and always pull before you start working!</p>
+        </div>
+    </div>
+
+    <script>
+        // Make collapsible sections work
+        const collapsibles = document.getElementsByClassName("collapsible");
+        
+        for (let i = 0; i < collapsibles.length; i++) {
+            collapsibles[i].addEventListener("click", function() {
+                this.classList.toggle("active");
+                const content = this.nextElementSibling;
+                
+                if (content.style.maxHeight) {
+                    content.style.maxHeight = null;
+                } else {
+                    content.style.maxHeight = content.scrollHeight + "px";
+                }
+            });
+        }
+
+        // Expand first section by default
+        if (collapsibles.length > 0) {
+            collapsibles[0].click();
+        }
+    </script>
+</body>
+</html>

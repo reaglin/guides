@@ -1,0 +1,1089 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Module 18: Denitrification — BMPFast Learning System</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700&family=Source+Serif+4:ital,wght@0,300;0,400;0,600;1,400&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --forest:      #2d5a27;
+      --forest-mid:  #3e7234;
+      --forest-light:#5c9e50;
+      --forest-pale: #e8f0e6;
+      --forest-tint: #f3f7f2;
+      --warm-white:  #faf8f4;
+      --cream:       #f5f0e8;
+      --ink:         #1c1c1a;
+      --ink-mid:     #3a3a36;
+      --ink-light:   #6b6b65;
+      --rule:        #c8d8c4;
+      --accent-gold: #a07830;
+      --accent-rust: #8b3a2a;
+      --sidebar-w:   260px;
+    }
+
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      font-family: 'Source Serif 4', Georgia, serif;
+      font-size: 17px;
+      line-height: 1.75;
+      color: var(--ink);
+      background: var(--warm-white);
+    }
+
+    /* ── SIDEBAR ─────────────────────────────────────── */
+    #sidebar {
+      position: fixed;
+      top: 0; left: 0;
+      width: var(--sidebar-w);
+      height: 100vh;
+      background: var(--forest);
+      color: #fff;
+      display: flex;
+      flex-direction: column;
+      overflow-y: auto;
+      z-index: 100;
+      padding-bottom: 2rem;
+    }
+
+    .sidebar-logo {
+      padding: 1.5rem 1.25rem 1rem;
+      border-bottom: 1px solid rgba(255,255,255,0.15);
+    }
+    .sidebar-logo .module-label {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.65rem;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: rgba(255,255,255,0.55);
+      margin-bottom: 0.35rem;
+    }
+    .sidebar-logo .module-title {
+      font-family: 'Playfair Display', serif;
+      font-size: 1.1rem;
+      font-weight: 600;
+      color: #fff;
+      line-height: 1.3;
+    }
+
+    .sidebar-nav { padding: 1rem 0; flex: 1; }
+
+    .nav-section-label {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.6rem;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      color: rgba(255,255,255,0.4);
+      padding: 0.75rem 1.25rem 0.25rem;
+    }
+
+    .nav-item {
+      display: block;
+      padding: 0.45rem 1.25rem 0.45rem 1.5rem;
+      font-family: 'Source Serif 4', serif;
+      font-size: 0.82rem;
+      color: rgba(255,255,255,0.8);
+      text-decoration: none;
+      border-left: 3px solid transparent;
+      transition: all 0.18s ease;
+      line-height: 1.35;
+    }
+    .nav-item:hover,
+    .nav-item.active {
+      color: #fff;
+      background: rgba(255,255,255,0.08);
+      border-left-color: var(--forest-light);
+    }
+    .nav-item.sub {
+      padding-left: 2.25rem;
+      font-size: 0.77rem;
+      color: rgba(255,255,255,0.6);
+    }
+
+    /* ── MAIN CONTENT ─────────────────────────────────── */
+    #main {
+      margin-left: var(--sidebar-w);
+      min-height: 100vh;
+    }
+
+    /* Hero */
+    .hero {
+      background: linear-gradient(135deg, var(--forest) 0%, var(--forest-mid) 60%, var(--forest-light) 100%);
+      color: #fff;
+      padding: 3.5rem 3rem 3rem;
+      position: relative;
+      overflow: hidden;
+    }
+    .hero::after {
+      content: '';
+      position: absolute;
+      bottom: -1px; left: 0; right: 0;
+      height: 32px;
+      background: var(--warm-white);
+      clip-path: ellipse(55% 100% at 50% 100%);
+    }
+    .hero-eyebrow {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.7rem;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      color: rgba(255,255,255,0.6);
+      margin-bottom: 0.6rem;
+    }
+    .hero h1 {
+      font-family: 'Playfair Display', serif;
+      font-size: 2.6rem;
+      font-weight: 700;
+      line-height: 1.15;
+      margin-bottom: 1rem;
+    }
+    .hero-meta {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.72rem;
+      color: rgba(255,255,255,0.55);
+      letter-spacing: 0.05em;
+    }
+    .hero-meta span { margin-right: 1.5rem; }
+
+    /* Content area */
+    .content {
+      padding: 2.5rem 3rem 4rem;
+      max-width: 860px;
+    }
+
+    /* Section headings */
+    .content h2 {
+      font-family: 'Playfair Display', serif;
+      font-size: 1.65rem;
+      font-weight: 700;
+      color: var(--forest);
+      margin-top: 3rem;
+      margin-bottom: 0.75rem;
+      padding-bottom: 0.4rem;
+      border-bottom: 2px solid var(--rule);
+    }
+    .content h2:first-child { margin-top: 0.5rem; }
+
+    .content h3 {
+      font-family: 'Playfair Display', serif;
+      font-size: 1.2rem;
+      font-weight: 600;
+      color: var(--forest-mid);
+      margin-top: 2rem;
+      margin-bottom: 0.5rem;
+    }
+
+    .content h4 {
+      font-family: 'Source Serif 4', serif;
+      font-size: 1rem;
+      font-weight: 600;
+      color: var(--ink-mid);
+      margin-top: 1.5rem;
+      margin-bottom: 0.4rem;
+      font-style: italic;
+    }
+
+    .content p {
+      margin-bottom: 1rem;
+      color: var(--ink-mid);
+    }
+
+    .content ul, .content ol {
+      padding-left: 1.5rem;
+      margin-bottom: 1rem;
+    }
+    .content li { margin-bottom: 0.4rem; color: var(--ink-mid); }
+    .content li ul { margin-top: 0.25rem; margin-bottom: 0.25rem; }
+
+    /* Callout boxes */
+    .callout {
+      border-left: 4px solid var(--forest-mid);
+      background: var(--forest-pale);
+      padding: 1rem 1.25rem;
+      margin: 1.5rem 0;
+      border-radius: 0 4px 4px 0;
+    }
+    .callout.warning {
+      border-left-color: var(--accent-rust);
+      background: #fdf0ed;
+    }
+    .callout.info {
+      border-left-color: var(--accent-gold);
+      background: #fdf8f0;
+    }
+    .callout-label {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.65rem;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--forest-mid);
+      margin-bottom: 0.4rem;
+    }
+    .callout.warning .callout-label { color: var(--accent-rust); }
+    .callout.info .callout-label { color: var(--accent-gold); }
+    .callout p { margin-bottom: 0; font-size: 0.92rem; }
+
+    /* Key facts / data items */
+    .data-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 1rem;
+      margin: 1.5rem 0;
+    }
+    .data-item {
+      background: var(--forest-tint);
+      border: 1px solid var(--rule);
+      border-radius: 4px;
+      padding: 0.9rem 1.1rem;
+    }
+    .data-item .data-label {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.65rem;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--forest-mid);
+      margin-bottom: 0.3rem;
+    }
+    .data-item .data-value {
+      font-family: 'Playfair Display', serif;
+      font-size: 1.25rem;
+      font-weight: 600;
+      color: var(--forest);
+    }
+    .data-item .data-unit {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.75rem;
+      color: var(--ink-light);
+      margin-left: 0.25rem;
+    }
+
+    /* Figure placeholder */
+    .figure-block {
+      width: 100%;
+      margin: 2rem 0;
+    }
+    .figure-placeholder {
+      width: 100%;
+      background: var(--cream);
+      border: 2px dashed var(--rule);
+      border-radius: 4px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 2.5rem 1.5rem;
+      text-align: center;
+      min-height: 200px;
+    }
+    .figure-placeholder .fig-icon {
+      font-size: 2rem;
+      margin-bottom: 0.75rem;
+      opacity: 0.4;
+    }
+    .figure-placeholder .fig-id {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.7rem;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--forest-mid);
+      margin-bottom: 0.35rem;
+    }
+    .figure-placeholder .fig-desc {
+      font-size: 0.88rem;
+      color: var(--ink-light);
+      max-width: 520px;
+      line-height: 1.5;
+    }
+    .figure-caption {
+      font-size: 0.83rem;
+      color: var(--ink-light);
+      font-style: italic;
+      margin-top: 0.5rem;
+      padding: 0 0.5rem;
+      line-height: 1.5;
+    }
+
+    /* Source attribution table */
+    .source-tag {
+      display: inline-block;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.62rem;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      background: var(--forest-pale);
+      color: var(--forest);
+      border: 1px solid var(--rule);
+      border-radius: 3px;
+      padding: 0.1rem 0.45rem;
+      margin-left: 0.4rem;
+      vertical-align: middle;
+    }
+
+    /* Technical table */
+    .tech-table {
+      width: 100%;
+      border-collapse: collapse;
+      margin: 1.5rem 0;
+      font-size: 0.88rem;
+    }
+    .tech-table thead th {
+      background: var(--forest);
+      color: #fff;
+      font-family: 'Source Serif 4', serif;
+      font-weight: 600;
+      padding: 0.6rem 0.85rem;
+      text-align: left;
+      font-size: 0.82rem;
+    }
+    .tech-table tbody tr:nth-child(even) { background: var(--forest-tint); }
+    .tech-table tbody td {
+      padding: 0.55rem 0.85rem;
+      border-bottom: 1px solid var(--rule);
+      vertical-align: top;
+      color: var(--ink-mid);
+    }
+
+    /* Chemical formula inline styling */
+    .chem {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.85em;
+      background: var(--cream);
+      padding: 0.05em 0.3em;
+      border-radius: 3px;
+      white-space: nowrap;
+    }
+
+    /* HR divider */
+    .section-rule {
+      border: none;
+      border-top: 1px solid var(--rule);
+      margin: 2.5rem 0;
+    }
+
+    /* Reference appendix */
+    .reference-section {
+      background: var(--cream);
+      border-top: 3px solid var(--forest);
+      padding: 2rem 3rem;
+      margin-top: 2rem;
+    }
+    .reference-section h2 {
+      font-family: 'Playfair Display', serif;
+      font-size: 1.3rem;
+      color: var(--forest);
+      margin-bottom: 1.25rem;
+      border-bottom: 1px solid var(--rule);
+      padding-bottom: 0.4rem;
+    }
+    .ref-item {
+      display: grid;
+      grid-template-columns: 28px 1fr;
+      gap: 0.5rem;
+      margin-bottom: 1.25rem;
+      font-size: 0.88rem;
+      color: var(--ink-mid);
+    }
+    .ref-num {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.75rem;
+      color: var(--forest-mid);
+      padding-top: 0.1rem;
+    }
+    .ref-figure-block {
+      margin: 1.5rem 0;
+    }
+    .ref-figure-block .figure-placeholder { min-height: 160px; }
+
+    /* Responsive */
+    @media (max-width: 900px) {
+      #sidebar { width: 220px; }
+      #main { margin-left: 220px; }
+      .content { padding: 1.5rem 1.5rem 3rem; }
+      .hero { padding: 2.5rem 1.5rem 2rem; }
+      .data-grid { grid-template-columns: 1fr; }
+    }
+    @media (max-width: 640px) {
+      #sidebar { display: none; }
+      #main { margin-left: 0; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- ════════════════════════════════════════════════════
+     SIDEBAR
+════════════════════════════════════════════════════ -->
+<nav id="sidebar">
+  <div class="sidebar-logo">
+    <div class="module-label">BMPFast Learning System</div>
+    <div class="module-title">Module 18<br>Denitrification</div>
+  </div>
+
+  <div class="sidebar-nav">
+    <div class="nav-section-label">Contents</div>
+    <a href="#overview" class="nav-item">Overview</a>
+    <a href="#learning-objectives" class="nav-item">Learning Objectives</a>
+    <a href="#what-is-denitrification" class="nav-item">What Is Denitrification?</a>
+    <a href="#requirements" class="nav-item">Denitrification Requirements</a>
+    <a href="#req-carbon" class="nav-item sub">Carbon Source</a>
+    <a href="#req-anoxic" class="nav-item sub">Anoxic Environment</a>
+    <a href="#req-nitrate" class="nav-item sub">Nitrate Availability</a>
+    <a href="#req-environment" class="nav-item sub">Environmental Conditions</a>
+    <a href="#req-contra" class="nav-item sub">Contraindicated Conditions</a>
+    <a href="#kinetics" class="nav-item">Reaction Kinetics</a>
+    <a href="#urban-stormwater" class="nav-item">Urban Stormwater Context</a>
+    <a href="#systems" class="nav-item">Denitrification Systems</a>
+    <a href="#sys-deep-bed" class="nav-item sub">Deep Bed Filters</a>
+    <a href="#sys-bioreactors" class="nav-item sub">Woodchip Bioreactors</a>
+    <a href="#sys-bioretention" class="nav-item sub">Bioretention Systems</a>
+    <a href="#florida-context" class="nav-item">Florida Regulatory Context</a>
+    <a href="#design-considerations" class="nav-item">Design Considerations</a>
+    <a href="#references" class="nav-item">References &amp; Figures</a>
+  </div>
+</nav>
+
+<!-- ════════════════════════════════════════════════════
+     MAIN
+════════════════════════════════════════════════════ -->
+<main id="main">
+
+  <!-- Hero -->
+  <header class="hero">
+    <div class="hero-eyebrow">BMPFast Learning System · Module 18</div>
+    <h1>Denitrification</h1>
+    <div class="hero-meta">
+      <span>Harvey H. Harper, Environmental Research &amp; Design, Inc.</span>
+      <span>January 2026</span>
+    </div>
+  </header>
+
+  <!-- Main content -->
+  <div class="content">
+
+    <!-- Overview -->
+    <section id="overview">
+      <h2>Overview</h2>
+      <p>
+        Denitrification is a microbially-mediated process that converts oxidized forms of nitrogen — 
+        primarily nitrate (<span class="chem">NO₃⁻</span>) and nitrite (<span class="chem">NO₂⁻</span>) — 
+        into nitrogen gas (<span class="chem">N₂</span>), effectively removing reactive nitrogen from 
+        the water column. In wastewater treatment plants, denitrification is a well-understood and 
+        routinely engineered process. Its application to urban stormwater management, however, is 
+        considerably more constrained, and understanding these limitations is essential for sound 
+        stormwater BMP design.
+      </p>
+      <p>
+        This module examines the biochemical requirements for denitrification, the kinetics governing 
+        its rate, the specific challenges posed by urban stormwater chemistry, and the engineered 
+        systems that have been developed to exploit or promote denitrification as part of a BMP 
+        treatment train.
+      </p>
+
+      <div class="figure-block">
+        <div class="figure-placeholder">
+          <div class="fig-icon">⚗</div>
+          <div class="fig-id">Figure 18-1</div>
+          <div class="fig-desc">Photograph of a field-scale denitrification bed — organic carbon media (such as wood chips or corncob) spread in a shallow lined bed adjacent to an agricultural or municipal drainage channel, demonstrating the physical scale of passive denitrification systems relative to the receiving water infrastructure.</div>
+        </div>
+        <p class="figure-caption">Figure 18-1. Field-scale denitrification bed showing organic carbon media installation alongside drainage infrastructure. Source: Harper, H.H. — Environmental Research &amp; Design, Inc.</p>
+      </div>
+    </section>
+
+    <!-- Learning Objectives -->
+    <section id="learning-objectives">
+      <h2>Learning Objectives</h2>
+      <p>Upon completing this module, the learner will be able to:</p>
+      <ul>
+        <li>Describe the biochemical process of denitrification and the four essential requirements for it to occur.</li>
+        <li>Explain why urban stormwater runoff presents challenges for effective denitrification.</li>
+        <li>Identify the nitrate concentration thresholds that govern whether denitrification is feasible for a given source water.</li>
+        <li>Understand the first-order reaction kinetics of denitrification and their design implications.</li>
+        <li>Compare the major engineered denitrification system types and their applicability in a stormwater context.</li>
+        <li>Recognize the pre-design verification steps required before committing to a denitrification-based BMP.</li>
+      </ul>
+    </section>
+
+    <!-- What Is Denitrification -->
+    <section id="what-is-denitrification">
+      <h2>What Is Denitrification?</h2>
+      <p>
+        Denitrification is the biological reduction of nitrogen oxides (collectively referred to as 
+        <span class="chem">NOₓ</span>) to molecular nitrogen gas under anaerobic or anoxic conditions. 
+        Facultative heterotrophic bacteria perform this reduction as an alternative to aerobic 
+        respiration when dissolved oxygen is depleted, using nitrate as a terminal electron acceptor 
+        instead of oxygen. The overall reaction sequence is:
+      </p>
+      <p style="font-family:'JetBrains Mono',monospace; font-size:0.9rem; background:var(--cream); padding:0.75rem 1rem; border-radius:4px; margin:1rem 0; line-height:2;">
+        NO₃⁻ → NO₂⁻ → NO → N₂O → N₂ (gas)
+      </p>
+      <p>
+        Each step is catalyzed by a specific reductase enzyme. The end product — dinitrogen gas — 
+        escapes to the atmosphere, permanently removing the nitrogen from the aquatic system. This 
+        makes denitrification fundamentally different from biological nitrogen uptake by plants or 
+        algae, which merely sequesters nitrogen into biomass that may later decompose and release 
+        nitrogen back into the water.
+      </p>
+      <p>
+        In wastewater treatment plants (WWTPs), denitrification is engineered in dedicated anoxic 
+        zones with controlled addition of simple carbon sources such as methanol or acetic acid 
+        to drive the reaction predictably. In natural and engineered stormwater systems, conditions 
+        are far less controlled, making the process intermittent and often rate-limited.
+      </p>
+    </section>
+
+    <!-- Requirements -->
+    <section id="requirements">
+      <h2>Denitrification Requirements</h2>
+      <p>Four conditions must be simultaneously satisfied for denitrification to proceed at a meaningful rate:</p>
+
+      <section id="req-carbon">
+        <h3>1. Degradable Carbon Source</h3>
+        <p>
+          Denitrifying bacteria require an electron donor — a source of biodegradable organic carbon — 
+          to reduce nitrate. The carbon source must be readily degradable, quantified as biochemical 
+          oxygen demand (BOD) rather than total organic carbon (TOC). Simple organic compounds such 
+          as methanol, acetate, and glucose are readily utilized; complex refractory organics such 
+          as humic acids (which give water its color) are not.
+        </p>
+        <ul>
+          <li>WWTPs supply controlled quantities of simple organics (methanol, acetic acid) to ensure adequate carbon availability.</li>
+          <li>Urban stormwater runoff generally contains <strong>low BOD</strong>, limiting the available electron donor and therefore the maximum rate of denitrification.</li>
+          <li>High-color water sources (dominated by humic acids) contribute TOC that is poorly available for denitrification, compounding the carbon limitation.</li>
+        </ul>
+        <div class="callout">
+          <div class="callout-label">Design Implication</div>
+          <p>Where denitrification is intended in a stormwater BMP, an auxiliary carbon source — such as woodchips, corncob, or another lignocellulosic material — must be incorporated to compensate for the low BOD of urban runoff.</p>
+        </div>
+      </section>
+
+      <section id="req-anoxic">
+        <h3>2. Reduced Anoxic Environment</h3>
+        <p>
+          Denitrification is an anaerobic respiratory process. Dissolved oxygen (DO) suppresses 
+          denitrification because aerobic respiration is thermodynamically favored over nitrate 
+          reduction. For significant denitrification to occur, the system must achieve and maintain 
+          reducing conditions characterized by a minimum redox potential (Eh) of <strong>−100 to −200 mV</strong>.
+        </p>
+        <p>
+          In practice, this requires either permanent saturation (as in a submerged filter or the 
+          internal water storage zone of a modified bioretention cell) or sufficiently long hydraulic 
+          residence times under sealed or saturated conditions that dissolved oxygen is consumed 
+          prior to the onset of denitrification.
+        </p>
+      </section>
+
+      <section id="req-nitrate">
+        <h3>3. Significant Nitrate Source</h3>
+        <p>
+          Perhaps the most critical and frequently overlooked requirement in the stormwater context: 
+          the source water must contain sufficient nitrate to sustain meaningful denitrification.
+        </p>
+        <div class="data-grid">
+          <div class="data-item">
+            <div class="data-label">Optimum NO₃⁻ for Denitrification</div>
+            <div class="data-value">280 – 840<span class="data-unit">µg/L</span></div>
+          </div>
+          <div class="data-item">
+            <div class="data-label">Concentration Below Which Denitrification Essentially Stops</div>
+            <div class="data-value">&lt; 100<span class="data-unit">µg/L NOₓ</span></div>
+          </div>
+        </div>
+        <p>
+          Urban stormwater runoff often does not contain sufficient nitrate to sustain meaningful 
+          denitrification. Data from ERD monitoring of four denitrification bed installations found 
+          that <strong>three of the four sites had insufficient NOₓ concentrations</strong> for 
+          significant denitrification to occur. This is a critical finding: the presence of significant 
+          NOₓ concentrations in the source water must be verified through site-specific water quality 
+          sampling prior to committing to a denitrification-based BMP design.
+        </p>
+        <div class="callout warning">
+          <div class="callout-label">Critical Pre-Design Requirement</div>
+          <p>The presence of significant NOₓ concentrations in the intended source water must be verified through site-specific sampling and analysis before designing any denitrification system. Assuming adequate nitrate without data has led to non-functional installations.</p>
+        </div>
+      </section>
+
+      <section id="req-environment">
+        <h3>4. Proper Environmental Conditions</h3>
+        <p>Denitrification is sensitive to pH and temperature:</p>
+
+        <h4>pH</h4>
+        <p>
+          Denitrifying bacteria have an optimum pH range of <strong>7.0 – 8.5</strong>. Activity 
+          declines sharply below pH 6.0 and above pH 9.0. This is an important consideration for 
+          Florida stormwater, where drainage from natural upland areas with organic soils can produce 
+          acidic, high-color water with pH values in the range of 4.5 – 6.0 — conditions that are 
+          directly contraindicated for denitrification.
+        </p>
+
+        <h4>Temperature</h4>
+        <p>
+          The optimum temperature range for denitrification is <strong>5 – 30°C</strong>, with 
+          rates declining substantially at temperatures below 5°C. In Florida's subtropical climate, 
+          low temperatures are generally not a limiting factor; however, elevated summer temperatures 
+          can stress microbial communities if they approach or exceed the upper bound.
+        </p>
+
+        <h4>Water-Based Environment</h4>
+        <p>
+          Denitrification requires a saturated, water-based environment. Intermittent wetting and 
+          drying of soils between storm events — characteristic of conventional stormwater BMPs — 
+          creates aerobic conditions during dry periods that must be overcome before denitrification 
+          can resume in the subsequent storm. This transition period reduces effective denitrification 
+          efficiency in intermittently loaded systems.
+        </p>
+      </section>
+
+      <section id="req-contra">
+        <h3>Contraindicated Conditions</h3>
+        <p>Conditions that render denitrification ineffective or impractical include:</p>
+        <ul>
+          <li><strong>High-color water with low pH</strong> — Humic acid-dominated water (common in Florida wetland and upland drainages) combines poor carbon quality with acidic pH, precluding effective denitrification on both counts.</li>
+          <li><strong>Sources with low nitrate concentrations</strong> — As discussed above, the absence of adequate NOₓ is the single most common reason that designed denitrification systems fail to perform.</li>
+        </ul>
+      </section>
+    </section>
+
+    <hr class="section-rule">
+
+    <!-- Kinetics -->
+    <section id="kinetics">
+      <h2>Reaction Kinetics</h2>
+      <p>
+        Understanding the kinetics of denitrification is essential for proper system sizing and 
+        realistic performance expectations.
+      </p>
+
+      <h3>First-Order Reaction Behavior</h3>
+      <p>
+        Denitrification follows first-order reaction kinetics with respect to nitrate concentration. 
+        This means the rate of nitrate removal is proportional to the instantaneous nitrate 
+        concentration: as concentration decreases, so does the reaction rate — logarithmically. 
+        This has two important design consequences:
+      </p>
+      <ul>
+        <li>Achieving very high percentage removals (e.g., &gt;90%) requires disproportionately long hydraulic residence times compared to moderate removals.</li>
+        <li>At low incoming nitrate concentrations, the system operates far from its theoretical maximum rate throughout the entire treatment cycle, further reducing efficiency.</li>
+      </ul>
+
+      <div class="figure-block">
+        <div class="figure-placeholder">
+          <div class="fig-icon">📈</div>
+          <div class="fig-id">Figure 18-2</div>
+          <div class="fig-desc">Graph showing first-order denitrification kinetics: a curve of reaction rate (y-axis) versus substrate (nitrate) concentration (x-axis). The curve rises steeply at low concentrations then flattens asymptotically toward a maximum rate as concentration increases, illustrating the Michaelis-Menten / first-order relationship. A dashed horizontal line indicates the theoretical maximum rate.</div>
+        </div>
+        <p class="figure-caption">Figure 18-2. First-order denitrification kinetics: reaction rate versus nitrate (substrate) concentration. Rate increases steeply at low concentrations and approaches a maximum asymptotically. Source: Harper, H.H. — Environmental Research &amp; Design, Inc.</p>
+      </div>
+
+      <h3>Reaction as an Electron Exchange</h3>
+      <p>
+        Denitrification is fundamentally a redox (oxidation-reduction) reaction. Nitrate is the 
+        oxidizing agent (electron acceptor), and the organic carbon source is the reducing agent 
+        (electron donor). The availability of either can limit the overall reaction rate. Carbon 
+        limitation is common in urban stormwater systems, while nitrate limitation is the dominant 
+        constraint at most Florida stormwater sites based on ERD monitoring data.
+      </p>
+
+      <h3>Process Rate and Duration</h3>
+      <p>
+        Denitrification is a relatively slow biological process. Under typical environmental conditions, 
+        approximately <strong>90% completion is reached in 3–4 days</strong> at optimum substrate 
+        concentrations and temperatures. This is a critical sizing parameter for passive denitrification 
+        systems that rely on hydraulic residence time rather than mechanical aeration or mixing.
+      </p>
+
+      <div class="callout info">
+        <div class="callout-label">Key Parameter Summary</div>
+        <p>Nitrate concentration is the single most important factor regulating denitrification rate. Optimum performance occurs at NO₃⁻ concentrations of 280–840 µg/L. Below 100 µg/L NOₓ, the process essentially stops. Approximately 90% completion in 3–4 days under optimal conditions.</p>
+      </div>
+    </section>
+
+    <hr class="section-rule">
+
+    <!-- Urban Stormwater Context -->
+    <section id="urban-stormwater">
+      <h2>Urban Stormwater Context</h2>
+      <p>
+        The characteristics of urban stormwater runoff create several challenges for effective 
+        denitrification that distinguish it from municipal wastewater treatment applications.
+      </p>
+
+      <h3>Nitrogen Species in Urban Runoff</h3>
+      <p>
+        Nitrogen in urban runoff exists in multiple forms: organic nitrogen, ammonium 
+        (<span class="chem">NH₄⁺</span>), nitrite (<span class="chem">NO₂⁻</span>), and nitrate 
+        (<span class="chem">NO₃⁻</span>). Total nitrogen in urban runoff is dominated by organic 
+        nitrogen and ammonium (Total Kjeldahl Nitrogen, or TKN), with nitrate typically comprising 
+        a smaller fraction. National median event mean concentrations for nitrate-nitrite 
+        (<span class="chem">NO₂⁺NO₃</span>) in urban runoff range from approximately 543 µg/L 
+        in open/non-urban areas to 736 µg/L in residential land uses, and these values are often 
+        well below the optimum denitrification range when seasonal variability is accounted for.
+        <span class="source-tag">SFWMD BMP Manual, 2002</span>
+      </p>
+
+      <table class="tech-table">
+        <thead>
+          <tr>
+            <th>Parameter</th>
+            <th>Residential</th>
+            <th>Mixed</th>
+            <th>Commercial</th>
+            <th>Open/Non-Urban</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>Nitrate-Nitrite (µg/L)</td>
+            <td>736</td>
+            <td>558</td>
+            <td>572</td>
+            <td>543</td>
+          </tr>
+          <tr>
+            <td>Total Kjeldahl Nitrogen (µg/L)</td>
+            <td>1,900</td>
+            <td>1,288</td>
+            <td>1,179</td>
+            <td>965</td>
+          </tr>
+          <tr>
+            <td>Total Nitrogen (µg/L)</td>
+            <td>2,636</td>
+            <td>1,846</td>
+            <td>1,751</td>
+            <td>1,508</td>
+          </tr>
+          <tr>
+            <td>BOD (mg/L)</td>
+            <td>10.0</td>
+            <td>7.8</td>
+            <td>9.3</td>
+            <td>—</td>
+          </tr>
+        </tbody>
+      </table>
+      <p class="figure-caption" style="margin-top:-0.75rem; margin-bottom:1rem;">Table 18-1. Median event mean concentrations by land use category for nitrogen species and BOD in urban stormwater runoff. Source: USEPA National Urban Runoff Program, 1983; cited in SFWMD Best Management Practices Manual, 2002.</p>
+
+      <h3>Low BOD in Stormwater</h3>
+      <p>
+        While the BOD values in Table 18-1 might appear adequate, they represent median event mean 
+        concentrations that include a wide range of variability. More critically, the nitrogen 
+        species available for denitrification (NOₓ) represents only a fraction of total nitrogen 
+        in stormwater, and low BOD limits the available electron donor for the denitrifying bacteria.
+        Urban runoff BOD is generally insufficient to sustain denitrification without supplemental 
+        carbon addition.
+      </p>
+
+      <h3>Nitrogen Removal Pathways in BMPs</h3>
+      <p>
+        Nitrogen can be controlled in stormwater BMPs through alternating aerobic and anaerobic 
+        conditions, maintenance of neutral pH, low toxicant concentrations, and biological uptake. 
+        In conventional wet detention ponds, the dominant nitrogen removal pathways are 
+        sedimentation of particulate nitrogen, biological uptake into littoral vegetation, and 
+        natural denitrification occurring in the sediment-water interface under anaerobic conditions 
+        in bottom sediments. These natural denitrification processes are generally limited by the 
+        same constraints described above.
+        <span class="source-tag">SFWMD BMP Manual, 2002</span>
+      </p>
+    </section>
+
+    <hr class="section-rule">
+
+    <!-- Denitrification Systems -->
+    <section id="systems">
+      <h2>Engineered Denitrification Systems</h2>
+      <p>
+        Where source water characterization confirms adequate NOₓ concentrations, several engineered 
+        system types are available. Each addresses the fundamental requirements of denitrification 
+        differently.
+      </p>
+
+      <section id="sys-deep-bed">
+        <h3>Deep Bed Denitrification Filters</h3>
+        <p>
+          Deep bed denitrification filters are engineered structures most commonly used in advanced 
+          wastewater treatment applications, particularly at municipal WWTPs where effluent polishing 
+          to low total nitrogen limits is required. The system consists of a deep bed of granular 
+          filter media through which clarified, nitrified effluent is passed upflow or downflow 
+          under anoxic conditions, with continuous or intermittent dosing of a supplemental carbon 
+          source to drive the denitrification reaction.
+        </p>
+
+        <div class="figure-block">
+          <div class="figure-placeholder">
+            <div class="fig-icon">🏗</div>
+            <div class="fig-id">Figure 18-3</div>
+            <div class="fig-desc">Cutaway diagram of a deep bed denitrification filter showing the vertical profile of components from top to bottom: filter media (granular sand or anthracite), support gravel layer, underdrain laterals, backwash (BW) air header, BW air laterals, sump cover plate, and collection sump. Arrows indicate influent flow direction through the media bed.</div>
+          </div>
+          <p class="figure-caption">Figure 18-3. Deep bed denitrification filter — profile of components showing media, support gravel, underdrain system, and backwash air distribution infrastructure. Source: Harper, H.H. — Environmental Research &amp; Design, Inc.</p>
+        </div>
+
+        <p>Key components of a deep bed denitrification filter include:</p>
+        <ul>
+          <li><strong>Filter media</strong> — granular material (typically sand or anthracite) that supports a biofilm of denitrifying bacteria.</li>
+          <li><strong>Support gravel</strong> — coarser material beneath the media providing structural support and hydraulic distribution.</li>
+          <li><strong>Underdrain system</strong> — collects treated effluent and distributes backwash water.</li>
+          <li><strong>Backwash (BW) air header and laterals</strong> — supply air for periodic air-scour backwashing to remove accumulated solids and restore hydraulic capacity.</li>
+          <li><strong>Sump and cover plate</strong> — collects backwash waste and provides structural base.</li>
+        </ul>
+
+        <p>
+          While deep bed filters are highly effective for tertiary nitrogen removal in WWTPs, their 
+          application to urban stormwater is limited by the typically insufficient NOₓ concentrations 
+          in stormwater, high capital cost, requirement for continuous operation, and need for chemical 
+          carbon addition and backwashing infrastructure.
+        </p>
+      </section>
+
+      <section id="sys-bioreactors">
+        <h3>Woodchip Denitrifying Bioreactors</h3>
+        <p>
+          Denitrifying woodchip bioreactors represent a passive, low-input alternative to conventional 
+          engineered denitrification systems. These systems use lignocellulosic wood chips as both 
+          a physical support matrix for denitrifying bacteria and as a slow-release organic carbon 
+          (electron donor) source. The wood chips provide a long-term, consistent supply of 
+          dissolved organic carbon through slow hydrolysis and degradation, eliminating the need 
+          for liquid chemical feed systems.
+        </p>
+
+        <p>Common configurations include:</p>
+        <ul>
+          <li><strong>Denitrification walls</strong> — subsurface reactive barriers that intercept shallow groundwater.</li>
+          <li><strong>In-line reactor beds</strong> — basins through which drainage water is piped, typically serving agricultural tile drainage or municipal outfalls.</li>
+          <li><strong>Modified bioretention cells</strong> — conventional bioretention systems modified to include an internal water storage zone (IWSZ) saturated with woodchips.</li>
+          <li><strong>Streambed bioreactors</strong> — installed in or adjacent to drainage channels.</li>
+        </ul>
+
+        <p>
+          Research has demonstrated successful nitrogen removal in field-scale woodchip bioreactor 
+          systems for periods of up to 15 years, even under fluctuating influent nitrate concentrations 
+          and variable flow rates. The woodchip substrate tolerates the highly variable hydraulic 
+          loading characteristic of stormwater systems better than liquid carbon dosing systems. 
+          Cost estimates for agricultural applications have been reported at approximately $10–15 
+          per acre per year when capital costs are amortized over a 10–15 year system life.
+        </p>
+
+        <div class="callout">
+          <div class="callout-label">Carbon Source Advantage</div>
+          <p>The use of a solid organic substrate such as woodchips eliminates the need for a liquid chemical feed system for organic carbon addition, reducing operational complexity and the risk of over- or under-dosing that is inherent in metered methanol or acetate addition.</p>
+        </div>
+      </section>
+
+      <section id="sys-bioretention">
+        <h3>Modified Bioretention Systems</h3>
+        <p>
+          Conventional bioretention systems (rain gardens and biofiltration cells) are not inherently 
+          designed for denitrification. In fact, conventional systems with free-draining media may 
+          exhibit net nitrate leaching as ammonium is nitrified in the aerobic media and the resulting 
+          nitrate passes through without reduction. Modification to include an internal water storage 
+          zone (IWSZ) creates the sustained anoxic conditions necessary for denitrification.
+        </p>
+        <p>
+          A modified bioretention cell designed for denitrification typically consists of the following 
+          zones from top to bottom:
+        </p>
+        <ul>
+          <li>Surface ponding zone (aerobic, stormwater storage)</li>
+          <li>Mulch layer (aerobic, particulate capture)</li>
+          <li>Topsoil/engineered media layer (aerobic, nitrification)</li>
+          <li>Nitrification zone (transition)</li>
+          <li>Denitrification IWSZ (permanently saturated, woodchip-amended, anoxic)</li>
+          <li>Drainage layer</li>
+        </ul>
+        <p>
+          Studies have shown that the addition of woodchips and biochar to the IWSZ can achieve 
+          nitrate removal efficiencies of 47–74% in modified systems, compared to net nitrate 
+          leaching in conventional sand bioretention systems. Research on microbial communities 
+          in BMP soils has further demonstrated that metabolically active denitrifiers are present 
+          across multiple BMP types — including surface sand filters — suggesting that denitrification 
+          can occur opportunistically wherever anoxic microsites develop, even in systems not 
+          explicitly designed for it.
+        </p>
+      </section>
+    </section>
+
+    <hr class="section-rule">
+
+    <!-- Florida Regulatory Context -->
+    <section id="florida-context">
+      <h2>Florida Regulatory Context</h2>
+      <p>
+        Florida's Environmental Resource Permit (ERP) program, administered under Chapter 62-330, 
+        F.A.C., establishes stormwater treatment criteria applicable to all regulated SWM system 
+        designs. The Applicant's Handbook Volume II (SFWMD), effective June 28, 2024, provides 
+        specific design and performance criteria for SWM systems within the South Florida Water 
+        Management District.
+        <span class="source-tag">SFWMD AH Vol. II, 2024</span>
+      </p>
+      <p>
+        Denitrification is not explicitly required by Florida's stormwater treatment standards, 
+        which are generally expressed as volumetric retention/detention criteria or pollutant 
+        loading limits rather than as specific process requirements. However, denitrification 
+        systems may be proposed as alternative or supplemental treatment approaches under the 
+        alternative design provisions of the ERP program, provided the applicant demonstrates 
+        through plans, test results, or monitoring data that the alternative meets the conditions 
+        for issuance set forth in Rules 62-330.301 and 62-330.302, F.A.C.
+        <span class="source-tag">SFWMD AH Vol. II, 2024</span>
+      </p>
+      <p>
+        For projects discharging to impaired water bodies or Outstanding Florida Waters (OFWs), 
+        enhanced treatment requirements may create the need for advanced nitrogen removal strategies, 
+        potentially including engineered denitrification as part of a comprehensive BMP treatment train.
+      </p>
+
+      <div class="callout info">
+        <div class="callout-label">Regulatory Pathway</div>
+        <p>Applicants proposing denitrification-based systems should document source water NOₓ concentrations, BOD availability, and system hydraulic residence time calculations as part of the reasonable assurance demonstration required for alternative design approval under the ERP program.</p>
+      </div>
+    </section>
+
+    <hr class="section-rule">
+
+    <!-- Design Considerations -->
+    <section id="design-considerations">
+      <h2>Design Considerations Summary</h2>
+      <p>
+        The following considerations should be addressed in any project evaluating denitrification 
+        as a stormwater treatment strategy:
+      </p>
+
+      <table class="tech-table">
+        <thead>
+          <tr>
+            <th>Consideration</th>
+            <th>Requirement / Threshold</th>
+            <th>Action if Not Met</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>NOₓ concentration in source water</td>
+            <td>Optimum: 280–840 µg/L<br>Minimum viable: &gt;100 µg/L</td>
+            <td>Do not design for denitrification; focus on other TN reduction strategies</td>
+          </tr>
+          <tr>
+            <td>BOD / degradable carbon</td>
+            <td>Adequate labile carbon for electron donor supply</td>
+            <td>Supplement with woodchips, corncob, or other solid carbon media in the anoxic zone</td>
+          </tr>
+          <tr>
+            <td>Redox potential</td>
+            <td>Eh: −100 to −200 mV minimum</td>
+            <td>Design for permanent saturation (IWSZ) or enclosed filter bed</td>
+          </tr>
+          <tr>
+            <td>pH</td>
+            <td>Optimum: 7.0 – 8.5</td>
+            <td>Correct pH with alkalinity addition; contraindicated for high-color, low-pH sources</td>
+          </tr>
+          <tr>
+            <td>Temperature</td>
+            <td>Optimum: 5 – 30°C</td>
+            <td>Generally not limiting in Florida; monitor for extremes</td>
+          </tr>
+          <tr>
+            <td>Hydraulic residence time</td>
+            <td>~3–4 days for ~90% completion</td>
+            <td>Size system accordingly; consider active flow management</td>
+          </tr>
+          <tr>
+            <td>Pre-design verification</td>
+            <td>Site-specific water quality sampling for NOₓ</td>
+            <td>Do not proceed with design based on assumed or literature NOₓ values alone</td>
+          </tr>
+        </tbody>
+      </table>
+
+      <div class="callout warning">
+        <div class="callout-label">ERD Field Experience</div>
+        <p>Of four denitrification bed installations monitored by Environmental Research &amp; Design, Inc., three had insufficient NOₓ concentrations for denitrification to occur to any significant extent. This 75% failure rate underscores the critical importance of pre-design water quality verification before committing to denitrification-based treatment systems for urban stormwater applications.</p>
+      </div>
+    </section>
+
+  </div><!-- /content -->
+
+  <!-- Reference figures appendix -->
+  <div class="reference-section" id="references">
+    <h2>References</h2>
+
+    <div class="ref-item">
+      <div class="ref-num">[1]</div>
+      <div>Harper, H.H. <em>Denitrification.</em> Presentation, BMPFast Learning System, Environmental Research &amp; Design, Inc., January 2026.</div>
+    </div>
+    <div class="ref-item">
+      <div class="ref-num">[2]</div>
+      <div>South Florida Water Management District. <em>Best Management Practices for South Florida Urban Stormwater Management Systems.</em> Technical Publication REG-004. West Palm Beach, FL: SFWMD, April 2002. Available: <a href="https://www.sfwmd.gov/sites/default/files/documents/bmp_manual.pdf" style="color:var(--forest)">sfwmd.gov</a></div>
+    </div>
+    <div class="ref-item">
+      <div class="ref-num">[3]</div>
+      <div>South Florida Water Management District. <em>Environmental Resource Permit Applicant's Handbook Volume II.</em> Effective June 28, 2024. Incorporated by reference in Rule 40E-4.091(1)(a) and Rule 62-330.010, F.A.C. Available: <a href="https://www.sfwmd.gov/sites/default/files/documents/swerp_applicants_handbook_vol_ii.pdf" style="color:var(--forest)">sfwmd.gov</a></div>
+    </div>
+    <div class="ref-item">
+      <div class="ref-num">[4]</div>
+      <div>Lopez-Ponnada, E.V. et al. "Application of denitrifying wood chip bioreactors for management of residential non-point sources of nitrogen." <em>Journal of Biological Engineering</em> 11, 16 (2017). DOI: 10.1186/s13036-017-0057-4.</div>
+    </div>
+    <div class="ref-item">
+      <div class="ref-num">[5]</div>
+      <div>Virginia Cooperative Extension. <em>Denitrifying Bioreactors: An Emerging Best Management Practice to Improve Water Quality.</em> Publication BSE-55. Virginia Tech, 2024. Available: <a href="https://www.pubs.ext.vt.edu/BSE/BSE-55/BSE-55.html" style="color:var(--forest)">pubs.ext.vt.edu</a></div>
+    </div>
+    <div class="ref-item">
+      <div class="ref-num">[6]</div>
+      <div>Perryman, S.E. et al. "The Presence of Denitrifiers in Bacterial Communities of Urban Stormwater Best Management Practices (BMPs)." <em>PMC</em>, 2022. PMC8758610.</div>
+    </div>
+    <div class="ref-item">
+      <div class="ref-num">[7]</div>
+      <div>USEPA. <em>Results of the Nationwide Urban Runoff Program.</em> Final Report. Washington, D.C.: U.S. Environmental Protection Agency, 1983.</div>
+    </div>
+
+    <h2 style="margin-top:2rem;">Figure Reference List</h2>
+    <p style="font-size:0.88rem; color:var(--ink-light); margin-bottom:1.5rem;">The following figures are referenced inline in the text and require graphical sourcing. Placeholders appear within the document body; final graphics should replace the corresponding placeholder blocks at the positions indicated.</p>
+
+    <div class="ref-figure-block">
+      <div class="figure-placeholder" style="min-height:140px;">
+        <div class="fig-id">REF — Figure 18-1</div>
+        <div class="fig-desc">Photograph: Field-scale denitrification bed with organic carbon media (wood chips or corncob) installed alongside agricultural or municipal drainage channel. Source: Harper, H.H. / Environmental Research &amp; Design, Inc. (Slide 2 of source presentation — left panel photograph).</div>
+      </div>
+    </div>
+
+    <div class="ref-figure-block">
+      <div class="figure-placeholder" style="min-height:140px;">
+        <div class="fig-id">REF — Figure 18-2</div>
+        <div class="fig-desc">Graph: First-order denitrification kinetics — reaction rate (y-axis) vs. substrate/nitrate concentration (x-axis). Ascending curve approaching asymptotic maximum. Source: Harper, H.H. / Environmental Research &amp; Design, Inc. (Slide 4 of source presentation — right panel graph).</div>
+      </div>
+    </div>
+
+    <div class="ref-figure-block">
+      <div class="figure-placeholder" style="min-height:140px;">
+        <div class="fig-id">REF — Figure 18-3</div>
+        <div class="fig-desc">Cutaway diagram: Deep bed denitrification filter profile showing layers — media, support gravel, underdrain, BW air header, BW air laterals, sump cover plate, sump. Source: Harper, H.H. / Environmental Research &amp; Design, Inc. (Slide 2 of source presentation — right panel diagram).</div>
+      </div>
+    </div>
+
+  </div><!-- /reference-section -->
+
+</main>
+
+<script>
+  // Highlight active nav item on scroll
+  const sections = document.querySelectorAll('section[id], div[id]');
+  const navItems = document.querySelectorAll('.nav-item');
+
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) {
+        navItems.forEach(item => item.classList.remove('active'));
+        const active = document.querySelector(`.nav-item[href="#${entry.target.id}"]`);
+        if (active) active.classList.add('active');
+      }
+    });
+  }, { rootMargin: '-20% 0px -70% 0px' });
+
+  sections.forEach(s => observer.observe(s));
+</script>
+
+</body>
+</html>

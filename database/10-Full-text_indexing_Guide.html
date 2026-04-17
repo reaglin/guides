@@ -1,0 +1,1187 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>COP4709 - Full-Text Indexing</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.6;
+            color: #1e1b33;
+            background: linear-gradient(135deg, #1a0533 0%, #3b1278 50%, #5e27a0 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1000px;
+            margin: 0 auto;
+            background: #fff;
+            border-radius: 15px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.45);
+            overflow: hidden;
+        }
+
+        header {
+            background: linear-gradient(135deg, #1a0533 0%, #5e27a0 100%);
+            color: white;
+            padding: 40px;
+            text-align: center;
+            border-bottom: 4px solid #a855f7;
+        }
+
+        header h1 { font-size: 2.5em; margin-bottom: 10px; text-shadow: 2px 2px 6px rgba(0,0,0,0.4); }
+        header p  { font-size: 1.2em; opacity: 0.9; }
+
+        .content { padding: 40px; }
+
+        /* Intro */
+        .intro {
+            background: linear-gradient(135deg, #f5f0ff 0%, #e9d5ff 100%);
+            padding: 25px;
+            border-radius: 10px;
+            margin-bottom: 30px;
+            border-left: 5px solid #7c3aed;
+        }
+        .intro h2 { color: #4c1d95; margin-bottom: 15px; }
+
+        /* Collapsible */
+        .section { margin-bottom: 25px; }
+
+        .collapsible {
+            background: #fafafa;
+            border: 2px solid #ede9fe;
+            border-radius: 10px;
+            margin-bottom: 15px;
+            overflow: hidden;
+            transition: all 0.3s ease;
+        }
+
+        .collapsible:hover {
+            border-color: #7c3aed;
+            box-shadow: 0 4px 12px rgba(124,58,237,0.18);
+        }
+
+        .collapsible-header {
+            background: linear-gradient(135deg, #1a0533 0%, #5e27a0 100%);
+            color: white;
+            padding: 20px;
+            cursor: pointer;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-weight: 600;
+            font-size: 1.15em;
+            user-select: none;
+            text-shadow: 1px 1px 2px rgba(0,0,0,0.3);
+        }
+
+        .collapsible-header:hover { background: linear-gradient(135deg, #2a0a48 0%, #7833b8 100%); }
+        .collapsible-header::after { content: '▼'; font-size: 0.8em; transition: transform 0.3s ease; }
+
+        .collapsible-content {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.4s ease;
+            padding: 0 20px;
+        }
+
+        .collapsible.active .collapsible-content { max-height: 14000px; padding: 20px; }
+        .collapsible.active .collapsible-header::after { transform: rotate(180deg); }
+
+        /* Info boxes */
+        .highlight-box { background: #fff8e1; border-left: 5px solid #f59e0b; padding: 15px; margin: 15px 0; border-radius: 5px; }
+        .success-box   { background: #d1fae5; border-left: 5px solid #059669; padding: 15px; margin: 15px 0; border-radius: 5px; }
+        .info-box      { background: #f0f0ff; border-left: 5px solid #7c3aed; padding: 15px; margin: 15px 0; border-radius: 5px; }
+        .danger-box    { background: #fee2e2; border-left: 5px solid #dc2626; padding: 15px; margin: 15px 0; border-radius: 5px; }
+        .purple-box    { background: #f5f0ff; border-left: 5px solid #9333ea; padding: 15px; margin: 15px 0; border-radius: 5px; }
+
+        /* Code blocks */
+        .code-block {
+            background: #12001f;
+            color: #e2d9f3;
+            padding: 20px;
+            border-radius: 8px;
+            overflow-x: auto;
+            margin: 15px 0;
+            font-family: 'Courier New', monospace;
+            font-size: 0.92em;
+            line-height: 1.65;
+            white-space: pre;
+        }
+
+        .code-block .keyword { color: #c084fc; }
+        .code-block .func    { color: #a5f3fc; }
+        .code-block .string  { color: #86efac; }
+        .code-block .comment { color: #5b3f7a; font-style: italic; }
+        .code-block .alias   { color: #fcd34d; }
+        .code-block .number  { color: #f9a8d4; }
+        .code-block .sys     { color: #67e8f9; }
+        .code-block .op      { color: #fda4af; }
+        .code-block .bad     { color: #f87171; }
+        .code-block .good    { color: #6ee7b7; }
+
+        /* Result tables */
+        .result-label {
+            background: #7c3aed;
+            color: white;
+            padding: 6px 14px;
+            font-size: 0.8em;
+            font-weight: 700;
+            border-radius: 5px 5px 0 0;
+            display: inline-block;
+            letter-spacing: 0.05em;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            background: white;
+            border-radius: 0 8px 8px 8px;
+            overflow: hidden;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+            margin-bottom: 15px;
+        }
+
+        th {
+            background: linear-gradient(135deg, #1a0533, #5e27a0);
+            color: white;
+            padding: 12px 15px;
+            text-align: left;
+            font-weight: 600;
+            font-size: 0.9em;
+        }
+
+        td { padding: 10px 15px; border-bottom: 1px solid #ede9fe; font-size: 0.92em; }
+        tr:last-child td { border-bottom: none; }
+        tr:nth-child(even) { background: #faf5ff; }
+        tr:hover { background: #ede9fe; }
+
+        /* Grids */
+        .two-col   { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin: 20px 0; }
+        .three-col { display: grid; grid-template-columns: repeat(3, 1fr); gap: 15px; margin: 20px 0; }
+
+        .card { padding: 18px; border-radius: 10px; box-shadow: 0 4px 12px rgba(0,0,0,0.08); }
+        .card.purple { background: linear-gradient(135deg, #f5f0ff, #e9d5ff); border: 2px solid #7c3aed; }
+        .card.good   { background: linear-gradient(135deg, #d1fae5, #a7f3d0); border: 2px solid #059669; }
+        .card.bad    { background: linear-gradient(135deg, #fee2e2, #fecaca); border: 2px solid #dc2626; }
+        .card.amber  { background: linear-gradient(135deg, #fef3c7, #fde68a); border: 2px solid #d97706; }
+        .card.dark   { background: linear-gradient(135deg, #1a0533, #3b1278); color: #e9d5ff; border: 2px solid #a855f7; }
+        .card.dark h4 { color: #d8b4fe; }
+        .card.blue   { background: linear-gradient(135deg, #eff6ff, #dbeafe); border: 2px solid #3b82f6; }
+
+        /* Badges */
+        .badge {
+            display: inline-block;
+            padding: 3px 10px;
+            border-radius: 12px;
+            font-size: 0.78em;
+            font-weight: 700;
+            margin: 3px 2px;
+        }
+
+        .badge-purple { background: #7c3aed; color: white; }
+        .badge-green  { background: #059669; color: white; }
+        .badge-red    { background: #dc2626; color: white; }
+        .badge-amber  { background: #d97706; color: white; }
+        .badge-blue   { background: #2563eb; color: white; }
+        .badge-gray   { background: #6b7280; color: white; }
+
+        /* Comparison highlight */
+        .vs-block {
+            display: grid;
+            grid-template-columns: 1fr auto 1fr;
+            gap: 10px;
+            align-items: start;
+            margin: 20px 0;
+        }
+
+        .vs-divider {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 900;
+            font-size: 1.3em;
+            color: #7c3aed;
+            padding-top: 8px;
+        }
+
+        /* Predicate / operator pills */
+        .pred {
+            display: inline-block;
+            background: #1a0533;
+            color: #c084fc;
+            font-family: 'Courier New', monospace;
+            font-size: 0.85em;
+            padding: 2px 10px;
+            border-radius: 4px;
+            border: 1px solid #7c3aed;
+            margin: 2px;
+        }
+
+        /* Typography */
+        h3 {
+            color: #4c1d95;
+            margin: 22px 0 10px;
+            font-size: 1.35em;
+            border-bottom: 2px solid #ede9fe;
+            padding-bottom: 5px;
+        }
+
+        h4 { color: #2e1065; margin: 15px 0 8px; font-size: 1.05em; }
+        strong { color: #5b21b6; }
+
+        code {
+            background: #f5f0ff;
+            color: #6d28d9;
+            padding: 2px 6px;
+            border-radius: 4px;
+            font-family: 'Courier New', monospace;
+            font-size: 0.9em;
+        }
+
+        ul, ol { margin: 12px 0 12px 28px; }
+        li { margin: 7px 0; }
+
+        footer {
+            background: #1a0533;
+            color: #d8b4fe;
+            text-align: center;
+            padding: 20px;
+            border-top: 4px solid #a855f7;
+        }
+    </style>
+</head>
+<body>
+<div class="container">
+
+    <header>
+        <h1>🔎 Full-Text Indexing</h1>
+        <p>COP4709 — Database Management</p>
+    </header>
+
+    <div class="content">
+
+        <!-- INTRO -->
+        <div class="intro">
+            <h2>📖 What Is Full-Text Indexing?</h2>
+            <p>A <strong>full-text index</strong> is a special kind of database index built to support fast, linguistic searches across large bodies of text — words, phrases, and language patterns — rather than exact value comparisons. Standard indexes support queries like "find rows where <code>status = 'Open'</code>" by matching exact values. Full-text indexes support queries like <em>"find all articles that discuss machine learning near neural networks"</em>.</p>
+            <p style="margin-top:12px;">Where a regular <code>LIKE '%keyword%'</code> search must scan every row and every character, a full-text index pre-processes text into a searchable word map — enabling fast lookups by word, phrase, prefix, proximity, or linguistic root, across columns containing thousands of words per row.</p>
+            <p style="margin-top:12px;">This guide uses <strong>SQL Server's built-in Full-Text Search engine</strong> for examples, covering setup, query syntax, use cases, and the trade-offs involved in adopting full-text indexing.</p>
+        </div>
+
+        <!-- ══════════════════════════════════════════════ -->
+        <!-- SECTION 1 — HOW FULL-TEXT INDEXING WORKS       -->
+        <!-- ══════════════════════════════════════════════ -->
+        <div class="section">
+            <div class="collapsible active">
+                <div class="collapsible-header">1. How Full-Text Indexing Works — Under the Hood</div>
+                <div class="collapsible-content">
+
+                    <h3>The Problem With LIKE for Text Search</h3>
+
+                    <div class="vs-block">
+                        <div class="card bad">
+                            <h4>❌ LIKE Search</h4>
+                            <div class="code-block" style="font-size:0.83em;"><span class="comment">-- Finds "learning" but NOT "learned"
+-- or "learn" or "learns"
+-- Must scan EVERY row, EVERY character</span>
+<span class="keyword">SELECT</span> title, body
+<span class="keyword">FROM</span>   articles
+<span class="keyword">WHERE</span>  body <span class="keyword">LIKE</span> <span class="string">'%learning%'</span>;</div>
+                            <p style="margin-top:8px; font-size:0.88em;"><strong>Cost:</strong> Full table scan every time. No index can help a leading wildcard search. Slow on large text columns. No linguistic awareness.</p>
+                        </div>
+                        <div class="vs-divider">VS</div>
+                        <div class="card good">
+                            <h4>✅ Full-Text Search</h4>
+                            <div class="code-block" style="font-size:0.83em;"><span class="comment">-- Finds "learning", "learned", "learns"
+-- "learner", "learnable" — all forms
+-- Uses pre-built word index</span>
+<span class="keyword">SELECT</span> title, body
+<span class="keyword">FROM</span>   articles
+<span class="keyword">WHERE</span>  <span class="func">CONTAINS</span>(body, <span class="string">'"learn*"'</span>);</div>
+                            <p style="margin-top:8px; font-size:0.88em;"><strong>Cost:</strong> Index lookup — fast even on millions of rows. Supports stemming, proximity, ranking, and phrase matching.</p>
+                        </div>
+                    </div>
+
+                    <h3>How the Full-Text Engine Processes Text</h3>
+                    <p>When you create a full-text index on a column, SQL Server's Full-Text Engine runs a background process that transforms the text into an inverted word index:</p>
+
+                    <table>
+                        <tr><th>Step</th><th>Process</th><th>Example</th></tr>
+                        <tr>
+                            <td><strong>1. Word Breaker</strong></td>
+                            <td>Tokenises text into individual words based on language rules</td>
+                            <td><em>"Machine learning is powerful"</em> → <code>Machine</code>, <code>learning</code>, <code>is</code>, <code>powerful</code></td>
+                        </tr>
+                        <tr>
+                            <td><strong>2. Stopword Filter</strong></td>
+                            <td>Removes common words with no search value (stopwords / noise words)</td>
+                            <td><code>is</code>, <code>the</code>, <code>a</code>, <code>and</code>, <code>of</code> → discarded</td>
+                        </tr>
+                        <tr>
+                            <td><strong>3. Stemmer</strong></td>
+                            <td>Reduces words to their linguistic root form for inflectional matching</td>
+                            <td><code>learning</code> → root <code>learn</code>; matches <em>learned, learns, learner</em></td>
+                        </tr>
+                        <tr>
+                            <td><strong>4. Thesaurus (optional)</strong></td>
+                            <td>Expands terms to synonyms using a configurable XML thesaurus file</td>
+                            <td><code>car</code> → also matches <code>automobile</code>, <code>vehicle</code></td>
+                        </tr>
+                        <tr>
+                            <td><strong>5. Inverted Index Build</strong></td>
+                            <td>Stores each unique word with the list of document IDs and positions where it appears</td>
+                            <td><code>machine → [doc3:pos1, doc7:pos4, doc22:pos12]</code></td>
+                        </tr>
+                    </table>
+
+                    <div class="info-box">
+                        <strong>The Inverted Index:</strong> The core of full-text search is the <em>inverted index</em> — a data structure mapping each unique word to the documents containing it (opposite of a forward index that maps documents to their words). When you search for "neural network", the engine looks up both words in the inverted index, then intersects the document lists. This is how search engines like Google work at their core.
+                    </div>
+
+                    <h3>Full-Text Index vs Standard B-Tree Index</h3>
+
+                    <table>
+                        <tr><th>Aspect</th><th>Standard B-Tree Index</th><th>Full-Text Index</th></tr>
+                        <tr>
+                            <td><strong>Purpose</strong></td>
+                            <td>Exact and range comparisons on column values</td>
+                            <td>Word, phrase, and linguistic searches within text</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Structure</strong></td>
+                            <td>Balanced tree of column values → row pointers</td>
+                            <td>Inverted word index → document IDs and positions</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Maintenance</strong></td>
+                            <td>Synchronous — updated immediately on write</td>
+                            <td>Asynchronous — crawled and updated on a schedule or manually</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Language awareness</strong></td>
+                            <td>None — character-by-character comparison</td>
+                            <td>Yes — stemming, stopwords, thesaurus, word breaking per language</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Supports LIKE '%word%'</strong></td>
+                            <td>No — leading wildcard defeats any B-Tree index</td>
+                            <td>Yes — equivalent via CONTAINS or FREETEXT</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Relevance ranking</strong></td>
+                            <td>No</td>
+                            <td>Yes — CONTAINSTABLE/FREETEXTTABLE return a rank score</td>
+                        </tr>
+                    </table>
+
+                </div>
+            </div>
+        </div>
+
+        <!-- ══════════════════════════════════════════════ -->
+        <!-- SECTION 2 — SETUP IN SQL SERVER                 -->
+        <!-- ══════════════════════════════════════════════ -->
+        <div class="section">
+            <div class="collapsible">
+                <div class="collapsible-header">2. Setting Up Full-Text Search in SQL Server</div>
+                <div class="collapsible-content">
+
+                    <div class="info-box">
+                        SQL Server Full-Text Search requires: (1) the Full-Text Search feature is installed, (2) a <strong>Full-Text Catalog</strong> exists to hold the indexes, and (3) a <strong>Full-Text Index</strong> is created on the target table. The table must have a unique single-column index (usually the primary key) for the full-text engine to track rows.
+                    </div>
+
+                    <h3>Step 1 — Verify Full-Text Search Is Installed</h3>
+
+                    <div class="code-block"><span class="comment">-- Check whether the Full-Text Search feature is installed and running</span>
+<span class="keyword">SELECT</span>  <span class="func">FULLTEXTSERVICEPROPERTY</span>(<span class="string">'IsFullTextInstalled'</span>)  <span class="keyword">AS</span>  <span class="alias">is_installed</span>;
+<span class="comment">-- Returns 1 if installed, 0 if not
+-- If not installed: add via SQL Server Setup > Feature Selection > Full-Text and Semantic Extractions</span>
+
+<span class="comment">-- Check whether full-text is enabled on the current database</span>
+<span class="keyword">SELECT</span>  <span class="func">DATABASEPROPERTY</span>(<span class="func">DB_NAME</span>(), <span class="string">'IsFullTextEnabled'</span>)
+        <span class="keyword">AS</span>  <span class="alias">ft_enabled_on_this_db</span>;</div>
+
+                    <h3>Step 2 — Create the Sample Table</h3>
+
+                    <div class="code-block"><span class="comment">-- A knowledge base articles table — typical full-text candidate</span>
+<span class="keyword">CREATE TABLE</span>  kb_articles (
+    article_id    <span class="keyword">INT IDENTITY PRIMARY KEY</span>,
+    title         <span class="keyword">NVARCHAR</span>(<span class="number">300</span>)    <span class="keyword">NOT NULL</span>,
+    body          <span class="keyword">NVARCHAR</span>(<span class="keyword">MAX</span>)    <span class="keyword">NOT NULL</span>,
+    author        <span class="keyword">NVARCHAR</span>(<span class="number">100</span>),
+    category      <span class="keyword">VARCHAR</span>(<span class="number">50</span>),
+    published_at  <span class="keyword">DATETIME</span>         <span class="keyword">NOT NULL</span>,
+    language_id   <span class="keyword">INT</span>              <span class="keyword">DEFAULT</span> <span class="number">1033</span>  <span class="comment">-- 1033 = US English</span>
+);
+
+<span class="comment">-- Insert sample data</span>
+<span class="keyword">INSERT INTO</span>  kb_articles  (title, body, author, category, published_at)
+<span class="keyword">VALUES</span>
+    (<span class="string">'Introduction to Machine Learning'</span>,
+     <span class="string">'Machine learning is a subset of artificial intelligence that enables systems to learn and improve from experience without being explicitly programmed. It focuses on developing computer programs that can access data and use it to learn for themselves.'</span>,
+     <span class="string">'Dr. Ada Lovelace'</span>, <span class="string">'AI'</span>, <span class="string">'2025-01-10'</span>),
+
+    (<span class="string">'Neural Networks and Deep Learning'</span>,
+     <span class="string">'Deep learning is a machine learning technique that teaches computers to do what comes naturally to humans: learn by example. Deep learning is a key technology behind driverless cars and voice recognition systems.'</span>,
+     <span class="string">'Prof. Alan Turing'</span>, <span class="string">'AI'</span>, <span class="string">'2025-01-15'</span>),
+
+    (<span class="string">'Database Performance Tuning'</span>,
+     <span class="string">'Database performance tuning involves optimizing query execution plans, adding appropriate indexes, and analysing wait statistics to identify bottlenecks. Regular maintenance such as index rebuilds and statistics updates are essential.'</span>,
+     <span class="string">'Jane Doe'</span>, <span class="string">'Databases'</span>, <span class="string">'2025-02-01'</span>),
+
+    (<span class="string">'SQL Server Security Best Practices'</span>,
+     <span class="string">'Securing a SQL Server instance requires a layered approach: network isolation, strong authentication, least-privilege authorization, transparent data encryption, and comprehensive audit logging.'</span>,
+     <span class="string">'John Smith'</span>, <span class="string">'Security'</span>, <span class="string">'2025-02-05'</span>),
+
+    (<span class="string">'Natural Language Processing Overview'</span>,
+     <span class="string">'Natural language processing (NLP) is a branch of artificial intelligence that helps computers understand, interpret, and manipulate human language. NLP draws from many disciplines including linguistics and machine learning.'</span>,
+     <span class="string">'Dr. Ada Lovelace'</span>, <span class="string">'AI'</span>, <span class="string">'2025-02-10'</span>);</div>
+
+                    <h3>Step 3 — Create a Full-Text Catalog</h3>
+
+                    <div class="code-block"><span class="comment">-- A full-text catalog is a logical container for full-text indexes
+-- One catalog can hold indexes from multiple tables</span>
+<span class="keyword">CREATE FULLTEXT CATALOG</span>  KnowledgeBaseCatalog
+    <span class="keyword">WITH ACCENT_SENSITIVITY</span> = <span class="keyword">OFF</span>   <span class="comment">-- 'resume' and 'résumé' treated the same</span>
+    <span class="keyword">AS DEFAULT</span>;                       <span class="comment">-- use this catalog when none is specified</span>
+
+<span class="comment">-- Verify the catalog was created</span>
+<span class="keyword">SELECT</span>  name,
+        path,
+        is_default,
+        is_accent_sensitivity_on
+<span class="keyword">FROM</span>    <span class="sys">sys.fulltext_catalogs</span>;</div>
+
+                    <h3>Step 4 — Create the Full-Text Index</h3>
+
+                    <div class="code-block"><span class="comment">-- Create the full-text index on the title and body columns
+-- KEY INDEX: the unique index the FT engine uses to identify rows
+-- LANGUAGE: controls which word breaker and stemmer are used</span>
+<span class="keyword">CREATE FULLTEXT INDEX ON</span>  kb_articles
+    (
+        title        <span class="keyword">LANGUAGE</span> <span class="number">1033</span>,  <span class="comment">-- US English word breaking for title</span>
+        body         <span class="keyword">LANGUAGE</span> <span class="number">1033</span>,  <span class="comment">-- US English word breaking for body</span>
+        author       <span class="keyword">LANGUAGE</span> <span class="number">1033</span>   <span class="comment">-- also index the author name</span>
+    )
+    <span class="keyword">KEY INDEX</span>   pk_kb_articles           <span class="comment">-- must reference a unique index</span>
+    <span class="keyword">ON</span>          KnowledgeBaseCatalog       <span class="comment">-- which catalog to store it in</span>
+    <span class="keyword">WITH</span>  (
+        CHANGE_TRACKING = AUTO            <span class="comment">-- automatically crawl changes</span>
+    );
+
+<span class="comment">-- Check index status and when it was last populated</span>
+<span class="keyword">SELECT</span>  <span class="func">OBJECT_NAME</span>(fti.object_id)         <span class="keyword">AS</span>  <span class="alias">table_name</span>,
+        ftc.name                             <span class="keyword">AS</span>  <span class="alias">catalog_name</span>,
+        fti.change_tracking_state_desc       <span class="keyword">AS</span>  <span class="alias">change_tracking</span>,
+        ftc.item_count                       <span class="keyword">AS</span>  <span class="alias">indexed_items</span>
+<span class="keyword">FROM</span>    <span class="sys">sys.fulltext_indexes</span>    <span class="keyword">AS</span>  <span class="alias">fti</span>
+<span class="keyword">JOIN</span>    <span class="sys">sys.fulltext_catalogs</span>   <span class="keyword">AS</span>  <span class="alias">ftc</span>
+        <span class="keyword">ON</span>  fti.fulltext_catalog_id = ftc.fulltext_catalog_id;</div>
+
+                    <h3>Manual Population (Rebuilding the Index)</h3>
+
+                    <div class="code-block"><span class="comment">-- Force a full re-population (re-crawl and re-index everything)
+-- Use after bulk loads or when AUTO change tracking is off</span>
+<span class="keyword">ALTER FULLTEXT INDEX ON</span>  kb_articles  <span class="keyword">START FULL POPULATION</span>;
+
+<span class="comment">-- Incremental population — only processes rows changed since last crawl
+-- Requires a timestamp column on the table</span>
+<span class="keyword">ALTER FULLTEXT INDEX ON</span>  kb_articles  <span class="keyword">START INCREMENTAL POPULATION</span>;
+
+<span class="comment">-- Update only the tracked changed rows (fast, minimal overhead)</span>
+<span class="keyword">ALTER FULLTEXT INDEX ON</span>  kb_articles  <span class="keyword">START UPDATE POPULATION</span>;</div>
+
+                    <div class="highlight-box">
+                        <strong>⚠️ Full-Text Indexes Are Not Synchronously Updated.</strong> Unlike B-Tree indexes that update immediately on INSERT/UPDATE/DELETE, full-text indexes are populated by a background crawl process. With <code>CHANGE_TRACKING = AUTO</code>, changes propagate within seconds to minutes. With <code>CHANGE_TRACKING = MANUAL</code>, you must explicitly trigger a population. This means there can be a window where newly inserted data is not yet searchable.
+                    </div>
+
+                </div>
+            </div>
+        </div>
+
+        <!-- ══════════════════════════════════════════════ -->
+        <!-- SECTION 3 — CONTAINS                           -->
+        <!-- ══════════════════════════════════════════════ -->
+        <div class="section">
+            <div class="collapsible">
+                <div class="collapsible-header">3. CONTAINS — Precise Full-Text Searching</div>
+                <div class="collapsible-content">
+
+                    <div class="info-box">
+                        <code>CONTAINS</code> is the primary predicate for full-text searching. It is used in the WHERE clause and returns a boolean (match / no match). It supports simple words, phrases, prefix terms, proximity, inflectional forms, and thesaurus lookups.
+                    </div>
+
+                    <h3>Simple Word and Phrase Search</h3>
+
+                    <div class="code-block"><span class="comment">-- Single word: finds all articles containing the word "machine"</span>
+<span class="keyword">SELECT</span>  article_id, title, category
+<span class="keyword">FROM</span>    kb_articles
+<span class="keyword">WHERE</span>   <span class="func">CONTAINS</span>(body, <span class="string">'machine'</span>);
+
+<span class="comment">-- Exact phrase: both words must appear adjacent in this order</span>
+<span class="keyword">SELECT</span>  article_id, title
+<span class="keyword">FROM</span>    kb_articles
+<span class="keyword">WHERE</span>   <span class="func">CONTAINS</span>(body, <span class="string">'"machine learning"'</span>);
+
+<span class="comment">-- Boolean AND: both words must appear somewhere in the column</span>
+<span class="keyword">SELECT</span>  article_id, title
+<span class="keyword">FROM</span>    kb_articles
+<span class="keyword">WHERE</span>   <span class="func">CONTAINS</span>(body, <span class="string">'machine AND learning'</span>);
+
+<span class="comment">-- Boolean OR: either word may appear</span>
+<span class="keyword">SELECT</span>  article_id, title
+<span class="keyword">FROM</span>    kb_articles
+<span class="keyword">WHERE</span>   <span class="func">CONTAINS</span>(body, <span class="string">'machine OR neural'</span>);
+
+<span class="comment">-- Boolean NOT: word must appear but second must NOT</span>
+<span class="keyword">SELECT</span>  article_id, title
+<span class="keyword">FROM</span>    kb_articles
+<span class="keyword">WHERE</span>   <span class="func">CONTAINS</span>(body, <span class="string">'machine AND NOT "deep learning"'</span>);</div>
+
+                    <div class="result-table-wrap">
+                        <div class="result-label">▶ RESULT — CONTAINS(body, '"machine learning"')</div>
+                        <table>
+                            <tr><th>article_id</th><th>title</th><th>category</th></tr>
+                            <tr><td>1</td><td>Introduction to Machine Learning</td><td>AI</td></tr>
+                            <tr><td>2</td><td>Neural Networks and Deep Learning</td><td>AI</td></tr>
+                            <tr><td>5</td><td>Natural Language Processing Overview</td><td>AI</td></tr>
+                        </table>
+                    </div>
+
+                    <h3>Prefix Search — Words Starting With</h3>
+
+                    <div class="code-block"><span class="comment">-- Prefix term: finds "learn", "learning", "learned", "learner", etc.
+-- The asterisk (*) is a prefix wildcard in full-text syntax</span>
+<span class="keyword">SELECT</span>  article_id, title
+<span class="keyword">FROM</span>    kb_articles
+<span class="keyword">WHERE</span>   <span class="func">CONTAINS</span>(body, <span class="string">'"learn*"'</span>);
+
+<span class="comment">-- Multiple prefixes with AND/OR</span>
+<span class="keyword">SELECT</span>  article_id, title
+<span class="keyword">FROM</span>    kb_articles
+<span class="keyword">WHERE</span>   <span class="func">CONTAINS</span>(body, <span class="string">'"optim*" OR "perform*"'</span>);
+<span class="comment">-- Matches: optimize, optimizing, optimization, performance, performing...</span></div>
+
+                    <h3>Inflectional Forms (FORMSOF INFLECTIONAL)</h3>
+                    <p>Matches all grammatical inflections of a word — singular/plural, verb tenses — without needing to know each form explicitly.</p>
+
+                    <div class="code-block"><span class="comment">-- FORMSOF INFLECTIONAL: matches "index", "indexes", "indexed", "indexing"</span>
+<span class="keyword">SELECT</span>  article_id, title
+<span class="keyword">FROM</span>    kb_articles
+<span class="keyword">WHERE</span>   <span class="func">CONTAINS</span>(body, <span class="string">'FORMSOF(INFLECTIONAL, index)'</span>);
+
+<span class="comment">-- FORMSOF THESAURUS: matches synonyms from the configured thesaurus
+-- e.g. "automobile" might also match "car", "vehicle"</span>
+<span class="keyword">SELECT</span>  article_id, title
+<span class="keyword">FROM</span>    kb_articles
+<span class="keyword">WHERE</span>   <span class="func">CONTAINS</span>(body, <span class="string">'FORMSOF(THESAURUS, optimize)'</span>);</div>
+
+                    <h3>Proximity Search (NEAR)</h3>
+                    <p>Finds documents where two terms appear near each other — not just anywhere in the document. Closer matches rank higher than distant ones.</p>
+
+                    <div class="code-block"><span class="comment">-- Simple NEAR: "machine" and "learning" must appear close to each other</span>
+<span class="keyword">SELECT</span>  article_id, title
+<span class="keyword">FROM</span>    kb_articles
+<span class="keyword">WHERE</span>   <span class="func">CONTAINS</span>(body, <span class="string">'machine NEAR learning'</span>);
+
+<span class="comment">-- Custom distance NEAR: within 5 words of each other, in order</span>
+<span class="keyword">SELECT</span>  article_id, title
+<span class="keyword">FROM</span>    kb_articles
+<span class="keyword">WHERE</span>   <span class="func">CONTAINS</span>(body,
+            <span class="string">'NEAR((machine, learning), 5, TRUE)'</span>);
+<span class="comment">--          term1   term2   max_distance  order_matters</span>
+
+<span class="comment">-- Search across MULTIPLE columns — use column list or ALL columns</span>
+<span class="keyword">SELECT</span>  article_id, title, author
+<span class="keyword">FROM</span>    kb_articles
+<span class="keyword">WHERE</span>   <span class="func">CONTAINS</span>((title, body), <span class="string">'"artificial intelligence"'</span>);
+
+<span class="comment">-- Search ALL full-text indexed columns at once</span>
+<span class="keyword">SELECT</span>  article_id, title
+<span class="keyword">FROM</span>    kb_articles
+<span class="keyword">WHERE</span>   <span class="func">CONTAINS</span>(<span class="op">*</span>, <span class="string">'Lovelace'</span>);  <span class="comment">-- searches title, body, AND author</span></div>
+
+                </div>
+            </div>
+        </div>
+
+        <!-- ══════════════════════════════════════════════ -->
+        <!-- SECTION 4 — FREETEXT                           -->
+        <!-- ══════════════════════════════════════════════ -->
+        <div class="section">
+            <div class="collapsible">
+                <div class="collapsible-header">4. FREETEXT — Natural Language Searching</div>
+                <div class="collapsible-content">
+
+                    <div class="info-box">
+                        <code>FREETEXT</code> is a simpler, higher-level predicate that interprets the search string as natural language rather than a structured query. SQL Server breaks the search string into words, generates inflectional forms, expands synonyms, and searches for any meaningful combination — no special syntax required from the user.
+                    </div>
+
+                    <h3>FREETEXT vs CONTAINS</h3>
+
+                    <table>
+                        <tr><th>Feature</th><th>CONTAINS</th><th>FREETEXT</th></tr>
+                        <tr><td>Query syntax</td><td>Explicit AND/OR/NEAR operators</td><td>Plain natural language text</td></tr>
+                        <tr><td>Phrase matching</td><td>Exact with double quotes</td><td>Automatic, fuzzy</td></tr>
+                        <tr><td>Inflectional forms</td><td>Opt-in with FORMSOF</td><td>Always on automatically</td></tr>
+                        <tr><td>Thesaurus expansion</td><td>Opt-in with FORMSOF</td><td>Automatic</td></tr>
+                        <tr><td>Precision</td><td>High — exact control</td><td>Lower — broader matching</td></tr>
+                        <tr><td>Recall</td><td>Lower — misses variants</td><td>Higher — catches more results</td></tr>
+                        <tr><td>Best for</td><td>Known search terms, structured queries</td><td>User-entered search boxes, exploratory search</td></tr>
+                    </table>
+
+                    <div class="code-block"><span class="comment">-- FREETEXT: "Has anyone written about how systems learn from data?"
+-- SQL Server extracts: systems, learn, data (drops stopwords)
+-- Generates inflections: learning, learned, learned, learner...
+-- Returns any article matching any of these concepts</span>
+<span class="keyword">SELECT</span>  article_id, title, category
+<span class="keyword">FROM</span>    kb_articles
+<span class="keyword">WHERE</span>   <span class="func">FREETEXT</span>(body, <span class="string">'systems that learn from data automatically'</span>);
+
+<span class="comment">-- Same query with FREETEXT across multiple columns</span>
+<span class="keyword">SELECT</span>  article_id, title
+<span class="keyword">FROM</span>    kb_articles
+<span class="keyword">WHERE</span>   <span class="func">FREETEXT</span>((title, body), <span class="string">'artificial intelligence and neural networks'</span>);
+
+<span class="comment">-- Combine FREETEXT with regular WHERE conditions</span>
+<span class="keyword">SELECT</span>  article_id, title, category, published_at
+<span class="keyword">FROM</span>    kb_articles
+<span class="keyword">WHERE</span>   <span class="func">FREETEXT</span>(body, <span class="string">'database performance optimization'</span>)
+  <span class="keyword">AND</span>   category = <span class="string">'Databases'</span>
+  <span class="keyword">AND</span>   published_at >= <span class="string">'2025-01-01'</span>;</div>
+
+                </div>
+            </div>
+        </div>
+
+        <!-- ══════════════════════════════════════════════ -->
+        <!-- SECTION 5 — RANKED RESULTS                     -->
+        <!-- ══════════════════════════════════════════════ -->
+        <div class="section">
+            <div class="collapsible">
+                <div class="collapsible-header">5. Ranked Results — CONTAINSTABLE &amp; FREETEXTTABLE</div>
+                <div class="collapsible-content">
+
+                    <div class="info-box">
+                        <code>CONTAINSTABLE</code> and <code>FREETEXTTABLE</code> work like their predicate counterparts but return a <strong>table</strong> with a relevance rank score (0–1000) for each match. Higher rank = better match. These are used with a JOIN to retrieve ranked results — essential for "most relevant first" search results pages.
+                    </div>
+
+                    <div class="code-block"><span class="comment">-- CONTAINSTABLE: returns a table of (KEY, RANK) pairs
+-- Join back to the base table to get the full row data</span>
+<span class="keyword">SELECT</span>  a.article_id,
+        a.title,
+        a.category,
+        ft.<span class="alias">RANK</span>                 <span class="keyword">AS</span>  <span class="alias">relevance_score</span>
+<span class="keyword">FROM</span>    kb_articles             <span class="keyword">AS</span>  <span class="alias">a</span>
+<span class="keyword">JOIN</span>    <span class="func">CONTAINSTABLE</span>(
+            kb_articles,        <span class="comment">-- table</span>
+            body,               <span class="comment">-- column(s) to search</span>
+            <span class="string">'machine AND learning'</span>  <span class="comment">-- search condition</span>
+        )                       <span class="keyword">AS</span>  <span class="alias">ft</span>
+        <span class="keyword">ON</span>  a.article_id = ft.<span class="alias">[KEY]</span>
+<span class="keyword">ORDER BY</span> ft.<span class="alias">RANK</span> <span class="keyword">DESC</span>;           <span class="comment">-- most relevant first</span>
+
+<span class="comment">-- FREETEXTTABLE: same table-valued output, natural language input
+-- Limit results with TOP N in the table-valued function</span>
+<span class="keyword">SELECT</span>  <span class="keyword">TOP</span> <span class="number">5</span>
+        a.article_id,
+        a.title,
+        a.author,
+        ft.<span class="alias">RANK</span>                 <span class="keyword">AS</span>  <span class="alias">relevance_score</span>
+<span class="keyword">FROM</span>    kb_articles             <span class="keyword">AS</span>  <span class="alias">a</span>
+<span class="keyword">JOIN</span>    <span class="func">FREETEXTTABLE</span>(
+            kb_articles,
+            (title, body),      <span class="comment">-- search across both columns</span>
+            <span class="string">'artificial intelligence machine learning'</span>,
+            <span class="number">10</span>                  <span class="comment">-- LANGUAGE optional; number limits candidates</span>
+        )                       <span class="keyword">AS</span>  <span class="alias">ft</span>
+        <span class="keyword">ON</span>  a.article_id = ft.<span class="alias">[KEY]</span>
+<span class="keyword">ORDER BY</span> ft.<span class="alias">RANK</span> <span class="keyword">DESC</span>;</div>
+
+                    <div class="result-table-wrap">
+                        <div class="result-label">▶ RESULT — FREETEXTTABLE ranked results</div>
+                        <table>
+                            <tr><th>article_id</th><th>title</th><th>author</th><th>relevance_score</th></tr>
+                            <tr><td>1</td><td>Introduction to Machine Learning</td><td>Dr. Ada Lovelace</td><td>974</td></tr>
+                            <tr><td>2</td><td>Neural Networks and Deep Learning</td><td>Prof. Alan Turing</td><td>851</td></tr>
+                            <tr><td>5</td><td>Natural Language Processing Overview</td><td>Dr. Ada Lovelace</td><td>712</td></tr>
+                        </table>
+                    </div>
+
+                    <div class="purple-box">
+                        <strong>Using Rank for "More Like This":</strong> Rank scores allow you to order results by relevance rather than insertion order — just like a search engine. A score close to 1000 means the document is a very strong match; lower scores indicate partial relevance. You can also use rank as a filter with <code>WHERE ft.RANK > 500</code> to return only high-confidence matches.
+                    </div>
+
+                </div>
+            </div>
+        </div>
+
+        <!-- ══════════════════════════════════════════════ -->
+        <!-- SECTION 6 — STOPWORDS & CONFIGURATION          -->
+        <!-- ══════════════════════════════════════════════ -->
+        <div class="section">
+            <div class="collapsible">
+                <div class="collapsible-header">6. Stopwords, Stoplists &amp; Configuration</div>
+                <div class="collapsible-content">
+
+                    <h3>Stopwords and Stoplists</h3>
+                    <p>Stopwords are common words that carry no search value and are excluded from the full-text index to save space and improve performance. SQL Server ships with built-in stoplists per language, and you can customise them.</p>
+
+                    <div class="code-block"><span class="comment">-- View the system stopwords for US English (language 1033)</span>
+<span class="keyword">SELECT</span>  stopword,
+        language
+<span class="keyword">FROM</span>    <span class="sys">sys.fulltext_system_stopwords</span>
+<span class="keyword">WHERE</span>   language_id = <span class="number">1033</span>
+<span class="keyword">ORDER BY</span> stopword;
+<span class="comment">-- Returns words like: a, about, after, all, also, an, and, any, are, as, at, be...</span>
+
+<span class="comment">-- Create a custom stoplist (copy system list and add your own words)</span>
+<span class="keyword">CREATE FULLTEXT STOPLIST</span>  CustomStopList
+    <span class="keyword">FROM SYSTEM STOPLIST</span>;   <span class="comment">-- start from the built-in list</span>
+
+<span class="comment">-- Add domain-specific words that appear everywhere but add no search value</span>
+<span class="keyword">ALTER FULLTEXT STOPLIST</span>  CustomStopList
+    <span class="keyword">ADD</span> <span class="string">'example'</span>  <span class="keyword">LANGUAGE</span> <span class="string">'English'</span>;
+
+<span class="keyword">ALTER FULLTEXT STOPLIST</span>  CustomStopList
+    <span class="keyword">ADD</span> <span class="string">'note'</span>     <span class="keyword">LANGUAGE</span> <span class="string">'English'</span>;
+
+<span class="comment">-- Associate the custom stoplist with the full-text index</span>
+<span class="keyword">ALTER FULLTEXT INDEX ON</span>  kb_articles
+    <span class="keyword">SET STOPLIST</span> = CustomStopList;</div>
+
+                    <h3>Configuring the Thesaurus</h3>
+                    <p>SQL Server's thesaurus is an XML file per language that maps terms to their synonyms. When <code>FORMSOF(THESAURUS, term)</code> is used, or when <code>FREETEXT</code> auto-expands terms, the thesaurus is consulted.</p>
+
+                    <div class="code-block"><span class="comment">-- Thesaurus files are located at:
+-- C:\Program Files\Microsoft SQL Server\MSSQL16.MSSQLSERVER\MSSQL\FTData\
+-- File for English: tsenu.xml  (ts + enu = thesaurus + English US)
+
+-- Example tsenu.xml entry — define synonyms for "database":</span>
+<span class="comment">&lt;!-- XML structure of the thesaurus file --&gt;
+&lt;XML ID="Microsoft Search Thesaurus"&gt;
+    &lt;thesaurus xmlns="..."&gt;
+        &lt;expansion&gt;
+            &lt;sub&gt;database&lt;/sub&gt;
+            &lt;sub&gt;datastore&lt;/sub&gt;
+            &lt;sub&gt;data store&lt;/sub&gt;
+            &lt;sub&gt;RDBMS&lt;/sub&gt;
+        &lt;/expansion&gt;
+    &lt;/thesaurus&gt;
+&lt;/XML&gt;</span>
+
+<span class="comment">-- After editing the XML file, reload the thesaurus for English:</span>
+<span class="keyword">EXEC</span>  <span class="sys">sys.sp_fulltext_load_thesaurus_file</span>  <span class="number">1033</span>;  <span class="comment">-- 1033 = English US</span></div>
+
+                    <h3>Managing Full-Text Indexes</h3>
+
+                    <div class="code-block"><span class="comment">-- View all full-text indexed columns and their settings</span>
+<span class="keyword">SELECT</span>  <span class="func">OBJECT_NAME</span>(ftc.object_id)   <span class="keyword">AS</span>  <span class="alias">table_name</span>,
+        c.name                         <span class="keyword">AS</span>  <span class="alias">column_name</span>,
+        c.system_type_id,
+        ftc.language_id
+<span class="keyword">FROM</span>    <span class="sys">sys.fulltext_index_columns</span>     <span class="keyword">AS</span>  <span class="alias">ftc</span>
+<span class="keyword">JOIN</span>    <span class="sys">sys.columns</span>                    <span class="keyword">AS</span>  <span class="alias">c</span>
+        <span class="keyword">ON</span>  ftc.object_id  = c.object_id
+        <span class="keyword">AND</span> ftc.column_id = c.column_id;
+
+<span class="comment">-- Disable (without dropping) the full-text index</span>
+<span class="keyword">ALTER FULLTEXT INDEX ON</span>  kb_articles  <span class="keyword">DISABLE</span>;
+
+<span class="comment">-- Re-enable and trigger a full population</span>
+<span class="keyword">ALTER FULLTEXT INDEX ON</span>  kb_articles  <span class="keyword">ENABLE</span>;
+
+<span class="comment">-- Drop the full-text index entirely</span>
+<span class="keyword">DROP FULLTEXT INDEX ON</span>  kb_articles;
+
+<span class="comment">-- Drop the catalog (all indexes in it must be dropped first)</span>
+<span class="keyword">DROP FULLTEXT CATALOG</span>  KnowledgeBaseCatalog;</div>
+
+                </div>
+            </div>
+        </div>
+
+        <!-- ══════════════════════════════════════════════ -->
+        <!-- SECTION 7 — WHEN TO USE                        -->
+        <!-- ══════════════════════════════════════════════ -->
+        <div class="section">
+            <div class="collapsible">
+                <div class="collapsible-header">7. When To Use Full-Text Indexing</div>
+                <div class="collapsible-content">
+
+                    <div class="success-box">
+                        <strong>Full-text indexing is the right choice when your queries need to search <em>within</em> the content of long text fields, and exact-value B-tree indexes cannot help.</strong>
+                    </div>
+
+                    <h3>Strong Use Cases</h3>
+
+                    <div class="three-col">
+                        <div class="card good">
+                            <h4>📄 Knowledge Bases &amp; Documentation</h4>
+                            <p>Support portals, internal wikis, and technical documentation where users search for topics, keywords, and phrases across article bodies containing hundreds to thousands of words.</p>
+                            <p style="margin-top:8px; font-size:0.88em;"><span class="badge badge-green">FREETEXT search box</span> <span class="badge badge-green">CONTAINSTABLE ranked</span></p>
+                        </div>
+                        <div class="card good">
+                            <h4>🛒 Product Search &amp; Catalogues</h4>
+                            <p>E-commerce product descriptions, specifications, and names — users type natural language into a search box and expect relevant results regardless of exact wording.</p>
+                            <p style="margin-top:8px; font-size:0.88em;"><span class="badge badge-green">FREETEXTTABLE ranked</span></p>
+                        </div>
+                        <div class="card good">
+                            <h4>📰 Content Management Systems</h4>
+                            <p>News sites, blogs, and publishing platforms where editors and readers search across article bodies, headlines, and metadata for related content.</p>
+                            <p style="margin-top:8px; font-size:0.88em;"><span class="badge badge-green">CONTAINS phrase</span></p>
+                        </div>
+                        <div class="card good">
+                            <h4>🏥 Medical / Legal Records</h4>
+                            <p>Free-text clinical notes, case descriptions, and legal documents where searches need to find relevant cases by concept rather than exact phrase — <em>"patient presented with chest pain"</em>.</p>
+                            <p style="margin-top:8px; font-size:0.88em;"><span class="badge badge-green">FREETEXT + NEAR</span></p>
+                        </div>
+                        <div class="card good">
+                            <h4>📧 Email &amp; Message Archives</h4>
+                            <p>Message bodies, email subjects, and communication logs. Users search for past conversations using approximate recollections — not exact text they wrote months ago.</p>
+                            <p style="margin-top:8px; font-size:0.88em;"><span class="badge badge-green">FORMSOF INFLECTIONAL</span></p>
+                        </div>
+                        <div class="card good">
+                            <h4>🔍 Resume / Job Matching</h4>
+                            <p>Matching job descriptions to candidate CVs by skill keywords, job titles, and experience descriptions. Proximity search identifies candidates who mention skills in context, not just incidentally.</p>
+                            <p style="margin-top:8px; font-size:0.88em;"><span class="badge badge-green">NEAR operator</span></p>
+                        </div>
+                    </div>
+
+                    <h3>Technical Triggers — When to Reach for Full-Text</h3>
+
+                    <table>
+                        <tr><th>Signal</th><th>Why Full-Text Helps</th></tr>
+                        <tr>
+                            <td>You are using <code>LIKE '%term%'</code> on a large text column</td>
+                            <td>Leading wildcard defeats all B-Tree indexes; query does a full scan every time</td>
+                        </tr>
+                        <tr>
+                            <td>Your text columns are <code>VARCHAR(MAX)</code> or <code>NVARCHAR(MAX)</code></td>
+                            <td>Standard indexes cannot index MAX columns effectively; full-text was designed for this</td>
+                        </tr>
+                        <tr>
+                            <td>Users need linguistic search (plurals, verb forms, synonyms)</td>
+                            <td>B-Tree matching is character-exact; full-text understands word roots</td>
+                        </tr>
+                        <tr>
+                            <td>You need relevance-ranked results</td>
+                            <td>Only full-text provides a rank score; LIKE returns unordered binary matches</td>
+                        </tr>
+                        <tr>
+                            <td>You need proximity search ("X near Y")</td>
+                            <td>Impossible with LIKE; NEAR operator is built into full-text</td>
+                        </tr>
+                        <tr>
+                            <td>Search performance is degrading with table growth</td>
+                            <td>Full-text scales well; LIKE scan cost grows linearly with row count</td>
+                        </tr>
+                    </table>
+
+                </div>
+            </div>
+        </div>
+
+        <!-- ══════════════════════════════════════════════ -->
+        <!-- SECTION 8 — WHEN NOT TO USE                    -->
+        <!-- ══════════════════════════════════════════════ -->
+        <div class="section">
+            <div class="collapsible">
+                <div class="collapsible-header">8. When NOT To Use Full-Text Indexing</div>
+                <div class="collapsible-content">
+
+                    <div class="danger-box">
+                        <strong>Full-text indexing has real overhead and is not always the right tool. Using it for the wrong problem adds complexity and maintenance cost without benefit.</strong>
+                    </div>
+
+                    <h3>Cases Where Full-Text Is the Wrong Choice</h3>
+
+                    <div class="three-col">
+                        <div class="card bad">
+                            <h4>❌ Short Code or ID Fields</h4>
+                            <p>Searching for exact values in short fields like product codes (<code>SKU-1042</code>), customer IDs, or phone numbers. A standard unique or non-clustered index is faster and simpler.</p>
+                            <p style="margin-top:8px; font-size:0.88em;"><strong>Use instead:</strong> <code>WHERE sku = 'SKU-1042'</code> with a B-Tree index</p>
+                        </div>
+                        <div class="card bad">
+                            <h4>❌ Exact String Lookups</h4>
+                            <p>When you need an exact character-for-character match — username, email address, account number. Full-text applies word breaking and stopwords, which can interfere with exact matching.</p>
+                            <p style="margin-top:8px; font-size:0.88em;"><strong>Use instead:</strong> Unique non-clustered index + <code>WHERE email = @email</code></p>
+                        </div>
+                        <div class="card bad">
+                            <h4>❌ Numeric &amp; Date Ranges</h4>
+                            <p>Range queries on numbers and dates (<code>price BETWEEN 10 AND 50</code>, <code>date >= '2025-01-01'</code>) are handled perfectly by B-Tree range scans. Full-text cannot index numeric or date columns.</p>
+                            <p style="margin-top:8px; font-size:0.88em;"><strong>Use instead:</strong> Standard index + range WHERE clause</p>
+                        </div>
+                        <div class="card bad">
+                            <h4>❌ Small Tables</h4>
+                            <p>On a table with a few hundred rows, a full table scan with LIKE is nearly instantaneous and simpler to maintain. Full-text overhead — catalog, crawler, index files — is not justified.</p>
+                            <p style="margin-top:8px; font-size:0.88em;"><strong>Use instead:</strong> LIKE search, which is fine at small scale</p>
+                        </div>
+                        <div class="card bad">
+                            <h4>❌ Near-Real-Time Search Requirements</h4>
+                            <p>If your application requires a newly inserted record to be searchable within milliseconds, full-text's asynchronous population can be a problem. Even with AUTO tracking, propagation is not instant.</p>
+                            <p style="margin-top:8px; font-size:0.88em;"><strong>Use instead:</strong> Elasticsearch or Azure Cognitive Search for sub-second indexing</p>
+                        </div>
+                        <div class="card bad">
+                            <h4>❌ Pattern-Based Searches</h4>
+                            <p>Regex-style patterns (<em>"starts with AB followed by any 3 digits"</em>), structured codes, or format validation. Full-text indexes words, not patterns — it cannot replicate LIKE 'AB[0-9][0-9][0-9]'.</p>
+                            <p style="margin-top:8px; font-size:0.88em;"><strong>Use instead:</strong> LIKE with trailing wildcard, or computed column + index</p>
+                        </div>
+                    </div>
+
+                    <h3>Full-Text vs Dedicated Search Engines</h3>
+                    <p>SQL Server's built-in full-text search is suitable for many use cases, but for very large datasets or advanced search requirements, a dedicated search platform may be a better fit:</p>
+
+                    <table>
+                        <tr><th>Requirement</th><th>SQL Server Full-Text</th><th>Elasticsearch / Azure AI Search</th></tr>
+                        <tr>
+                            <td>Setup simplicity</td>
+                            <td>✅ In-database, no extra infrastructure</td>
+                            <td>❌ Separate service, more operational complexity</td>
+                        </tr>
+                        <tr>
+                            <td>Billions of documents</td>
+                            <td>⚠️ Works but may strain the DB server</td>
+                            <td>✅ Designed for petabyte-scale distributed search</td>
+                        </tr>
+                        <tr>
+                            <td>Fuzzy / typo-tolerant search</td>
+                            <td>❌ Not supported natively</td>
+                            <td>✅ Built-in fuzziness parameter</td>
+                        </tr>
+                        <tr>
+                            <td>Faceted filtering (e.g. filter by category + price range + rating)</td>
+                            <td>⚠️ Combine with SQL WHERE — workable</td>
+                            <td>✅ Native aggregation buckets and facets</td>
+                        </tr>
+                        <tr>
+                            <td>Sub-100ms search latency at scale</td>
+                            <td>⚠️ Competes with OLTP workload for resources</td>
+                            <td>✅ Dedicated search cluster, no DB contention</td>
+                        </tr>
+                        <tr>
+                            <td>Multi-language, geospatial, ML ranking</td>
+                            <td>⚠️ Basic multi-language; no geo/ML ranking</td>
+                            <td>✅ Built-in across all features</td>
+                        </tr>
+                    </table>
+
+                </div>
+            </div>
+        </div>
+
+        <!-- ══════════════════════════════════════════════ -->
+        <!-- SECTION 9 — ADVANTAGES & DISADVANTAGES         -->
+        <!-- ══════════════════════════════════════════════ -->
+        <div class="section">
+            <div class="collapsible">
+                <div class="collapsible-header">9. Advantages &amp; Disadvantages</div>
+                <div class="collapsible-content">
+
+                    <div class="two-col">
+                        <div class="card good">
+                            <h4>✅ Advantages</h4>
+                            <ul>
+                                <li><strong>Dramatically faster text search</strong> — inverted index lookup vs full table scan; 10×–1000× faster on large data</li>
+                                <li><strong>Linguistic intelligence</strong> — stemming, inflectional forms, and stopwords mean users get relevant results without needing exact keywords</li>
+                                <li><strong>Phrase and proximity matching</strong> — find documents where terms appear near each other; impossible with LIKE</li>
+                                <li><strong>Relevance ranking</strong> — CONTAINSTABLE and FREETEXTTABLE return a rank score for result ordering</li>
+                                <li><strong>Built into SQL Server</strong> — no separate search service needed; queries stay in T-SQL; uses existing connection security</li>
+                                <li><strong>Multi-language support</strong> — different word breakers and stemmers per language; one database can hold multilingual content</li>
+                                <li><strong>NVARCHAR(MAX) support</strong> — can index large text columns that B-Tree indexes cannot handle efficiently</li>
+                                <li><strong>Thesaurus customisation</strong> — domain-specific synonym expansion (e.g. "heart attack" = "myocardial infarction")</li>
+                                <li><strong>Eliminates LIKE '%...%' scans</strong> — fixes one of the most common query performance anti-patterns</li>
+                            </ul>
+                        </div>
+                        <div class="card bad">
+                            <h4>❌ Disadvantages</h4>
+                            <ul>
+                                <li><strong>Asynchronous updates</strong> — newly inserted or updated data is not immediately searchable; there is a propagation delay</li>
+                                <li><strong>Additional storage</strong> — the full-text catalog and index files require significant disk space (can approach the size of the indexed text itself)</li>
+                                <li><strong>Maintenance overhead</strong> — catalogs must be populated; fragmentation occurs over time; rebuilds are resource-intensive</li>
+                                <li><strong>Not exact-match reliable</strong> — stopwords, stemming, and word breaking can cause unexpected misses on exact terms (e.g. a stopword in a phrase may be dropped)</li>
+                                <li><strong>Limited data type support</strong> — cannot full-text index numeric, date, or binary columns directly</li>
+                                <li><strong>CPU/memory pressure</strong> — full-text queries run in-process and compete with OLTP workloads for server resources</li>
+                                <li><strong>No fuzzy/typo matching</strong> — a misspelled search term returns no results; dedicated search engines handle typos natively</li>
+                                <li><strong>Requires unique key on table</strong> — tables without a single-column unique index cannot have a full-text index</li>
+                                <li><strong>Debugging complexity</strong> — understanding why a document did or didn't match requires understanding the full text pipeline (word breaking, stopwords, stemming)</li>
+                            </ul>
+                        </div>
+                    </div>
+
+                    <h3>Performance Impact Summary</h3>
+
+                    <table>
+                        <tr><th>Operation</th><th>Impact of Full-Text Index</th><th>Notes</th></tr>
+                        <tr>
+                            <td><strong>Text search queries</strong></td>
+                            <td>🟢 Significantly faster</td>
+                            <td>Index scan vs full table scan; scales well with row count growth</td>
+                        </tr>
+                        <tr>
+                            <td><strong>INSERT</strong></td>
+                            <td>🟡 Minor write overhead</td>
+                            <td>Change is logged for the crawler; async population means the write itself is fast</td>
+                        </tr>
+                        <tr>
+                            <td><strong>UPDATE to indexed column</strong></td>
+                            <td>🟡 Moderate overhead</td>
+                            <td>Old tokens removed, new tokens queued for indexing during next crawl</td>
+                        </tr>
+                        <tr>
+                            <td><strong>DELETE</strong></td>
+                            <td>🟡 Minor overhead</td>
+                            <td>Row flagged as deleted in the FT index during next crawl</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Bulk load</strong></td>
+                            <td>🔴 Significant overhead post-load</td>
+                            <td>Full population after a bulk insert is CPU and I/O intensive; schedule during off-peak</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Index rebuild / catalog rebuild</strong></td>
+                            <td>🔴 High resource use</td>
+                            <td>Re-reads all indexed text; avoid during peak hours</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Disk space</strong></td>
+                            <td>🟡 Moderate additional storage</td>
+                            <td>Catalog size depends on text volume and vocabulary size; monitor disk usage</td>
+                        </tr>
+                    </table>
+
+                </div>
+            </div>
+        </div>
+
+        <!-- ══════════════════════════════════════════════ -->
+        <!-- SECTION 10 — QUICK REFERENCE                   -->
+        <!-- ══════════════════════════════════════════════ -->
+        <div class="section">
+            <div class="collapsible">
+                <div class="collapsible-header">10. Quick Reference &amp; Decision Guide</div>
+                <div class="collapsible-content">
+
+                    <h3>Full-Text Predicate / Function Reference</h3>
+
+                    <table>
+                        <tr><th>Function / Predicate</th><th>Returns</th><th>Best For</th><th>Syntax Sketch</th></tr>
+                        <tr>
+                            <td><code>CONTAINS(col, query)</code></td>
+                            <td>TRUE / FALSE</td>
+                            <td>Exact words, phrases, proximity, prefix in WHERE</td>
+                            <td><code>WHERE CONTAINS(body, 'term')</code></td>
+                        </tr>
+                        <tr>
+                            <td><code>FREETEXT(col, text)</code></td>
+                            <td>TRUE / FALSE</td>
+                            <td>Natural language user input in WHERE</td>
+                            <td><code>WHERE FREETEXT(body, 'user typed text')</code></td>
+                        </tr>
+                        <tr>
+                            <td><code>CONTAINSTABLE(tbl, col, query)</code></td>
+                            <td>Table (KEY, RANK)</td>
+                            <td>Ranked results, JOIN for sorted output</td>
+                            <td><code>JOIN CONTAINSTABLE(...) ON id = [KEY]</code></td>
+                        </tr>
+                        <tr>
+                            <td><code>FREETEXTTABLE(tbl, col, text)</code></td>
+                            <td>Table (KEY, RANK)</td>
+                            <td>Ranked natural-language results</td>
+                            <td><code>JOIN FREETEXTTABLE(...) ON id = [KEY]</code></td>
+                        </tr>
+                    </table>
+
+                    <h3>CONTAINS Search Term Quick Reference</h3>
+
+                    <table>
+                        <tr><th>What You Want</th><th>Syntax</th><th>Example</th></tr>
+                        <tr><td>Single word</td><td><code>'word'</code></td><td><code>'machine'</code></td></tr>
+                        <tr><td>Exact phrase</td><td><code>'"phrase here"'</code></td><td><code>'"machine learning"'</code></td></tr>
+                        <tr><td>Both words anywhere</td><td><code>'word1 AND word2'</code></td><td><code>'security AND encryption'</code></td></tr>
+                        <tr><td>Either word</td><td><code>'word1 OR word2'</code></td><td><code>'index OR indexes'</code></td></tr>
+                        <tr><td>Word but not another</td><td><code>'word1 AND NOT word2'</code></td><td><code>'learning AND NOT deep'</code></td></tr>
+                        <tr><td>Word starts with prefix</td><td><code>'"prefix*"'</code></td><td><code>'"optim*"'</code> → optimize, optimization</td></tr>
+                        <tr><td>All word forms (stem)</td><td><code>'FORMSOF(INFLECTIONAL, word)'</code></td><td><code>'FORMSOF(INFLECTIONAL, index)'</code></td></tr>
+                        <tr><td>Synonyms</td><td><code>'FORMSOF(THESAURUS, word)'</code></td><td><code>'FORMSOF(THESAURUS, database)'</code></td></tr>
+                        <tr><td>Words near each other</td><td><code>'word1 NEAR word2'</code></td><td><code>'neural NEAR network'</code></td></tr>
+                        <tr><td>Words within N positions</td><td><code>'NEAR((w1,w2), N, ordered)'</code></td><td><code>'NEAR((machine,learning),5,TRUE)'</code></td></tr>
+                    </table>
+
+                    <h3>Decision Flowchart — Should I Use Full-Text Indexing?</h3>
+
+                    <table>
+                        <tr><th>Question</th><th>Yes → ...</th><th>No → ...</th></tr>
+                        <tr>
+                            <td>Are you searching <strong>inside</strong> long text fields (hundreds of words)?</td>
+                            <td>Continue ↓</td>
+                            <td>Use standard B-Tree index + exact WHERE</td>
+                        </tr>
+                        <tr>
+                            <td>Do users search with natural language or approximate terms?</td>
+                            <td>Continue ↓</td>
+                            <td>LIKE with trailing wildcard may be sufficient</td>
+                        </tr>
+                        <tr>
+                            <td>Is table performance suffering from LIKE '%term%' scans?</td>
+                            <td>Continue ↓</td>
+                            <td>Evaluate query frequency — may not be urgent</td>
+                        </tr>
+                        <tr>
+                            <td>Can you tolerate a short indexing delay (seconds to minutes)?</td>
+                            <td>Continue ↓</td>
+                            <td>Consider Elasticsearch for sub-second requirements</td>
+                        </tr>
+                        <tr>
+                            <td>Is your dataset in SQL Server and billions-of-rows scale is not needed?</td>
+                            <td><strong>✅ Use Full-Text Indexing</strong></td>
+                            <td>Consider a dedicated search service (Elasticsearch, Azure AI Search)</td>
+                        </tr>
+                    </table>
+
+                    <div class="success-box" style="margin-top:20px;">
+                        <strong>📌 Implementation Checklist:</strong>
+                        <ol style="margin-top:10px;">
+                            <li>Verify Full-Text Search feature is installed (<code>FULLTEXTSERVICEPROPERTY</code>)</li>
+                            <li>Create a Full-Text Catalog (<code>CREATE FULLTEXT CATALOG</code>)</li>
+                            <li>Ensure target table has a single-column unique index (usually the PK)</li>
+                            <li>Create Full-Text Index with <code>CHANGE_TRACKING = AUTO</code> for production</li>
+                            <li>Trigger initial population (<code>START FULL POPULATION</code>)</li>
+                            <li>Use <code>CONTAINS</code> for precise queries; <code>FREETEXT</code> for user search boxes</li>
+                            <li>Use <code>FREETEXTTABLE</code> / <code>CONTAINSTABLE</code> when relevance ranking is needed</li>
+                            <li>Monitor catalog size and schedule population jobs during off-peak hours</li>
+                            <li>Customise stoplist and thesaurus for domain-specific vocabulary</li>
+                        </ol>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+
+    </div><!-- /content -->
+
+    <footer>
+        <p>COP4709 — Database Management Systems</p>
+        <p>&copy; 2025 Course Materials &nbsp;|&nbsp; Last Updated: February 2025</p>
+    </footer>
+
+</div><!-- /container -->
+
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        const headers = document.querySelectorAll('.collapsible-header');
+        headers.forEach(header => {
+            header.addEventListener('click', function () {
+                this.parentElement.classList.toggle('active');
+            });
+        });
+        document.querySelector('.collapsible').classList.add('active');
+    });
+</script>
+</body>
+</html>

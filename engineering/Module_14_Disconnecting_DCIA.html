@@ -1,0 +1,973 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Module 14: Disconnecting the Directly Connected Impervious Area (DCIA)</title>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700&family=Source+Serif+4:ital,wght@0,300;0,400;0,600;1,400&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
+  <style>
+    :root {
+      --green-dark:   #1a4a2e;
+      --green-mid:    #2d6a4a;
+      --green-light:  #4a9066;
+      --green-pale:   #e8f2ec;
+      --green-border: #b5d4bf;
+      --warm-white:   #faf8f4;
+      --warm-off:     #f2ede6;
+      --text-dark:    #1c1c1c;
+      --text-mid:     #3d3d3d;
+      --text-muted:   #6b6b6b;
+      --accent:       #c8a84b;
+      --accent-light: #f5efd7;
+      --rule:         #d4cfc8;
+    }
+
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: 'Source Serif 4', Georgia, serif;
+      font-size: 17px;
+      line-height: 1.75;
+      color: var(--text-dark);
+      background: var(--warm-white);
+    }
+
+    /* ── HERO ── */
+    .hero {
+      background: linear-gradient(135deg, var(--green-dark) 0%, var(--green-mid) 100%);
+      color: #fff;
+      padding: 3.5rem 3rem 3rem;
+      position: relative;
+      overflow: hidden;
+    }
+    .hero::after {
+      content: '';
+      position: absolute;
+      bottom: -1px; left: 0; right: 0;
+      height: 32px;
+      background: var(--warm-white);
+      clip-path: ellipse(55% 100% at 50% 100%);
+    }
+    .hero-eyebrow {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.72rem;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      color: var(--accent);
+      margin-bottom: 0.75rem;
+    }
+    .hero h1 {
+      font-family: 'Playfair Display', serif;
+      font-size: 2.5rem;
+      font-weight: 700;
+      line-height: 1.2;
+      max-width: 820px;
+      margin-bottom: 1rem;
+    }
+    .hero-meta {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.75rem;
+      color: rgba(255,255,255,0.65);
+      letter-spacing: 0.06em;
+    }
+    .hero-meta span { margin-right: 2rem; }
+
+    /* ── LAYOUT ── */
+    .page-body {
+      display: grid;
+      grid-template-columns: 220px 1fr;
+      gap: 0;
+      max-width: 1280px;
+      margin: 0 auto;
+    }
+
+    /* ── SIDEBAR ── */
+    nav.sidebar {
+      position: sticky;
+      top: 0;
+      height: 100vh;
+      overflow-y: auto;
+      padding: 2rem 1.25rem 2rem 1.5rem;
+      border-right: 1px solid var(--rule);
+      background: var(--warm-off);
+    }
+    nav.sidebar h3 {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.65rem;
+      letter-spacing: 0.16em;
+      text-transform: uppercase;
+      color: var(--text-muted);
+      margin-bottom: 1rem;
+    }
+    nav.sidebar ol {
+      list-style: none;
+      counter-reset: nav-c;
+    }
+    nav.sidebar ol li {
+      counter-increment: nav-c;
+      margin-bottom: 0.4rem;
+    }
+    nav.sidebar ol li a {
+      display: flex;
+      gap: 0.5rem;
+      font-family: 'Source Serif 4', serif;
+      font-size: 0.8rem;
+      color: var(--text-mid);
+      text-decoration: none;
+      line-height: 1.4;
+    }
+    nav.sidebar ol li a::before {
+      content: counter(nav-c, decimal-leading-zero);
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.68rem;
+      color: var(--green-light);
+      flex-shrink: 0;
+      padding-top: 0.05rem;
+    }
+    nav.sidebar ol li a:hover { color: var(--green-mid); }
+
+    /* ── MAIN CONTENT ── */
+    main {
+      padding: 3rem 3.5rem 5rem;
+      min-width: 0;
+    }
+
+    section { margin-bottom: 3.5rem; }
+
+    h2 {
+      font-family: 'Playfair Display', serif;
+      font-size: 1.75rem;
+      font-weight: 700;
+      color: var(--green-dark);
+      margin-bottom: 1rem;
+      padding-bottom: 0.5rem;
+      border-bottom: 2px solid var(--green-border);
+    }
+    h3 {
+      font-family: 'Playfair Display', serif;
+      font-size: 1.2rem;
+      font-weight: 600;
+      color: var(--green-mid);
+      margin: 1.75rem 0 0.6rem;
+    }
+
+    p { margin-bottom: 1rem; }
+    p:last-child { margin-bottom: 0; }
+
+    /* ── CALLOUT BOXES ── */
+    .callout {
+      border-left: 4px solid var(--green-mid);
+      background: var(--green-pale);
+      padding: 1rem 1.25rem;
+      margin: 1.5rem 0;
+      border-radius: 0 6px 6px 0;
+    }
+    .callout.accent {
+      border-left-color: var(--accent);
+      background: var(--accent-light);
+    }
+    .callout.warning {
+      border-left-color: #b85c38;
+      background: #fdf0eb;
+    }
+    .callout-label {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.68rem;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      color: var(--green-mid);
+      margin-bottom: 0.35rem;
+      font-weight: 500;
+    }
+    .callout.accent .callout-label { color: #9a7730; }
+    .callout.warning .callout-label { color: #b85c38; }
+
+    /* ── LEARNING OBJECTIVES ── */
+    .objectives-box {
+      background: var(--green-dark);
+      color: #fff;
+      padding: 2rem 2.25rem;
+      border-radius: 8px;
+      margin-bottom: 2rem;
+    }
+    .objectives-box h3 {
+      font-family: 'Playfair Display', serif;
+      color: var(--accent);
+      font-size: 1.1rem;
+      margin-bottom: 1rem;
+      margin-top: 0;
+    }
+    .objectives-box ol {
+      margin: 0;
+      padding-left: 1.4rem;
+    }
+    .objectives-box ol li {
+      margin-bottom: 0.45rem;
+      font-size: 0.97rem;
+      line-height: 1.6;
+    }
+
+    /* ── TABLES ── */
+    .table-wrap {
+      overflow-x: auto;
+      margin: 1.5rem 0;
+    }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 0.88rem;
+      font-family: 'Source Serif 4', serif;
+    }
+    thead th {
+      background: var(--green-dark);
+      color: #fff;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.73rem;
+      letter-spacing: 0.06em;
+      padding: 0.65rem 0.9rem;
+      text-align: left;
+      font-weight: 500;
+    }
+    tbody tr:nth-child(even) { background: var(--warm-off); }
+    tbody tr:nth-child(odd)  { background: #fff; }
+    tbody tr.highlight { background: #dff0e4; font-weight: 600; }
+    td {
+      padding: 0.55rem 0.9rem;
+      border-bottom: 1px solid var(--rule);
+      vertical-align: top;
+    }
+    td.mono {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.82rem;
+    }
+
+    /* ── FIGURE PLACEHOLDER ── */
+    .figure-placeholder {
+      width: 100%;
+      background: var(--warm-off);
+      border: 2px dashed var(--green-border);
+      border-radius: 6px;
+      padding: 2rem 1.5rem;
+      margin: 1.75rem 0;
+      text-align: center;
+    }
+    .figure-placeholder .fig-icon {
+      font-size: 2rem;
+      margin-bottom: 0.5rem;
+      opacity: 0.4;
+    }
+    .figure-placeholder .fig-label {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.7rem;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--green-mid);
+      margin-bottom: 0.4rem;
+    }
+    .figure-placeholder .fig-title {
+      font-family: 'Playfair Display', serif;
+      font-size: 1rem;
+      font-weight: 600;
+      color: var(--text-dark);
+      margin-bottom: 0.4rem;
+    }
+    .figure-placeholder .fig-desc {
+      font-size: 0.83rem;
+      color: var(--text-muted);
+      max-width: 700px;
+      margin: 0 auto;
+    }
+
+    /* ── STEP WORKFLOW ── */
+    .workflow {
+      display: flex;
+      flex-direction: column;
+      gap: 1rem;
+      margin: 1.5rem 0;
+    }
+    .workflow-step {
+      display: flex;
+      gap: 1rem;
+      align-items: flex-start;
+      background: #fff;
+      border: 1px solid var(--green-border);
+      border-radius: 8px;
+      padding: 1rem 1.25rem;
+    }
+    .step-num {
+      flex-shrink: 0;
+      width: 2.2rem;
+      height: 2.2rem;
+      background: var(--green-mid);
+      color: #fff;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.85rem;
+      font-weight: 500;
+    }
+    .step-body strong {
+      display: block;
+      font-family: 'Playfair Display', serif;
+      font-size: 1rem;
+      margin-bottom: 0.2rem;
+      color: var(--green-dark);
+    }
+    .step-body p { margin: 0; font-size: 0.9rem; }
+
+    /* ── KEY FORMULA ── */
+    .formula-box {
+      background: var(--green-dark);
+      color: #fff;
+      padding: 1.25rem 1.75rem;
+      border-radius: 6px;
+      margin: 1.5rem 0;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 1rem;
+      line-height: 1.8;
+    }
+    .formula-box .formula-label {
+      font-size: 0.65rem;
+      letter-spacing: 0.16em;
+      text-transform: uppercase;
+      color: var(--accent);
+      margin-bottom: 0.35rem;
+    }
+
+    /* ── COMPARISON GRID ── */
+    .comparison-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 1.25rem;
+      margin: 1.5rem 0;
+    }
+    .comparison-card {
+      border: 1px solid var(--green-border);
+      border-radius: 8px;
+      overflow: hidden;
+    }
+    .comparison-card .card-head {
+      background: var(--green-mid);
+      color: #fff;
+      padding: 0.65rem 1rem;
+      font-family: 'Playfair Display', serif;
+      font-size: 0.95rem;
+      font-weight: 600;
+    }
+    .comparison-card .card-body {
+      padding: 1rem;
+      font-size: 0.88rem;
+    }
+    .comparison-card .card-body p { margin-bottom: 0.4rem; }
+    .comparison-card .card-body strong { color: var(--green-dark); }
+
+    /* ── FIGURES APPENDIX ── */
+    .figures-appendix { border-top: 2px solid var(--rule); padding-top: 2rem; margin-top: 3rem; }
+    .figures-appendix h2 { border-bottom-color: var(--rule); color: var(--text-muted); }
+
+    .figure-ref {
+      display: flex;
+      gap: 1.25rem;
+      margin-bottom: 1.75rem;
+      background: #fff;
+      border: 1px solid var(--rule);
+      border-radius: 8px;
+      overflow: hidden;
+    }
+    .figure-ref-thumb {
+      flex-shrink: 0;
+      width: 180px;
+      background: var(--warm-off);
+      border-right: 1px solid var(--rule);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 1.25rem 1rem;
+      text-align: center;
+    }
+    .figure-ref-thumb .fig-num {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.65rem;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      color: var(--green-mid);
+      margin-bottom: 0.3rem;
+    }
+    .figure-ref-thumb .fig-icon { font-size: 2.5rem; opacity: 0.35; }
+    .figure-ref-content { padding: 1.1rem 1.25rem; }
+    .figure-ref-content strong {
+      display: block;
+      font-family: 'Playfair Display', serif;
+      font-size: 1rem;
+      margin-bottom: 0.35rem;
+    }
+    .figure-ref-content p { font-size: 0.85rem; color: var(--text-mid); margin: 0; }
+
+    @media (max-width: 860px) {
+      .page-body { grid-template-columns: 1fr; }
+      nav.sidebar { position: static; height: auto; }
+      main { padding: 2rem 1.25rem 4rem; }
+      .comparison-grid { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- HERO -->
+<header class="hero">
+  <div class="hero-eyebrow">BMPFast Learning System · Module 14</div>
+  <h1>Disconnecting the Directly Connected Impervious Area (DCIA)</h1>
+  <div class="hero-meta">
+    <span>Author: Marty Wanielista</span>
+    <span>October 2025</span>
+    <span>BMPFast / BMPTrains 2025</span>
+  </div>
+</header>
+
+<div class="page-body">
+
+  <!-- SIDEBAR NAV -->
+  <nav class="sidebar">
+    <h3>Contents</h3>
+    <ol>
+      <li><a href="#objectives">Learning Objectives</a></li>
+      <li><a href="#definition">DCIA Definition</a></li>
+      <li><a href="#nondcia">Non-DCIA Criteria</a></li>
+      <li><a href="#cn-method">Curve Number Method</a></li>
+      <li><a href="#example">Example Problem</a></li>
+      <li><a href="#watershed">Watershed Characteristics</a></li>
+      <li><a href="#cn-values">CN Value Rationale</a></li>
+      <li><a href="#rain-garden">Rain Garden BMP</a></li>
+      <li><a href="#configuration">System Configuration</a></li>
+      <li><a href="#summary">Summary Report Comparison</a></li>
+      <li><a href="#key-takeaways">Key Takeaways</a></li>
+      <li><a href="#figures">Referenced Figures</a></li>
+    </ol>
+  </nav>
+
+  <!-- MAIN -->
+  <main>
+
+    <!-- 1. LEARNING OBJECTIVES -->
+    <section id="objectives">
+      <h2>Learning Objectives</h2>
+      <div class="objectives-box">
+        <h3>Upon completing this module, participants will be able to:</h3>
+        <ol>
+          <li>Understand the definition and regulatory basis of DCIA.</li>
+          <li>Know what is important for discharge volume and mass estimates when disconnecting the DCIA.</li>
+          <li>Enter data into BMPFast for analysis to meet performance standards for a discharge analysis.</li>
+          <li>Apply calculation methods used to estimate discharge volume and mass.</li>
+          <li>Work through a complete example problem for disconnecting DCIA in a residential development scenario.</li>
+          <li>Recognize that discharge mass and volume may also be independently important beyond percentage removal targets (e.g., in Basin Management Action Plan areas).</li>
+        </ol>
+      </div>
+
+      <div class="callout accent">
+        <div class="callout-label">Key Principle</div>
+        Composite CN calculation must be based on <strong>volume discharge</strong>, not the arithmetic average or the area-weighted average. The simple arithmetic average CN can significantly overestimate runoff and does not reflect the nonlinear nature of the curve number method.
+      </div>
+    </section>
+
+    <!-- 2. DCIA DEFINITION -->
+    <section id="definition">
+      <h2>DCIA Definition</h2>
+      <p>The following definition is drawn from the Florida Applicant's Handbook (AH) Volume 1, 2024:</p>
+
+      <div class="callout">
+        <div class="callout-label">Regulatory Definition — AH Vol. 1, 2024</div>
+        <p><strong>"Directly connected impervious area"</strong> or <strong>"DCIA"</strong> means the area covered by a building, impermeable pavement, and/or other impervious surfaces, which drains <em>directly</em> into a conveyance system without first flowing across sufficient permeable vegetated land area — as referenced in Section 9.2 of this Volume — to allow for infiltration of runoff.</p>
+      </div>
+
+      <p>In practical terms, DCIA encompasses any impervious surface where stormwater runoff is channeled directly into pipes, inlets, or other conveyance infrastructure rather than first passing over and through vegetated pervious areas. Rooftops draining to gutters and downspouts connected to storm drains, parking lots with curb-and-gutter drainage, and roads with curb inlets are common examples of DCIA.</p>
+    </section>
+
+    <!-- 3. NON-DCIA CRITERIA -->
+    <section id="nondcia">
+      <h2>Non-DCIA Criteria (Section 9.2)</h2>
+      <p>Section 9.2 of AH Volume 1 defines the conditions under which impervious areas are considered <em>not</em> directly connected — and therefore classified as Non-DCIA:</p>
+
+      <div class="callout">
+        <div class="callout-label">AH Vol. 1, Section 9.2 — Non-DCIA Definition</div>
+        <p>Non-Directly Connected Impervious Areas (NonDCIA) include all pervious areas <strong>and</strong> portions of impervious areas that flow over at least:</p>
+        <ul style="margin: 0.5rem 0 0.5rem 1.25rem; line-height: 1.8;">
+          <li><strong>10 feet</strong> of undisturbed pervious area with Hydrologic Soil Group (HSG) A or B soils; or</li>
+          <li><strong>20 feet</strong> of undisturbed pervious area for other soil types (HSG C or D);</li>
+        </ul>
+        <p style="margin-top:0.5rem;">unless the applicant demonstrates that a narrower width would provide sufficient infiltration to disconnect the impervious area by percolating the desired runoff volume from a <strong>3-year, 1-hour storm event</strong>.</p>
+      </div>
+
+      <p>The 3-year, 1-hour storm event is the governing design storm for evaluating disconnection. Runoff from the disconnected impervious area must be fully infiltrated within the pervious strip. The soil storage capacity S′ derived from the curve number of the receiving pervious soils must equal or exceed the rainfall depth from the 3-year, 1-hour IDF curve for the project's meteorological zone.</p>
+    </section>
+
+    <!-- 4. CURVE NUMBER METHOD -->
+    <section id="cn-method">
+      <h2>Curve Number Method for Disconnection Analysis</h2>
+      <p>The SCS (NRCS) Curve Number method is used to determine whether the pervious receiving area has sufficient soil storage capacity to absorb the runoff from the disconnected impervious area. The key parameter is the potential maximum retention S′:</p>
+
+      <div class="formula-box">
+        <div class="formula-label">SCS Potential Maximum Retention</div>
+        S′ = (1000 / CN) − 10<br/><br/>
+        Example: CN = 78 → S′ = (1000/78) − 10 = <strong>2.82 inches</strong>
+      </div>
+
+      <p>For disconnection to be valid, S′ must exceed the 3-year, 1-hour rainfall depth for the site's meteorological zone. In the example problem (Florida Zone 4, mean annual rainfall = 52 inches), the IDF curve yields a 3-year, 1-hour volume of <strong>2.4 inches</strong>. Since S′ = 2.82 inches &gt; 2.4 inches, the soils can store more than the design storm produces — disconnection is feasible for HSG A/B soils with CN ≈ 78.</p>
+
+      <div class="callout warning">
+        <div class="callout-label">Critical Error to Avoid</div>
+        <strong>Do not use a simple arithmetic average or area-weighted average CN to compute composite runoff.</strong> The CN-to-runoff relationship is highly nonlinear. Averaging CNs before computing runoff produces systematic errors. The composite CN must be derived from the volume-discharge method, computing individual area runoff volumes and summing before back-calculating a composite CN. In the example, a simple average yields CN = 86.5, while the correct composite CN from BMPFast is <strong>91.27</strong> (with DCIA) or <strong>83.81</strong> (with 1.1 ac disconnected).
+      </div>
+
+      <h3>Composite CN Calculator in BMPFast</h3>
+      <p>BMPFast includes a Composite CN Calculator accessible from the Watershed Characteristics screen. Users enter each land area with its associated CN value. The calculator computes the runoff coefficient C and weighted C for each area, sums them, and derives the volume-correct composite CN. The interface also displays the DCIA Percentage and the Avg Weighted C.</p>
+
+      <div class="figure-placeholder">
+        <div class="fig-icon">📊</div>
+        <div class="fig-label">Figure 14-1</div>
+        <div class="fig-title">BMPFast Composite CN Calculator Interface</div>
+        <div class="fig-desc">Screenshot of the Composite CN Calculator showing columns for Area (ac), CN, C, and Weighted C. Two active rows: 1.100 ac at CN=95 (C=0.429, Weighted C=0.262) and 0.700 ac at CN=78 (C=0.116, Weighted C=0.045). Summary panel shows Avg Weighted C=0.307, DCIA Percent=0.0, Composite CN=91.27, and Calculate button.</div>
+      </div>
+    </section>
+
+    <!-- 5. EXAMPLE PROBLEM OVERVIEW -->
+    <section id="example">
+      <h2>Example Problem: Disconnecting DCIA</h2>
+      <p>This worked example — Example Problem 7 in BMPFast — demonstrates the full workflow for analyzing a disconnection of DCIA on a single-family residential development project. The project is located in <strong>Florida Meteorological Zone 4</strong> with a mean annual rainfall of <strong>52 inches</strong>.</p>
+
+      <h3>Project Summary</h3>
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr>
+              <th>Parameter</th>
+              <th>Value</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr><td>Project Name</td><td class="mono">Ex Prob 7 – Disconnect DCIA</td></tr>
+            <tr><td>Meteorological Zone</td><td class="mono">Florida Zone 4</td></tr>
+            <tr><td>Mean Annual Rainfall</td><td class="mono">52 inches</td></tr>
+            <tr><td>Performance Standard</td><td class="mono">All Sites Non-Exempted</td></tr>
+            <tr><td>Groundwater Discharge Analysis</td><td class="mono">Yes</td></tr>
+            <tr><td>Required Nitrogen Removal Efficiency</td><td class="mono">55%</td></tr>
+            <tr><td>Required Phosphorus Removal Efficiency</td><td class="mono">80%</td></tr>
+            <tr><td>Total Catchment Area (Pre and Post)</td><td class="mono">2.00 acres</td></tr>
+            <tr><td>Total Impervious Area (Proposed Design)</td><td class="mono">1.3 acres</td></tr>
+            <tr><td>DCIA Disconnected</td><td class="mono">1.1 acres</td></tr>
+            <tr><td>Remaining DCIA (10% of total)</td><td class="mono">0.2 acres</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <h3>Step 1 — General Site Information Entry</h3>
+      <p>Open BMPFast and create a new project. The General Site Information dialog requires entry of the project name, meteorological zone selection, mean annual rainfall, performance standard for surface discharge analysis, and whether a groundwater discharge analysis is needed. The nitrogen and phosphorus removal efficiency targets are set based on project location and receiving water classification.</p>
+
+      <div class="figure-placeholder">
+        <div class="fig-icon">🖥️</div>
+        <div class="fig-label">Figure 14-2</div>
+        <div class="fig-title">BMPFast General Site Information Dialog — Example Problem 7</div>
+        <div class="fig-desc">Screenshot of the General Site Information window for "Ex Prob 7 Disconnect DCIA and r" showing: Meteorological Zone = Florida Zone 4; Mean Annual Rainfall = 52 inches; Performance Standard = All sites non-exempted; Groundwater Analysis = Yes; N Removal = 55%; P Removal = 80%. Navigation buttons visible: Enter Catchment, Enter Treatment, Configure Catchments, Summary Treatment Report, Complete Report, Cost Comparisons.</div>
+      </div>
+
+      <h3>Checking Soil Storage Versus Design Storm</h3>
+      <p>Before proceeding, verify that the pervious receiving area can store the 3-year, 1-hour rainfall:</p>
+      <ul style="margin: 0.5rem 0 0.75rem 1.25rem; line-height: 1.8;">
+        <li>From the pervious area soil characteristics: CN = 78</li>
+        <li>Calculated soil storage: S′ = (1000/78) − 10 = <strong>2.82 inches</strong></li>
+        <li>From IDF curves for Zone 4: 3-year, 1-hour volume = <strong>2.4 inches</strong></li>
+        <li>Since 2.82 &gt; 2.4, the soil can store the design storm — <strong>disconnection is feasible</strong></li>
+      </ul>
+    </section>
+
+    <!-- 6. WATERSHED CHARACTERISTICS -->
+    <section id="watershed">
+      <h2>Watershed Characteristics Entry</h2>
+      <p>After confirming feasibility, enter catchment-specific data using the Watershed Characteristics Worksheet in BMPFast. The catchment is named <strong>Southwest Acres</strong> (Catchment 1).</p>
+
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr>
+              <th>Parameter</th>
+              <th>Pre-Development</th>
+              <th>Post-Development</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr><td>Land Use Category</td><td>Agricultural – Pasture</td><td>Single-Family Residential</td></tr>
+            <tr><td>TN EMC (mg/L)</td><td class="mono">3.030</td><td class="mono">1.770</td></tr>
+            <tr><td>TP EMC (mg/L)</td><td class="mono">0.593</td><td class="mono">0.327</td></tr>
+            <tr><td>Catchment Area (ac)</td><td class="mono">2.00</td><td class="mono">2.00</td></tr>
+            <tr><td>Non-DCIA Curve Number</td><td class="mono">78.00</td><td class="mono">91.26</td></tr>
+            <tr><td>DCIA Percentage</td><td class="mono">0%</td><td class="mono">10%</td></tr>
+            <tr><td>Annual ROC</td><td class="mono">0.116</td><td class="mono">0.359</td></tr>
+            <tr><td>Annual Runoff (ac-ft/yr)</td><td class="mono">1.009</td><td class="mono">3.112</td></tr>
+            <tr><td>TN Loading (kg/yr)</td><td class="mono">3.769</td><td class="mono">6.791</td></tr>
+            <tr><td>TP Loading (kg/yr)</td><td class="mono">0.738</td><td class="mono">1.255</td></tr>
+            <tr><td>Wet Pond Area (ac)</td><td class="mono">0.00</td><td class="mono">0.00</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="callout">
+        <div class="callout-label">Design Configuration Note</div>
+        From the proposed design, total impervious area = 1.3 acres. Of this, <strong>1.1 acres will be disconnected</strong> — routed over sufficient pervious area to qualify as Non-DCIA. The remaining <strong>0.2 acres</strong> remains directly connected (10% DCIA). In BMPFast, the Post-Development DCIA Percentage is entered as 10.00, and the Post-Development Non-DCIA CN reflects the composite of the disconnected impervious and pervious areas (CN = 91.26).
+      </div>
+
+      <div class="figure-placeholder">
+        <div class="fig-icon">🖥️</div>
+        <div class="fig-label">Figure 14-3</div>
+        <div class="fig-title">BMPFast Watershed Characteristics Worksheet — Southwest Acres Catchment</div>
+        <div class="fig-desc">Screenshot of the Watershed Characteristics Worksheet for Catchment 1 "Southwest Acres." Shows pre-development (Agricultural Pasture, TN=3.030, TP=0.593) and post-development (Single-Family, TN=1.770, TP=0.327) land uses. Key inputs: Pre CN=78.00, Post CN=91.26, Post DCIA=10.00%. Calculated outputs showing Annual ROC, Runoff volume, and N/P loading values for pre and post conditions.</div>
+      </div>
+    </section>
+
+    <!-- 7. CN VALUE RATIONALE -->
+    <section id="cn-values">
+      <h2>Curve Number Value Rationale</h2>
+      <p>The specific CN values used in this analysis reflect important technical considerations within the BMPFast framework:</p>
+
+      <div class="comparison-grid">
+        <div class="comparison-card">
+          <div class="card-head">Why CN = 95 for Impervious Areas?</div>
+          <div class="card-body">
+            <p>ROC (Runoff Coefficient) is calculated using an initial abstraction of <strong>0.10 inches</strong> — rainfall excess begins once this threshold is exceeded. The CN associated with a rainfall excess starting at 0.10 inches is <strong>95</strong>.</p>
+            <p>This reflects the near-total impermeability of paved or roofed surfaces, where almost all rainfall above a minimal surface storage threshold becomes runoff.</p>
+          </div>
+        </div>
+        <div class="comparison-card">
+          <div class="card-head">Why CN = 55 for Pervious Areas?</div>
+          <div class="card-body">
+            <p>Sandy soils are used for the pervious receiving area, but they are assumed to be <strong>compacted</strong> from construction activity. CN = 55 reflects moderately compacted sandy conditions.</p>
+            <p>Natural, undisturbed sandy soils (HSG A) would typically have CN values <strong>well below 55</strong>. Where native sandy soils are preserved, a lower CN and therefore greater soil storage capacity may be justified.</p>
+          </div>
+        </div>
+      </div>
+
+      <h3>Composite CN Sensitivity to DCIA Fraction</h3>
+      <p>The composite CN is highly sensitive to the fraction of the catchment that remains as DCIA versus pervious or disconnected impervious. The following comparison illustrates the impact of disconnecting 1.1 acres of the 1.3-acre DCIA:</p>
+
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr>
+              <th>Scenario</th>
+              <th>Area (ac)</th>
+              <th>CN</th>
+              <th>C</th>
+              <th>Weighted C</th>
+              <th>Composite CN</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr class="highlight">
+              <td colspan="6" style="background: var(--green-pale); font-family: 'JetBrains Mono', monospace; font-size: 0.78rem; color: var(--green-dark);">Scenario A: 1.1 ac Disconnected (10% DCIA remains)</td>
+            </tr>
+            <tr><td>DCIA Remaining</td><td class="mono">0.200</td><td class="mono">95</td><td class="mono">—</td><td class="mono">—</td><td rowspan="2" class="mono" style="vertical-align:middle; font-size:1.05rem; font-weight:700; text-align:center;">91.27</td></tr>
+            <tr><td>Non-DCIA (pervious + disconnected)</td><td class="mono">1.800</td><td class="mono">78</td><td class="mono">—</td><td class="mono">—</td></tr>
+            <tr class="highlight">
+              <td colspan="6" style="background: var(--green-pale); font-family: 'JetBrains Mono', monospace; font-size: 0.78rem; color: var(--green-dark);">Scenario B: No Disconnection (full 1.3 ac DCIA)</td>
+            </tr>
+            <tr><td>DCIA</td><td class="mono">0.700</td><td class="mono">95</td><td class="mono">0.429</td><td class="mono">0.150</td><td rowspan="2" class="mono" style="vertical-align:middle; font-size:1.05rem; font-weight:700; text-align:center;">83.81</td></tr>
+            <tr><td>Pervious</td><td class="mono">1.300</td><td class="mono">55</td><td class="mono">0.030</td><td class="mono">0.020</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="callout accent">
+        <div class="callout-label">Comparison Note</div>
+        The simple arithmetic average CN for the full-DCIA scenario would be (95 + 78) / 2 = <strong>86.5</strong> — significantly higher than the volume-correct composite CN of 83.81. Using the arithmetic average would <em>overestimate</em> runoff volume and produce an inaccurate loading calculation.
+      </div>
+    </section>
+
+    <!-- 8. RAIN GARDEN BMP -->
+    <section id="rain-garden">
+      <h2>Proposed Rain Garden BMP</h2>
+      <p>A rain garden is proposed to provide the required nutrient removal treatment for the Southwest Acres catchment. The rain garden is designed at <strong>0.11 acres</strong> with an average depth of <strong>2 feet</strong>, using a filter media mix to protect groundwater quality while providing effective nitrogen and phosphorus removal.</p>
+
+      <h3>Rain Garden Design Parameters</h3>
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr>
+              <th>Parameter</th>
+              <th>Value</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr><td>Treatment Type</td><td class="mono">Retention</td></tr>
+            <tr><td>Media Mix</td><td class="mono">B&G CTS24</td></tr>
+            <tr><td>Sustainable Void Fraction</td><td class="mono">0.25</td></tr>
+            <tr><td>Media Volume</td><td class="mono">5,400 cubic feet</td></tr>
+            <tr><td>Water Storage above Media</td><td class="mono">9,583 cubic feet</td></tr>
+            <tr><td>Credit for Cover Crop</td><td class="mono">0%</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <h3>Treatment Performance Results</h3>
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr>
+              <th>Parameter</th>
+              <th>Required (%)</th>
+              <th>Provided (%)</th>
+              <th>Status</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr><td>Nitrogen Treatment Efficiency</td><td class="mono">55.00</td><td class="mono">80.5</td><td style="color: #1a4a2e; font-weight: 600;">✓ Met</td></tr>
+            <tr><td>Phosphorus Treatment Efficiency</td><td class="mono">80.00</td><td class="mono">80.5</td><td style="color: #1a4a2e; font-weight: 600;">✓ Met</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="callout">
+        <div class="callout-label">Design Note</div>
+        The B&amp;G CTS24 media mix is specified to protect the receiving groundwater while simultaneously providing biological and physical-chemical treatment of nitrogen and phosphorus. The retention configuration retains water in the media pore space, promoting denitrification for nitrogen removal and sorption for phosphorus removal.
+      </div>
+
+      <div class="figure-placeholder">
+        <div class="fig-icon">🖥️</div>
+        <div class="fig-label">Figure 14-4</div>
+        <div class="fig-title">BMPFast Rain Garden Analysis Worksheet</div>
+        <div class="fig-desc">Screenshot of the Rain Garden Analysis Worksheet for Catchment 1 Southwest Acres (Analysis Type: All sites non-exempted). Shows Retention selected, Media Mix = B&G CTS24, Void Fraction = 0.25, Media Volume = 5,400 cu ft, Water Storage above Media = 9,583 cu ft. Surface Water Discharge summary table showing Required/Provided values for N (55%/80.5%) and P (80%/80.5%).</div>
+      </div>
+    </section>
+
+    <!-- 9. SYSTEM CONFIGURATION -->
+    <section id="configuration">
+      <h2>System Configuration: Topology and BMP Routing</h2>
+      <p>After defining the catchment characteristics and BMP properties, the system topology must be configured in BMPFast. The Configure Catchments step establishes the routing pathway from each catchment through its assigned BMP to the outlet.</p>
+
+      <div class="workflow">
+        <div class="workflow-step">
+          <div class="step-num">1</div>
+          <div class="step-body">
+            <strong>Set Catchment Routing</strong>
+            <p>From Catchment 1 (Southwest Acres), select the routing destination as <strong>Outlet</strong>.</p>
+          </div>
+        </div>
+        <div class="workflow-step">
+          <div class="step-num">2</div>
+          <div class="step-body">
+            <strong>Assign BMP to Catchment</strong>
+            <p>Select <strong>Rain Garden</strong> as the BMP to use in routing from the dropdown list. Available options include Rain Garden, Filtration, Multiple BMP, and No Treatment.</p>
+          </div>
+        </div>
+        <div class="workflow-step">
+          <div class="step-num">3</div>
+          <div class="step-body">
+            <strong>Confirm Routing Diagram</strong>
+            <p>The routing diagram displays: ID 1 (Southwest Acres → Rain Garden) → Outlet (0). This confirms the single-catchment, single-BMP, single-outlet topology.</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="callout">
+        <div class="callout-label">Configuration Summary</div>
+        The Select Catchment Configuration table shows: From = 1, To = 0 (Outlet), Area = 2.00 ac, BMP Used = Rain Garden. The routing diagram confirms the flow path: ID 1 Southwest Acres → Rain Garden → Outlet (0).
+      </div>
+
+      <div class="figure-placeholder">
+        <div class="fig-icon">🖥️</div>
+        <div class="fig-label">Figure 14-5</div>
+        <div class="fig-title">BMPFast Routing Configuration and Diagram</div>
+        <div class="fig-desc">Two-panel screenshot. Top panel: Routing Catchment dialog showing Catchment 1 routing to Outlet with Rain Garden BMP selected from dropdown (options: Rain Garden, Filtration, Multiple BMP, No Treatment). Bottom panel: Select Catchment Configuration table (From=1, To=0, Area=2.00, BMP=Rain Garden) with Routing Diagram panel on right showing ID 1 Southwest Acres → Rain Garden → Outlet (0).</div>
+      </div>
+    </section>
+
+    <!-- 10. SUMMARY REPORT -->
+    <section id="summary">
+      <h2>Summary Report: Disconnected vs. Non-Disconnected DCIA</h2>
+      <p>BMPFast generates a Summary Treatment Report allowing direct comparison between two analysis scenarios: (A) disconnecting 1.1 of the 1.3 acres of DCIA and (B) treating the full 1.3-acre DCIA without disconnection, using the same rain garden BMP for both.</p>
+
+      <h3>Volume of Runoff Comparison</h3>
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr>
+              <th>Scenario</th>
+              <th>Catchment Area (ac)</th>
+              <th colspan="2">Runoff Volume</th>
+            </tr>
+            <tr>
+              <th></th>
+              <th></th>
+              <th>ac-ft/yr</th>
+              <th>in/yr</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr class="highlight">
+              <td colspan="4" style="background: var(--green-pale); font-family: 'JetBrains Mono', monospace; font-size: 0.78rem; color: var(--green-dark);">Scenario A: 1.1 ac Disconnected DCIA</td>
+            </tr>
+            <tr><td>Pre-Condition</td><td class="mono">2.00</td><td class="mono">1.01</td><td class="mono">6.05</td></tr>
+            <tr><td>System Post-Condition (with BMPs)</td><td class="mono">2.00</td><td class="mono">0.61</td><td class="mono">3.65</td></tr>
+            <tr><td>Post-Condition (no BMP)</td><td class="mono">2.00</td><td class="mono">3.11</td><td class="mono">18.67</td></tr>
+            <tr class="highlight">
+              <td colspan="4" style="background: var(--green-pale); font-family: 'JetBrains Mono', monospace; font-size: 0.78rem; color: var(--green-dark);">Scenario B: 1.3 ac Full DCIA (No Disconnection)</td>
+            </tr>
+            <tr><td>Pre-Condition</td><td class="mono">2.00</td><td class="mono">—</td><td class="mono">6.05</td></tr>
+            <tr><td>System Post-Condition (with BMPs)</td><td class="mono">2.00</td><td class="mono">—</td><td class="mono">4.55</td></tr>
+            <tr><td>Post-Condition (no BMP)</td><td class="mono">2.00</td><td class="mono">—</td><td class="mono">29.91</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <h3>Loading Analysis — % Target Removals</h3>
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr>
+              <th>Analysis Parameter</th>
+              <th>Scenario A (1.1 ac Disconnected)</th>
+              <th>Scenario B (Full 1.3 ac DCIA)</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr><td>TN Target Met?</td><td style="color:#1a4a2e; font-weight:600;">Yes</td><td style="color:#1a4a2e; font-weight:600;">Yes</td></tr>
+            <tr><td>Required / Provided N Removal</td><td class="mono">55% / 80.46%</td><td class="mono">55% / 84.77%</td></tr>
+            <tr><td>TP Target Met?</td><td style="color:#1a4a2e; font-weight:600;">Yes</td><td style="color:#1a4a2e; font-weight:600;">Yes</td></tr>
+            <tr><td>Required / Provided P Removal</td><td class="mono">80% / 80.46%</td><td class="mono">80% / 84.77%</td></tr>
+            <tr><td>Discharge TN (lbs/yr)</td><td class="mono">14.97</td><td class="mono">23.99</td></tr>
+            <tr><td>Discharge TP (lbs/yr)</td><td class="mono">2.766</td><td class="mono">4.432</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <h3>Pre vs. Post Removals (Net Improvement)</h3>
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr>
+              <th>Parameter</th>
+              <th>Scenario A (Disconnected)</th>
+              <th>Scenario B (No Disconnection)</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr><td>TN below Pre-Development Loading?</td><td style="color:#1a4a2e; font-weight:600;">Yes</td><td style="color:#1a4a2e; font-weight:600;">Yes</td></tr>
+            <tr><td>Required / Provided TN Pre/Post</td><td class="mono">44.5% / 80.46%</td><td class="mono">44.5% / 84.77%</td></tr>
+            <tr><td>TP below Pre-Development Loading?</td><td style="color:#1a4a2e; font-weight:600;">Yes</td><td style="color:#1a4a2e; font-weight:600;">Yes</td></tr>
+            <tr><td>Required / Provided TP Pre/Post</td><td class="mono">41.21% / 80.46%</td><td class="mono">41.21% / 84.77%</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="callout">
+        <div class="callout-label">Interpretation</div>
+        Both scenarios meet the percentage removal targets for TN and TP, and both achieve net improvement over pre-development loading. However, <strong>disconnecting the DCIA significantly reduces discharge mass and volume</strong>. In Scenario A, discharge TN is 14.97 lbs/yr versus 23.99 lbs/yr in Scenario B — a reduction of approximately 38%. Discharge TP follows a similar pattern.
+      </div>
+
+      <div class="callout accent">
+        <div class="callout-label">Basin Management Action Plans (BMAPs)</div>
+        In designated BMAP areas, absolute discharge mass (pounds per year) may be regulated in addition to percentage removal efficiency. In these cases, disconnecting DCIA provides a meaningful additional benefit by reducing the total mass load reaching receiving waters — even when both scenarios would satisfy percentage-based targets. Designers working in BMAP areas should consider DCIA disconnection as a cost-effective mass reduction strategy.
+      </div>
+
+      <div class="figure-placeholder">
+        <div class="fig-icon">📋</div>
+        <div class="fig-label">Figure 14-6</div>
+        <div class="fig-title">BMPFast Summary Report — DCIA Disconnected vs. Full DCIA Comparison</div>
+        <div class="fig-desc">Side-by-side summary report comparison. Left panel (Disconnecting 1.1 ac of 1.3 ac DCIA): Volume of Runoff Summary table with pre/post/no-BMP scenarios; Summary Loading Analysis showing TN required/provided 55%/80.46%, TP 80%/80.46% (both Yes); Pre vs. Post Removals showing TN 44.5%/80.46%, TP 41.21%/80.46% (both Yes); Discharge TN=14.97 lbs/yr, TP=2.766 lbs/yr. Right panel (1.3 ac DCIA, no disconnect): Runoff volumes 6.05/4.55/29.91 in/yr; TN 55%/84.77%, TP 80%/84.77%; Pre/Post TN 44.5%/84.77%, TP 41.21%/84.77%; Discharge TN=23.99 lbs/yr, TP=4.432 lbs/yr.</div>
+      </div>
+    </section>
+
+    <!-- 11. KEY TAKEAWAYS -->
+    <section id="key-takeaways">
+      <h2>Key Takeaways</h2>
+
+      <div class="objectives-box">
+        <h3>Summary of Core Concepts</h3>
+        <ol>
+          <li><strong>DCIA Definition:</strong> Impervious area that drains directly to a conveyance system without passing over sufficient pervious area for infiltration. Disconnection requires at least 10 feet (HSG A/B) or 20 feet (HSG C/D) of undisturbed pervious area, unless soil percolation is demonstrated for the 3-year, 1-hour storm.</li>
+          <li><strong>Soil Storage Check:</strong> Use S′ = (1000/CN) − 10 to compare pervious area storage capacity against the 3-year, 1-hour IDF rainfall. Disconnection is feasible only when S′ exceeds the design storm depth.</li>
+          <li><strong>Volume-Correct Composite CN:</strong> Always compute composite CN from the sum of individual area runoff volumes — never from arithmetic or area-weighted CN averages. BMPFast automates this calculation.</li>
+          <li><strong>CN Values:</strong> Use CN = 95 for impervious areas (initial abstraction = 0.10 in) and appropriate CN for pervious areas based on soil type and condition (CN = 55 for compacted sandy soil; lower for undisturbed native sandy soils).</li>
+          <li><strong>Mass vs. Percentage:</strong> Even when percentage removal targets are met with or without disconnection, disconnecting DCIA meaningfully reduces total discharged pollutant mass — critical in BMAP-regulated areas where absolute mass load limits apply.</li>
+          <li><strong>BMPFast Workflow:</strong> General Site Info → Watershed Characteristics (CN, DCIA%) → BMP Entry (Rain Garden) → Configure Catchments (Routing) → Summary Treatment Report.</li>
+        </ol>
+      </div>
+    </section>
+
+    <!-- FIGURES APPENDIX -->
+    <section id="figures" class="figures-appendix">
+      <h2>Referenced Figures</h2>
+
+      <div class="figure-ref">
+        <div class="figure-ref-thumb">
+          <div class="fig-num">Figure 14-1</div>
+          <div class="fig-icon">📊</div>
+        </div>
+        <div class="figure-ref-content">
+          <strong>BMPFast Composite CN Calculator Interface</strong>
+          <p>Screenshot showing the Composite CN Calculator with Area (ac), CN, C, and Weighted C columns. Two active rows: 1.100 ac at CN=95 and 0.700 ac at CN=78. Result panel: Avg Weighted C=0.307, DCIA Percent=0.0, Composite CN=91.27. Demonstrates volume-correct CN computation versus simple arithmetic average (CN=86.5).</p>
+        </div>
+      </div>
+
+      <div class="figure-ref">
+        <div class="figure-ref-thumb">
+          <div class="fig-num">Figure 14-2</div>
+          <div class="fig-icon">🖥️</div>
+        </div>
+        <div class="figure-ref-content">
+          <strong>BMPFast General Site Information Dialog — Example Problem 7</strong>
+          <p>Project setup screen for "Ex Prob 7 Disconnect DCIA." Florida Zone 4, 52 in rainfall, All Sites Non-Exempted performance standard, Groundwater Analysis = Yes, N removal = 55%, P removal = 80%. Main navigation buttons for workflow steps 1–6.</p>
+        </div>
+      </div>
+
+      <div class="figure-ref">
+        <div class="figure-ref-thumb">
+          <div class="fig-num">Figure 14-3</div>
+          <div class="fig-icon">🖥️</div>
+        </div>
+        <div class="figure-ref-content">
+          <strong>BMPFast Watershed Characteristics Worksheet — Southwest Acres Catchment</strong>
+          <p>Catchment 1 data entry showing pre (Agricultural Pasture, CN=78, DCIA=0%) and post (Single-Family, CN=91.26, DCIA=10%) conditions. EMC values, Annual ROC, runoff volume, and N/P loading calculations for both development conditions.</p>
+        </div>
+      </div>
+
+      <div class="figure-ref">
+        <div class="figure-ref-thumb">
+          <div class="fig-num">Figure 14-4</div>
+          <div class="fig-icon">🖥️</div>
+        </div>
+        <div class="figure-ref-content">
+          <strong>BMPFast Rain Garden Analysis Worksheet</strong>
+          <p>Rain Garden design inputs: Retention type, B&G CTS24 media mix, void fraction=0.25, media volume=5,400 cu ft, water storage=9,583 cu ft. Surface Water Discharge results showing N efficiency required/provided 55%/80.5% and P efficiency 80%/80.5% — both targets met.</p>
+        </div>
+      </div>
+
+      <div class="figure-ref">
+        <div class="figure-ref-thumb">
+          <div class="fig-num">Figure 14-5</div>
+          <div class="fig-icon">🖥️</div>
+        </div>
+        <div class="figure-ref-content">
+          <strong>BMPFast Routing Configuration and Diagram</strong>
+          <p>Routing Catchment dialog with BMP dropdown showing Rain Garden selected. Configuration table: From=1, To=0 (Outlet), Area=2.00 ac, BMP=Rain Garden. Routing diagram: ID 1 Southwest Acres → Rain Garden → Outlet (0).</p>
+        </div>
+      </div>
+
+      <div class="figure-ref">
+        <div class="figure-ref-thumb">
+          <div class="fig-num">Figure 14-6</div>
+          <div class="fig-icon">📋</div>
+        </div>
+        <div class="figure-ref-content">
+          <strong>BMPFast Summary Report — DCIA Disconnected vs. Full DCIA Comparison</strong>
+          <p>Side-by-side comparison of Volume of Runoff Summary, Summary Loading Analysis (% removals), and Pre/Post Removals for both scenarios. Disconnected scenario: Discharge TN=14.97 lbs/yr, TP=2.766 lbs/yr, post-condition runoff=3.65 in/yr. Full DCIA scenario: Discharge TN=23.99 lbs/yr, TP=4.432 lbs/yr, post-condition runoff=4.55 in/yr.</p>
+        </div>
+      </div>
+
+    </section>
+
+  </main>
+</div>
+
+</body>
+</html>

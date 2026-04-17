@@ -1,0 +1,1502 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>COP4834 - Guide to the Stack</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #b34700 0%, #e85d04 50%, #f48c06 100%);
+            padding: 20px;
+            line-height: 1.6;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.45);
+            overflow: hidden;
+        }
+
+        /* ── Header ── */
+        .header {
+            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #e85d04 100%);
+            color: white;
+            padding: 45px 40px;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+        }
+        .header::before {
+            content: '⚡';
+            position: absolute;
+            font-size: 210px;
+            opacity: 0.05;
+            top: -30px;
+            right: -10px;
+        }
+        .header h1 { font-size: 2.5em; margin-bottom: 10px; text-shadow: 2px 2px 8px rgba(0,0,0,0.5); }
+        .header p  { font-size: 1.2em; opacity: 0.92; }
+
+        .content { padding: 40px; }
+
+        /* ── Intro box ── */
+        .intro-box {
+            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+            color: white;
+            padding: 30px;
+            border-radius: 10px;
+            margin-bottom: 30px;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.3);
+            border-left: 6px solid #e85d04;
+        }
+        .intro-box h2 { margin-bottom: 12px; font-size: 1.8em; }
+
+        /* ── Collapsibles ── */
+        .collapsible {
+            background: linear-gradient(135deg, #1a1a2e 0%, #e85d04 100%);
+            color: white;
+            cursor: pointer;
+            padding: 18px 22px;
+            width: 100%;
+            border: none;
+            text-align: left;
+            outline: none;
+            font-size: 1.15em;
+            font-weight: bold;
+            border-radius: 8px;
+            margin-bottom: 10px;
+            transition: all 0.3s ease;
+            box-shadow: 0 3px 10px rgba(0,0,0,0.2);
+            border-left: 5px solid #f48c06;
+        }
+        .collapsible:hover {
+            background: linear-gradient(135deg, #0f0f1a 0%, #c44e03 100%);
+            transform: translateY(-2px);
+            box-shadow: 0 6px 18px rgba(0,0,0,0.3);
+        }
+        .collapsible.active {
+            background: linear-gradient(135deg, #1a5c3a 0%, #27ae60 100%);
+            border-left-color: #2ecc71;
+        }
+        .collapsible:after { content: '\002B'; float: right; font-size: 1.3em; font-weight: bold; }
+        .collapsible.active:after { content: '\2212'; }
+
+        .collapsible-content {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.35s ease-out;
+            background-color: #fffaf6;
+            border-radius: 0 0 8px 8px;
+            margin-bottom: 20px;
+        }
+        .collapsible-inner { padding: 28px; }
+
+        /* ── Callout boxes ── */
+        .info-box    { background: #fff3e0; border-left: 5px solid #e85d04; padding: 20px; margin: 20px 0; border-radius: 5px; }
+        .warning-box { background: #fef5e7; border-left: 5px solid #f39c12; padding: 20px; margin: 20px 0; border-radius: 5px; }
+        .success-box { background: #d5f4e6; border-left: 5px solid #27ae60; padding: 20px; margin: 20px 0; border-radius: 5px; }
+        .tip-box     { background: #eaf4fb; border-left: 5px solid #2e86c1; padding: 20px; margin: 20px 0; border-radius: 5px; }
+        .danger-box  { background: #fdf0f0; border-left: 5px solid #c0392b; padding: 20px; margin: 20px 0; border-radius: 5px; }
+
+        /* ── Typography ── */
+        h3 {
+            color: #1a1a2e;
+            margin: 22px 0 10px 0;
+            font-size: 1.45em;
+            border-bottom: 2px solid #e85d04;
+            padding-bottom: 6px;
+            display: inline-block;
+        }
+        h4 { color: #b34700; margin: 15px 0 8px 0; font-size: 1.15em; }
+        ul, ol { margin-left: 25px; margin-top: 10px; }
+        li { margin: 9px 0; }
+        strong { color: #1a1a2e; }
+        p { margin: 8px 0; }
+
+        /* ── Tables ── */
+        .comparison-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 20px 0;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+            border-radius: 8px;
+            overflow: hidden;
+        }
+        .comparison-table th {
+            background: linear-gradient(135deg, #1a1a2e, #e85d04);
+            color: white;
+            padding: 14px 16px;
+            text-align: left;
+            font-weight: bold;
+        }
+        .comparison-table td {
+            padding: 12px 16px;
+            border-bottom: 1px solid #fde8d0;
+        }
+        .comparison-table tr:last-child td { border-bottom: none; }
+        .comparison-table tr:hover td { background: #fff8f0; }
+
+        /* ── Stack layer cards ── */
+        .layer-row {
+            display: grid;
+            grid-template-columns: 160px 1fr;
+            gap: 0;
+            margin: 6px 0;
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+        }
+        .layer-label {
+            color: white;
+            padding: 14px 16px;
+            font-weight: bold;
+            font-size: 0.92em;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+        }
+        .layer-content {
+            background: #fff8f2;
+            padding: 14px 18px;
+            border: 1px solid #fde8d0;
+            border-left: none;
+        }
+        .layer-content h5 { color: #1a1a2e; margin-bottom: 4px; font-size: 1em; }
+        .layer-content p  { color: #444; font-size: 0.9em; margin: 0; }
+
+        .lc-1 { background: #1a1a2e; }
+        .lc-2 { background: #2d2d4e; }
+        .lc-3 { background: #e85d04; }
+        .lc-4 { background: #f48c06; }
+        .lc-5 { background: #b34700; }
+        .lc-6 { background: #8a3200; }
+
+        /* ── Stack combo cards ── */
+        .stack-card {
+            background: white;
+            border: 2px solid #e85d04;
+            border-radius: 12px;
+            overflow: hidden;
+            margin: 18px 0;
+            box-shadow: 0 4px 14px rgba(0,0,0,0.1);
+        }
+        .stack-card-header {
+            background: linear-gradient(135deg, #1a1a2e, #e85d04);
+            color: white;
+            padding: 18px 22px;
+        }
+        .stack-card-header h4 {
+            color: white;
+            font-size: 1.4em;
+            margin: 0 0 4px 0;
+        }
+        .stack-card-header p { opacity: 0.88; font-size: 0.92em; margin: 0; }
+        .stack-card-body { padding: 22px; }
+
+        .stack-layers {
+            display: flex;
+            gap: 6px;
+            flex-wrap: wrap;
+            margin: 14px 0;
+        }
+        .stack-pill {
+            padding: 6px 14px;
+            border-radius: 20px;
+            font-size: 0.85em;
+            font-weight: bold;
+            color: white;
+        }
+        .sp-db    { background: #1a1a2e; }
+        .sp-back  { background: #2e86c1; }
+        .sp-front { background: #e85d04; }
+        .sp-host  { background: #27ae60; }
+        .sp-other { background: #8e44ad; }
+
+        /* ── Do / Don't ── */
+        .do-dont-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 18px; margin: 18px 0; }
+        .do-box   { background: #d5f4e6; border: 2px solid #27ae60; border-radius: 8px; padding: 18px; }
+        .do-box h4   { color: #1e8449; margin-bottom: 10px; }
+        .dont-box { background: #fdf0f0; border: 2px solid #c0392b; border-radius: 8px; padding: 18px; }
+        .dont-box h4 { color: #c0392b; margin-bottom: 10px; }
+
+        /* ── Feature grid ── */
+        .feature-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+            margin: 18px 0;
+        }
+        .feature-item {
+            background: linear-gradient(135deg, #fff8f2, #fde8d0);
+            border: 2px solid #e85d04;
+            border-radius: 8px;
+            padding: 18px;
+            text-align: center;
+        }
+        .feature-item h5 { color: #1a1a2e; margin-bottom: 8px; font-size: 1.05em; }
+
+        /* ── Badges ── */
+        .badge {
+            display: inline-block;
+            padding: 3px 10px;
+            border-radius: 20px;
+            font-size: 0.8em;
+            font-weight: bold;
+            margin-left: 6px;
+            vertical-align: middle;
+        }
+        .badge-free     { background: #27ae60; color: white; }
+        .badge-paid     { background: #c0392b; color: white; }
+        .badge-oss      { background: #2e86c1; color: white; }
+        .badge-managed  { background: #8e44ad; color: white; }
+        .badge-beginner { background: #27ae60; color: white; }
+        .badge-inter    { background: #e67e22; color: white; }
+        .badge-advanced { background: #c0392b; color: white; }
+
+        /* ── Rating bars ── */
+        .rating-row {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin: 7px 0;
+        }
+        .rating-label { min-width: 120px; font-size: 0.88em; color: #444; }
+        .rating-bar   { flex: 1; height: 12px; background: #fde8d0; border-radius: 6px; overflow: hidden; }
+        .rating-fill  { height: 100%; border-radius: 6px; }
+        .rf-high      { background: linear-gradient(90deg, #27ae60, #2ecc71); }
+        .rf-medium    { background: linear-gradient(90deg, #e67e22, #f39c12); }
+        .rf-low       { background: linear-gradient(90deg, #c0392b, #e74c3c); }
+
+        /* ── Decision checklist ── */
+        .decision-section {
+            background: white;
+            border: 2px solid #e85d04;
+            border-radius: 10px;
+            margin: 16px 0;
+            overflow: hidden;
+        }
+        .decision-section-header {
+            background: linear-gradient(135deg, #1a1a2e, #e85d04);
+            color: white;
+            padding: 14px 20px;
+            font-weight: bold;
+            font-size: 1.05em;
+        }
+        .decision-section-body { padding: 18px 20px; }
+        .decision-section-body ul { list-style: none; margin-left: 0; }
+        .decision-section-body li { margin: 8px 0; }
+        .decision-section-body li::before { content: "☐ "; color: #e85d04; font-weight: bold; }
+
+        /* ── Step containers ── */
+        .step-container {
+            background: white;
+            border: 2px solid #e85d04;
+            border-radius: 8px;
+            padding: 20px;
+            margin: 15px 0;
+        }
+        .step-number {
+            display: inline-block;
+            background: linear-gradient(135deg, #1a1a2e, #e85d04);
+            color: white;
+            width: 36px; height: 36px;
+            border-radius: 50%;
+            text-align: center;
+            line-height: 36px;
+            font-weight: bold;
+            margin-right: 10px;
+        }
+        .step-title {
+            display: inline-block;
+            font-size: 1.2em;
+            color: #1a1a2e;
+            font-weight: bold;
+            vertical-align: middle;
+        }
+        .step-content { margin-top: 14px; padding-left: 46px; }
+
+        /* ── Inline code ── */
+        code {
+            background: #1a1a2e;
+            color: #f48c06;
+            padding: 3px 8px;
+            border-radius: 4px;
+            font-family: 'Courier New', monospace;
+            font-size: 0.9em;
+        }
+
+        /* ── Pro/Con columns ── */
+        .pro-con-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 14px;
+            margin: 14px 0;
+        }
+        .pro-col { background: #d5f4e6; border: 2px solid #27ae60; border-radius: 8px; padding: 16px; }
+        .pro-col h5 { color: #1e8449; margin-bottom: 8px; font-size: 1em; }
+        .con-col { background: #fdf0f0; border: 2px solid #c0392b; border-radius: 8px; padding: 16px; }
+        .con-col h5 { color: #c0392b; margin-bottom: 8px; font-size: 1em; }
+        .pro-col ul, .con-col ul { margin-left: 18px; }
+        .pro-col li, .con-col li { margin: 5px 0; font-size: 0.9em; }
+
+        /* ── Footer ── */
+        .footer {
+            background: linear-gradient(135deg, #1a1a2e 0%, #e85d04 60%, #f48c06 100%);
+            color: white;
+            padding: 25px 20px;
+            text-align: center;
+        }
+        .footer p { opacity: 0.92; margin: 4px 0; }
+
+        @media (max-width: 720px) {
+            .do-dont-grid, .pro-con-grid { grid-template-columns: 1fr; }
+            .layer-row { grid-template-columns: 1fr; }
+            .layer-label { border-radius: 8px 8px 0 0; padding: 10px; }
+        }
+    </style>
+</head>
+<body>
+<div class="container">
+
+    <div class="header">
+        <h1>⚡ COP4834 Web Systems II</h1>
+        <p>Guide to the Stack — Choosing the Right Technologies for Full-Stack Development</p>
+    </div>
+
+    <div class="content">
+
+        <div class="intro-box">
+            <h2>📚 Module Overview</h2>
+            <p>In full-stack development, <em>the stack</em> refers to the complete set of technologies used to build and run an application — from the database at the bottom to the browser interface at the top, including everything in between. Choosing a stack is one of the most consequential early decisions on any project. It affects what you can build, how fast you can build it, what it will cost to deploy and maintain, and what talent you can hire. This guide breaks down every layer of a modern web stack, catalogs the most popular options at each level, profiles the leading stack combinations, and provides a structured decision framework to help you choose the right stack for your project.</p>
+        </div>
+
+
+        <!-- ═══════════════════════════ SECTION 1 ═══════════════════════════ -->
+        <button class="collapsible">1. Defining the Stack — The Layers of a Full-Stack Application</button>
+        <div class="collapsible-content">
+            <div class="collapsible-inner">
+
+                <div class="info-box">
+                    <h4>📖 What Is "The Stack"?</h4>
+                    <p>A technology stack (or "tech stack") is the collection of software tools, frameworks, languages, and platforms that a development team uses to build and run an application. Each layer of the stack has a specific job. The layers must be compatible, integrate cleanly, and collectively meet the project's requirements for performance, scalability, and cost.</p>
+                </div>
+
+                <h3>The Six Layers of a Modern Web Stack</h3>
+
+                <div class="layer-row">
+                    <div class="layer-label lc-1">🌐<br>Client / Frontend</div>
+                    <div class="layer-content">
+                        <h5>What the user sees and interacts with directly</h5>
+                        <p>Runs in the browser or on the user's device. Renders UI, handles user interactions, makes API calls to the server, and manages client-side state. Technologies: HTML, CSS, JavaScript, and frontend frameworks like React, Vue, or Angular.</p>
+                    </div>
+                </div>
+                <div class="layer-row">
+                    <div class="layer-label lc-2">🔌<br>API / Middleware</div>
+                    <div class="layer-content">
+                        <h5>The communication layer between frontend and backend</h5>
+                        <p>Receives requests from the frontend, enforces authentication and authorization, validates input, executes business logic, and returns structured responses (typically JSON). REST or GraphQL APIs are the standard patterns.</p>
+                    </div>
+                </div>
+                <div class="layer-row">
+                    <div class="layer-label lc-3">⚙️<br>Backend / Server</div>
+                    <div class="layer-content">
+                        <h5>The application logic engine</h5>
+                        <p>Handles server-side processing, business rules, integrations with external services, data transformation, and complex computations. The backend language and runtime live here: Node.js, Python, Java, PHP, C#, Ruby, Go, etc.</p>
+                    </div>
+                </div>
+                <div class="layer-row">
+                    <div class="layer-label lc-4">🗄️<br>Database</div>
+                    <div class="layer-content">
+                        <h5>Persistent data storage and retrieval</h5>
+                        <p>Stores and manages the application's data. Relational databases (PostgreSQL, MySQL, SQL Server) handle structured data with relationships. NoSQL databases (MongoDB, Redis, Cassandra) handle document, key-value, or wide-column data patterns.</p>
+                    </div>
+                </div>
+                <div class="layer-row">
+                    <div class="layer-label lc-5">☁️<br>Infrastructure / Hosting</div>
+                    <div class="layer-content">
+                        <h5>Where the application runs</h5>
+                        <p>The servers, containers, networking, and storage that host and run the application. Options range from traditional VPS hosting to Platform-as-a-Service (PaaS), containerized deployments (Docker/Kubernetes), and fully serverless architectures.</p>
+                    </div>
+                </div>
+                <div class="layer-row">
+                    <div class="layer-label lc-6">🔧<br>DevOps / Tooling</div>
+                    <div class="layer-content">
+                        <h5>How the application is built, tested, and deployed</h5>
+                        <p>Version control (Git), CI/CD pipelines, monitoring, logging, and alerting. While not always called part of "the stack," these tools are inseparable from modern full-stack development and significantly influence productivity and reliability.</p>
+                    </div>
+                </div>
+
+                <h3>Why Stack Choice Matters</h3>
+
+                <div class="feature-grid">
+                    <div class="feature-item">
+                        <h5>👥 Talent Availability</h5>
+                        <p>The more popular the stack, the larger the pool of developers who can work with it — and the lower the hiring cost.</p>
+                    </div>
+                    <div class="feature-item">
+                        <h5>🚀 Development Speed</h5>
+                        <p>Mature frameworks with rich ecosystems let teams build faster. An unfamiliar stack slows down initial velocity significantly.</p>
+                    </div>
+                    <div class="feature-item">
+                        <h5>💰 Total Cost</h5>
+                        <p>License costs, hosting costs, and labor costs all depend on stack choices. Open-source stacks can eliminate licensing fees entirely.</p>
+                    </div>
+                    <div class="feature-item">
+                        <h5>📦 Ecosystem</h5>
+                        <p>Libraries, plugins, and integrations save enormous time. A stack with a rich ecosystem avoids building things from scratch.</p>
+                    </div>
+                    <div class="feature-item">
+                        <h5>🌍 Community Support</h5>
+                        <p>StackOverflow answers, GitHub issues, tutorials, and community forums — all depend on community size. Larger communities = faster problem-solving.</p>
+                    </div>
+                    <div class="feature-item">
+                        <h5>⚖️ Long-Term Viability</h5>
+                        <p>Technologies with strong corporate backing or large open-source communities are less likely to become abandoned and unsupported.</p>
+                    </div>
+                </div>
+
+                <div class="warning-box">
+                    <h4>⚠️ The Most Common Stack Mistake</h4>
+                    <p>Choosing a stack based on what's trendy rather than what fits the project's needs and the team's skills. A well-executed project on a "boring" stack delivers more value than an unfinished project on a fashionable one. <strong>The best stack is the one your team can actually use productively.</strong></p>
+                </div>
+
+            </div>
+        </div>
+
+
+        <!-- ═══════════════════════════ SECTION 2 ═══════════════════════════ -->
+        <button class="collapsible">2. Frontend Technologies — The Client Layer</button>
+        <div class="collapsible-content">
+            <div class="collapsible-inner">
+
+                <div class="info-box">
+                    <h4>📖 The Frontend Is What Users Experience</h4>
+                    <p>The frontend must run in any browser, on any device, at any network speed. Frontend choices affect UI complexity, performance, accessibility, mobile support, and how quickly your team can build and iterate on the user interface.</p>
+                </div>
+
+                <h3>The Foundation — HTML, CSS, JavaScript</h3>
+
+                <p>All browsers understand exactly three languages natively. Everything else in the frontend stack ultimately compiles down to these:</p>
+                <ul>
+                    <li><strong>HTML:</strong> Structure and content of the page</li>
+                    <li><strong>CSS:</strong> Visual presentation, layout, and responsive design</li>
+                    <li><strong>JavaScript:</strong> Interactivity, dynamic behavior, and API communication</li>
+                </ul>
+
+                <h3>JavaScript Frontend Frameworks</h3>
+
+                <table class="comparison-table">
+                    <thead>
+                        <tr>
+                            <th>Framework</th>
+                            <th>Maintained By</th>
+                            <th>Learning Curve</th>
+                            <th>Community Size</th>
+                            <th>Best For</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td><strong>React</strong></td>
+                            <td>Meta (Facebook)</td>
+                            <td><span class="badge badge-inter">Moderate</span></td>
+                            <td>Largest of all (2024)</td>
+                            <td>Flexible SPAs, component libraries, large apps</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Vue.js</strong></td>
+                            <td>Community / Evan You</td>
+                            <td><span class="badge badge-beginner">Gentle</span></td>
+                            <td>Large, very active</td>
+                            <td>Progressive enhancement, beginner-friendly apps</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Angular</strong></td>
+                            <td>Google</td>
+                            <td><span class="badge badge-advanced">Steep</span></td>
+                            <td>Large, enterprise-focused</td>
+                            <td>Large enterprise apps, opinionated structure needed</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Svelte / SvelteKit</strong></td>
+                            <td>Community / Vercel</td>
+                            <td><span class="badge badge-beginner">Gentle</span></td>
+                            <td>Growing rapidly</td>
+                            <td>Performance-critical apps, smaller bundle sizes</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Next.js</strong></td>
+                            <td>Vercel (uses React)</td>
+                            <td><span class="badge badge-inter">Moderate</span></td>
+                            <td>Very large</td>
+                            <td>SSR, SEO-sensitive apps, full-stack React</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Nuxt.js</strong></td>
+                            <td>Community (uses Vue)</td>
+                            <td><span class="badge badge-inter">Moderate</span></td>
+                            <td>Large</td>
+                            <td>SSR with Vue, SEO-sensitive Vue applications</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Vanilla JS (no framework)</strong></td>
+                            <td>Browser standard</td>
+                            <td><span class="badge badge-beginner">Low</span></td>
+                            <td>All of the web</td>
+                            <td>Simple sites, performance-critical, no framework overhead</td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <h3>CSS Approaches</h3>
+
+                <table class="comparison-table">
+                    <thead>
+                        <tr><th>Approach</th><th>Examples</th><th>Best For</th></tr>
+                    </thead>
+                    <tbody>
+                        <tr><td><strong>Plain CSS / Custom Properties</strong></td><td>Native CSS, CSS variables</td><td>Full control, no tooling overhead</td></tr>
+                        <tr><td><strong>CSS Preprocessors</strong></td><td>Sass/SCSS, Less</td><td>Variables, nesting, mixins — organized stylesheets</td></tr>
+                        <tr><td><strong>Utility-First CSS</strong></td><td>Tailwind CSS</td><td>Fast prototyping, consistent design systems without custom CSS</td></tr>
+                        <tr><td><strong>Component Libraries</strong></td><td>Bootstrap, Material UI, Chakra UI, shadcn/ui</td><td>Pre-built components, rapid development, non-designers</td></tr>
+                        <tr><td><strong>CSS-in-JS</strong></td><td>Styled Components, Emotion</td><td>Component-scoped styles, dynamic theming in React</td></tr>
+                    </tbody>
+                </table>
+
+                <h3>Single Page Application (SPA) vs. Server-Side Rendering (SSR)</h3>
+
+                <div class="do-dont-grid">
+                    <div class="do-box">
+                        <h4>✅ SPA (React, Vue, Angular)</h4>
+                        <p><strong>How it works:</strong> JavaScript runs in the browser, fetches data via API, renders UI client-side</p>
+                        <ul>
+                            <li>Rich, app-like user experience</li>
+                            <li>Fast interactions after initial load</li>
+                            <li>Clear separation between frontend and backend API</li>
+                            <li>Slower initial page load</li>
+                            <li>SEO requires extra configuration</li>
+                            <li><strong>Best for:</strong> Dashboards, tools, authenticated apps</li>
+                        </ul>
+                    </div>
+                    <div class="do-box">
+                        <h4>✅ SSR / Full-Stack Meta-Framework (Next.js, Nuxt, SvelteKit)</h4>
+                        <p><strong>How it works:</strong> Server renders initial HTML; JavaScript hydrates client-side</p>
+                        <ul>
+                            <li>Excellent SEO — content is in the initial HTML</li>
+                            <li>Faster initial page load</li>
+                            <li>Can combine static pages + dynamic content</li>
+                            <li>More complex deployment and caching</li>
+                            <li><strong>Best for:</strong> Public-facing sites, e-commerce, content-heavy apps</li>
+                        </ul>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+
+
+        <!-- ═══════════════════════════ SECTION 3 ═══════════════════════════ -->
+        <button class="collapsible">3. Backend Technologies — The Server Layer</button>
+        <div class="collapsible-content">
+            <div class="collapsible-inner">
+
+                <div class="info-box">
+                    <h4>📖 The Backend Is Where the Business Logic Lives</h4>
+                    <p>The backend handles everything the user should not touch directly: data validation, authentication, business rules, third-party integrations, and database operations. The backend language and framework choice is the most impactful layer of the stack — it affects every other decision.</p>
+                </div>
+
+                <h3>Backend Languages and Frameworks</h3>
+
+                <table class="comparison-table">
+                    <thead>
+                        <tr>
+                            <th>Language / Runtime</th>
+                            <th>Primary Framework(s)</th>
+                            <th>Performance</th>
+                            <th>Learning Curve</th>
+                            <th>Job Market (2024)</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td><strong>Node.js (JavaScript)</strong></td>
+                            <td>Express, Fastify, NestJS</td>
+                            <td>High (async I/O)</td>
+                            <td><span class="badge badge-beginner">Low (if JS known)</span></td>
+                            <td>Very High</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Python</strong></td>
+                            <td>Django, Flask, FastAPI</td>
+                            <td>Moderate</td>
+                            <td><span class="badge badge-beginner">Low (readable)</span></td>
+                            <td>Very High</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Java</strong></td>
+                            <td>Spring Boot, Quarkus</td>
+                            <td>Very High</td>
+                            <td><span class="badge badge-advanced">Steep</span></td>
+                            <td>High (enterprise)</td>
+                        </tr>
+                        <tr>
+                            <td><strong>C# / .NET</strong></td>
+                            <td>ASP.NET Core</td>
+                            <td>Very High</td>
+                            <td><span class="badge badge-inter">Moderate</span></td>
+                            <td>High (enterprise, Microsoft)</td>
+                        </tr>
+                        <tr>
+                            <td><strong>PHP</strong></td>
+                            <td>Laravel, Symfony</td>
+                            <td>Moderate</td>
+                            <td><span class="badge badge-beginner">Low</span></td>
+                            <td>High (legacy, web hosting)</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Ruby</strong></td>
+                            <td>Ruby on Rails</td>
+                            <td>Moderate</td>
+                            <td><span class="badge badge-inter">Moderate</span></td>
+                            <td>Moderate (declining)</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Go (Golang)</strong></td>
+                            <td>Gin, Fiber, Echo</td>
+                            <td>Extremely High</td>
+                            <td><span class="badge badge-inter">Moderate</span></td>
+                            <td>Growing (cloud, microservices)</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Rust</strong></td>
+                            <td>Actix, Axum</td>
+                            <td>Highest available</td>
+                            <td><span class="badge badge-advanced">Very Steep</span></td>
+                            <td>Niche, growing</td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <h3>Backend Framework Profiles</h3>
+
+                <div class="step-container">
+                    <span class="step-number" style="width:auto;border-radius:6px;padding:0 10px;font-size:0.9em;">Node.js / Express</span>
+                    <span class="step-title"></span>
+                    <div class="step-content" style="padding-left: 0; margin-top: 10px;">
+                        <p>Minimalist, unopinionated. Build exactly what you need with no forced structure. Massive npm ecosystem.</p>
+                        <div class="pro-con-grid">
+                            <div class="pro-col"><h5>✅ Pros</h5><ul><li>Same language as frontend (JavaScript)</li><li>Largest package ecosystem (npm)</li><li>Excellent for APIs and real-time features</li><li>Non-blocking I/O — handles many concurrent connections</li><li>Massive community and tutorials</li></ul></div>
+                            <div class="con-col"><h5>❌ Cons</h5><ul><li>No built-in structure — teams must establish their own patterns</li><li>Callback/async complexity for newcomers</li><li>Not ideal for CPU-heavy computation</li><li>npm ecosystem has dependency management challenges</li></ul></div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="step-container">
+                    <span class="step-number" style="width:auto;border-radius:6px;padding:0 10px;font-size:0.9em;">Django (Python)</span>
+                    <span class="step-title"></span>
+                    <div class="step-content" style="padding-left: 0; margin-top: 10px;">
+                        <p>"Batteries included" framework — comes with ORM, admin panel, auth, forms, and more out of the box.</p>
+                        <div class="pro-con-grid">
+                            <div class="pro-col"><h5>✅ Pros</h5><ul><li>Extraordinary built-in features — admin panel alone saves days</li><li>Excellent ORM for database operations</li><li>Python's readability speeds development</li><li>Naturally suited to data-heavy and ML-adjacent applications</li><li>Strong security defaults (CSRF, XSS, SQL injection protection)</li></ul></div>
+                            <div class="con-col"><h5>❌ Cons</h5><ul><li>Monolithic structure can feel heavy for small APIs</li><li>Slower performance than Go or compiled languages</li><li>Less suited to real-time features without additional tools</li><li>Opinionated — harder to deviate from its conventions</li></ul></div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="step-container">
+                    <span class="step-number" style="width:auto;border-radius:6px;padding:0 10px;font-size:0.9em;">ASP.NET Core (C#)</span>
+                    <span class="step-title"></span>
+                    <div class="step-content" style="padding-left: 0; margin-top: 10px;">
+                        <p>Microsoft's cross-platform, high-performance framework. Dominant in enterprise and Windows-ecosystem environments.</p>
+                        <div class="pro-con-grid">
+                            <div class="pro-col"><h5>✅ Pros</h5><ul><li>Exceptional raw performance</li><li>Strong typing with C# reduces runtime errors</li><li>First-class tooling in Visual Studio</li><li>Enterprise-grade built-in features</li><li>Strong Azure integration</li><li>Blazor enables C# in the browser</li></ul></div>
+                            <div class="con-col"><h5>❌ Cons</h5><ul><li>Historically Windows-centric (though now cross-platform)</li><li>Steeper learning curve</li><li>Less dominant outside enterprise/Microsoft ecosystems</li><li>Community smaller than Node.js or Python in startup context</li></ul></div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="step-container">
+                    <span class="step-number" style="width:auto;border-radius:6px;padding:0 10px;font-size:0.9em;">Laravel (PHP)</span>
+                    <span class="step-title"></span>
+                    <div class="step-content" style="padding-left: 0; margin-top: 10px;">
+                        <p>The dominant PHP framework. Brought elegance and modern practices to PHP development. Excellent for content and e-commerce sites.</p>
+                        <div class="pro-con-grid">
+                            <div class="pro-col"><h5>✅ Pros</h5><ul><li>Runs on virtually all shared hosting — cheapest deployment</li><li>Eloquent ORM is intuitive and powerful</li><li>Excellent ecosystem (Livewire, Forge, Vapor, Cashier)</li><li>Blade templating engine is clean</li><li>Large community, extensive documentation</li></ul></div>
+                            <div class="con-col"><h5>❌ Cons</h5><ul><li>PHP carries historical reputation baggage</li><li>Slower performance than Node.js or Go at high scale</li><li>Less favored in data science or ML work</li><li>Not a first choice for real-time applications</li></ul></div>
+                        </div>
+                    </div>
+                </div>
+
+                <h3>API Design Patterns</h3>
+
+                <table class="comparison-table">
+                    <thead>
+                        <tr><th>Pattern</th><th>How It Works</th><th>Best For</th><th>Trade-offs</th></tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td><strong>REST</strong></td>
+                            <td>Resources mapped to URLs; HTTP verbs (GET/POST/PUT/DELETE) indicate action</td>
+                            <td>Most applications; well-understood standard</td>
+                            <td>Over/under-fetching data; multiple round trips for complex data</td>
+                        </tr>
+                        <tr>
+                            <td><strong>GraphQL</strong></td>
+                            <td>Single endpoint; client specifies exactly what data it needs</td>
+                            <td>Complex data requirements; mobile apps with bandwidth constraints</td>
+                            <td>More complex setup; caching is harder; risk of deeply nested queries</td>
+                        </tr>
+                        <tr>
+                            <td><strong>tRPC</strong></td>
+                            <td>TypeScript-first; end-to-end type safety between frontend and backend</td>
+                            <td>TypeScript full-stack (Next.js + Node.js); small teams</td>
+                            <td>TypeScript only; tighter coupling between client and server</td>
+                        </tr>
+                    </tbody>
+                </table>
+
+            </div>
+        </div>
+
+
+        <!-- ═══════════════════════════ SECTION 4 ═══════════════════════════ -->
+        <button class="collapsible">4. Database Technologies — The Data Layer</button>
+        <div class="collapsible-content">
+            <div class="collapsible-inner">
+
+                <div class="info-box">
+                    <h4>📖 The Database Choice Is Hard to Change Later</h4>
+                    <p>Migrating a database after an application has significant data is one of the most costly and risky operations in software development. Choose your database carefully early — it is the hardest layer of the stack to replace.</p>
+                </div>
+
+                <h3>Relational Databases (SQL)</h3>
+
+                <p>Relational databases store data in tables with defined schemas and relationships. They are the right choice for most business applications with structured data.</p>
+
+                <table class="comparison-table">
+                    <thead>
+                        <tr><th>Database</th><th>License / Cost</th><th>Best For</th><th>Notable Features</th></tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td><strong>PostgreSQL</strong></td>
+                            <td><span class="badge badge-oss">Open Source / Free</span></td>
+                            <td>Most applications — the default best choice</td>
+                            <td>JSONB column support, full-text search, excellent standards compliance, foreign data wrappers, PostGIS for geospatial</td>
+                        </tr>
+                        <tr>
+                            <td><strong>MySQL / MariaDB</strong></td>
+                            <td><span class="badge badge-oss">Open Source / Free</span></td>
+                            <td>Web applications, WordPress, read-heavy workloads</td>
+                            <td>Extremely widespread hosting support, excellent replication, InnoDB storage engine</td>
+                        </tr>
+                        <tr>
+                            <td><strong>SQL Server</strong></td>
+                            <td><span class="badge badge-paid">Microsoft License</span></td>
+                            <td>Microsoft/Azure ecosystems, enterprise</td>
+                            <td>Excellent tooling (SSMS), SSRS integration, Always On availability, Express edition free</td>
+                        </tr>
+                        <tr>
+                            <td><strong>SQLite</strong></td>
+                            <td><span class="badge badge-oss">Open Source / Free</span></td>
+                            <td>Development, testing, single-user apps, embedded</td>
+                            <td>Zero-config, file-based, no server needed. Not for high-concurrency production use.</td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <h3>NoSQL Databases</h3>
+
+                <p>NoSQL databases sacrifice some of the structured consistency of relational databases for flexibility, horizontal scalability, or specific data patterns.</p>
+
+                <table class="comparison-table">
+                    <thead>
+                        <tr><th>Database</th><th>Type</th><th>License</th><th>Best For</th></tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td><strong>MongoDB</strong></td>
+                            <td>Document store (JSON-like)</td>
+                            <td><span class="badge badge-oss">Community free / Atlas paid</span></td>
+                            <td>Flexible schema, document-oriented data, JavaScript-native stacks (MEAN/MERN)</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Redis</strong></td>
+                            <td>Key-Value / In-Memory</td>
+                            <td><span class="badge badge-oss">Open Source / Cloud paid</span></td>
+                            <td>Caching, sessions, real-time leaderboards, pub/sub messaging. Used alongside a primary database, not instead of one.</td>
+                        </tr>
+                        <tr>
+                            <td><strong>DynamoDB</strong></td>
+                            <td>Key-Value + Document</td>
+                            <td><span class="badge badge-paid">AWS Managed / Pay-per-use</span></td>
+                            <td>Serverless architectures, predictable performance at massive scale, AWS-native stacks</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Firestore</strong></td>
+                            <td>Document store</td>
+                            <td><span class="badge badge-paid">Google / Free tier available</span></td>
+                            <td>Real-time sync, mobile apps, Firebase stacks</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Cassandra</strong></td>
+                            <td>Wide-column</td>
+                            <td><span class="badge badge-oss">Apache / Open Source</span></td>
+                            <td>Massive write throughput, time-series data, IoT — overkill for most web apps</td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <h3>SQL vs. NoSQL — The Honest Trade-Off</h3>
+
+                <div class="do-dont-grid">
+                    <div class="do-box">
+                        <h4>✅ Choose SQL (Relational) When...</h4>
+                        <ul>
+                            <li>Data has clear relationships and structure</li>
+                            <li>Data integrity and ACID transactions matter (financial, medical, e-commerce)</li>
+                            <li>Reporting and complex queries are important</li>
+                            <li>The team knows SQL (nearly universal skill)</li>
+                            <li>You are unsure — default to relational</li>
+                        </ul>
+                    </div>
+                    <div class="do-box">
+                        <h4>✅ Consider NoSQL When...</h4>
+                        <ul>
+                            <li>Data is genuinely document-shaped or schema-free</li>
+                            <li>Horizontal scaling to massive write throughput is required</li>
+                            <li>Real-time sync to clients is a first-class requirement (Firestore)</li>
+                            <li>You are building a caching layer or session store (Redis)</li>
+                            <li>Serverless-first architecture on AWS (DynamoDB)</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <h3>ORMs — Object-Relational Mappers</h3>
+
+                <div class="tip-box">
+                    <h4>💡 ORMs Let You Work With the Database in Your Application Language</h4>
+                    <p>An ORM maps database tables to language objects, allowing database operations through code rather than raw SQL. Most full-stack frameworks include one.</p>
+                    <ul>
+                        <li><strong>Prisma (Node.js/TypeScript):</strong> Modern, type-safe ORM — the current community favorite for TypeScript stacks</li>
+                        <li><strong>Sequelize (Node.js):</strong> Mature, widely used ORM for Node.js</li>
+                        <li><strong>TypeORM (TypeScript):</strong> Decorator-based, great with NestJS</li>
+                        <li><strong>Django ORM (Python):</strong> Exceptional built-in ORM — one of Django's strongest features</li>
+                        <li><strong>SQLAlchemy (Python):</strong> The most powerful Python ORM — used with Flask/FastAPI</li>
+                        <li><strong>Entity Framework Core (.NET):</strong> Microsoft's official ORM for .NET — excellent tooling</li>
+                        <li><strong>Eloquent (PHP/Laravel):</strong> Expressive ActiveRecord-style ORM</li>
+                        <li><strong>Hibernate (Java):</strong> The dominant Java ORM for Spring Boot</li>
+                    </ul>
+                </div>
+
+            </div>
+        </div>
+
+
+        <!-- ═══════════════════════════ SECTION 5 ═══════════════════════════ -->
+        <button class="collapsible">5. Infrastructure and Hosting — Where It All Runs</button>
+        <div class="collapsible-content">
+            <div class="collapsible-inner">
+
+                <h3>Hosting Models</h3>
+
+                <table class="comparison-table">
+                    <thead>
+                        <tr><th>Model</th><th>Examples</th><th>Effort</th><th>Cost</th><th>Best For</th></tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td><strong>Shared Hosting</strong></td>
+                            <td>Bluehost, HostGator, SiteGround</td>
+                            <td>Very low</td>
+                            <td>$5–$25/month</td>
+                            <td>PHP/WordPress sites, small static sites — not suitable for modern full-stack apps</td>
+                        </tr>
+                        <tr>
+                            <td><strong>VPS (Virtual Private Server)</strong></td>
+                            <td>DigitalOcean Droplets, Linode, Vultr</td>
+                            <td>Medium — requires server admin</td>
+                            <td>$6–$100/month</td>
+                            <td>Full control over the stack, any language, cost-effective at small scale</td>
+                        </tr>
+                        <tr>
+                            <td><strong>PaaS (Platform as a Service)</strong></td>
+                            <td>Heroku, Railway, Render, Fly.io</td>
+                            <td>Low — managed deployment</td>
+                            <td>$0–$200/month</td>
+                            <td>Faster deployment, less ops work, good for MVPs and mid-sized apps</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Major Cloud (IaaS)</strong></td>
+                            <td>AWS, Google Cloud (GCP), Azure</td>
+                            <td>High — significant DevOps expertise needed</td>
+                            <td>$20–$∞</td>
+                            <td>Large scale, complex architectures, regulated industries, maximum flexibility</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Serverless / Edge</strong></td>
+                            <td>Vercel, Netlify, AWS Lambda, Cloudflare Workers</td>
+                            <td>Low for deployment; architectural change required</td>
+                            <td>Usage-based — often very low for moderate traffic</td>
+                            <td>Frontend hosting (Vercel/Netlify are dominant), serverless functions, JAMstack</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Containers (Docker/Kubernetes)</strong></td>
+                            <td>Docker + any host; AWS ECS/EKS; GKE; AKS</td>
+                            <td>High — DevOps expertise required</td>
+                            <td>Varies by underlying host</td>
+                            <td>Portability, microservices, teams that need environment consistency</td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <h3>Cloud Provider Comparison</h3>
+
+                <table class="comparison-table">
+                    <thead>
+                        <tr><th>Provider</th><th>Market Share</th><th>Strengths</th><th>Best Ecosystem Fit</th></tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td><strong>AWS (Amazon)</strong></td>
+                            <td>~33% (largest)</td>
+                            <td>Most complete service catalog, largest community, most jobs, widest regional coverage</td>
+                            <td>Any stack — it's the default choice</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Azure (Microsoft)</strong></td>
+                            <td>~22%</td>
+                            <td>Microsoft product integration (Active Directory, SQL Server, .NET, Office 365), enterprise contracts</td>
+                            <td>.NET/C#, Microsoft shops, enterprise environments</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Google Cloud (GCP)</strong></td>
+                            <td>~12%</td>
+                            <td>Best Kubernetes tooling (GKE), BigQuery for analytics, AI/ML services, Firebase</td>
+                            <td>Data-intensive apps, Firebase stacks, Kubernetes-first teams</td>
+                        </tr>
+                        <tr>
+                            <td><strong>DigitalOcean</strong></td>
+                            <td>~3%</td>
+                            <td>Simple UX, transparent pricing, developer-friendly docs, App Platform PaaS</td>
+                            <td>Small to medium apps, startups, developers who want simplicity over breadth</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Vercel / Netlify</strong></td>
+                            <td>Growing fast</td>
+                            <td>Zero-config frontend deployment, CDN, serverless functions, preview deployments</td>
+                            <td>Next.js (Vercel), Gatsby, static/JAMstack frontends</td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <div class="tip-box">
+                    <h4>💡 Hosting Recommendation for COP4834 Projects</h4>
+                    <p>For learning and small projects: <strong>Railway, Render, or DigitalOcean App Platform</strong> offer simple deployment without significant DevOps overhead. For frontend-only or Next.js: <strong>Vercel</strong> is the default. For production applications at scale: <strong>AWS or GCP</strong>, with appropriate DevOps support.</p>
+                </div>
+
+            </div>
+        </div>
+
+
+        <!-- ═══════════════════════════ SECTION 6 ═══════════════════════════ -->
+        <button class="collapsible">6. Popular Stack Combinations — Profiles and Trade-offs</button>
+        <div class="collapsible-content">
+            <div class="collapsible-inner">
+
+                <div class="info-box">
+                    <h4>📖 Named Stacks Are Marketing Shorthands</h4>
+                    <p>Acronym stacks like MEAN, MERN, and LAMP describe common combinations that work well together. In practice, most real projects mix and match — but named stacks give teams a starting point and a shared vocabulary.</p>
+                </div>
+
+                <!-- MERN -->
+                <div class="stack-card">
+                    <div class="stack-card-header">
+                        <h4>MERN Stack</h4>
+                        <p>MongoDB · Express.js · React · Node.js</p>
+                    </div>
+                    <div class="stack-card-body">
+                        <div class="stack-layers">
+                            <span class="stack-pill sp-db">MongoDB</span>
+                            <span class="stack-pill sp-back">Express.js</span>
+                            <span class="stack-pill sp-back">Node.js</span>
+                            <span class="stack-pill sp-front">React</span>
+                            <span class="stack-pill sp-host">AWS / Vercel / Railway</span>
+                        </div>
+                        <p><strong>What it is:</strong> JavaScript end-to-end — the same language (JavaScript/TypeScript) runs on the frontend, backend, and stores JSON-like documents in MongoDB. Extremely popular in startups and modern web development.</p>
+                        <div class="pro-con-grid">
+                            <div class="pro-col"><h5>✅ Advantages</h5><ul><li>One language across the entire stack</li><li>Massive community — most tutorials online</li><li>JSON everywhere — seamless data flow</li><li>React is the most in-demand frontend skill in the job market</li><li>Rapid prototyping speed</li><li>npm ecosystem provides solutions for almost anything</li><li>Fully open source — zero licensing cost</li></ul></div>
+                            <div class="con-col"><h5>❌ Disadvantages</h5><ul><li>MongoDB's flexible schema can lead to data integrity issues if not carefully managed</li><li>No built-in structure — requires discipline to maintain quality in larger codebases</li><li>JavaScript type errors catch at runtime, not compile time (mitigated by TypeScript)</li><li>MongoDB's ACID limitations for complex transactions</li><li>MongoDB hosting costs more than PostgreSQL at scale</li></ul></div>
+                        </div>
+                        <p><strong>Community &amp; Support:</strong> Enormous. React + Node.js are in the top 5 most-used technologies on Stack Overflow year after year. Tutorials, bootcamps, YouTube courses, and hiring are all extremely well-supported.</p>
+                        <p><strong>Cost Profile:</strong> All components free/open source. MongoDB Atlas free tier available; production costs scale with data volume. Deployment on Vercel (frontend) + Railway/Render (backend) possible for under $20/month at MVP scale.</p>
+                        <p><strong>Best for:</strong> SPAs, social apps, content platforms, real-time dashboards, startups, bootcamp graduates entering the workforce.</p>
+                    </div>
+                </div>
+
+                <!-- MEAN -->
+                <div class="stack-card">
+                    <div class="stack-card-header">
+                        <h4>MEAN Stack</h4>
+                        <p>MongoDB · Express.js · Angular · Node.js</p>
+                    </div>
+                    <div class="stack-card-body">
+                        <div class="stack-layers">
+                            <span class="stack-pill sp-db">MongoDB</span>
+                            <span class="stack-pill sp-back">Express.js</span>
+                            <span class="stack-pill sp-back">Node.js</span>
+                            <span class="stack-pill sp-front">Angular</span>
+                        </div>
+                        <p><strong>What it is:</strong> The original JavaScript full-stack acronym. Uses Angular (maintained by Google) instead of React. Angular provides a complete, opinionated framework rather than a component library.</p>
+                        <div class="pro-con-grid">
+                            <div class="pro-col"><h5>✅ Advantages</h5><ul><li>Angular provides strong structure and conventions — better for large teams</li><li>TypeScript is the default in Angular — fewer runtime type errors</li><li>Dependency injection and RxJS built in for enterprise patterns</li><li>Still JavaScript end-to-end</li><li>Strong Google backing for Angular</li></ul></div>
+                            <div class="con-col"><h5>❌ Disadvantages</h5><ul><li>Angular's steep learning curve vs. React or Vue</li><li>Heavier and more opinionated than MERN</li><li>Angular has lost job-market ground to React since ~2018</li><li>MongoDB same trade-offs as MERN</li></ul></div>
+                        </div>
+                        <p><strong>Community &amp; Support:</strong> Large but smaller than MERN. Angular is common in enterprise environments and companies in the Google ecosystem.</p>
+                        <p><strong>Best for:</strong> Enterprise applications, large teams that benefit from Angular's enforced structure, organizations already using Google Cloud.</p>
+                    </div>
+                </div>
+
+                <!-- LAMP -->
+                <div class="stack-card">
+                    <div class="stack-card-header">
+                        <h4>LAMP Stack</h4>
+                        <p>Linux · Apache · MySQL · PHP</p>
+                    </div>
+                    <div class="stack-card-body">
+                        <div class="stack-layers">
+                            <span class="stack-pill sp-host">Linux</span>
+                            <span class="stack-pill sp-back">Apache / Nginx</span>
+                            <span class="stack-pill sp-db">MySQL / MariaDB</span>
+                            <span class="stack-pill sp-back">PHP / Laravel</span>
+                        </div>
+                        <p><strong>What it is:</strong> The stack that built the early web. WordPress, Drupal, Joomla, and hundreds of millions of websites run on LAMP or LEMP (Nginx variant). Still extraordinarily prevalent — PHP runs on ~77% of all websites with a known server-side language.</p>
+                        <div class="pro-con-grid">
+                            <div class="pro-col"><h5>✅ Advantages</h5><ul><li>Cheapest hosting of any stack — available on $3/month shared hosting</li><li>Virtually unlimited shared hosting providers</li><li>Laravel is a mature, elegant framework with an outstanding ecosystem</li><li>WordPress is the world's largest CMS — LAMP is its native environment</li><li>Massive developer community, decades of tutorials</li><li>MySQL is battle-tested at enormous scale</li><li>Entire stack is free and open source</li></ul></div>
+                            <div class="con-col"><h5>❌ Disadvantages</h5><ul><li>PHP has a historically poor reputation (pre-modern era)</li><li>Less fashionable — fewer startups choosing it as a greenfield choice</li><li>Not the best choice for real-time features</li><li>Traditional LAMP is not naturally a SPA architecture</li><li>Weaker in data science or ML-adjacent use cases</li></ul></div>
+                        </div>
+                        <p><strong>Community &amp; Support:</strong> Enormous legacy community. Laravel specifically has an exceptionally active and welcoming community. Laracasts (Laravel tutorials) is one of the highest-quality learning resources for any framework.</p>
+                        <p><strong>Cost Profile:</strong> Lowest of any production-grade stack. Shared hosting available for under $10/month. Entire stack is open source.</p>
+                        <p><strong>Best for:</strong> Content sites, e-commerce, CMS-driven projects, WordPress, agencies with high client volume, budget-constrained deployments, businesses needing cheap scalable hosting.</p>
+                    </div>
+                </div>
+
+                <!-- Django + React -->
+                <div class="stack-card">
+                    <div class="stack-card-header">
+                        <h4>Django REST + React (Python Full-Stack)</h4>
+                        <p>PostgreSQL · Django · Django REST Framework · React</p>
+                    </div>
+                    <div class="stack-card-body">
+                        <div class="stack-layers">
+                            <span class="stack-pill sp-db">PostgreSQL</span>
+                            <span class="stack-pill sp-back">Django</span>
+                            <span class="stack-pill sp-back">Django REST Framework</span>
+                            <span class="stack-pill sp-front">React</span>
+                            <span class="stack-pill sp-host">AWS / Heroku / Railway</span>
+                        </div>
+                        <p><strong>What it is:</strong> Python on the backend with React on the frontend, connected by a REST API. Extremely popular in data-driven applications, fintech, healthcare, and companies with Python in their data/ML pipeline.</p>
+                        <div class="pro-con-grid">
+                            <div class="pro-col"><h5>✅ Advantages</h5><ul><li>Django's built-in admin panel is production-ready on day one</li><li>Exceptional security defaults baked into Django</li><li>Python's ecosystem includes NumPy, Pandas, Scikit-learn — ML/AI capabilities</li><li>PostgreSQL is the most feature-rich open-source database</li><li>Django ORM is powerful and Pythonic</li><li>Excellent for teams with Python data science background</li></ul></div>
+                            <div class="con-col"><h5>❌ Disadvantages</h5><ul><li>Two separate language ecosystems to manage (Python + JavaScript)</li><li>More complex deployment than purely JavaScript stacks</li><li>Django's pace of change is slower — less cutting-edge</li><li>REST Framework is verbose for simple APIs (FastAPI is faster)</li></ul></div>
+                        </div>
+                        <p><strong>Community &amp; Support:</strong> Very large. Django has a mature, stable community. PostgreSQL is universally supported. React community is the largest frontend community. Strong overlap with data science communities.</p>
+                        <p><strong>Cost Profile:</strong> All open source. PostgreSQL hosting available free (Supabase free tier) to very low cost. Python hosting is universally available.</p>
+                        <p><strong>Best for:</strong> Data-driven applications, fintech, healthcare, government applications, teams transitioning from data science to web development, applications needing AI/ML integration.</p>
+                    </div>
+                </div>
+
+                <!-- .NET + React -->
+                <div class="stack-card">
+                    <div class="stack-card-header">
+                        <h4>ASP.NET Core + React (Microsoft Stack)</h4>
+                        <p>SQL Server / PostgreSQL · ASP.NET Core · React or Blazor</p>
+                    </div>
+                    <div class="stack-card-body">
+                        <div class="stack-layers">
+                            <span class="stack-pill sp-db">SQL Server / PostgreSQL</span>
+                            <span class="stack-pill sp-back">ASP.NET Core</span>
+                            <span class="stack-pill sp-front">React / Blazor</span>
+                            <span class="stack-pill sp-host">Azure / AWS</span>
+                        </div>
+                        <p><strong>What it is:</strong> Microsoft's enterprise-grade full-stack. Dominant in corporate, government, financial services, and healthcare environments. With Blazor, C# runs in the browser — no JavaScript required on the frontend.</p>
+                        <div class="pro-con-grid">
+                            <div class="pro-col"><h5>✅ Advantages</h5><ul><li>Exceptional performance — among the fastest web frameworks</li><li>Strong typing throughout with C#</li><li>Outstanding Visual Studio and VS Code tooling</li><li>Natural fit with Azure, Office 365, Active Directory</li><li>Blazor: write the entire stack in C#</li><li>Entity Framework Core is a mature, powerful ORM</li><li>Widely required in enterprise job postings</li></ul></div>
+                            <div class="con-col"><h5>❌ Disadvantages</h5><ul><li>SQL Server licensing adds significant cost (Express edition free but limited)</li><li>C# has a steeper learning curve for beginners</li><li>Historically Windows-biased (cross-platform now, but legacy tooling shows)</li><li>Larger company and enterprise focus — less startup community</li><li>Heavier than Node.js or Python for simple APIs</li></ul></div>
+                        </div>
+                        <p><strong>Community &amp; Support:</strong> Large, enterprise-focused community. Excellent official Microsoft documentation. Stack Overflow support is strong. Certifications (Azure, .NET) have strong professional value.</p>
+                        <p><strong>Cost Profile:</strong> ASP.NET Core and Blazor are free and open source. SQL Server Express is free with limitations; Developer and Standard editions carry licensing costs. Azure hosting is premium-priced but has strong support contracts.</p>
+                        <p><strong>Best for:</strong> Enterprise environments, Microsoft-ecosystem companies, financial services, healthcare, government, teams with C# background, organizations with Azure infrastructure.</p>
+                    </div>
+                </div>
+
+                <!-- T3 / Modern TypeScript -->
+                <div class="stack-card">
+                    <div class="stack-card-header">
+                        <h4>T3 Stack — Modern TypeScript Full-Stack</h4>
+                        <p>PostgreSQL · Next.js · tRPC · Prisma · TypeScript</p>
+                    </div>
+                    <div class="stack-card-body">
+                        <div class="stack-layers">
+                            <span class="stack-pill sp-db">PostgreSQL</span>
+                            <span class="stack-pill sp-other">Prisma ORM</span>
+                            <span class="stack-pill sp-back">Next.js (full-stack)</span>
+                            <span class="stack-pill sp-back">tRPC</span>
+                            <span class="stack-pill sp-front">React</span>
+                            <span class="stack-pill sp-host">Vercel</span>
+                        </div>
+                        <p><strong>What it is:</strong> A modern, opinionated TypeScript full-stack. Next.js handles both frontend and backend API routes. tRPC provides end-to-end type safety without a separate API layer. Prisma is the ORM. Popular in modern startups and solo developer projects.</p>
+                        <div class="pro-con-grid">
+                            <div class="pro-col"><h5>✅ Advantages</h5><ul><li>Full TypeScript — type errors caught at compile time across the entire stack</li><li>Single repository — frontend and backend in one codebase</li><li>Extremely developer-productive once learned</li><li>Vercel deployment is one command</li><li>Prisma provides excellent TypeScript database access</li><li>Strong growing community, popular in startup ecosystem</li></ul></div>
+                            <div class="con-col"><h5>❌ Disadvantages</h5><ul><li>tRPC requires TypeScript — not accessible to JavaScript-only teams</li><li>Tight coupling between frontend and backend</li><li>Less familiar to developers from non-JS backgrounds</li><li>Next.js complexity grows significantly in large applications</li><li>Vercel hosting costs can be high at scale</li></ul></div>
+                        </div>
+                        <p><strong>Community &amp; Support:</strong> Rapidly growing but younger than MERN or LAMP. Strong presence on Twitter/X, YouTube, and in modern startup engineering blogs. The T3 stack has a dedicated community and documentation site.</p>
+                        <p><strong>Best for:</strong> TypeScript-first teams, solo developers, startups, SaaS products, teams who want maximum type safety and developer experience.</p>
+                    </div>
+                </div>
+
+                <!-- Firebase / Supabase -->
+                <div class="stack-card">
+                    <div class="stack-card-header">
+                        <h4>Backend-as-a-Service (BaaS) — Firebase / Supabase</h4>
+                        <p>Firestore or PostgreSQL · Auto-generated API · React / Vue / Angular</p>
+                    </div>
+                    <div class="stack-card-body">
+                        <div class="stack-layers">
+                            <span class="stack-pill sp-db">Firestore / PostgreSQL</span>
+                            <span class="stack-pill sp-back">Auto-generated REST/GraphQL API</span>
+                            <span class="stack-pill sp-back">Cloud Functions (serverless)</span>
+                            <span class="stack-pill sp-front">Any frontend</span>
+                            <span class="stack-pill sp-host">Google Cloud / AWS</span>
+                        </div>
+                        <p><strong>What it is:</strong> A managed backend service that eliminates the need to write a custom server. Authentication, database, storage, and real-time sync are provided out of the box. Firebase (Google) uses Firestore/NoSQL; Supabase uses PostgreSQL and is open source.</p>
+                        <div class="pro-con-grid">
+                            <div class="pro-col"><h5>✅ Advantages</h5><ul><li>No backend code to write for standard CRUD operations</li><li>Built-in real-time sync (Firestore) — ideal for collaborative apps</li><li>Authentication, storage, and push notifications built in</li><li>Excellent free tiers for development and small apps</li><li>Supabase: open source, PostgreSQL-based, self-hostable</li><li>Fastest MVP delivery speed of any option</li></ul></div>
+                            <div class="con-col"><h5>❌ Disadvantages</h5><ul><li>Vendor lock-in — migrating away from Firebase is painful</li><li>Complex business logic is awkward to implement in serverless functions</li><li>Costs escalate significantly at high data volumes (Firebase especially)</li><li>Less control over performance and architecture</li><li>Not appropriate for complex transactional systems or regulated industries</li></ul></div>
+                        </div>
+                        <p><strong>Best for:</strong> MVPs, prototypes, real-time collaborative apps, mobile apps, solo developers, hackathon projects, apps where speed-to-market trumps all else.</p>
+                    </div>
+                </div>
+
+                <h3>Stack Comparison Summary</h3>
+
+                <table class="comparison-table">
+                    <thead>
+                        <tr><th>Stack</th><th>Learning Curve</th><th>Community</th><th>Cost</th><th>Performance</th><th>Best For</th></tr>
+                    </thead>
+                    <tbody>
+                        <tr><td><strong>MERN</strong></td><td>Moderate</td><td>⭐⭐⭐⭐⭐ Largest</td><td>💚 Free OSS</td><td>High</td><td>SPAs, startups, bootcamp graduates</td></tr>
+                        <tr><td><strong>MEAN</strong></td><td>Steep (Angular)</td><td>⭐⭐⭐⭐ Large</td><td>💚 Free OSS</td><td>High</td><td>Enterprise, structured teams</td></tr>
+                        <tr><td><strong>LAMP / Laravel</strong></td><td>Low</td><td>⭐⭐⭐⭐⭐ Massive</td><td>💚 Cheapest</td><td>Moderate</td><td>Content, e-commerce, agencies</td></tr>
+                        <tr><td><strong>Django + React</strong></td><td>Moderate</td><td>⭐⭐⭐⭐ Very Large</td><td>💚 Free OSS</td><td>Moderate</td><td>Data-driven, ML/AI, regulated</td></tr>
+                        <tr><td><strong>.NET + React</strong></td><td>Steep</td><td>⭐⭐⭐⭐ Large</td><td>🟡 SQL Server license</td><td>Very High</td><td>Enterprise, Microsoft shops</td></tr>
+                        <tr><td><strong>T3 (TypeScript)</strong></td><td>Moderate–Steep</td><td>⭐⭐⭐ Growing</td><td>💚 Free OSS</td><td>High</td><td>TypeScript-first, SaaS, solo devs</td></tr>
+                        <tr><td><strong>Firebase / Supabase</strong></td><td>Low</td><td>⭐⭐⭐⭐ Growing</td><td>🟡 Scales with usage</td><td>Managed</td><td>MVPs, real-time, prototypes</td></tr>
+                    </tbody>
+                </table>
+
+            </div>
+        </div>
+
+
+        <!-- ═══════════════════════════ SECTION 7 ═══════════════════════════ -->
+        <button class="collapsible">7. Cross-Cutting Considerations — What Every Stack Must Address</button>
+        <div class="collapsible-content">
+            <div class="collapsible-inner">
+
+                <h3>Community Health Indicators</h3>
+
+                <div class="concept-card" style="background:white;border:2px solid #e85d04;border-radius:10px;padding:20px;margin:15px 0;">
+                    <h4 style="color:#e85d04;">How to Evaluate a Technology's Community</h4>
+                    <p>Before committing to a technology, assess the health of its community:</p>
+                    <ul>
+                        <li><strong>GitHub activity:</strong> Recent commits, open issues being addressed, active pull requests</li>
+                        <li><strong>Stack Overflow volume:</strong> Number of questions asked and answered in the last year</li>
+                        <li><strong>npm/PyPI download trends:</strong> Is weekly download volume growing, stable, or declining?</li>
+                        <li><strong>Job postings:</strong> Search Indeed, LinkedIn, and Glassdoor for the technology — how many openings?</li>
+                        <li><strong>Corporate backing:</strong> Technologies backed by major companies (React/Meta, Angular/Google, .NET/Microsoft) are unlikely to be abandoned</li>
+                        <li><strong>Conference presence:</strong> Active dedicated conferences and meetups signal healthy communities</li>
+                    </ul>
+                </div>
+
+                <h3>License and Cost Realities</h3>
+
+                <table class="comparison-table">
+                    <thead>
+                        <tr><th>Category</th><th>Free / Open Source Options</th><th>Paid / Licensed Options</th></tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td><strong>Frontend Framework</strong></td>
+                            <td>React, Vue, Angular, Svelte (all MIT)</td>
+                            <td>Kendo UI components, AG Grid Enterprise</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Backend Framework</strong></td>
+                            <td>Node/Express, Django, Laravel, FastAPI</td>
+                            <td>Some enterprise .NET tools</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Database</strong></td>
+                            <td>PostgreSQL, MySQL, MongoDB Community</td>
+                            <td>SQL Server Standard/Enterprise, Oracle</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Hosting (VPS)</strong></td>
+                            <td>DigitalOcean $6/mo, Railway free tier</td>
+                            <td>AWS, Azure, GCP (usage-based)</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Database Hosting</strong></td>
+                            <td>Supabase free tier, PlanetScale free tier</td>
+                            <td>MongoDB Atlas, AWS RDS</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Email Service</strong></td>
+                            <td>Mailpit (dev), Amazon SES (very low cost)</td>
+                            <td>SendGrid, Postmark, Mailgun (tiered)</td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <h3>Team Skills — The Most Important Factor</h3>
+
+                <div class="danger-box">
+                    <h4>🚨 Never Choose a Stack Your Team Doesn't Know</h4>
+                    <p>The learning curve penalty for an unfamiliar stack is steep. A team that knows Django and React deeply will outproduce a team learning Go + Vue from scratch — even if Go + Vue would theoretically be "better" for the use case. The best stack is the one your team can execute confidently. If you need to learn something new, factor the learning time explicitly into the project estimate.</p>
+                </div>
+
+                <h3>When You Need to Learn Something New</h3>
+
+                <div class="success-box">
+                    <h4>✅ Structured Technology Adoption</h4>
+                    <ul>
+                        <li>Build a proof-of-concept first — a small working prototype to validate the choice before committing to it project-wide</li>
+                        <li>Run a spike (time-boxed research task) on the unfamiliar technology</li>
+                        <li>Add 30–50% to your estimate for the affected components</li>
+                        <li>Identify which team member will lead on the new technology and make time for them to learn it before the project starts</li>
+                    </ul>
+                </div>
+
+                <h3>Scalability — Plan for Growth Without Over-Engineering</h3>
+
+                <div class="warning-box">
+                    <h4>⚠️ Don't Over-Engineer for Scale You Don't Have</h4>
+                    <p>A Kubernetes microservices architecture is inappropriate for an application with 100 users. Choose infrastructure complexity proportional to current needs. Most successful startups ran on a monolith for years before needing microservices. Design for the scale you have today, with an eye toward the path to the scale you realistically might reach.</p>
+                </div>
+
+            </div>
+        </div>
+
+
+        <!-- ═══════════════════════════ SECTION 8 ═══════════════════════════ -->
+        <button class="collapsible">8. Stack Decision Checklist — Choosing the Right Stack for Your Project</button>
+        <div class="collapsible-content">
+            <div class="collapsible-inner">
+
+                <div class="info-box">
+                    <h4>📖 How to Use This Checklist</h4>
+                    <p>Work through each category by answering the questions or checking the items that apply to your project. Your answers will direct you toward the appropriate stack choices for each layer. There is rarely one "correct" answer — but this framework will eliminate choices that are clearly wrong for your context and surface the ones that fit best.</p>
+                </div>
+
+                <div class="decision-section">
+                    <div class="decision-section-header">🎯 Step 1 — Define the Project Type</div>
+                    <div class="decision-section-body">
+                        <p>Check all that apply. This shapes every other decision.</p>
+                        <ul>
+                            <li>The application is primarily a public-facing content/marketing site (SEO critical → consider SSR: Next.js, Nuxt, or LAMP)</li>
+                            <li>The application is a rich interactive web app / dashboard (SPA is appropriate → React, Vue, or Angular)</li>
+                            <li>The application needs real-time features (WebSocket/live data → Node.js or Firebase/Supabase)</li>
+                            <li>The application is an API-only backend (consumed by mobile, frontend, or third parties)</li>
+                            <li>The application handles financial transactions (ACID compliance critical → PostgreSQL or SQL Server; consider .NET or Django)</li>
+                            <li>The application handles health or regulated data (HIPAA, PCI → enterprise stack; .NET or Django/PostgreSQL)</li>
+                            <li>The application needs ML/AI features or data pipelines (Python ecosystem → Django or FastAPI + PostgreSQL)</li>
+                            <li>This is an MVP / prototype / proof of concept (speed is paramount → Firebase, Supabase, or MERN)</li>
+                            <li>This is a content management or e-commerce site (consider LAMP / Laravel or a headless CMS)</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <div class="decision-section">
+                    <div class="decision-section-header">👥 Step 2 — Assess Team Skills and Experience</div>
+                    <div class="decision-section-body">
+                        <ul>
+                            <li>The team is most experienced in JavaScript / TypeScript → MERN, MEAN, or T3 Stack</li>
+                            <li>The team is most experienced in Python → Django REST + React or FastAPI + Vue</li>
+                            <li>The team is most experienced in PHP → Laravel (LAMP)</li>
+                            <li>The team is most experienced in C# / .NET → ASP.NET Core + React or Blazor</li>
+                            <li>The team is most experienced in Java → Spring Boot + React</li>
+                            <li>Team is small (1–2 developers) and speed is critical → prioritize simplicity and familiarity over sophistication</li>
+                            <li>No significant backend experience on team → consider Firebase or Supabase for MVP</li>
+                            <li>A significant learning curve is acceptable — estimated in the project plan with appropriate buffer</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <div class="decision-section">
+                    <div class="decision-section-header">💰 Step 3 — Evaluate Budget and Cost Constraints</div>
+                    <div class="decision-section-body">
+                        <ul>
+                            <li>Hosting budget is under $50/month → prioritize LAMP on shared hosting, or free-tier PaaS (Railway/Render/Supabase)</li>
+                            <li>Software licensing budget is near zero → exclude SQL Server Standard/Enterprise and Oracle; choose PostgreSQL / MySQL</li>
+                            <li>The client requires an ongoing support contract → consider stacks with commercial support options (Azure/.NET, AWS-managed services)</li>
+                            <li>Long-term talent hiring budget is a concern → choose the most widely used stack (React + Node.js or React + Django) to maximize hiring pool</li>
+                            <li>Cloud costs are being compared against shared hosting → LAMP is substantially cheaper; evaluate trade-offs</li>
+                            <li>Vendor lock-in is a budget risk → prefer open-source and self-hostable options (PostgreSQL, Supabase over Firebase)</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <div class="decision-section">
+                    <div class="decision-section-header">⚡ Step 4 — Evaluate Performance Requirements</div>
+                    <div class="decision-section-body">
+                        <ul>
+                            <li>Expected concurrent users under 1,000 → any stack handles this; performance is not the primary concern</li>
+                            <li>Expected concurrent users 1,000–50,000 → Node.js, Go, or .NET preferred; ensure proper caching strategy</li>
+                            <li>Expected concurrent users 50,000+ → Go, .NET, or Java at the backend; distributed databases; significant infrastructure investment</li>
+                            <li>High read-heavy workload → add Redis caching layer to any stack</li>
+                            <li>Real-time data requirements → Node.js or Go backend; consider WebSocket architecture</li>
+                            <li>CPU-intensive computing required → avoid Node.js (single-threaded); prefer Go, Java, .NET, or Python with async workers</li>
+                            <li>Mobile or low-bandwidth users are significant → SSR (Next.js/Nuxt) for faster initial load; optimize API payload sizes</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <div class="decision-section">
+                    <div class="decision-section-header">🗄️ Step 5 — Choose the Database</div>
+                    <div class="decision-section-body">
+                        <ul>
+                            <li>Data has clear relationships and structure → PostgreSQL (first choice) or MySQL</li>
+                            <li>ACID transaction compliance is critical → PostgreSQL or SQL Server</li>
+                            <li>Complex reporting and analytics queries needed → PostgreSQL or SQL Server</li>
+                            <li>Using Microsoft / Azure ecosystem → SQL Server</li>
+                            <li>Data is document-shaped and schema evolves frequently → MongoDB (ensure you understand its trade-offs)</li>
+                            <li>Real-time sync to connected clients is essential → Firestore or Supabase Realtime</li>
+                            <li>Need a caching layer for sessions or high-speed data → add Redis alongside primary database</li>
+                            <li>Serverless architecture on AWS → consider DynamoDB for primary data store</li>
+                            <li>Unsure what to pick → choose PostgreSQL. It handles nearly every use case well.</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <div class="decision-section">
+                    <div class="decision-section-header">🌐 Step 6 — Choose the Frontend Approach</div>
+                    <div class="decision-section-body">
+                        <ul>
+                            <li>SEO is critical (public-facing site, marketing, e-commerce) → Next.js, Nuxt, or SvelteKit (SSR)</li>
+                            <li>Authenticated app / dashboard with no SEO need → React SPA, Vue SPA, or Angular</li>
+                            <li>Team is JavaScript-experienced → React (largest community, most jobs)</li>
+                            <li>Team is new to frontend frameworks → Vue.js (gentler learning curve than React or Angular)</li>
+                            <li>Building a large enterprise app with many developers → Angular (enforced structure reduces inconsistency)</li>
+                            <li>Entire team is TypeScript-comfortable → consider T3 Stack (Next.js + tRPC) for maximum type safety</li>
+                            <li>UI component library needed quickly → Bootstrap, Material UI, shadcn/ui, or Tailwind</li>
+                            <li>Performance and bundle size are priorities → Svelte or SvelteKit</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <div class="decision-section">
+                    <div class="decision-section-header">☁️ Step 7 — Choose Infrastructure and Hosting</div>
+                    <div class="decision-section-body">
+                        <ul>
+                            <li>Learning project / student project → Railway free tier, Render free tier, or Vercel + Supabase</li>
+                            <li>Small production app (under 1,000 users) → DigitalOcean, Railway, or Render (paid tier)</li>
+                            <li>Medium production app (1,000–50,000 users) → DigitalOcean managed, AWS or GCP basic setup, or PaaS scaled tier</li>
+                            <li>PHP / Laravel application → shared hosting (cheapest), VPS, or Laravel Forge + any VPS</li>
+                            <li>Frontend-heavy (Next.js / Nuxt / static) → Vercel or Netlify</li>
+                            <li>Microsoft ecosystem → Azure</li>
+                            <li>Maximum cloud services flexibility → AWS</li>
+                            <li>Data/ML workloads → Google Cloud (best ML tooling) or AWS SageMaker</li>
+                            <li>Team has no DevOps experience → choose a managed PaaS (Railway, Render, Heroku) over raw VPS or Kubernetes</li>
+                            <li>Budget is the primary constraint → LAMP on shared hosting, or free tiers of Railway/Supabase/Vercel</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <div class="decision-section">
+                    <div class="decision-section-header">🔒 Step 8 — Security and Compliance Requirements</div>
+                    <div class="decision-section-body">
+                        <ul>
+                            <li>HIPAA compliance required → .NET (Azure) or Django/PostgreSQL (AWS with BAA); avoid Firebase for PHI</li>
+                            <li>PCI-DSS required → use a certified payment processor (Stripe, Braintree); stack choice is secondary to compliance configuration</li>
+                            <li>SOC 2 certification needed → choose cloud providers with SOC 2 certified services (AWS, Azure, GCP)</li>
+                            <li>Strong security defaults needed out of the box → Django (CSRF, XSS, SQL injection protection built in) or ASP.NET Core</li>
+                            <li>Data sovereignty (data cannot leave a specific country) → choose a cloud provider with regional data centers in the required location; avoid BaaS providers that lack regional control</li>
+                            <li>Audit logging of all data changes required → plan for database-level audit triggers; factor this into all stack choices</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <div class="decision-section">
+                    <div class="decision-section-header">🔭 Step 9 — Long-Term Maintainability</div>
+                    <div class="decision-section-body">
+                        <ul>
+                            <li>Project will be maintained for 5+ years → choose technologies with strong long-term backing (React, .NET, Django, PostgreSQL)</li>
+                            <li>Team will turn over and new developers need to onboard → prefer widely taught and documented technologies; avoid obscure choices</li>
+                            <li>Client will eventually manage the system internally → choose the most learnable stack for their team's likely skill level</li>
+                            <li>Vendor lock-in is unacceptable → avoid Firebase; prefer self-hostable databases (PostgreSQL); use standard protocols (REST over proprietary)</li>
+                            <li>The stack should attract talent easily in the future → React + Node.js or React + Python has the broadest talent pool</li>
+                            <li>Budget for ongoing updates and security patches is limited → simpler stacks with fewer moving parts are easier and cheaper to maintain</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <div class="success-box">
+                    <h4>✅ Final Decision Framework</h4>
+                    <p>After working through the checklist, ask these three summary questions:</p>
+                    <ol style="margin-left:25px; margin-top:10px;">
+                        <li style="margin:10px 0;"><strong>Can our team actually build with this stack right now?</strong> If no — either change the stack or add learning time to the project plan.</li>
+                        <li style="margin:10px 0;"><strong>Does this stack fit within the project's budget — both for licensing and hosting?</strong> If no — find the equivalent open-source option or revisit the scope.</li>
+                        <li style="margin:10px 0;"><strong>When a problem arises at 2am, can we find a solution quickly?</strong> Choose the stack with the largest community for the use case — help availability is a real production cost.</li>
+                    </ol>
+                </div>
+
+                <div class="tip-box">
+                    <h4>💡 Recommended Reference Resources</h4>
+                    <ul>
+                        <li><strong>Stack Overflow Developer Survey (survey.stackoverflow.co)</strong> — Annual survey covering most-used, most-loved, and highest-paid technologies</li>
+                        <li><strong>State of JS (stateofjs.com)</strong> — Annual survey of JavaScript ecosystem trends</li>
+                        <li><strong>State of CSS / State of Python</strong> — Similar ecosystem surveys for CSS and Python</li>
+                        <li><strong>ThoughtWorks Technology Radar (thoughtworks.com/radar)</strong> — Expert assessment of technology adoption readiness</li>
+                        <li><strong>DB-Engines Ranking (db-engines.com/en/ranking)</strong> — Database popularity trends over time</li>
+                        <li><strong>GitHub Octoverse (octoverse.github.com)</strong> — Language and framework usage trends from GitHub activity</li>
+                        <li><strong>npm Trends (npmtrends.com)</strong> — Compare download trends for JavaScript packages side by side</li>
+                    </ul>
+                </div>
+
+            </div>
+        </div>
+
+    </div><!-- /.content -->
+
+    <div class="footer">
+        <p>&copy; 2024 COP4834 Web Systems II | Guide to the Stack</p>
+        <p>The best stack is the one your team can ship with — reliably, repeatedly, and confidently.</p>
+    </div>
+
+</div><!-- /.container -->
+
+<script>
+    const collapsibles = document.getElementsByClassName("collapsible");
+    for (let i = 0; i < collapsibles.length; i++) {
+        collapsibles[i].addEventListener("click", function () {
+            this.classList.toggle("active");
+            const content = this.nextElementSibling;
+            if (content.style.maxHeight) {
+                content.style.maxHeight = null;
+            } else {
+                content.style.maxHeight = content.scrollHeight + "px";
+            }
+        });
+    }
+    if (collapsibles.length > 0) { collapsibles[0].click(); }
+</script>
+</body>
+</html>

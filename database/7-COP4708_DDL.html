@@ -1,0 +1,1364 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>COP 4708 – Module 5: SQL DDL</title>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700;800&family=Source+Sans+3:ital,wght@0,300;0,400;0,600;0,700;1,400&family=Source+Code+Pro:wght@400;600&display=swap" rel="stylesheet"/>
+  <style>
+    *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+    :root{
+      --navy:#0b1929;--deep-teal:#0e4d6e;--teal:#1672a0;--sky:#2196c4;
+      --ice:#d6eaf8;--pale:#eaf4fb;
+      --gold:#8a5c00;--gold-mid:#b87d10;--gold-bright:#d4960e;
+      --gold-light:#fdf5e0;--gold-border:#e8c87a;
+      --jade:#1a6b50;--jade-light:#e4f5ef;--jade-border:#8dd4b8;
+      --burg:#7b1d3a;--burg-light:#f9eaee;--burg-border:#e0a0b0;
+      --purple:#5040a0;--purple-light:#eeeaff;
+      --red:#aa3030;--red-light:#fdecea;
+      --white:#ffffff;--off-white:#f5f8fc;--border:#c4d8ea;
+      --text:#18293c;--muted:#557a92;--radius:10px;
+      --shadow:0 4px 20px rgba(11,25,41,.09);
+      --shadow-lg:0 8px 32px rgba(11,25,41,.14);
+    }
+    html{scroll-behavior:smooth}
+    body{font-family:'Source Sans 3',sans-serif;color:var(--text);background:var(--off-white);line-height:1.72}
+    /* HEADER */
+    header{background:linear-gradient(145deg,#1a1200 0%,#2a1e00 40%,#0b1929 100%);color:#fff;position:relative;overflow:hidden}
+    header::before{content:'';position:absolute;inset:0;
+      background:radial-gradient(ellipse at 75% 25%,rgba(180,120,10,.40) 0%,transparent 55%),
+                 radial-gradient(ellipse at 15% 80%,rgba(14,77,110,.30) 0%,transparent 50%);
+      pointer-events:none}
+    header::after{content:'';position:absolute;right:20px;top:20px;width:340px;height:220px;
+      background:url("data:image/svg+xml,%3Csvg viewBox='0 0 340 220' xmlns='http://www.w3.org/2000/svg'%3E%3Ctext x='10' y='42' font-family='monospace' font-size='22' fill='%23d4960e' fill-opacity='.18' font-weight='700'%3ECREATE TABLE%3C/text%3E%3Ctext x='26' y='70' font-family='monospace' font-size='13' fill='%23d4960e' fill-opacity='.12'%3EStudentID INT IDENTITY(1,1)%3C/text%3E%3Ctext x='26' y='90' font-family='monospace' font-size='13' fill='%23d4960e' fill-opacity='.10'%3ELastName VARCHAR(60) NOT NULL%3C/text%3E%3Ctext x='26' y='110' font-family='monospace' font-size='13' fill='%23d4960e' fill-opacity='.10'%3ECONSTRAINT PK_Student PRIMARY KEY%3C/text%3E%3Ctext x='10' y='148' font-family='monospace' font-size='18' fill='%231672a0' fill-opacity='.22' font-weight='700'%3EALTER TABLE%3C/text%3E%3Ctext x='10' y='185' font-family='monospace' font-size='18' fill='%23557a92' fill-opacity='.16' font-weight='700'%3EDROP TABLE%3C/text%3E%3C/svg%3E");
+      background-size:contain;background-repeat:no-repeat;pointer-events:none}
+    .header-inner{position:relative;z-index:1;max-width:980px;margin:0 auto;padding:52px 32px 44px}
+    .course-badge{display:inline-flex;align-items:center;gap:8px;background:rgba(138,92,0,.3);border:1px solid rgba(212,150,14,.4);color:#f5d080;font-size:.77rem;font-weight:700;letter-spacing:.12em;text-transform:uppercase;padding:5px 14px;border-radius:20px;margin-bottom:16px}
+    .course-badge::before{content:'◈'}
+    header h1{font-family:'Playfair Display',serif;font-size:2.4rem;line-height:1.18;color:#fff;margin-bottom:10px;max-width:640px}
+    header h1 em{font-style:normal;color:#f5d080}
+    header h2{font-size:1.05rem;font-weight:300;color:#90b8d0;margin-bottom:26px;max-width:580px}
+    .header-chips{display:flex;flex-wrap:wrap;gap:10px}
+    .chip{background:rgba(255,255,255,.10);border:1px solid rgba(255,255,255,.18);color:#cce5f5;font-size:.8rem;font-weight:600;padding:5px 14px;border-radius:20px}
+    /* OUTCOMES */
+    .outcomes-wrap{background:var(--gold-light);border-left:6px solid var(--gold);max-width:980px;margin:0 auto;border-radius:0 var(--radius) var(--radius) 0;padding:22px 28px}
+    .outcomes-wrap h3{font-family:'Playfair Display',serif;font-size:1rem;color:#4a2e00;margin-bottom:14px;display:flex;align-items:center;gap:8px}
+    .outcomes-wrap h3::before{content:'🎯'}
+    .outcomes-wrap ol{padding-left:20px;color:#3a2000;font-size:.93rem}
+    .outcomes-wrap li{margin-bottom:7px}
+    .clo-note{margin-top:14px;font-size:.82rem;color:#4a2e00;font-style:italic;font-weight:600}
+    /* LAYOUT */
+    main{max-width:980px;margin:40px auto 64px;padding:0 20px}
+    .progress-nav{background:#fff;border:1px solid var(--border);border-radius:var(--radius);padding:18px 22px;margin-bottom:10px;box-shadow:var(--shadow)}
+    .progress-nav h3{font-size:.77rem;font-weight:700;text-transform:uppercase;letter-spacing:.1em;color:var(--muted);margin-bottom:12px}
+    .nav-links{display:flex;flex-wrap:wrap;gap:8px}
+    .nav-links a{background:var(--pale);border:1px solid var(--border);color:var(--deep-teal);font-size:.8rem;font-weight:600;padding:5px 13px;border-radius:20px;text-decoration:none;transition:all .15s}
+    .nav-links a:hover{background:var(--gold);color:#fff;border-color:var(--gold)}
+    .expand-controls{display:flex;gap:10px;justify-content:flex-end;margin-bottom:16px}
+    .ctrl-btn{background:#fff;border:1px solid var(--border);color:var(--deep-teal);font-size:.8rem;font-weight:700;padding:6px 16px;border-radius:20px;cursor:pointer;transition:all .15s}
+    .ctrl-btn:hover{background:var(--teal);color:#fff;border-color:var(--teal)}
+    /* SECTION LABELS */
+    .section-label{display:flex;align-items:center;gap:12px;margin:44px 0 8px}
+    .section-label .num{background:linear-gradient(135deg,var(--gold),var(--gold-bright));color:#fff;font-family:'Playfair Display',serif;font-size:.95rem;font-weight:700;min-width:36px;height:36px;border-radius:8px;display:flex;align-items:center;justify-content:center;flex-shrink:0;box-shadow:0 3px 10px rgba(138,92,0,.35)}
+    .section-label h2{font-family:'Playfair Display',serif;font-size:1.45rem;color:var(--navy)}
+    .outcome-tag{background:var(--gold-light);border:1px solid var(--gold-border);color:var(--gold);font-size:.72rem;font-weight:700;text-transform:uppercase;letter-spacing:.07em;padding:3px 10px;border-radius:12px}
+    /* CARDS */
+    .card{background:#fff;border:1px solid var(--border);border-radius:var(--radius);margin-bottom:14px;box-shadow:var(--shadow);overflow:hidden;transition:box-shadow .2s}
+    .card:hover{box-shadow:var(--shadow-lg)}
+    .card-header{display:flex;align-items:center;justify-content:space-between;padding:17px 22px;cursor:pointer;user-select:none;background:#fff;transition:background .15s;gap:12px}
+    .card-header:hover,.card-header.open{background:var(--pale)}
+    .card-header.open{border-bottom:2px solid var(--gold-bright)}
+    .ch-left{display:flex;align-items:center;gap:12px}
+    .card-icon{font-size:1.35rem;line-height:1}
+    .card-header h3{font-family:'Playfair Display',serif;font-size:1.08rem;color:var(--navy)}
+    .card-header h3 span{display:block;font-family:'Source Sans 3',sans-serif;font-size:.75rem;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.08em;margin-bottom:2px}
+    .toggle-btn{width:28px;height:28px;border-radius:50%;background:var(--ice);border:none;cursor:pointer;display:flex;align-items:center;justify-content:center;flex-shrink:0;transition:background .18s,transform .25s;font-size:.8rem;color:var(--teal);font-weight:700}
+    .toggle-btn.open{background:var(--gold);color:#fff;transform:rotate(180deg)}
+    .card-body{display:none;padding:26px 28px 30px;border-top:1px solid var(--border);animation:fadeSlide .22s ease}
+    .card-body.open{display:block}
+    @keyframes fadeSlide{from{opacity:0;transform:translateY(-8px)}to{opacity:1;transform:translateY(0)}}
+    /* TYPOGRAPHY */
+    .card-body h4{font-family:'Playfair Display',serif;font-size:1.02rem;color:var(--deep-teal);margin:24px 0 10px;padding-bottom:6px;border-bottom:1px dashed var(--border)}
+    .card-body h4:first-child{margin-top:0}
+    .card-body h5{font-size:.92rem;font-weight:700;color:var(--navy);margin:16px 0 7px}
+    .card-body p{margin-bottom:14px;font-size:.96rem}
+    .card-body p:last-child{margin-bottom:0}
+    .card-body ul,.card-body ol{padding-left:22px;margin-bottom:14px;font-size:.95rem}
+    .card-body li{margin-bottom:7px}
+    strong{font-weight:700;color:var(--navy)}
+    em{font-style:italic;color:var(--deep-teal)}
+    code{font-family:'Source Code Pro',monospace;font-size:.85em;background:var(--pale);border:1px solid var(--border);color:var(--deep-teal);padding:1px 6px;border-radius:4px}
+    /* DEF BOX */
+    .def-box{background:linear-gradient(135deg,var(--navy) 0%,#1a1000 100%);color:#fff;border-radius:var(--radius);padding:22px 26px;margin:6px 0 18px;position:relative;overflow:hidden}
+    .def-box::before{content:'"';position:absolute;top:-12px;left:16px;font-family:'Playfair Display',serif;font-size:9rem;color:rgba(255,255,255,.04);line-height:1;pointer-events:none}
+    .def-box .def-label{font-size:.7rem;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:#f5d080;margin-bottom:8px}
+    .def-box p{font-size:1rem;color:#e8dcc8;font-style:italic;position:relative;z-index:1;margin-bottom:0}
+    .def-box strong{color:#f5d898}
+    .def-box em{color:#a8d8f0;font-style:normal;font-weight:600}
+    /* CALLOUTS */
+    .callout{border-radius:var(--radius);padding:15px 18px;margin:16px 0;font-size:.93rem;display:flex;gap:12px;align-items:flex-start}
+    .callout-icon{font-size:1.25rem;flex-shrink:0;margin-top:1px}
+    .callout-body{flex:1}
+    .callout-body strong{display:block;margin-bottom:4px}
+    .callout-info{background:var(--ice);border-left:4px solid var(--sky)}
+    .callout-tip{background:var(--jade-light);border-left:4px solid var(--jade)}
+    .callout-warning{background:#fff3e0;border-left:4px solid #e07820}
+    .callout-danger{background:var(--red-light);border-left:4px solid var(--red)}
+    .callout-key{background:var(--purple-light);border-left:4px solid var(--purple)}
+    .callout-gold{background:var(--gold-light);border-left:4px solid var(--gold)}
+    /* TABLES */
+    .styled-table{width:100%;border-collapse:collapse;font-size:.91rem;margin:14px 0;border-radius:var(--radius);overflow:hidden;box-shadow:0 2px 12px rgba(11,25,41,.08)}
+    .styled-table thead tr{background:var(--deep-teal);color:#fff}
+    .styled-table thead th{padding:12px 16px;text-align:left;font-weight:700;font-size:.83rem;letter-spacing:.04em;text-transform:uppercase}
+    .styled-table tbody tr{border-bottom:1px solid var(--border);transition:background .12s}
+    .styled-table tbody tr:hover{background:var(--pale)}
+    .styled-table tbody tr:last-child{border-bottom:none}
+    .styled-table tbody td{padding:11px 16px;vertical-align:top}
+    .styled-table td.hl{font-weight:700;color:var(--deep-teal)}
+    .styled-table td.gold{font-weight:700;color:var(--gold)}
+    .styled-table td code{font-size:.83em}
+    /* DDL CARDS */
+    .ddl-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(155px,1fr));gap:12px;margin:16px 0}
+    .ddl-card{border-radius:var(--radius);padding:16px;border:2px solid;text-align:center;transition:transform .15s,box-shadow .15s}
+    .ddl-card:hover{transform:translateY(-3px);box-shadow:var(--shadow-lg)}
+    .ddl-kw{font-family:'Source Code Pro',monospace;font-size:1.05rem;font-weight:700;margin-bottom:7px;display:block}
+    .ddl-card p{font-size:.82rem;color:var(--text);margin:0}
+    .ddl-create{background:var(--jade-light);border-color:var(--jade-border)}.ddl-create .ddl-kw{color:var(--jade)}
+    .ddl-alter{background:var(--gold-light);border-color:var(--gold-border)}.ddl-alter .ddl-kw{color:var(--gold)}
+    .ddl-drop{background:var(--red-light);border-color:#f0b8b8}.ddl-drop .ddl-kw{color:var(--red)}
+    .ddl-trunc{background:var(--burg-light);border-color:var(--burg-border)}.ddl-trunc .ddl-kw{color:var(--burg)}
+    .ddl-rename{background:var(--purple-light);border-color:#c0b0e8}.ddl-rename .ddl-kw{color:var(--purple)}
+    /* CODE */
+    .code-wrap{margin:14px 0;border-radius:var(--radius);overflow:hidden;border:1px solid #1a3a55;box-shadow:0 3px 14px rgba(11,25,41,.18)}
+    .code-topbar{background:#152a3e;padding:8px 16px;display:flex;align-items:center;justify-content:space-between}
+    .lang-badge{font-family:'Source Code Pro',monospace;font-size:.72rem;font-weight:600;color:#7ec8e3;text-transform:uppercase;letter-spacing:.1em}
+    .code-dots{display:flex;gap:5px}
+    .code-dots span{width:10px;height:10px;border-radius:50%}
+    .d1{background:#ff5f57}.d2{background:#febc2e}.d3{background:#28c840}
+    pre.code-block{background:#0b1929;color:#c8e6ff;padding:20px 24px;font-family:'Source Code Pro',monospace;font-size:.84rem;line-height:1.85;overflow-x:auto;white-space:pre;word-break:normal;overflow-wrap:normal;margin:0;display:block;tab-size:4}
+    .kw{color:#79b8ff}.nm{color:#ffa07a}.str{color:#9ecbff}.num{color:#f8c555}
+    .cmt{color:#4a7a96;font-style:italic}.grn{color:#7ecb9e}.hi{color:#f5d080;font-weight:700}
+    /* SYNTAX BOX */
+    .syntax-box{background:#0d2035;border:1px solid #2a4460;border-radius:var(--radius);padding:18px 22px;margin:14px 0}
+    .syn-label{font-size:.7rem;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:var(--gold-border);margin-bottom:10px}
+    pre.syn-block{font-family:'Source Code Pro',monospace;font-size:.84rem;line-height:1.85;color:#c8e6ff;white-space:pre;overflow-x:auto;margin:0}
+    .syn-opt{color:#7a9bb5}.syn-var{color:#f5d080;font-style:italic}
+    /* ALTER OP CARDS */
+    .alter-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:12px;margin:14px 0}
+    .alter-card{border-radius:var(--radius);padding:15px 17px;border:1px solid;position:relative;overflow:hidden}
+    .alter-card::after{content:attr(data-op);position:absolute;bottom:-6px;right:4px;font-family:'Source Code Pro',monospace;font-size:2rem;opacity:.07;font-weight:700;pointer-events:none;line-height:1}
+    .ac-add{background:var(--jade-light);border-color:var(--jade-border)}
+    .ac-mod{background:var(--gold-light);border-color:var(--gold-border)}
+    .ac-drp{background:var(--red-light);border-color:#f0b8b8}
+    .ac-ren{background:var(--purple-light);border-color:#c0b0e8}
+    .ac-title{font-weight:700;font-size:.85rem;text-transform:uppercase;letter-spacing:.05em;margin-bottom:6px}
+    .ac-add .ac-title{color:var(--jade)}.ac-mod .ac-title{color:var(--gold)}
+    .ac-drp .ac-title{color:var(--red)}.ac-ren .ac-title{color:var(--purple)}
+    .alter-card p{font-size:.84rem;color:var(--text);margin:0}
+    /* RISK TABLE */
+    .risk-table{width:100%;border-collapse:collapse;font-size:.87rem;margin:14px 0;border-radius:var(--radius);overflow:hidden;box-shadow:0 2px 12px rgba(11,25,41,.08)}
+    .risk-table thead tr{background:#2a1800;color:#f5d080}
+    .risk-table thead th{padding:11px 14px;text-align:left;font-weight:700;font-size:.79rem;letter-spacing:.05em;text-transform:uppercase}
+    .risk-table tbody tr{border-bottom:1px solid var(--border)}
+    .risk-table tbody tr:last-child{border-bottom:none}
+    .risk-table tbody td{padding:10px 14px;vertical-align:top}
+    .r-safe{background:#edfff5}.r-caution{background:#fffbe6}.r-danger{background:#fff0f0}
+    td.op-name{font-family:'Source Code Pro',monospace;font-weight:700;font-size:.84rem}
+    .r-safe td.op-name{color:var(--jade)}.r-caution td.op-name{color:var(--gold)}.r-danger td.op-name{color:var(--red)}
+    /* STEP LIST */
+    .step-list{list-style:none;padding:0;margin:14px 0;counter-reset:steps}
+    .step-list li{counter-increment:steps;display:flex;gap:13px;align-items:flex-start;padding:12px 15px;border-radius:var(--radius);margin-bottom:8px;background:#fff;border:1px solid var(--border);font-size:.93rem;transition:background .15s}
+    .step-list li:hover{background:var(--pale)}
+    .step-list li::before{content:counter(steps);min-width:27px;height:27px;border-radius:50%;background:linear-gradient(135deg,var(--gold),var(--gold-bright));color:#fff;font-weight:700;font-size:.79rem;display:flex;align-items:center;justify-content:center;flex-shrink:0;box-shadow:0 2px 6px rgba(138,92,0,.35)}
+    .sc strong{display:block;font-size:.9rem;margin-bottom:2px}
+    .sc span{font-size:.86rem;color:var(--muted)}
+    /* ORDER CHAIN */
+    .order-chain{display:flex;flex-wrap:wrap;gap:0;align-items:center;margin:16px 0}
+    .oc-box{background:var(--deep-teal);color:#fff;border-radius:var(--radius);padding:10px 16px;font-family:'Source Code Pro',monospace;font-size:.83rem;font-weight:700;white-space:nowrap}
+    .oc-arrow{color:var(--gold-bright);font-size:1.4rem;padding:0 6px;font-weight:700}
+    /* STRIP & CHECKLIST */
+    .strip{background:linear-gradient(90deg,var(--gold) 0%,var(--gold-bright) 100%);color:#fff;border-radius:var(--radius);padding:18px 24px;margin:16px 0;font-size:.95rem}
+    .strip strong{color:#fff3cc}
+    .checklist{list-style:none;padding:0;margin:0}
+    .checklist li{padding:7px 0;font-size:.93rem;border-bottom:1px dashed var(--border);display:flex;align-items:baseline;gap:10px}
+    .checklist li:last-child{border-bottom:none}
+    .checklist li::before{content:'☐';font-size:1rem;flex-shrink:0}
+    footer{background:var(--navy);color:#6a90aa;text-align:center;padding:28px 20px;font-size:.82rem}
+    footer span{color:#a0c4dc;font-weight:700}
+    @media(max-width:660px){header h1{font-size:1.85rem}.ddl-grid{grid-template-columns:1fr 1fr}}
+  </style>
+</head>
+<body>
+
+<!-- HEADER -->
+<header>
+  <div class="header-inner">
+    <div class="course-badge">COP 4708 · Introduction to Databases</div>
+    <h1>Module 5: <em>SQL Data Definition<br/>Language (DDL)</em></h1>
+    <h2>Creating, modifying, and managing database structures — plus the practical realities of altering live tables that already contain data</h2>
+    <div class="header-chips">
+      <span class="chip">📙 Module 5</span>
+      <span class="chip">🎓 CLO 2 Support</span>
+      <span class="chip">⏱ Estimated 75–90 min</span>
+      <span class="chip">5 Learning Outcomes</span>
+    </div>
+  </div>
+</header>
+
+<!-- OUTCOMES -->
+<div class="outcomes-wrap">
+  <h3>Module Learning Outcomes</h3>
+  <ol>
+    <li>Create and manage table structures using SQL DDL statements</li>
+    <li>Demonstrate how <em>referential integrity actions</em> are implemented in SQL</li>
+    <li>Create and use all SQL <em>constraint types</em> (PK, FK, NOT NULL, UNIQUE, CHECK, DEFAULT)</li>
+    <li>Use the <em>ALTER TABLE</em> statement to add, modify, and remove columns and constraints</li>
+    <li>Use SQL statements to <em>drop</em> tables, columns, and constraints — and manage this safely when data exists</li>
+  </ol>
+  <p class="clo-note">📌 Supports CLO 2: Design, normalize, and implement database systems.</p>
+</div>
+
+<!-- MAIN -->
+<main>
+  <div class="progress-nav">
+    <h3>Jump to Section</h3>
+    <div class="nav-links">
+      <a href="#sec1">1. DDL Overview</a>
+      <a href="#sec2">2. CREATE TABLE</a>
+      <a href="#sec3">3. All Constraint Types</a>
+      <a href="#sec4">4. Referential Integrity Actions</a>
+      <a href="#sec5">5. ALTER TABLE</a>
+      <a href="#sec6">6. Altering Tables with Data</a>
+      <a href="#sec7">7. DROP &amp; TRUNCATE</a>
+      <a href="#sec8">8. Execution Order &amp; Dependencies</a>
+      <a href="#sec9">9. Summary &amp; Checklist</a>
+    </div>
+  </div>
+  <div class="expand-controls">
+    <button class="ctrl-btn" onclick="setAll(true)">Expand All</button>
+    <button class="ctrl-btn" onclick="setAll(false)">Collapse All</button>
+  </div>
+
+  <!-- ═══ SECTION 1 — DDL OVERVIEW ═══ -->
+  <div class="section-label" id="sec1">
+    <div class="num">1</div>
+    <h2>DDL Overview — The Five Commands</h2>
+    <span class="outcome-tag">Foundation</span>
+  </div>
+  <div class="card">
+    <div class="card-header open" onclick="toggle(this)">
+      <div class="ch-left"><span class="card-icon">🗂️</span>
+        <h3><span>Foundation · SQL Sub-languages</span>What DDL Is and Where It Fits in SQL</h3>
+      </div>
+      <button class="toggle-btn open">▲</button>
+    </div>
+    <div class="card-body open">
+      <div class="def-box">
+        <div class="def-label">Definition — Data Definition Language (DDL)</div>
+        <p><strong>DDL</strong> is the subset of SQL used to define, modify, and remove database <em>structures</em> — tables, columns, constraints, indexes, views, and schemas. DDL commands change the shape of the database, not its data. In SQL Server, DDL statements are <strong>auto-committed</strong> — they take effect immediately and cannot be rolled back once the statement completes.</p>
+      </div>
+      <h4>The Four SQL Sub-Languages</h4>
+      <table class="styled-table">
+        <thead><tr><th>Sub-Language</th><th>Purpose</th><th>Key Commands</th></tr></thead>
+        <tbody>
+          <tr><td class="gold"><strong>DDL</strong> — Data Definition</td><td>Define and modify <em>structures</em></td><td><code>CREATE</code>, <code>ALTER</code>, <code>DROP</code>, <code>TRUNCATE</code></td></tr>
+          <tr><td class="hl">DML — Data Manipulation</td><td>Insert, update, delete rows</td><td><code>INSERT</code>, <code>UPDATE</code>, <code>DELETE</code></td></tr>
+          <tr><td class="hl">DQL — Data Query</td><td>Retrieve data from tables</td><td><code>SELECT</code></td></tr>
+          <tr><td class="hl">DCL — Data Control</td><td>Manage access permissions</td><td><code>GRANT</code>, <code>REVOKE</code>, <code>DENY</code></td></tr>
+        </tbody>
+      </table>
+      <h4>The Five DDL Commands</h4>
+      <div class="ddl-grid">
+        <div class="ddl-card ddl-create"><span class="ddl-kw">CREATE</span><p>Builds a new object — table, view, index, schema, database, or stored procedure.</p></div>
+        <div class="ddl-card ddl-alter"><span class="ddl-kw">ALTER</span><p>Modifies an existing object — adds, changes, or removes columns and constraints.</p></div>
+        <div class="ddl-card ddl-drop"><span class="ddl-kw">DROP</span><p>Permanently removes a database object and all its data. Cannot be undone without a backup.</p></div>
+        <div class="ddl-card ddl-trunc"><span class="ddl-kw">TRUNCATE</span><p>Removes all rows instantly without logging individual deletes. Faster than DELETE.</p></div>
+        <div class="ddl-card ddl-rename"><span class="ddl-kw">RENAME</span><p>Renames an object. In SQL Server, use the <code>sp_rename</code> system stored procedure.</p></div>
+      </div>
+      <div class="callout callout-warning">
+        <span class="callout-icon">⚠️</span>
+        <div class="callout-body">
+          <strong>DDL Is Auto-Committed — No Undo</strong>
+          In SQL Server, DDL statements commit immediately. Unlike DML inside a transaction, a <code>DROP TABLE</code> or <code>ALTER TABLE</code> that goes wrong cannot be rolled back once it completes. Always test DDL on a copy of the database and take a full backup before applying structural changes to production.
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══ SECTION 2 — CREATE TABLE ═══ -->
+  <div class="section-label" id="sec2">
+    <div class="num">2</div>
+    <h2>CREATE TABLE — Full Syntax &amp; Working Schema</h2>
+    <span class="outcome-tag">Outcome 1</span>
+  </div>
+  <div class="card">
+    <div class="card-header open" onclick="toggle(this)">
+      <div class="ch-left"><span class="card-icon">🏗️</span>
+        <h3><span>Outcome 1 · Syntax</span>CREATE TABLE — Annotated Syntax and Column Options</h3>
+      </div>
+      <button class="toggle-btn open">▲</button>
+    </div>
+    <div class="card-body open">
+      <h4>Full Syntax Template</h4>
+      <div class="syntax-box">
+        <div class="syn-label">T-SQL · CREATE TABLE — Full Syntax</div>
+        <pre class="syn-block"><span class="kw">CREATE TABLE</span> <span class="syn-var">SchemaName</span>.<span class="syn-var">TableName</span>
+(
+    <span class="cmt">-- Column definitions</span>
+    <span class="syn-var">ColumnName</span>  <span class="syn-var">DataType</span><span class="syn-opt">[(size)]</span>
+                <span class="syn-opt">[IDENTITY(seed, increment)]</span>
+                <span class="syn-opt">[NULL | NOT NULL]</span>
+                <span class="syn-opt">[CONSTRAINT <span class="syn-var">Name</span> DEFAULT <span class="syn-var">value</span>]</span>
+                <span class="syn-opt">[CONSTRAINT <span class="syn-var">Name</span> CHECK (<span class="syn-var">expression</span>)]</span>,
+
+    <span class="cmt">-- Table-level constraints (after all columns)</span>
+    <span class="syn-opt">CONSTRAINT <span class="syn-var">Name</span> PRIMARY KEY (<span class="syn-var">col1</span><span class="syn-opt">, col2</span>)</span>,
+    <span class="syn-opt">CONSTRAINT <span class="syn-var">Name</span> UNIQUE (<span class="syn-var">col</span>)</span>,
+    <span class="syn-opt">CONSTRAINT <span class="syn-var">Name</span> FOREIGN KEY (<span class="syn-var">col</span>)
+        REFERENCES <span class="syn-var">ParentTable</span>(<span class="syn-var">ParentCol</span>)
+        <span class="syn-opt">[ON DELETE {NO ACTION | CASCADE | SET NULL | SET DEFAULT}]</span>
+        <span class="syn-opt">[ON UPDATE {NO ACTION | CASCADE | SET NULL | SET DEFAULT}]</span></span>,
+    <span class="syn-opt">CONSTRAINT <span class="syn-var">Name</span> CHECK (<span class="syn-var">expression</span>)</span>
+);</pre>
+      </div>
+      <div class="callout callout-tip">
+        <span class="callout-icon">💡</span>
+        <div class="callout-body">
+          <strong>Always Name Your Constraints Explicitly</strong>
+          Never rely on SQL Server's auto-generated constraint names like <code>PK__Student__3A812345</code>. They are unreadable and vary between environments. Use the naming pattern: <code>PK_TableName</code>, <code>FK_Child_Parent</code>, <code>UQ_Table_Column</code>, <code>CK_Table_Column</code>, <code>DF_Table_Column</code>.
+        </div>
+      </div>
+      <h4>Inline vs. Table-Level Constraint Placement</h4>
+      <table class="styled-table">
+        <thead><tr><th>Placement</th><th>Location in Statement</th><th>Required For</th><th>Works For</th></tr></thead>
+        <tbody>
+          <tr><td class="gold"><strong>Inline</strong></td><td>Same line as the column</td><td>NOT NULL (always inline)</td><td>Single-column PK, UNIQUE, CHECK, DEFAULT</td></tr>
+          <tr><td class="hl"><strong>Table-level</strong></td><td>After all column definitions</td><td>Composite (multi-column) PKs and FKs</td><td>All constraint types</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-header open" onclick="toggle(this)">
+      <div class="ch-left"><span class="card-icon">📋</span>
+        <h3><span>Outcome 1 · Full Example</span>Complete Student Registration Schema — Six Tables in Dependency Order</h3>
+      </div>
+      <button class="toggle-btn open">▲</button>
+    </div>
+    <div class="card-body open">
+      <p>Tables must be created in <strong>dependency order</strong> — parent tables before the child tables that reference them. Attempting to create a table with a FK to a table that does not yet exist will fail with a reference error.</p>
+      <div class="code-wrap">
+        <div class="code-topbar"><div class="code-dots"><span class="d1"></span><span class="d2"></span><span class="d3"></span></div><span class="lang-badge">T-SQL · Table 1 of 6 — Department (no dependencies)</span></div>
+        <pre class="code-block"><span class="cmt">-- ═══════════════════════════════════════════════════════════
+-- STUDENT REGISTRATION SCHEMA
+-- Create tables in dependency order: parents before children
+-- ═══════════════════════════════════════════════════════════</span>
+
+<span class="cmt">-- 1. Department — no FK dependencies, created first</span>
+<span class="kw">CREATE TABLE</span> Department
+(
+    DeptID      <span class="nm">CHAR</span>(<span class="num">5</span>)      <span class="kw">NOT NULL</span>,
+    DeptName    <span class="nm">VARCHAR</span>(<span class="num">80</span>)  <span class="kw">NOT NULL</span>,
+    Building    <span class="nm">VARCHAR</span>(<span class="num">60</span>)  <span class="kw">NULL</span>,
+    Phone       <span class="nm">VARCHAR</span>(<span class="num">15</span>)  <span class="kw">NULL</span>,
+
+    <span class="kw">CONSTRAINT</span> PK_Department   <span class="kw">PRIMARY KEY</span> (DeptID),
+    <span class="kw">CONSTRAINT</span> UQ_Dept_Name    <span class="kw">UNIQUE</span>      (DeptName)
+);</pre>
+      </div>
+      <div class="code-wrap">
+        <div class="code-topbar"><div class="code-dots"><span class="d1"></span><span class="d2"></span><span class="d3"></span></div><span class="lang-badge">T-SQL · Tables 2 &amp; 3 — Instructor &amp; Course</span></div>
+        <pre class="code-block"><span class="cmt">-- 2. Instructor — depends on Department</span>
+<span class="kw">CREATE TABLE</span> Instructor
+(
+    InstructorID  <span class="nm">INT</span>          <span class="kw">IDENTITY</span>(<span class="num">1</span>,<span class="num">1</span>)  <span class="kw">NOT NULL</span>,
+    DeptID        <span class="nm">CHAR</span>(<span class="num">5</span>)                    <span class="kw">NOT NULL</span>,
+    LastName      <span class="nm">VARCHAR</span>(<span class="num">60</span>)                <span class="kw">NOT NULL</span>,
+    FirstName     <span class="nm">VARCHAR</span>(<span class="num">50</span>)                <span class="kw">NOT NULL</span>,
+    Email         <span class="nm">VARCHAR</span>(<span class="num">100</span>)               <span class="kw">NOT NULL</span>,
+    Rank          <span class="nm">VARCHAR</span>(<span class="num">30</span>)                <span class="kw">NOT NULL</span>,
+    HireDate      <span class="nm">DATE</span>                        <span class="kw">NOT NULL</span>
+                      <span class="kw">CONSTRAINT</span> DF_Inst_HireDate <span class="kw">DEFAULT</span> <span class="grn">GETDATE</span>(),
+
+    <span class="kw">CONSTRAINT</span> PK_Instructor        <span class="kw">PRIMARY KEY</span> (InstructorID),
+    <span class="kw">CONSTRAINT</span> UQ_Instructor_Email  <span class="kw">UNIQUE</span>      (Email),
+    <span class="kw">CONSTRAINT</span> CK_Instructor_Rank
+        <span class="kw">CHECK</span> (Rank <span class="kw">IN</span> (<span class="str">'Adjunct'</span>, <span class="str">'Assistant'</span>, <span class="str">'Associate'</span>, <span class="str">'Professor'</span>)),
+    <span class="kw">CONSTRAINT</span> FK_Instructor_Dept
+        <span class="kw">FOREIGN KEY</span> (DeptID)
+        <span class="kw">REFERENCES</span> Department (DeptID)
+        <span class="kw">ON DELETE</span> NO ACTION
+        <span class="kw">ON UPDATE</span> CASCADE
+);
+
+<span class="cmt">-- 3. Course — depends on Department</span>
+<span class="kw">CREATE TABLE</span> Course
+(
+    CourseID     <span class="nm">CHAR</span>(<span class="num">10</span>)     <span class="kw">NOT NULL</span>,  <span class="cmt">-- natural key e.g. 'COP4708'</span>
+    DeptID       <span class="nm">CHAR</span>(<span class="num">5</span>)      <span class="kw">NOT NULL</span>,
+    CourseName   <span class="nm">VARCHAR</span>(<span class="num">100</span>) <span class="kw">NOT NULL</span>,
+    Credits      <span class="nm">TINYINT</span>      <span class="kw">NOT NULL</span>,
+    Description  <span class="nm">VARCHAR</span>(<span class="num">500</span>) <span class="kw">NULL</span>,
+
+    <span class="kw">CONSTRAINT</span> PK_Course         <span class="kw">PRIMARY KEY</span> (CourseID),
+    <span class="kw">CONSTRAINT</span> CK_Course_Credits <span class="kw">CHECK</span>       (Credits <span class="kw">BETWEEN</span> <span class="num">1</span> <span class="kw">AND</span> <span class="num">6</span>),
+    <span class="kw">CONSTRAINT</span> FK_Course_Dept
+        <span class="kw">FOREIGN KEY</span> (DeptID) <span class="kw">REFERENCES</span> Department (DeptID)
+        <span class="kw">ON DELETE</span> NO ACTION
+);</pre>
+      </div>
+      <div class="code-wrap">
+        <div class="code-topbar"><div class="code-dots"><span class="d1"></span><span class="d2"></span><span class="d3"></span></div><span class="lang-badge">T-SQL · Tables 4, 5 &amp; 6 — Section, Student, Enrollment</span></div>
+        <pre class="code-block"><span class="cmt">-- 4. Section — depends on Course and Instructor</span>
+<span class="kw">CREATE TABLE</span> Section
+(
+    SectionID      <span class="nm">INT</span>          <span class="kw">IDENTITY</span>(<span class="num">1</span>,<span class="num">1</span>)  <span class="kw">NOT NULL</span>,
+    CourseID       <span class="nm">CHAR</span>(<span class="num">10</span>)                   <span class="kw">NOT NULL</span>,
+    InstructorID   <span class="nm">INT</span>                          <span class="kw">NOT NULL</span>,
+    Semester       <span class="nm">VARCHAR</span>(<span class="num">10</span>)                 <span class="kw">NOT NULL</span>,
+    YearOffered    <span class="nm">SMALLINT</span>                     <span class="kw">NOT NULL</span>,
+    Room           <span class="nm">VARCHAR</span>(<span class="num">20</span>)                 <span class="kw">NULL</span>,
+    MaxEnrollment  <span class="nm">TINYINT</span>                      <span class="kw">NOT NULL</span>,
+
+    <span class="kw">CONSTRAINT</span> PK_Section          <span class="kw">PRIMARY KEY</span> (SectionID),
+    <span class="kw">CONSTRAINT</span> CK_Section_Sem      <span class="kw">CHECK</span> (Semester <span class="kw">IN</span> (<span class="str">'Spring'</span>,<span class="str">'Summer'</span>,<span class="str">'Fall'</span>)),
+    <span class="kw">CONSTRAINT</span> CK_Section_Year     <span class="kw">CHECK</span> (YearOffered <span class="kw">BETWEEN</span> <span class="num">2000</span> <span class="kw">AND</span> <span class="num">2100</span>),
+    <span class="kw">CONSTRAINT</span> CK_Section_MaxEnr   <span class="kw">CHECK</span> (MaxEnrollment <span class="kw">BETWEEN</span> <span class="num">1</span> <span class="kw">AND</span> <span class="num">200</span>),
+    <span class="kw">CONSTRAINT</span> FK_Section_Course
+        <span class="kw">FOREIGN KEY</span> (CourseID) <span class="kw">REFERENCES</span> Course (CourseID) <span class="kw">ON DELETE</span> NO ACTION,
+    <span class="kw">CONSTRAINT</span> FK_Section_Instructor
+        <span class="kw">FOREIGN KEY</span> (InstructorID) <span class="kw">REFERENCES</span> Instructor (InstructorID) <span class="kw">ON DELETE</span> NO ACTION
+);
+
+<span class="cmt">-- 5. Student</span>
+<span class="kw">CREATE TABLE</span> Student
+(
+    StudentID      <span class="nm">INT</span>          <span class="kw">IDENTITY</span>(<span class="num">1</span>,<span class="num">1</span>)  <span class="kw">NOT NULL</span>,
+    LastName       <span class="nm">VARCHAR</span>(<span class="num">60</span>)                <span class="kw">NOT NULL</span>,
+    FirstName      <span class="nm">VARCHAR</span>(<span class="num">50</span>)                <span class="kw">NOT NULL</span>,
+    Email          <span class="nm">VARCHAR</span>(<span class="num">100</span>)               <span class="kw">NOT NULL</span>,
+    DateOfBirth    <span class="nm">DATE</span>                        <span class="kw">NULL</span>,
+    DeclaredMajor  <span class="nm">CHAR</span>(<span class="num">10</span>)                   <span class="kw">NULL</span>,
+    IsEnrolled     <span class="nm">BIT</span>                         <span class="kw">NOT NULL</span>
+                       <span class="kw">CONSTRAINT</span> DF_Student_IsEnrolled  <span class="kw">DEFAULT</span> <span class="num">1</span>,
+    CreatedDate    <span class="nm">DATETIME2</span>                   <span class="kw">NOT NULL</span>
+                       <span class="kw">CONSTRAINT</span> DF_Student_Created     <span class="kw">DEFAULT</span> <span class="grn">GETDATE</span>(),
+
+    <span class="kw">CONSTRAINT</span> PK_Student        <span class="kw">PRIMARY KEY</span> (StudentID),
+    <span class="kw">CONSTRAINT</span> UQ_Student_Email  <span class="kw">UNIQUE</span>      (Email)
+);
+
+<span class="cmt">-- 6. Enrollment — junction table resolving M:N; depends on Student and Section
+--    Created last because it references both parent tables</span>
+<span class="kw">CREATE TABLE</span> Enrollment
+(
+    StudentID   <span class="nm">INT</span>      <span class="kw">NOT NULL</span>,
+    SectionID   <span class="nm">INT</span>      <span class="kw">NOT NULL</span>,
+    EnrollDate  <span class="nm">DATE</span>     <span class="kw">NOT NULL</span>
+                    <span class="kw">CONSTRAINT</span> DF_Enroll_Date <span class="kw">DEFAULT</span> <span class="grn">GETDATE</span>(),
+    Grade       <span class="nm">CHAR</span>(<span class="num">2</span>) <span class="kw">NULL</span>,
+
+    <span class="kw">CONSTRAINT</span> PK_Enrollment
+        <span class="kw">PRIMARY KEY</span> (StudentID, SectionID),      <span class="cmt">-- composite PK</span>
+    <span class="kw">CONSTRAINT</span> CK_Enrollment_Grade
+        <span class="kw">CHECK</span> (Grade <span class="kw">IS NULL OR</span>
+               Grade <span class="kw">IN</span> (<span class="str">'A'</span>,<span class="str">'A-'</span>,<span class="str">'B+'</span>,<span class="str">'B'</span>,<span class="str">'B-'</span>,<span class="str">'C+'</span>,<span class="str">'C'</span>,<span class="str">'C-'</span>,<span class="str">'D'</span>,<span class="str">'F'</span>,<span class="str">'W'</span>,<span class="str">'I'</span>)),
+    <span class="kw">CONSTRAINT</span> FK_Enrollment_Student
+        <span class="kw">FOREIGN KEY</span> (StudentID)
+        <span class="kw">REFERENCES</span> Student (StudentID)
+        <span class="kw">ON DELETE</span> CASCADE,          <span class="cmt">-- delete enrollments when student is removed</span>
+    <span class="kw">CONSTRAINT</span> FK_Enrollment_Section
+        <span class="kw">FOREIGN KEY</span> (SectionID)
+        <span class="kw">REFERENCES</span> Section (SectionID)
+        <span class="kw">ON DELETE</span> NO ACTION         <span class="cmt">-- cannot drop a section with active enrollments</span>
+);</pre>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══ SECTION 3 — CONSTRAINTS ═══ -->
+  <div class="section-label" id="sec3">
+    <div class="num">3</div>
+    <h2>All SQL Constraint Types — Complete Reference</h2>
+    <span class="outcome-tag">Outcome 3</span>
+  </div>
+  <div class="card">
+    <div class="card-header open" onclick="toggle(this)">
+      <div class="ch-left"><span class="card-icon">🔒</span>
+        <h3><span>Outcome 3 · Constraints</span>PRIMARY KEY, FOREIGN KEY, NOT NULL, UNIQUE, CHECK, DEFAULT</h3>
+      </div>
+      <button class="toggle-btn open">▲</button>
+    </div>
+    <div class="card-body open">
+      <h4>PRIMARY KEY</h4>
+      <p>Uniquely identifies every row. Implicitly <code>NOT NULL</code>. Creates a clustered index by default. Each table may have only one primary key, but it can span multiple columns (composite).</p>
+      <div class="code-wrap">
+        <div class="code-topbar"><div class="code-dots"><span class="d1"></span><span class="d2"></span><span class="d3"></span></div><span class="lang-badge">T-SQL · PRIMARY KEY</span></div>
+        <pre class="code-block"><span class="cmt">-- Simple PK — single column, table-level (recommended)</span>
+<span class="kw">CONSTRAINT</span> PK_Student  <span class="kw">PRIMARY KEY</span> (StudentID)
+
+<span class="cmt">-- Composite PK — MUST be table-level (cannot be inline)</span>
+<span class="kw">CONSTRAINT</span> PK_Enrollment  <span class="kw">PRIMARY KEY</span> (StudentID, SectionID)
+
+<span class="cmt">-- Inline shorthand — auto-named, NOT recommended for production</span>
+StudentID  <span class="nm">INT</span>  <span class="kw">IDENTITY</span>(<span class="num">1</span>,<span class="num">1</span>)  <span class="kw">PRIMARY KEY</span></pre>
+      </div>
+
+      <h4>UNIQUE</h4>
+      <p>Ensures all non-NULL values in a column (or column combination) are distinct. Implements alternate keys. SQL Server allows one NULL per unique column.</p>
+      <div class="code-wrap">
+        <div class="code-topbar"><div class="code-dots"><span class="d1"></span><span class="d2"></span><span class="d3"></span></div><span class="lang-badge">T-SQL · UNIQUE</span></div>
+        <pre class="code-block"><span class="cmt">-- Single-column unique — alternate key</span>
+<span class="kw">CONSTRAINT</span> UQ_Student_Email   <span class="kw">UNIQUE</span> (Email)
+
+<span class="cmt">-- Multi-column unique — the combination must be unique</span>
+<span class="kw">CONSTRAINT</span> UQ_Section_Offering
+    <span class="kw">UNIQUE</span> (CourseID, Semester, YearOffered)
+<span class="cmt">-- Prevents scheduling the same course twice in the same semester and year</span></pre>
+      </div>
+
+      <h4>NOT NULL</h4>
+      <p>Prevents a column from holding a NULL value. Always written inline on the column definition — there is no table-level NOT NULL syntax. Implements mandatory (required) attributes from the data model.</p>
+      <div class="code-wrap">
+        <div class="code-topbar"><div class="code-dots"><span class="d1"></span><span class="d2"></span><span class="d3"></span></div><span class="lang-badge">T-SQL · NOT NULL vs NULL</span></div>
+        <pre class="code-block">LastName    <span class="nm">VARCHAR</span>(<span class="num">60</span>)  <span class="kw">NOT NULL</span>,  <span class="cmt">-- required: INSERT fails if value not supplied</span>
+MiddleName  <span class="nm">VARCHAR</span>(<span class="num">40</span>)  <span class="kw">NULL</span>,     <span class="cmt">-- optional: NULL stored if omitted</span>
+Phone       <span class="nm">VARCHAR</span>(<span class="num">20</span>),           <span class="cmt">-- NULL is the default when neither specified</span></pre>
+      </div>
+
+      <h4>CHECK</h4>
+      <p>Validates column values against a logical expression before storing. Any <code>INSERT</code> or <code>UPDATE</code> failing the expression is rejected. NULL values pass a CHECK constraint (UNKNOWN evaluates as passing).</p>
+      <div class="code-wrap">
+        <div class="code-topbar"><div class="code-dots"><span class="d1"></span><span class="d2"></span><span class="d3"></span></div><span class="lang-badge">T-SQL · CHECK — Common Expression Patterns</span></div>
+        <pre class="code-block"><span class="cmt">-- Range check</span>
+<span class="kw">CONSTRAINT</span> CK_Course_Credits
+    <span class="kw">CHECK</span> (Credits <span class="kw">BETWEEN</span> <span class="num">1</span> <span class="kw">AND</span> <span class="num">6</span>)
+
+<span class="cmt">-- Allowed-values list</span>
+<span class="kw">CONSTRAINT</span> CK_Instructor_Rank
+    <span class="kw">CHECK</span> (Rank <span class="kw">IN</span> (<span class="str">'Adjunct'</span>, <span class="str">'Assistant'</span>, <span class="str">'Associate'</span>, <span class="str">'Professor'</span>))
+
+<span class="cmt">-- Positive value</span>
+<span class="kw">CONSTRAINT</span> CK_OrderLine_Qty
+    <span class="kw">CHECK</span> (Quantity &gt; <span class="num">0</span>)
+
+<span class="cmt">-- String length check</span>
+<span class="kw">CONSTRAINT</span> CK_Dept_ID
+    <span class="kw">CHECK</span> (<span class="grn">LEN</span>(DeptID) = <span class="num">5</span>)
+
+<span class="cmt">-- Cross-column date logic (must be table-level)</span>
+<span class="kw">CONSTRAINT</span> CK_Project_Dates
+    <span class="kw">CHECK</span> (EndDate &gt; StartDate)
+
+<span class="cmt">-- NULL-aware check: NULL is acceptable until grading is complete</span>
+<span class="kw">CONSTRAINT</span> CK_Enrollment_Grade
+    <span class="kw">CHECK</span> (Grade <span class="kw">IS NULL OR</span>
+           Grade <span class="kw">IN</span> (<span class="str">'A'</span>,<span class="str">'A-'</span>,<span class="str">'B+'</span>,<span class="str">'B'</span>,<span class="str">'B-'</span>,<span class="str">'C+'</span>,<span class="str">'C'</span>,<span class="str">'C-'</span>,<span class="str">'D'</span>,<span class="str">'F'</span>,<span class="str">'W'</span>,<span class="str">'I'</span>))</pre>
+      </div>
+
+      <h4>DEFAULT</h4>
+      <p>Automatically provides a value when an <code>INSERT</code> omits the column. Does not prevent NULL if NULL is explicitly supplied. Can use literal values or server functions.</p>
+      <div class="code-wrap">
+        <div class="code-topbar"><div class="code-dots"><span class="d1"></span><span class="d2"></span><span class="d3"></span></div><span class="lang-badge">T-SQL · DEFAULT — Literals and Functions</span></div>
+        <pre class="code-block"><span class="cmt">-- Literal defaults</span>
+IsActive    <span class="nm">BIT</span>        <span class="kw">NOT NULL</span>  <span class="kw">CONSTRAINT</span> DF_Stu_Active  <span class="kw">DEFAULT</span> <span class="num">1</span>,
+Status      <span class="nm">VARCHAR</span>(<span class="num">20</span>) <span class="kw">NOT NULL</span> <span class="kw">CONSTRAINT</span> DF_Ord_Status  <span class="kw">DEFAULT</span> <span class="str">'Pending'</span>,
+Quantity    <span class="nm">SMALLINT</span>   <span class="kw">NOT NULL</span>  <span class="kw">CONSTRAINT</span> DF_Line_Qty    <span class="kw">DEFAULT</span> <span class="num">1</span>,
+
+<span class="cmt">-- Function defaults — evaluated by the server at INSERT time</span>
+CreatedAt   <span class="nm">DATETIME2</span>  <span class="kw">NOT NULL</span>  <span class="kw">CONSTRAINT</span> DF_Stu_Created <span class="kw">DEFAULT</span> <span class="grn">GETDATE</span>(),
+RecordGUID  <span class="nm">UNIQUEIDENTIFIER</span> <span class="kw">NOT NULL</span> <span class="kw">CONSTRAINT</span> DF_GUID  <span class="kw">DEFAULT</span> <span class="grn">NEWID</span>(),</pre>
+      </div>
+
+      <h4>Constraint Behavior Summary</h4>
+      <table class="styled-table">
+        <thead><tr><th>Constraint</th><th>Enforced On</th><th>NULL Behavior</th><th>Index Created?</th></tr></thead>
+        <tbody>
+          <tr><td class="gold">PRIMARY KEY</td><td>INSERT, UPDATE</td><td>NULLs never allowed</td><td>✅ Clustered (default)</td></tr>
+          <tr><td class="hl">FOREIGN KEY</td><td>INSERT, UPDATE, DELETE*</td><td>NULL FK = no parent required</td><td>⚠️ Not automatic — add manually</td></tr>
+          <tr><td class="hl">NOT NULL</td><td>INSERT, UPDATE</td><td>Rejects NULL</td><td>No</td></tr>
+          <tr><td class="hl">UNIQUE</td><td>INSERT, UPDATE</td><td>One NULL allowed per column</td><td>✅ Non-clustered</td></tr>
+          <tr><td class="hl">CHECK</td><td>INSERT, UPDATE</td><td>NULL passes (UNKNOWN = pass)</td><td>No</td></tr>
+          <tr><td class="hl">DEFAULT</td><td>INSERT only</td><td>Fills value; NULL still insertable explicitly</td><td>No</td></tr>
+        </tbody>
+      </table>
+      <div class="callout callout-info">
+        <span class="callout-icon">ℹ️</span>
+        <div class="callout-body">
+          <strong>FK Index Best Practice</strong>
+          SQL Server does not automatically create an index on a FK column. Always add a non-clustered index manually on FK columns — join performance on unindexed FK columns degrades sharply as table size grows: <code>CREATE INDEX IX_Order_CustomerID ON [Order] (CustomerID);</code>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══ SECTION 4 — REFERENTIAL INTEGRITY ACTIONS ═══ -->
+  <div class="section-label" id="sec4">
+    <div class="num">4</div>
+    <h2>Referential Integrity Actions in SQL</h2>
+    <span class="outcome-tag">Outcome 2</span>
+  </div>
+  <div class="card">
+    <div class="card-header open" onclick="toggle(this)">
+      <div class="ch-left"><span class="card-icon">🔗</span>
+        <h3><span>Outcome 2 · ON DELETE / ON UPDATE</span>All Four Referential Actions with Behavior and Use Cases</h3>
+      </div>
+      <button class="toggle-btn open">▲</button>
+    </div>
+    <div class="card-body open">
+      <p>Every <code>FOREIGN KEY</code> constraint must specify what happens to child rows when the parent row is <strong>deleted</strong> or when the parent's PK is <strong>updated</strong>. If unspecified, SQL Server defaults to <code>NO ACTION</code>.</p>
+      <div class="code-wrap">
+        <div class="code-topbar"><div class="code-dots"><span class="d1"></span><span class="d2"></span><span class="d3"></span></div><span class="lang-badge">T-SQL · ON DELETE NO ACTION (Default)</span></div>
+        <pre class="code-block"><span class="cmt">-- NO ACTION: blocks the DELETE if any child rows reference the parent.
+-- The parent row cannot be deleted while children exist.
+-- Child rows must be manually removed first.</span>
+
+<span class="kw">CONSTRAINT</span> FK_Order_Customer
+    <span class="kw">FOREIGN KEY</span> (CustomerID)
+    <span class="kw">REFERENCES</span> Customer (CustomerID)
+    <span class="kw">ON DELETE</span> NO ACTION
+    <span class="kw">ON UPDATE</span> NO ACTION;
+
+<span class="cmt">-- Effect:
+--   DELETE FROM Customer WHERE CustomerID = 5;
+--   → ERROR: FK violation if any Order.CustomerID = 5 exists
+--   → Must DELETE the customer's orders first, then delete the customer</span></pre>
+      </div>
+      <div class="code-wrap">
+        <div class="code-topbar"><div class="code-dots"><span class="d1"></span><span class="d2"></span><span class="d3"></span></div><span class="lang-badge">T-SQL · ON DELETE CASCADE</span></div>
+        <pre class="code-block"><span class="cmt">-- CASCADE: automatically deletes all matching child rows when the parent is deleted.
+-- Use when children have no meaning without the parent (order lines, log entries).</span>
+
+<span class="kw">CONSTRAINT</span> FK_Enrollment_Student
+    <span class="kw">FOREIGN KEY</span> (StudentID)
+    <span class="kw">REFERENCES</span> Student (StudentID)
+    <span class="kw">ON DELETE</span> CASCADE;
+
+<span class="cmt">-- Effect:
+--   DELETE FROM Student WHERE StudentID = 42;
+--   → Automatically deletes all Enrollment rows where StudentID = 42
+--   → No error; parent and children removed in one operation
+
+-- ⚠️  SQL Server blocks CASCADE if it creates multiple cascade paths
+--     to the same table (ambiguous cascade — use triggers instead)</span></pre>
+      </div>
+      <div class="code-wrap">
+        <div class="code-topbar"><div class="code-dots"><span class="d1"></span><span class="d2"></span><span class="d3"></span></div><span class="lang-badge">T-SQL · ON DELETE SET NULL</span></div>
+        <pre class="code-block"><span class="cmt">-- SET NULL: sets the FK column to NULL in all child rows when parent is deleted.
+-- The child row survives; its FK column becomes NULL.
+-- The FK column MUST be defined as nullable (NULL) for this to work.</span>
+
+<span class="kw">CREATE TABLE</span> Project
+(
+    ProjectID    <span class="nm">INT</span>          <span class="kw">IDENTITY</span>(<span class="num">1</span>,<span class="num">1</span>)  <span class="kw">NOT NULL</span>,
+    ProjectName  <span class="nm">VARCHAR</span>(<span class="num">100</span>)               <span class="kw">NOT NULL</span>,
+    ManagerID    <span class="nm">INT</span>                          <span class="kw">NULL</span>,    <span class="cmt">-- must be nullable</span>
+
+    <span class="kw">CONSTRAINT</span> PK_Project  <span class="kw">PRIMARY KEY</span> (ProjectID),
+    <span class="kw">CONSTRAINT</span> FK_Project_Manager
+        <span class="kw">FOREIGN KEY</span> (ManagerID)
+        <span class="kw">REFERENCES</span> Employee (EmployeeID)
+        <span class="kw">ON DELETE</span> SET NULL   <span class="cmt">-- project survives; ManagerID = NULL</span>
+);
+
+<span class="cmt">-- Effect:
+--   DELETE FROM Employee WHERE EmployeeID = 10;
+--   → Project.ManagerID becomes NULL for all projects managed by employee 10
+--   → Projects remain; they simply have no assigned manager</span></pre>
+      </div>
+      <div class="code-wrap">
+        <div class="code-topbar"><div class="code-dots"><span class="d1"></span><span class="d2"></span><span class="d3"></span></div><span class="lang-badge">T-SQL · ON DELETE SET DEFAULT &amp; ON UPDATE CASCADE</span></div>
+        <pre class="code-block"><span class="cmt">-- SET DEFAULT: sets the FK column to its DEFAULT value when parent is deleted.
+-- Rarely used. The default value must reference an existing, valid parent row.</span>
+
+<span class="kw">CONSTRAINT</span> FK_Employee_Dept
+    <span class="kw">FOREIGN KEY</span> (DeptID)
+    <span class="kw">REFERENCES</span> Department (DeptID)
+    <span class="kw">ON DELETE</span> SET DEFAULT;   <span class="cmt">-- reassigns to default dept ('GENRL') if dept deleted</span>
+
+<span class="cmt">-- ON UPDATE CASCADE: propagates a PK change to all FK columns automatically.
+-- Useful when natural keys (not surrogates) may be updated.</span>
+
+<span class="kw">CONSTRAINT</span> FK_Instructor_Dept
+    <span class="kw">FOREIGN KEY</span> (DeptID)
+    <span class="kw">REFERENCES</span> Department (DeptID)
+    <span class="kw">ON DELETE</span> NO ACTION
+    <span class="kw">ON UPDATE</span> CASCADE;      <span class="cmt">-- if DeptID 'CS' changes to 'CSCI', all FKs update</span></pre>
+      </div>
+      <h4>Choosing the Right Referential Action</h4>
+      <table class="styled-table">
+        <thead><tr><th>Scenario</th><th>Best Action</th><th>Why</th></tr></thead>
+        <tbody>
+          <tr><td class="hl">Order Lines → Order</td><td><code>CASCADE</code></td><td>Lines have no meaning without their order</td></tr>
+          <tr><td class="hl">Order → Customer</td><td><code>NO ACTION</code></td><td>Historical orders must not vanish if customer is removed</td></tr>
+          <tr><td class="hl">Employee → Department (optional)</td><td><code>SET NULL</code></td><td>Employee can temporarily exist without a department</td></tr>
+          <tr><td class="hl">Audit Log → User</td><td><code>NO ACTION</code></td><td>Audit records must persist even after user deletion</td></tr>
+          <tr><td class="hl">Enrollment → Student</td><td><code>CASCADE</code></td><td>When a student is fully purged, enrollments go too</td></tr>
+          <tr><td class="hl">Natural PK updated</td><td><code>ON UPDATE CASCADE</code></td><td>Propagates the change to all child FK columns automatically</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- ═══ SECTION 5 — ALTER TABLE ═══ -->
+  <div class="section-label" id="sec5">
+    <div class="num">5</div>
+    <h2>ALTER TABLE — Modifying Existing Tables</h2>
+    <span class="outcome-tag">Outcome 4</span>
+  </div>
+  <div class="card">
+    <div class="card-header open" onclick="toggle(this)">
+      <div class="ch-left"><span class="card-icon">🔧</span>
+        <h3><span>Outcome 4 · ALTER TABLE</span>ADD, ALTER COLUMN, DROP, and RENAME — All Operations with Syntax</h3>
+      </div>
+      <button class="toggle-btn open">▲</button>
+    </div>
+    <div class="card-body open">
+      <div class="alter-grid">
+        <div class="alter-card ac-add" data-op="ADD"><div class="ac-title">ADD Column or Constraint</div><p>Adds new column(s) or applies a new constraint to an existing table. New NOT NULL columns require a DEFAULT.</p></div>
+        <div class="alter-card ac-mod" data-op="ALTER"><div class="ac-title">ALTER COLUMN</div><p>Changes a column's data type, size, or nullability. Restricted when data exists — type compatibility must be verified.</p></div>
+        <div class="alter-card ac-drp" data-op="DROP"><div class="ac-title">DROP Column or Constraint</div><p>Removes a column and its data permanently, or removes a constraint definition. Must drop constraints before dropping their columns.</p></div>
+        <div class="alter-card ac-ren" data-op="sp_"><div class="ac-title">RENAME via sp_rename</div><p>Renames tables or columns. SQL Server has no native RENAME DDL command — use the <code>sp_rename</code> system procedure.</p></div>
+      </div>
+
+      <h4>ADD Column</h4>
+      <div class="code-wrap">
+        <div class="code-topbar"><div class="code-dots"><span class="d1"></span><span class="d2"></span><span class="d3"></span></div><span class="lang-badge">T-SQL · ALTER TABLE ADD COLUMN</span></div>
+        <pre class="code-block"><span class="cmt">-- Add a single nullable column (always safe on tables with existing data)</span>
+<span class="kw">ALTER TABLE</span> Student
+<span class="kw">ADD</span> Phone  <span class="nm">VARCHAR</span>(<span class="num">20</span>)  <span class="kw">NULL</span>;
+
+<span class="cmt">-- Add multiple columns in one statement</span>
+<span class="kw">ALTER TABLE</span> Student
+<span class="kw">ADD</span>
+    Phone        <span class="nm">VARCHAR</span>(<span class="num">20</span>)   <span class="kw">NULL</span>,
+    LinkedInURL  <span class="nm">VARCHAR</span>(<span class="num">200</span>)  <span class="kw">NULL</span>,
+    IsVerified   <span class="nm">BIT</span>           <span class="kw">NOT NULL</span>
+                     <span class="kw">CONSTRAINT</span> DF_Student_Verified  <span class="kw">DEFAULT</span> <span class="num">0</span>;
+<span class="cmt">-- NOT NULL column is safe here because DEFAULT 0 fills all existing rows</span></pre>
+      </div>
+
+      <h4>ADD Constraint to an Existing Table</h4>
+      <div class="code-wrap">
+        <div class="code-topbar"><div class="code-dots"><span class="d1"></span><span class="d2"></span><span class="d3"></span></div><span class="lang-badge">T-SQL · ALTER TABLE ADD CONSTRAINT</span></div>
+        <pre class="code-block"><span class="cmt">-- Add a UNIQUE constraint</span>
+<span class="kw">ALTER TABLE</span> Instructor
+<span class="kw">ADD CONSTRAINT</span> UQ_Instructor_Email  <span class="kw">UNIQUE</span> (Email);
+
+<span class="cmt">-- Add a CHECK constraint</span>
+<span class="kw">ALTER TABLE</span> Student
+<span class="kw">ADD CONSTRAINT</span> CK_Student_DOB
+    <span class="kw">CHECK</span> (DateOfBirth &lt; <span class="grn">GETDATE</span>());
+
+<span class="cmt">-- Add a FOREIGN KEY constraint</span>
+<span class="kw">ALTER TABLE</span> Course
+<span class="kw">ADD CONSTRAINT</span> FK_Course_Dept
+    <span class="kw">FOREIGN KEY</span> (DeptID)
+    <span class="kw">REFERENCES</span> Department (DeptID)
+    <span class="kw">ON DELETE</span> NO ACTION;
+
+<span class="cmt">-- Add a DEFAULT constraint — uses FOR syntax, not inline</span>
+<span class="kw">ALTER TABLE</span> Student
+<span class="kw">ADD CONSTRAINT</span> DF_Student_IsEnrolled
+    <span class="kw">DEFAULT</span> <span class="num">1</span>  <span class="kw">FOR</span> IsEnrolled;</pre>
+      </div>
+
+      <h4>ALTER COLUMN — Change Type, Size, or Nullability</h4>
+      <div class="code-wrap">
+        <div class="code-topbar"><div class="code-dots"><span class="d1"></span><span class="d2"></span><span class="d3"></span></div><span class="lang-badge">T-SQL · ALTER TABLE ALTER COLUMN</span></div>
+        <pre class="code-block"><span class="cmt">-- Increase column size (safe — larger type accommodates all existing values)</span>
+<span class="kw">ALTER TABLE</span> Student
+<span class="kw">ALTER COLUMN</span> LastName  <span class="nm">VARCHAR</span>(<span class="num">80</span>)  <span class="kw">NOT NULL</span>;
+
+<span class="cmt">-- Change nullability from NULL to NOT NULL
+-- ⚠️  FAILS if any existing row has NULL in this column</span>
+<span class="kw">ALTER TABLE</span> Student
+<span class="kw">ALTER COLUMN</span> Phone  <span class="nm">VARCHAR</span>(<span class="num">20</span>)  <span class="kw">NOT NULL</span>;
+
+<span class="cmt">-- Expand numeric type (safe implicit conversion)</span>
+<span class="kw">ALTER TABLE</span> Product
+<span class="kw">ALTER COLUMN</span> StockQty  <span class="nm">INT</span>  <span class="kw">NOT NULL</span>;  <span class="cmt">-- was SMALLINT</span>
+
+<span class="cmt">-- ⚠️  CANNOT ALTER COLUMN directly when it:
+--     - Is part of a PRIMARY KEY or UNIQUE constraint
+--     - Has a FOREIGN KEY or CHECK constraint referencing it
+--     - Is referenced by an index
+--     Solution: DROP the constraint → ALTER COLUMN → re-ADD the constraint</span></pre>
+      </div>
+
+      <h4>DROP COLUMN and DROP CONSTRAINT</h4>
+      <div class="code-wrap">
+        <div class="code-topbar"><div class="code-dots"><span class="d1"></span><span class="d2"></span><span class="d3"></span></div><span class="lang-badge">T-SQL · ALTER TABLE DROP</span></div>
+        <pre class="code-block"><span class="cmt">-- Drop a single constraint by name</span>
+<span class="kw">ALTER TABLE</span> Student
+<span class="kw">DROP CONSTRAINT</span> CK_Student_DOB;
+
+<span class="cmt">-- Drop a column (all data in that column is permanently deleted)</span>
+<span class="kw">ALTER TABLE</span> Student
+<span class="kw">DROP COLUMN</span> LinkedInURL;
+
+<span class="cmt">-- Drop multiple columns in one statement</span>
+<span class="kw">ALTER TABLE</span> Student
+<span class="kw">DROP COLUMN</span> LinkedInURL, Phone;
+
+<span class="cmt">-- ⚠️  Cannot drop a column while any constraint references it.
+--     Drop the constraint FIRST, then drop the column.
+--     These must be two separate ALTER TABLE statements.</span>
+<span class="kw">ALTER TABLE</span> Student  <span class="kw">DROP CONSTRAINT</span> UQ_Student_Email;
+<span class="kw">ALTER TABLE</span> Student  <span class="kw">DROP COLUMN</span>     Email;</pre>
+      </div>
+
+      <h4>RENAME — Using sp_rename</h4>
+      <div class="code-wrap">
+        <div class="code-topbar"><div class="code-dots"><span class="d1"></span><span class="d2"></span><span class="d3"></span></div><span class="lang-badge">T-SQL · sp_rename — Tables, Columns, Constraints</span></div>
+        <pre class="code-block"><span class="cmt">-- Rename a table</span>
+<span class="kw">EXEC</span> sp_rename <span class="str">'OldTableName'</span>, <span class="str">'NewTableName'</span>;
+
+<span class="cmt">-- Rename a column (third argument 'COLUMN' is required)</span>
+<span class="kw">EXEC</span> sp_rename <span class="str">'Student.DateOfBirth'</span>, <span class="str">'BirthDate'</span>, <span class="str">'COLUMN'</span>;
+
+<span class="cmt">-- Rename a constraint</span>
+<span class="kw">EXEC</span> sp_rename <span class="str">'PK_OldName'</span>, <span class="str">'PK_NewName'</span>;
+
+<span class="cmt">-- ⚠️  sp_rename updates the catalog but does NOT update stored procedures,
+--     views, or application code referencing the old name.
+--     Search for all usages before renaming anything in production.</span></pre>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══ SECTION 6 — ALTERING TABLES WITH DATA ═══ -->
+  <div class="section-label" id="sec6">
+    <div class="num">6</div>
+    <h2>Altering Tables That Already Contain Data</h2>
+    <span class="outcome-tag">Practical Guide</span>
+  </div>
+
+  <div class="card">
+    <div class="card-header open" onclick="toggle(this)">
+      <div class="ch-left"><span class="card-icon">⚡</span>
+        <h3><span>Practical Guide · Risk Matrix</span>Which Operations Are Safe, Cautious, or Dangerous?</h3>
+      </div>
+      <button class="toggle-btn open">▲</button>
+    </div>
+    <div class="card-body open">
+      <div class="callout callout-danger">
+        <span class="callout-icon">🚨</span>
+        <div class="callout-body">
+          <strong>The Core Problem with Live Tables</strong>
+          When a table contains rows, every schema change must account for existing data. Adding a NOT NULL column without a default, shrinking a column smaller than its longest current value, or adding a constraint that existing data violates — all of these will fail or silently corrupt data. Always inspect the data before executing any structural change.
+        </div>
+      </div>
+      <table class="risk-table">
+        <thead><tr><th>Operation</th><th>Risk</th><th>What Goes Wrong</th><th>Safe Approach</th></tr></thead>
+        <tbody>
+          <tr class="r-safe"><td class="op-name">ADD NULL column</td><td>✅ Safe</td><td>None — existing rows get NULL automatically</td><td>Execute as written</td></tr>
+          <tr class="r-safe"><td class="op-name">ADD NOT NULL + DEFAULT column</td><td>✅ Safe</td><td>None — existing rows receive the DEFAULT value</td><td>Always pair NOT NULL with DEFAULT</td></tr>
+          <tr class="r-safe"><td class="op-name">INCREASE column size</td><td>✅ Safe</td><td>None — larger size accommodates all existing values</td><td>Execute as written</td></tr>
+          <tr class="r-safe"><td class="op-name">DROP unused NULL column</td><td>✅ Safe*</td><td>No structural risk — but data is permanently lost</td><td>Archive data first; drop constraints first</td></tr>
+          <tr class="r-caution"><td class="op-name">DECREASE column size</td><td>⚠️ Caution</td><td>Fails if any existing value exceeds the new size</td><td>Query MAX(LEN(col)) first; clean data if needed</td></tr>
+          <tr class="r-caution"><td class="op-name">NULL → NOT NULL</td><td>⚠️ Caution</td><td>Fails if any row has NULL in that column</td><td>UPDATE to fill NULLs first, then ALTER COLUMN</td></tr>
+          <tr class="r-caution"><td class="op-name">ADD CHECK constraint</td><td>⚠️ Caution</td><td>Fails if any existing row violates the expression</td><td>Query violations; clean data; then add (or use WITH NOCHECK)</td></tr>
+          <tr class="r-caution"><td class="op-name">ADD FOREIGN KEY</td><td>⚠️ Caution</td><td>Fails if any FK value has no matching parent PK</td><td>Query orphaned rows; delete or fix before adding FK</td></tr>
+          <tr class="r-caution"><td class="op-name">ADD NOT NULL (no default)</td><td>⚠️ Caution</td><td>Fails if any rows exist — no value can be supplied for them</td><td>Add as NULL → UPDATE → ALTER to NOT NULL</td></tr>
+          <tr class="r-danger"><td class="op-name">Incompatible type change</td><td>🚨 Dangerous</td><td>Conversion failure or silent truncation/data loss</td><td>Add new column → migrate → verify → drop old column</td></tr>
+          <tr class="r-danger"><td class="op-name">DROP column with data</td><td>🚨 Dangerous</td><td>All column data permanently deleted — no undo</td><td>Back up to archive table; confirm truly unneeded</td></tr>
+          <tr class="r-danger"><td class="op-name">DROP TABLE</td><td>🚨 Dangerous</td><td>Structure and all data permanently removed</td><td>Full backup; verify dependencies; consider RENAME first</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-header open" onclick="toggle(this)">
+      <div class="ch-left"><span class="card-icon">🛡️</span>
+        <h3><span>Practical Guide · Safe Patterns</span>Step-by-Step Techniques for Every Common Risky Operation</h3>
+      </div>
+      <button class="toggle-btn open">▲</button>
+    </div>
+    <div class="card-body open">
+      <h4>Pattern 1 — Adding a NOT NULL Column to a Table with Existing Rows</h4>
+      <div class="code-wrap">
+        <div class="code-topbar"><div class="code-dots"><span class="d1"></span><span class="d2"></span><span class="d3"></span></div><span class="lang-badge">T-SQL · Safe Pattern 1: Add NOT NULL Column</span></div>
+        <pre class="code-block"><span class="cmt">-- GOAL: Add 'Phone VARCHAR(20) NOT NULL' to Student which already has rows.
+-- ─────────────────────────────────────────────────────────────────────────</span>
+
+<span class="cmt">-- Step 1: Add the column as nullable. Existing rows receive NULL — no error.</span>
+<span class="kw">ALTER TABLE</span> Student
+<span class="kw">ADD</span> Phone  <span class="nm">VARCHAR</span>(<span class="num">20</span>)  <span class="kw">NULL</span>;
+
+<span class="cmt">-- Step 2: Populate existing rows with a valid placeholder or real value.</span>
+<span class="kw">UPDATE</span> Student
+<span class="kw">SET</span>    Phone = <span class="str">'000-000-0000'</span>
+<span class="kw">WHERE</span>  Phone <span class="kw">IS NULL</span>;
+
+<span class="cmt">-- Step 3: Verify no NULLs remain before proceeding.</span>
+<span class="kw">SELECT</span> <span class="grn">COUNT</span>(*) <span class="kw">AS</span> NullCount
+<span class="kw">FROM</span>   Student
+<span class="kw">WHERE</span>  Phone <span class="kw">IS NULL</span>;
+<span class="cmt">-- Must return 0 before continuing</span>
+
+<span class="cmt">-- Step 4: Tighten the column to NOT NULL.</span>
+<span class="kw">ALTER TABLE</span> Student
+<span class="kw">ALTER COLUMN</span> Phone  <span class="nm">VARCHAR</span>(<span class="num">20</span>)  <span class="kw">NOT NULL</span>;</pre>
+      </div>
+
+      <h4>Pattern 2 — Changing a Column to an Incompatible Data Type</h4>
+      <div class="code-wrap">
+        <div class="code-topbar"><div class="code-dots"><span class="d1"></span><span class="d2"></span><span class="d3"></span></div><span class="lang-badge">T-SQL · Safe Pattern 2: Change Data Type</span></div>
+        <pre class="code-block"><span class="cmt">-- GOAL: Change Student.GradePointAverage from FLOAT to DECIMAL(3,2).
+--        Incompatible types — cannot ALTER in-place safely.
+-- ─────────────────────────────────────────────────────────────────────────</span>
+
+<span class="cmt">-- Step 1: Add a new column with the target type.</span>
+<span class="kw">ALTER TABLE</span> Student
+<span class="kw">ADD</span> GPA_New  <span class="nm">DECIMAL</span>(<span class="num">3</span>,<span class="num">2</span>)  <span class="kw">NULL</span>;
+
+<span class="cmt">-- Step 2: Migrate data with an explicit CAST.</span>
+<span class="kw">UPDATE</span> Student
+<span class="kw">SET</span>    GPA_New = <span class="grn">CAST</span>(GradePointAverage <span class="kw">AS</span> <span class="nm">DECIMAL</span>(<span class="num">3</span>,<span class="num">2</span>));
+
+<span class="cmt">-- Step 3: Verify the converted data is accurate.</span>
+<span class="kw">SELECT</span> StudentID, GradePointAverage <span class="kw">AS</span> OldGPA, GPA_New <span class="kw">AS</span> NewGPA
+<span class="kw">FROM</span>   Student
+<span class="kw">WHERE</span>  <span class="grn">ABS</span>(GradePointAverage - <span class="grn">CAST</span>(GPA_New <span class="kw">AS</span> <span class="nm">FLOAT</span>)) &gt; <span class="num">0.01</span>;
+<span class="cmt">-- Should return 0 rows if conversion was lossless</span>
+
+<span class="cmt">-- Step 4: Drop the old column.</span>
+<span class="kw">ALTER TABLE</span> Student  <span class="kw">DROP COLUMN</span>  GradePointAverage;
+
+<span class="cmt">-- Step 5: Rename the new column to the official name.</span>
+<span class="kw">EXEC</span> sp_rename <span class="str">'Student.GPA_New'</span>, <span class="str">'GPA'</span>, <span class="str">'COLUMN'</span>;
+
+<span class="cmt">-- Step 6: Apply constraints to the renamed column.</span>
+<span class="kw">ALTER TABLE</span> Student
+<span class="kw">ADD CONSTRAINT</span> CK_Student_GPA
+    <span class="kw">CHECK</span> (GPA <span class="kw">BETWEEN</span> <span class="num">0.00</span> <span class="kw">AND</span> <span class="num">4.00</span>);</pre>
+      </div>
+
+      <h4>Pattern 3 — Adding a CHECK or FK Constraint When Existing Data May Violate It</h4>
+      <div class="code-wrap">
+        <div class="code-topbar"><div class="code-dots"><span class="d1"></span><span class="d2"></span><span class="d3"></span></div><span class="lang-badge">T-SQL · Safe Pattern 3: Add Constraint to Existing Data</span></div>
+        <pre class="code-block"><span class="cmt">-- Step 1: Identify rows that would violate the new constraint BEFORE adding it.</span>
+<span class="kw">SELECT</span> StudentID, GPA
+<span class="kw">FROM</span>   Student
+<span class="kw">WHERE</span>  GPA <span class="kw">NOT BETWEEN</span> <span class="num">0.00</span> <span class="kw">AND</span> <span class="num">4.00</span>
+   <span class="kw">OR</span>  GPA <span class="kw">IS NULL</span>;
+<span class="cmt">-- Fix or remove any rows returned before continuing</span>
+
+<span class="cmt">-- Step 2A: Data is clean — add constraint and validate existing rows.</span>
+<span class="kw">ALTER TABLE</span> Student
+<span class="kw">ADD CONSTRAINT</span> CK_Student_GPA
+    <span class="kw">CHECK</span> (GPA <span class="kw">BETWEEN</span> <span class="num">0.00</span> <span class="kw">AND</span> <span class="num">4.00</span>);
+
+<span class="cmt">-- Step 2B: Legacy data must remain but future rows must comply —
+--           WITH NOCHECK skips validation of existing rows.
+--           ⚠️  Constraint is "untrusted" — optimizer cannot rely on it.</span>
+<span class="kw">ALTER TABLE</span> Student
+<span class="kw">WITH NOCHECK</span>
+<span class="kw">ADD CONSTRAINT</span> CK_Student_GPA
+    <span class="kw">CHECK</span> (GPA <span class="kw">BETWEEN</span> <span class="num">0.00</span> <span class="kw">AND</span> <span class="num">4.00</span>);
+
+<span class="cmt">-- After cleaning legacy data, re-validate to make the constraint trusted:</span>
+<span class="kw">ALTER TABLE</span> Student
+<span class="kw">WITH CHECK  CHECK CONSTRAINT</span> CK_Student_GPA;</pre>
+      </div>
+
+      <h4>Pattern 4 — Decreasing a Column's Size Safely</h4>
+      <div class="code-wrap">
+        <div class="code-topbar"><div class="code-dots"><span class="d1"></span><span class="d2"></span><span class="d3"></span></div><span class="lang-badge">T-SQL · Safe Pattern 4: Shrink Column Size</span></div>
+        <pre class="code-block"><span class="cmt">-- GOAL: Reduce LastName from VARCHAR(200) to VARCHAR(60).
+-- ─────────────────────────────────────────────────────────────────────────</span>
+
+<span class="cmt">-- Step 1: Check current maximum length and rows that would be truncated.</span>
+<span class="kw">SELECT</span>
+    <span class="grn">MAX</span>(<span class="grn">LEN</span>(LastName))  <span class="kw">AS</span> MaxCurrentLength,
+    <span class="grn">COUNT</span>(*)            <span class="kw">AS</span> RowsThatWouldBeTruncated
+<span class="kw">FROM</span>  Student
+<span class="kw">WHERE</span> <span class="grn">LEN</span>(LastName) &gt; <span class="num">60</span>;
+
+<span class="cmt">-- Only proceed if RowsThatWouldBeTruncated = 0</span>
+
+<span class="cmt">-- Step 2: Perform the size reduction.</span>
+<span class="kw">ALTER TABLE</span> Student
+<span class="kw">ALTER COLUMN</span> LastName  <span class="nm">VARCHAR</span>(<span class="num">60</span>)  <span class="kw">NOT NULL</span>;</pre>
+      </div>
+
+      <h4>Pattern 5 — Finding Constraint Names Before Dropping Them</h4>
+      <div class="code-wrap">
+        <div class="code-topbar"><div class="code-dots"><span class="d1"></span><span class="d2"></span><span class="d3"></span></div><span class="lang-badge">T-SQL · Query Constraint Names from System Catalog</span></div>
+        <pre class="code-block"><span class="cmt">-- All constraints on a specific table</span>
+<span class="kw">SELECT</span>
+    tc.CONSTRAINT_NAME,
+    tc.CONSTRAINT_TYPE,
+    kcu.COLUMN_NAME
+<span class="kw">FROM</span>  INFORMATION_SCHEMA.TABLE_CONSTRAINTS      tc
+<span class="kw">JOIN</span>  INFORMATION_SCHEMA.KEY_COLUMN_USAGE        kcu
+    <span class="kw">ON</span>  tc.CONSTRAINT_NAME = kcu.CONSTRAINT_NAME
+   <span class="kw">AND</span>  tc.TABLE_NAME      = kcu.TABLE_NAME
+<span class="kw">WHERE</span> tc.TABLE_NAME = <span class="str">'Student'</span>
+<span class="kw">ORDER BY</span> tc.CONSTRAINT_TYPE;
+
+<span class="cmt">-- CHECK constraints specifically</span>
+<span class="kw">SELECT</span>
+    cc.CONSTRAINT_NAME,
+    cc.CHECK_CLAUSE
+<span class="kw">FROM</span>  INFORMATION_SCHEMA.CHECK_CONSTRAINTS   cc
+<span class="kw">JOIN</span>  INFORMATION_SCHEMA.TABLE_CONSTRAINTS   tc
+    <span class="kw">ON</span>  tc.CONSTRAINT_NAME = cc.CONSTRAINT_NAME
+<span class="kw">WHERE</span> tc.TABLE_NAME = <span class="str">'Student'</span>;
+
+<span class="cmt">-- DEFAULT constraints (not in INFORMATION_SCHEMA — use sys catalog)</span>
+<span class="kw">SELECT</span>
+    dc.name          <span class="kw">AS</span> ConstraintName,
+    col.name         <span class="kw">AS</span> ColumnName,
+    dc.definition    <span class="kw">AS</span> DefaultValue
+<span class="kw">FROM</span>  sys.default_constraints dc
+<span class="kw">JOIN</span>  sys.columns             col
+    <span class="kw">ON</span>  col.object_id  = dc.parent_object_id
+   <span class="kw">AND</span>  col.column_id  = dc.parent_column_id
+<span class="kw">WHERE</span> dc.parent_object_id = <span class="grn">OBJECT_ID</span>(<span class="str">'Student'</span>);</pre>
+      </div>
+
+      <div class="callout callout-gold">
+        <span class="callout-icon">📌</span>
+        <div class="callout-body">
+          <strong>The Golden Rule of Schema Changes on Live Tables</strong>
+          Always follow this sequence: <strong>(1) Backup</strong> → <strong>(2) Test on a dev copy</strong> → <strong>(3) Inspect the data</strong> → <strong>(4) Execute</strong> → <strong>(5) Verify</strong> → <strong>(6) Notify dependent teams</strong>. Even "safe" operations like adding a nullable column can affect query plans and execution performance in high-volume systems.
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══ SECTION 7 — DROP & TRUNCATE ═══ -->
+  <div class="section-label" id="sec7">
+    <div class="num">7</div>
+    <h2>DROP &amp; TRUNCATE — Removing Tables and Data</h2>
+    <span class="outcome-tag">Outcome 5</span>
+  </div>
+  <div class="card">
+    <div class="card-header open" onclick="toggle(this)">
+      <div class="ch-left"><span class="card-icon">🗑️</span>
+        <h3><span>Outcome 5 · DROP and TRUNCATE</span>Removing Tables, Views, and Databases — and Clearing All Rows</h3>
+      </div>
+      <button class="toggle-btn open">▲</button>
+    </div>
+    <div class="card-body open">
+      <div class="code-wrap">
+        <div class="code-topbar"><div class="code-dots"><span class="d1"></span><span class="d2"></span><span class="d3"></span></div><span class="lang-badge">T-SQL · DROP TABLE — With and Without Safety Guards</span></div>
+        <pre class="code-block"><span class="cmt">-- Basic DROP — fails with error if table does not exist</span>
+<span class="kw">DROP TABLE</span> Student;
+
+<span class="cmt">-- Safe DROP — checks for existence first (SQL Server 2016+)</span>
+<span class="kw">DROP TABLE IF EXISTS</span> Student;
+
+<span class="cmt">-- Drop multiple tables in one statement (must be in correct order:
+-- child tables before parent tables, to avoid FK violations)</span>
+<span class="kw">DROP TABLE IF EXISTS</span> Enrollment;   <span class="cmt">-- child first</span>
+<span class="kw">DROP TABLE IF EXISTS</span> Section;
+<span class="kw">DROP TABLE IF EXISTS</span> Course;
+<span class="kw">DROP TABLE IF EXISTS</span> Student;
+<span class="kw">DROP TABLE IF EXISTS</span> Instructor;
+<span class="kw">DROP TABLE IF EXISTS</span> Department;   <span class="cmt">-- parent last</span>
+
+<span class="cmt">-- ⚠️  DROP TABLE removes the table structure AND all data permanently.
+--     It cannot be undone without a database backup.
+--     If a child table has a FK referencing the target, DROP fails.
+--     Drop the child table (or its FK constraint) first.</span></pre>
+      </div>
+
+      <div class="code-wrap">
+        <div class="code-topbar"><div class="code-dots"><span class="d1"></span><span class="d2"></span><span class="d3"></span></div><span class="lang-badge">T-SQL · DROP Other Object Types</span></div>
+        <pre class="code-block"><span class="cmt">-- Drop a view</span>
+<span class="kw">DROP VIEW IF EXISTS</span> vw_ActiveStudents;
+
+<span class="cmt">-- Drop an index</span>
+<span class="kw">DROP INDEX IF EXISTS</span> IX_Student_Email  <span class="kw">ON</span> Student;
+
+<span class="cmt">-- Drop a stored procedure</span>
+<span class="kw">DROP PROCEDURE IF EXISTS</span> usp_GetStudentGPA;
+
+<span class="cmt">-- Drop a database (must not be the current database; switch first)</span>
+<span class="kw">USE</span> master;
+<span class="kw">DROP DATABASE IF EXISTS</span> RegistrationDB;</pre>
+      </div>
+
+      <h4>TRUNCATE TABLE vs. DELETE — Critical Differences</h4>
+      <p>Both remove rows, but they behave very differently in terms of performance, logging, identity reset, and transaction safety.</p>
+      <table class="styled-table">
+        <thead><tr><th>Feature</th><th>TRUNCATE TABLE</th><th>DELETE (no WHERE)</th></tr></thead>
+        <tbody>
+          <tr><td class="hl">Speed</td><td>✅ Very fast — minimal logging</td><td>⚠️ Slower — logs every row deletion</td></tr>
+          <tr><td class="hl">Transaction Log</td><td>Logs only page deallocations</td><td>Logs every individual row</td></tr>
+          <tr><td class="hl">IDENTITY reset</td><td>✅ Resets IDENTITY counter to seed value</td><td>Does not reset — counter continues</td></tr>
+          <tr><td class="hl">WHERE clause</td><td>❌ None — removes all rows</td><td>✅ Supports WHERE for selective removal</td></tr>
+          <tr><td class="hl">Triggers fired</td><td>❌ Does not fire DELETE triggers</td><td>✅ Fires DELETE triggers</td></tr>
+          <tr><td class="hl">FK constraints</td><td>❌ Fails if any FK references the table</td><td>⚠️ Fails per-row based on FK action</td></tr>
+          <tr><td class="hl">Rollback</td><td>✅ Can be rolled back inside a transaction</td><td>✅ Can be rolled back inside a transaction</td></tr>
+          <tr><td class="hl">DDL or DML?</td><td>DDL</td><td>DML</td></tr>
+        </tbody>
+      </table>
+      <div class="code-wrap">
+        <div class="code-topbar"><div class="code-dots"><span class="d1"></span><span class="d2"></span><span class="d3"></span></div><span class="lang-badge">T-SQL · TRUNCATE vs DELETE</span></div>
+        <pre class="code-block"><span class="cmt">-- TRUNCATE: removes all rows instantly, resets IDENTITY, minimal logging
+--           Use for clearing staging/temp tables during ETL processes</span>
+<span class="kw">TRUNCATE TABLE</span> StagingImport;
+
+<span class="cmt">-- After TRUNCATE: IDENTITY restarts at seed value (e.g., 1)</span>
+<span class="kw">INSERT INTO</span> StagingImport (Name) <span class="kw">VALUES</span> (<span class="str">'Test'</span>);
+<span class="kw">SELECT</span> <span class="grn">SCOPE_IDENTITY</span>();  <span class="cmt">-- returns 1 (reset)</span>
+
+<span class="cmt">-- DELETE: removes all rows with full per-row logging
+--         Use when you need triggers, WHERE filtering, or IDENTITY preservation</span>
+<span class="kw">DELETE FROM</span> Student;
+
+<span class="cmt">-- After DELETE: IDENTITY continues from where it left off</span>
+<span class="kw">INSERT INTO</span> Student (LastName, FirstName, Email)
+<span class="kw">VALUES</span> (<span class="str">'Smith'</span>, <span class="str">'John'</span>, <span class="str">'j.smith@school.edu'</span>);
+<span class="kw">SELECT</span> <span class="grn">SCOPE_IDENTITY</span>();  <span class="cmt">-- returns 501 (continues)</span>
+
+<span class="cmt">-- ⚠️  TRUNCATE fails if another table has an active FK referencing this table:
+--       "Cannot truncate table because it is being referenced by a FOREIGN KEY"
+--       Solution: disable the FK, truncate, re-enable — or use DELETE instead</span></pre>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══ SECTION 8 — EXECUTION ORDER & DEPENDENCIES ═══ -->
+  <div class="section-label" id="sec8">
+    <div class="num">8</div>
+    <h2>DDL Execution Order &amp; Dependency Management</h2>
+    <span class="outcome-tag">Outcome 1</span>
+  </div>
+  <div class="card">
+    <div class="card-header open" onclick="toggle(this)">
+      <div class="ch-left"><span class="card-icon">📐</span>
+        <h3><span>Outcome 1 · Execution Order</span>Create in Dependency Order, Drop in Reverse — and Verifying Your Schema</h3>
+      </div>
+      <button class="toggle-btn open">▲</button>
+    </div>
+    <div class="card-body open">
+      <p>The order in which you execute <code>CREATE TABLE</code> and <code>DROP TABLE</code> statements is not arbitrary — it is dictated by foreign key dependencies. Violating this order produces FK reference errors that halt your script.</p>
+
+      <h4>CREATE Order — Parents Before Children</h4>
+      <div class="order-chain">
+        <div class="oc-box">Department</div><div class="oc-arrow">→</div>
+        <div class="oc-box">Instructor</div><div class="oc-arrow">→</div>
+        <div class="oc-box">Course</div><div class="oc-arrow">→</div>
+        <div class="oc-box">Student</div><div class="oc-arrow">→</div>
+        <div class="oc-box">Section</div><div class="oc-arrow">→</div>
+        <div class="oc-box">Enrollment</div>
+      </div>
+
+      <h4>DROP Order — Children Before Parents (Exact Reverse)</h4>
+      <div class="order-chain">
+        <div class="oc-box">Enrollment</div><div class="oc-arrow">→</div>
+        <div class="oc-box">Section</div><div class="oc-arrow">→</div>
+        <div class="oc-box">Student</div><div class="oc-arrow">→</div>
+        <div class="oc-box">Course</div><div class="oc-arrow">→</div>
+        <div class="oc-box">Instructor</div><div class="oc-arrow">→</div>
+        <div class="oc-box">Department</div>
+      </div>
+
+      <div class="callout callout-tip">
+        <span class="callout-icon">💡</span>
+        <div class="callout-body">
+          <strong>Tip — Teardown and Rebuild Script Pattern</strong>
+          For development and testing, keep a paired script: a DROP block (reverse order) followed immediately by the CREATE block (dependency order). Running this single script resets the schema to a clean state without manually tracking order each time.
+        </div>
+      </div>
+
+      <h4>Teardown and Rebuild Script Template</h4>
+      <div class="code-wrap">
+        <div class="code-topbar"><div class="code-dots"><span class="d1"></span><span class="d2"></span><span class="d3"></span></div><span class="lang-badge">T-SQL · Teardown → Rebuild Pattern</span></div>
+        <pre class="code-block"><span class="cmt">-- ═══ SECTION 1: TEARDOWN (drop in reverse dependency order) ════════════</span>
+<span class="kw">DROP TABLE IF EXISTS</span> Enrollment;
+<span class="kw">DROP TABLE IF EXISTS</span> Section;
+<span class="kw">DROP TABLE IF EXISTS</span> Student;
+<span class="kw">DROP TABLE IF EXISTS</span> Course;
+<span class="kw">DROP TABLE IF EXISTS</span> Instructor;
+<span class="kw">DROP TABLE IF EXISTS</span> Department;
+
+<span class="cmt">-- ═══ SECTION 2: REBUILD (create in dependency order) ═══════════════════</span>
+<span class="kw">CREATE TABLE</span> Department ( ... );
+<span class="kw">CREATE TABLE</span> Instructor  ( ... );
+<span class="kw">CREATE TABLE</span> Course      ( ... );
+<span class="kw">CREATE TABLE</span> Student     ( ... );
+<span class="kw">CREATE TABLE</span> Section     ( ... );
+<span class="kw">CREATE TABLE</span> Enrollment  ( ... );</pre>
+      </div>
+
+      <h4>Verifying Your Schema After Creation</h4>
+      <div class="code-wrap">
+        <div class="code-topbar"><div class="code-dots"><span class="d1"></span><span class="d2"></span><span class="d3"></span></div><span class="lang-badge">T-SQL · Schema Verification Queries</span></div>
+        <pre class="code-block"><span class="cmt">-- List all tables in the current database</span>
+<span class="kw">SELECT</span> TABLE_NAME, TABLE_TYPE
+<span class="kw">FROM</span>   INFORMATION_SCHEMA.TABLES
+<span class="kw">WHERE</span>  TABLE_TYPE = <span class="str">'BASE TABLE'</span>
+<span class="kw">ORDER BY</span> TABLE_NAME;
+
+<span class="cmt">-- List all columns for a specific table</span>
+<span class="kw">SELECT</span>
+    COLUMN_NAME,
+    DATA_TYPE,
+    CHARACTER_MAXIMUM_LENGTH    <span class="kw">AS</span> MaxLen,
+    NUMERIC_PRECISION           <span class="kw">AS</span> Precision,
+    NUMERIC_SCALE               <span class="kw">AS</span> Scale,
+    IS_NULLABLE
+<span class="kw">FROM</span>   INFORMATION_SCHEMA.COLUMNS
+<span class="kw">WHERE</span>  TABLE_NAME = <span class="str">'Student'</span>
+<span class="kw">ORDER BY</span> ORDINAL_POSITION;
+
+<span class="cmt">-- List all FK relationships in the database</span>
+<span class="kw">SELECT</span>
+    fk.name                       <span class="kw">AS</span> ForeignKey,
+    tp.name                       <span class="kw">AS</span> ParentTable,
+    cp.name                       <span class="kw">AS</span> ParentColumn,
+    tr.name                       <span class="kw">AS</span> ReferencedTable,
+    cr.name                       <span class="kw">AS</span> ReferencedColumn,
+    fk.delete_referential_action_desc <span class="kw">AS</span> OnDelete,
+    fk.update_referential_action_desc <span class="kw">AS</span> OnUpdate
+<span class="kw">FROM</span>  sys.foreign_keys                 fk
+<span class="kw">JOIN</span>  sys.foreign_key_columns          fkc  <span class="kw">ON</span> fk.object_id = fkc.constraint_object_id
+<span class="kw">JOIN</span>  sys.tables                       tp   <span class="kw">ON</span> fk.parent_object_id    = tp.object_id
+<span class="kw">JOIN</span>  sys.columns                      cp   <span class="kw">ON</span> fkc.parent_object_id  = cp.object_id
+                                             <span class="kw">AND</span> fkc.parent_column_id = cp.column_id
+<span class="kw">JOIN</span>  sys.tables                       tr   <span class="kw">ON</span> fk.referenced_object_id    = tr.object_id
+<span class="kw">JOIN</span>  sys.columns                      cr   <span class="kw">ON</span> fkc.referenced_object_id  = cr.object_id
+                                             <span class="kw">AND</span> fkc.referenced_column_id = cr.column_id
+<span class="kw">ORDER BY</span> tp.name, fk.name;
+
+<span class="cmt">-- Check if a specific table exists</span>
+<span class="kw">IF</span> <span class="grn">OBJECT_ID</span>(<span class="str">'Student'</span>, <span class="str">'U'</span>) <span class="kw">IS NOT NULL</span>
+    <span class="kw">PRINT</span> <span class="str">'Table Student exists'</span>;
+<span class="kw">ELSE</span>
+    <span class="kw">PRINT</span> <span class="str">'Table Student does NOT exist'</span>;</pre>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══ SECTION 9 — SUMMARY & CHECKLIST ═══ -->
+  <div class="section-label" id="sec9">
+    <div class="num" style="font-size:1rem;">✓</div>
+    <h2>Summary, Quick Reference &amp; Self-Assessment</h2>
+  </div>
+  <div class="card">
+    <div class="card-header open" onclick="toggle(this)">
+      <div class="ch-left"><span class="card-icon">📋</span>
+        <h3><span>Review</span>DDL Command Reference, Glossary &amp; Outcome Checklist</h3>
+      </div>
+      <button class="toggle-btn open">▲</button>
+    </div>
+    <div class="card-body open">
+      <div class="strip">
+        <strong>Module 5 Complete!</strong> You can now write a full DDL script that creates a properly ordered schema, enforces all constraint types, handles referential integrity actions, safely alters tables containing live data, and tears down objects in the correct sequence.
+      </div>
+
+      <h4>DDL Quick Reference Card</h4>
+      <table class="styled-table">
+        <thead><tr><th>Task</th><th>SQL Statement</th><th>Key Notes</th></tr></thead>
+        <tbody>
+          <tr><td class="gold">Create a table</td><td><code>CREATE TABLE t (...)</code></td><td>Parent tables before child tables</td></tr>
+          <tr><td class="hl">Add a nullable column</td><td><code>ALTER TABLE t ADD col TYPE NULL</code></td><td>Always safe on tables with data</td></tr>
+          <tr><td class="hl">Add NOT NULL column (with data)</td><td>Add NULL → UPDATE → ALTER to NOT NULL</td><td>3-step pattern — never skip the UPDATE</td></tr>
+          <tr><td class="hl">Change column size (grow)</td><td><code>ALTER TABLE t ALTER COLUMN col TYPE(n)</code></td><td>Expanding is safe; shrinking requires data check</td></tr>
+          <tr><td class="hl">Change column type (incompatible)</td><td>Add new col → CAST migrate → drop old → rename</td><td>5-step pattern — never ALTER incompatible types directly</td></tr>
+          <tr><td class="hl">Add constraint</td><td><code>ALTER TABLE t ADD CONSTRAINT n ...</code></td><td>Check for violations first; use WITH NOCHECK for legacy data</td></tr>
+          <tr><td class="hl">Drop a constraint</td><td><code>ALTER TABLE t DROP CONSTRAINT n</code></td><td>Must know exact constraint name — query INFORMATION_SCHEMA</td></tr>
+          <tr><td class="hl">Drop a column</td><td><code>ALTER TABLE t DROP COLUMN c</code></td><td>Drop all constraints on it first; data is permanently lost</td></tr>
+          <tr><td class="hl">Rename table or column</td><td><code>EXEC sp_rename 'old', 'new', 'COLUMN'</code></td><td>Does not update views, SPs, or application code</td></tr>
+          <tr><td class="hl">Remove all rows (fast)</td><td><code>TRUNCATE TABLE t</code></td><td>Resets IDENTITY; no WHERE; fails if FK references t</td></tr>
+          <tr><td class="hl">Remove all rows (controlled)</td><td><code>DELETE FROM t</code></td><td>Fires triggers; supports WHERE; IDENTITY continues</td></tr>
+          <tr><td class="hl">Drop a table</td><td><code>DROP TABLE IF EXISTS t</code></td><td>Children before parents; permanent — no undo without backup</td></tr>
+          <tr><td class="hl">Find all constraints on a table</td><td><code>SELECT ... FROM INFORMATION_SCHEMA.TABLE_CONSTRAINTS</code></td><td>Also check sys.default_constraints for DEFAULT names</td></tr>
+          <tr><td class="hl">Find all FK relationships</td><td><code>SELECT ... FROM sys.foreign_keys JOIN sys.tables ...</code></td><td>Shows parent/child tables, columns, and referential actions</td></tr>
+        </tbody>
+      </table>
+
+      <h4>Referential Action Decision Summary</h4>
+      <table class="styled-table">
+        <thead><tr><th>Action</th><th>Child Row Behavior When Parent Is Deleted</th><th>Best Use</th></tr></thead>
+        <tbody>
+          <tr><td class="gold">NO ACTION</td><td>DELETE blocked — child rows must be removed first</td><td>Most situations; safest default; historical records</td></tr>
+          <tr><td class="hl">CASCADE</td><td>Child rows automatically deleted with parent</td><td>Dependent detail records (order lines, log entries)</td></tr>
+          <tr><td class="hl">SET NULL</td><td>FK column set to NULL; child row remains</td><td>Optional relationships; child can exist without parent</td></tr>
+          <tr><td class="hl">SET DEFAULT</td><td>FK column reset to its DEFAULT value</td><td>Rare; requires a valid default parent FK value</td></tr>
+        </tbody>
+      </table>
+
+      <h4>Key Terms Glossary</h4>
+      <table class="styled-table">
+        <thead><tr><th>Term</th><th>Definition</th></tr></thead>
+        <tbody>
+          <tr><td class="hl">DDL</td><td>Data Definition Language — the SQL subset for creating, modifying, and removing database structures</td></tr>
+          <tr><td class="hl">CREATE TABLE</td><td>DDL command that builds a new table with specified columns and constraints</td></tr>
+          <tr><td class="hl">ALTER TABLE</td><td>DDL command that modifies an existing table by adding, changing, or removing columns and constraints</td></tr>
+          <tr><td class="hl">DROP TABLE</td><td>DDL command that permanently removes a table and all its data</td></tr>
+          <tr><td class="hl">TRUNCATE TABLE</td><td>DDL command that removes all rows instantly with minimal logging and resets the IDENTITY counter</td></tr>
+          <tr><td class="hl">IDENTITY(seed, incr)</td><td>SQL Server column property that auto-generates incrementing integers; used to implement surrogate keys</td></tr>
+          <tr><td class="hl">PRIMARY KEY</td><td>Constraint ensuring each row is uniquely identified; implicitly NOT NULL; creates a clustered index</td></tr>
+          <tr><td class="hl">FOREIGN KEY</td><td>Constraint linking a column to the PK of another table, enforcing referential integrity</td></tr>
+          <tr><td class="hl">NOT NULL</td><td>Column constraint preventing NULL values; implements mandatory attributes from the data model</td></tr>
+          <tr><td class="hl">UNIQUE</td><td>Constraint ensuring all non-NULL values in a column (or combination) are distinct; implements alternate keys</td></tr>
+          <tr><td class="hl">CHECK</td><td>Constraint validating column values against a logical expression before storing; NULL passes CHECK</td></tr>
+          <tr><td class="hl">DEFAULT</td><td>Constraint automatically supplying a value when an INSERT omits the column</td></tr>
+          <tr><td class="hl">Referential Action</td><td>The behavior specified in a FK constraint (NO ACTION, CASCADE, SET NULL, SET DEFAULT) triggered by parent changes</td></tr>
+          <tr><td class="hl">ON DELETE CASCADE</td><td>Referential action that automatically deletes child rows when their parent row is deleted</td></tr>
+          <tr><td class="hl">ON DELETE NO ACTION</td><td>Default referential action that blocks deletion of a parent row if child rows reference it</td></tr>
+          <tr><td class="hl">WITH NOCHECK</td><td>Option on ADD CONSTRAINT that skips validation of existing rows; constraint is "untrusted"</td></tr>
+          <tr><td class="hl">sp_rename</td><td>SQL Server system stored procedure used to rename tables, columns, or constraints</td></tr>
+          <tr><td class="hl">INFORMATION_SCHEMA</td><td>Standard SQL catalog views for querying metadata about tables, columns, and constraints</td></tr>
+          <tr><td class="hl">sys catalog</td><td>SQL Server system catalog tables (sys.tables, sys.columns, sys.foreign_keys, etc.) for deeper metadata queries</td></tr>
+          <tr><td class="hl">Dependency order</td><td>The required sequence for CREATE (parents first) and DROP (children first) to satisfy FK references</td></tr>
+        </tbody>
+      </table>
+
+      <h4>Self-Assessment Checklist</h4>
+      <div class="callout callout-tip">
+        <span class="callout-icon">✅</span>
+        <div class="callout-body">
+          <ul class="checklist">
+            <li>I can explain the four SQL sub-languages (DDL, DML, DQL, DCL) and identify which commands belong to each</li>
+            <li>I can write a complete <code>CREATE TABLE</code> statement with correct column definitions, data types, nullability, IDENTITY, and all constraint types — named explicitly</li>
+            <li>I understand inline vs. table-level constraint placement and know when each is required</li>
+            <li>I can create a full multi-table schema in the correct dependency order and explain why the order matters</li>
+            <li>I can define and apply all six constraint types: <strong>PRIMARY KEY, FOREIGN KEY, NOT NULL, UNIQUE, CHECK, DEFAULT</strong></li>
+            <li>I can choose the correct referential action (NO ACTION, CASCADE, SET NULL, SET DEFAULT) for a given business scenario and explain the effect on child rows</li>
+            <li>I can use <code>ALTER TABLE</code> to add columns, add constraints, modify column types/sizes, and drop columns and constraints</li>
+            <li>I can apply the 3-step pattern for adding a NOT NULL column to a table with existing data</li>
+            <li>I can apply the 5-step pattern for safely changing a column to an incompatible data type</li>
+            <li>I understand the risk matrix: which DDL operations are safe, require caution, or are dangerous on live tables</li>
+            <li>I can explain the difference between <code>TRUNCATE TABLE</code> and <code>DELETE</code> — including IDENTITY reset, logging, trigger behavior, and FK restrictions</li>
+            <li>I can use <code>DROP TABLE IF EXISTS</code> in correct reverse-dependency order and explain why</li>
+            <li>I can query <code>INFORMATION_SCHEMA</code> and system catalog views to find constraint names, column definitions, and FK relationships</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</main>
+
+<footer>
+  <span>COP 4708 – Introduction to Databases</span> &nbsp;|&nbsp; Module 5: SQL Data Definition Language (DDL)
+  <br/><span style="font-weight:300;color:#4a6a80;font-size:.78rem;margin-top:6px;display:block;">Supports CLO 2: Design, normalize, and implement database systems.</span>
+</footer>
+
+<script>
+  function toggle(header) {
+    const body = header.nextElementSibling;
+    const btn  = header.querySelector('.toggle-btn');
+    const open = body.classList.contains('open');
+    body.classList.toggle('open', !open);
+    header.classList.toggle('open', !open);
+    btn.classList.toggle('open', !open);
+  }
+  function setAll(open) {
+    document.querySelectorAll('.card-body').forEach(b => b.classList.toggle('open', open));
+    document.querySelectorAll('.card-header').forEach(h => h.classList.toggle('open', open));
+    document.querySelectorAll('.toggle-btn').forEach(b => b.classList.toggle('open', open));
+  }
+</script>
+</body>
+</html>

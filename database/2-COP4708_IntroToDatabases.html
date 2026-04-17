@@ -1,0 +1,1496 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>COP 4708 – Module 1: Introduction to Databases</title>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700&family=Source+Sans+3:wght@300;400;600;700&family=Source+Code+Pro:wght@400;600&display=swap" rel="stylesheet" />
+  <style>
+    /* ───────────── RESET & ROOT ───────────── */
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --navy:       #0d1b2a;
+      --deep-teal:  #0f4c75;
+      --teal:       #1b6ca8;
+      --sky:        #2196c4;
+      --ice:        #d6eaf8;
+      --pale:       #eaf4fb;
+      --gold:       #f0a500;
+      --gold-light: #fef3cd;
+      --green:      #1a7a4a;
+      --green-light:#e8f5ee;
+      --red:        #b5372a;
+      --red-light:  #fdecea;
+      --purple:     #5b3fa6;
+      --purple-light:#f0eaff;
+      --white:      #ffffff;
+      --off-white:  #f7fafc;
+      --border:     #c9dff0;
+      --text:       #1a2b3c;
+      --muted:      #5a7a90;
+      --radius:     10px;
+      --shadow:     0 4px 18px rgba(13,27,42,.10);
+    }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      font-family: 'Source Sans 3', sans-serif;
+      font-weight: 400;
+      color: var(--text);
+      background: var(--off-white);
+      line-height: 1.7;
+    }
+
+    /* ───────────── HEADER ───────────── */
+    header {
+      background: linear-gradient(135deg, var(--navy) 0%, var(--deep-teal) 55%, var(--teal) 100%);
+      color: var(--white);
+      padding: 0;
+      position: relative;
+      overflow: hidden;
+    }
+    header::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background:
+        radial-gradient(ellipse at 80% 20%, rgba(33,150,196,.25) 0%, transparent 60%),
+        url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23ffffff' fill-opacity='0.03'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
+      pointer-events: none;
+    }
+    .header-inner {
+      position: relative;
+      max-width: 960px;
+      margin: 0 auto;
+      padding: 48px 32px 40px;
+    }
+    .course-badge {
+      display: inline-block;
+      background: rgba(255,255,255,.15);
+      border: 1px solid rgba(255,255,255,.3);
+      color: #cce8f8;
+      font-size: .78rem;
+      font-weight: 700;
+      letter-spacing: .12em;
+      text-transform: uppercase;
+      padding: 4px 14px;
+      border-radius: 20px;
+      margin-bottom: 16px;
+    }
+    header h1 {
+      font-family: 'Playfair Display', serif;
+      font-size: 2.5rem;
+      line-height: 1.2;
+      margin-bottom: 10px;
+      color: var(--white);
+    }
+    header h2 {
+      font-size: 1.1rem;
+      font-weight: 300;
+      color: #a8d4ee;
+      margin-bottom: 24px;
+    }
+    .header-meta {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 12px;
+    }
+    .meta-chip {
+      background: rgba(255,255,255,.12);
+      border: 1px solid rgba(255,255,255,.2);
+      color: #d0eaf8;
+      font-size: .82rem;
+      font-weight: 600;
+      padding: 5px 14px;
+      border-radius: 20px;
+    }
+
+    /* ───────────── OUTCOMES BANNER ───────────── */
+    .outcomes-banner {
+      background: linear-gradient(90deg, var(--gold-light) 0%, #fff8e1 100%);
+      border-left: 6px solid var(--gold);
+      max-width: 960px;
+      margin: 32px auto 0;
+      border-radius: 0 var(--radius) var(--radius) 0;
+      padding: 24px 28px;
+    }
+    .outcomes-banner h3 {
+      font-family: 'Playfair Display', serif;
+      font-size: 1.05rem;
+      color: #7a5500;
+      margin-bottom: 14px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .outcomes-banner h3::before { content: '🎯'; }
+    .outcomes-banner ol {
+      padding-left: 20px;
+      color: #5a4000;
+      font-size: .93rem;
+    }
+    .outcomes-banner ol li { margin-bottom: 6px; }
+    .clo-note {
+      margin-top: 14px;
+      font-size: .82rem;
+      color: #7a5500;
+      font-style: italic;
+      font-weight: 600;
+    }
+
+    /* ───────────── MAIN LAYOUT ───────────── */
+    main {
+      max-width: 960px;
+      margin: 40px auto 60px;
+      padding: 0 20px;
+    }
+
+    /* ───────────── SECTION HEADERS ───────────── */
+    .section-label {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin: 40px 0 6px;
+    }
+    .section-label .num {
+      background: var(--deep-teal);
+      color: var(--white);
+      font-family: 'Playfair Display', serif;
+      font-size: 1rem;
+      width: 34px; height: 34px;
+      border-radius: 50%;
+      display: flex; align-items: center; justify-content: center;
+      flex-shrink: 0;
+    }
+    .section-label h2 {
+      font-family: 'Playfair Display', serif;
+      font-size: 1.4rem;
+      color: var(--navy);
+    }
+
+    /* ───────────── COLLAPSIBLE CARDS ───────────── */
+    .card {
+      background: var(--white);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      margin-bottom: 16px;
+      box-shadow: var(--shadow);
+      overflow: hidden;
+      transition: box-shadow .2s;
+    }
+    .card:hover { box-shadow: 0 6px 28px rgba(13,27,42,.14); }
+
+    .card-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 18px 22px;
+      cursor: pointer;
+      user-select: none;
+      background: var(--white);
+      transition: background .18s;
+      gap: 14px;
+    }
+    .card-header:hover { background: var(--pale); }
+    .card-header.open { background: var(--pale); border-bottom: 2px solid var(--teal); }
+
+    .card-header .ch-left {
+      display: flex; align-items: center; gap: 12px;
+    }
+    .card-icon {
+      font-size: 1.4rem;
+      line-height: 1;
+    }
+    .card-header h3 {
+      font-family: 'Playfair Display', serif;
+      font-size: 1.1rem;
+      color: var(--navy);
+    }
+    .card-header h3 span {
+      display: block;
+      font-family: 'Source Sans 3', sans-serif;
+      font-size: .78rem;
+      font-weight: 600;
+      color: var(--muted);
+      text-transform: uppercase;
+      letter-spacing: .08em;
+      margin-bottom: 2px;
+    }
+    .toggle-btn {
+      width: 28px; height: 28px;
+      border-radius: 50%;
+      background: var(--ice);
+      border: none;
+      cursor: pointer;
+      display: flex; align-items: center; justify-content: center;
+      flex-shrink: 0;
+      transition: background .2s, transform .25s;
+      font-size: 1rem;
+      color: var(--teal);
+    }
+    .toggle-btn.open {
+      background: var(--teal);
+      color: var(--white);
+      transform: rotate(180deg);
+    }
+
+    .card-body {
+      display: none;
+      padding: 24px 26px 28px;
+      border-top: 1px solid var(--border);
+      animation: fadeIn .25s ease;
+    }
+    .card-body.open { display: block; }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(-6px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+
+    /* ───────────── CONTENT ELEMENTS ───────────── */
+    .card-body h4 {
+      font-family: 'Playfair Display', serif;
+      font-size: 1.02rem;
+      color: var(--deep-teal);
+      margin: 22px 0 8px;
+    }
+    .card-body h4:first-child { margin-top: 0; }
+
+    .card-body p { margin-bottom: 14px; font-size: .96rem; }
+    .card-body p:last-child { margin-bottom: 0; }
+
+    .card-body ul, .card-body ol {
+      padding-left: 22px;
+      margin-bottom: 14px;
+      font-size: .96rem;
+    }
+    .card-body ul li, .card-body ol li { margin-bottom: 6px; }
+
+    strong { font-weight: 700; color: var(--navy); }
+    em { color: var(--deep-teal); font-style: italic; }
+
+    /* ───────────── CALLOUT BOXES ───────────── */
+    .callout {
+      border-radius: var(--radius);
+      padding: 16px 20px;
+      margin: 18px 0;
+      font-size: .93rem;
+      display: flex;
+      gap: 12px;
+      align-items: flex-start;
+    }
+    .callout .callout-icon { font-size: 1.3rem; flex-shrink: 0; margin-top: 1px; }
+    .callout-body { flex: 1; }
+    .callout-body strong { display: block; margin-bottom: 4px; }
+
+    .callout-info    { background: var(--ice);          border-left: 4px solid var(--sky); }
+    .callout-tip     { background: var(--green-light);  border-left: 4px solid var(--green); }
+    .callout-warning { background: #fff3e0;              border-left: 4px solid #e67e22; }
+    .callout-key     { background: var(--purple-light); border-left: 4px solid var(--purple); }
+    .callout-example { background: var(--gold-light);   border-left: 4px solid var(--gold); }
+
+    /* ───────────── DEFINITION BLOCKS ───────────── */
+    .def-box {
+      background: linear-gradient(135deg, var(--navy) 0%, var(--deep-teal) 100%);
+      color: var(--white);
+      border-radius: var(--radius);
+      padding: 22px 26px;
+      margin: 18px 0;
+      position: relative;
+      overflow: hidden;
+    }
+    .def-box::before {
+      content: '"';
+      position: absolute;
+      top: -10px; left: 14px;
+      font-family: 'Playfair Display', serif;
+      font-size: 8rem;
+      color: rgba(255,255,255,.07);
+      line-height: 1;
+    }
+    .def-box .def-label {
+      font-size: .72rem;
+      font-weight: 700;
+      letter-spacing: .14em;
+      text-transform: uppercase;
+      color: #7ec8e3;
+      margin-bottom: 8px;
+    }
+    .def-box p {
+      font-size: 1.02rem;
+      color: #e8f4fc;
+      font-style: italic;
+      position: relative;
+      z-index: 1;
+      margin-bottom: 0;
+    }
+
+    /* ───────────── TABLES ───────────── */
+    .styled-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: .91rem;
+      margin: 16px 0;
+      border-radius: var(--radius);
+      overflow: hidden;
+      box-shadow: 0 2px 10px rgba(13,27,42,.08);
+    }
+    .styled-table thead tr {
+      background: var(--deep-teal);
+      color: var(--white);
+    }
+    .styled-table thead th {
+      padding: 12px 16px;
+      text-align: left;
+      font-weight: 700;
+      font-size: .85rem;
+      letter-spacing: .04em;
+      text-transform: uppercase;
+    }
+    .styled-table tbody tr { border-bottom: 1px solid var(--border); transition: background .15s; }
+    .styled-table tbody tr:hover { background: var(--pale); }
+    .styled-table tbody tr:last-child { border-bottom: none; }
+    .styled-table tbody td { padding: 11px 16px; vertical-align: top; }
+    .styled-table tbody td:first-child { font-weight: 700; color: var(--deep-teal); }
+
+    /* ───────────── TERM CARDS ───────────── */
+    .term-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+      gap: 14px;
+      margin: 16px 0;
+    }
+    .term-card {
+      background: var(--pale);
+      border: 1px solid var(--border);
+      border-top: 4px solid var(--teal);
+      border-radius: var(--radius);
+      padding: 14px 16px;
+    }
+    .term-card .term-name {
+      font-weight: 700;
+      font-size: .88rem;
+      color: var(--deep-teal);
+      text-transform: uppercase;
+      letter-spacing: .05em;
+      margin-bottom: 6px;
+    }
+    .term-card p { font-size: .85rem; color: var(--text); margin-bottom: 0; }
+
+    /* ───────────── DBMS CARDS ───────────── */
+    .dbms-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(270px, 1fr));
+      gap: 16px;
+      margin: 16px 0;
+    }
+    .dbms-card {
+      background: var(--white);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 20px;
+      box-shadow: 0 2px 10px rgba(13,27,42,.07);
+      transition: transform .2s, box-shadow .2s;
+    }
+    .dbms-card:hover { transform: translateY(-3px); box-shadow: 0 6px 22px rgba(13,27,42,.13); }
+    .dbms-card .dbms-logo {
+      font-size: 2.2rem;
+      margin-bottom: 10px;
+    }
+    .dbms-card .dbms-name {
+      font-family: 'Playfair Display', serif;
+      font-size: 1.05rem;
+      color: var(--navy);
+      margin-bottom: 4px;
+    }
+    .dbms-card .dbms-vendor {
+      font-size: .77rem;
+      font-weight: 700;
+      letter-spacing: .06em;
+      text-transform: uppercase;
+      color: var(--muted);
+      margin-bottom: 10px;
+    }
+    .dbms-card p { font-size: .87rem; color: var(--text); margin-bottom: 10px; }
+    .dbms-tag {
+      display: inline-block;
+      background: var(--ice);
+      color: var(--teal);
+      font-size: .73rem;
+      font-weight: 700;
+      padding: 2px 10px;
+      border-radius: 20px;
+      margin: 2px 2px 0 0;
+      text-transform: uppercase;
+      letter-spacing: .05em;
+    }
+    .dbms-tag.oss  { background: var(--green-light); color: var(--green); }
+    .dbms-tag.comm { background: var(--red-light);   color: var(--red); }
+    .dbms-tag.nosql{ background: var(--purple-light);color: var(--purple); }
+
+    /* ───────────── DIKW PYRAMID ───────────── */
+    .pyramid-wrap {
+      margin: 24px 0;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 0;
+    }
+    .pyramid-row {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      margin-bottom: 6px;
+      width: 100%;
+    }
+    .pyramid-block {
+      color: var(--white);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 700;
+      font-size: .92rem;
+      letter-spacing: .06em;
+      text-transform: uppercase;
+      border-radius: 6px;
+      padding: 14px 10px;
+      text-align: center;
+      transition: transform .2s;
+      flex-shrink: 0;
+    }
+    .pyramid-block:hover { transform: scale(1.02); }
+    .pyramid-desc { font-size: .88rem; color: var(--text); flex: 1; }
+    .pyramid-desc strong { color: var(--navy); }
+
+    /* ───────────── CODE BLOCKS ───────────── */
+    .code-block {
+      background: #0d1b2a;
+      color: #c8e6ff;
+      border-radius: var(--radius);
+      padding: 20px 24px;
+      margin: 16px 0;
+      font-family: 'Source Code Pro', monospace;
+      font-size: .86rem;
+      line-height: 1.8;
+      overflow-x: auto;
+      border: 1px solid #1e3a55;
+      white-space: pre;
+    }
+    .code-block .kw  { color: #79b8ff; }
+    .code-block .str { color: #9ecbff; }
+    .code-block .cmt { color: #57778e; font-style: italic; }
+    .code-block .fn  { color: #b392f0; }
+    .code-block .num { color: #f8c555; }
+
+    /* ───────────── PROGRESS INDICATOR ───────────── */
+    .progress-nav {
+      background: var(--white);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 18px 22px;
+      margin-bottom: 36px;
+      box-shadow: var(--shadow);
+    }
+    .progress-nav h3 {
+      font-size: .8rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: .1em;
+      color: var(--muted);
+      margin-bottom: 12px;
+    }
+    .nav-links {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+    }
+    .nav-links a {
+      background: var(--pale);
+      border: 1px solid var(--border);
+      color: var(--deep-teal);
+      font-size: .81rem;
+      font-weight: 600;
+      padding: 5px 13px;
+      border-radius: 20px;
+      text-decoration: none;
+      transition: background .15s, color .15s;
+    }
+    .nav-links a:hover { background: var(--teal); color: var(--white); border-color: var(--teal); }
+
+    /* ───────────── TWO-COL LAYOUT ───────────── */
+    .two-col {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 16px;
+      margin: 16px 0;
+    }
+    @media (max-width: 600px) {
+      .two-col { grid-template-columns: 1fr; }
+      .term-grid { grid-template-columns: 1fr 1fr; }
+      .dbms-grid { grid-template-columns: 1fr; }
+      header h1 { font-size: 1.8rem; }
+    }
+
+    /* ───────────── COMPARISON BOX ───────────── */
+    .compare-box {
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      overflow: hidden;
+      margin: 16px 0;
+    }
+    .compare-header {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+    }
+    .compare-header div {
+      padding: 12px 18px;
+      font-weight: 700;
+      font-size: .88rem;
+      text-transform: uppercase;
+      letter-spacing: .06em;
+      color: var(--white);
+    }
+    .compare-header div:first-child  { background: var(--deep-teal); }
+    .compare-header div:last-child   { background: #1a7a4a; }
+    .compare-row {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      border-top: 1px solid var(--border);
+    }
+    .compare-row:hover { background: var(--pale); }
+    .compare-row div {
+      padding: 10px 18px;
+      font-size: .91rem;
+      border-right: 1px solid var(--border);
+    }
+    .compare-row div:last-child { border-right: none; }
+
+    /* ───────────── FOOTER ───────────── */
+    footer {
+      background: var(--navy);
+      color: #7a9bb5;
+      text-align: center;
+      padding: 28px 20px;
+      font-size: .82rem;
+    }
+    footer span { color: #a8c8e0; font-weight: 700; }
+
+    /* ───────────── EXPAND ALL BTN ───────────── */
+    .expand-controls {
+      display: flex;
+      gap: 10px;
+      justify-content: flex-end;
+      margin-bottom: 10px;
+    }
+    .ctrl-btn {
+      background: var(--white);
+      border: 1px solid var(--border);
+      color: var(--deep-teal);
+      font-size: .81rem;
+      font-weight: 700;
+      padding: 6px 16px;
+      border-radius: 20px;
+      cursor: pointer;
+      transition: background .15s, color .15s;
+    }
+    .ctrl-btn:hover { background: var(--teal); color: var(--white); border-color: var(--teal); }
+
+    /* ───────────── HIGHLIGHT STRIP ───────────── */
+    .strip {
+      background: linear-gradient(90deg, var(--teal) 0%, var(--sky) 100%);
+      color: var(--white);
+      border-radius: var(--radius);
+      padding: 18px 24px;
+      margin: 18px 0;
+      font-size: .95rem;
+    }
+    .strip strong { color: #d6f0ff; }
+  </style>
+</head>
+<body>
+
+<!-- ══════════════════ HEADER ══════════════════ -->
+<header>
+  <div class="header-inner">
+    <div class="course-badge">COP 4708 · Introduction to Databases</div>
+    <h1>Module 1: Foundations of Databases</h1>
+    <h2>Understanding what databases are, why they matter, and who manages them</h2>
+    <div class="header-meta">
+      <span class="meta-chip">📘 Module 1 of 1</span>
+      <span class="meta-chip">🎓 CLO 3 Support</span>
+      <span class="meta-chip">⏱ Estimated 45–60 min</span>
+      <span class="meta-chip">6 Learning Outcomes</span>
+    </div>
+  </div>
+</header>
+
+<!-- ══════════════════ OUTCOMES ══════════════════ -->
+<div class="outcomes-banner" style="margin-left:auto;margin-right:auto;max-width:960px;margin-top:0;">
+  <h3>Module Learning Outcomes</h3>
+  <ol>
+    <li>Define the term <em>database</em> and describe what is contained within a database</li>
+    <li>Define the term <em>metadata</em> and provide examples of metadata</li>
+    <li>Explain the purpose of a <em>relational database</em></li>
+    <li>Explain the difference between <em>information</em> and <em>knowledge</em></li>
+    <li>Explain the importance of <em>managing the database</em></li>
+    <li>Identify the commonly used <em>database management systems (DBMS)</em></li>
+  </ol>
+  <p class="clo-note">📌 Supports CLO 3: Develop the ability to manipulate databases using database management tools, techniques, and computer skills.</p>
+</div>
+
+<!-- ══════════════════ MAIN ══════════════════ -->
+<main>
+
+  <!-- Navigation -->
+  <div class="progress-nav">
+    <h3>Jump to Section</h3>
+    <div class="nav-links">
+      <a href="#sec1">1. What Is a Database?</a>
+      <a href="#sec2">2. Metadata</a>
+      <a href="#sec3">3. Relational Databases</a>
+      <a href="#sec4">4. Data, Information &amp; Knowledge</a>
+      <a href="#sec5">5. Managing the Database</a>
+      <a href="#sec6">6. Common DBMS Platforms</a>
+    </div>
+  </div>
+
+  <div class="expand-controls">
+    <button class="ctrl-btn" onclick="setAll(true)">Expand All</button>
+    <button class="ctrl-btn" onclick="setAll(false)">Collapse All</button>
+  </div>
+
+  <!-- ─────────────────────────────────────── -->
+  <!-- SECTION 1 – WHAT IS A DATABASE?         -->
+  <!-- ─────────────────────────────────────── -->
+  <div class="section-label" id="sec1">
+    <div class="num">1</div>
+    <h2>What Is a Database?</h2>
+  </div>
+
+  <!-- Card 1.1 -->
+  <div class="card">
+    <div class="card-header open" onclick="toggle(this)">
+      <div class="ch-left">
+        <span class="card-icon">🗄️</span>
+        <h3><span>Outcome 1</span>Definition &amp; Core Concept</h3>
+      </div>
+      <button class="toggle-btn open">▲</button>
+    </div>
+    <div class="card-body open">
+
+      <div class="def-box">
+        <div class="def-label">Definition</div>
+        <p>A <strong>database</strong> is an organized, structured collection of related data stored electronically so that it can be easily accessed, managed, and updated by authorized users and applications.</p>
+      </div>
+
+      <p>Think of a database as a highly organized digital filing system. Unlike a simple spreadsheet or a pile of documents, a database is designed with rules, structure, and relationships so that data can be retrieved quickly and reliably—even when millions of records are stored.</p>
+
+      <h4>Everyday Analogies</h4>
+      <div class="two-col">
+        <div class="callout callout-example">
+          <span class="callout-icon">📚</span>
+          <div class="callout-body">
+            <strong>Library Card Catalog</strong>
+            Every book has a record: title, author, call number, availability. You can look up by any field. A database works the same way—structured records you can query.
+          </div>
+        </div>
+        <div class="callout callout-example">
+          <span class="callout-icon">🏦</span>
+          <div class="callout-body">
+            <strong>Bank Records</strong>
+            Your account, transactions, and balances are stored in a database. When you check your balance online, a query is sent to retrieve your specific records instantly.
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- Card 1.2 -->
+  <div class="card">
+    <div class="card-header open" onclick="toggle(this)">
+      <div class="ch-left">
+        <span class="card-icon">📦</span>
+        <h3><span>Outcome 1 continued</span>What Is Stored Inside a Database?</h3>
+      </div>
+      <button class="toggle-btn open">▲</button>
+    </div>
+    <div class="card-body open">
+
+      <p>A modern database contains much more than raw rows of data. The following components work together to store and organize information reliably.</p>
+
+      <h4>Core Objects Found in a Database</h4>
+      <div class="term-grid">
+        <div class="term-card">
+          <div class="term-name">Tables</div>
+          <p>The primary structure. Each table stores data about a single subject (e.g., Customers, Orders). Organized into rows (records) and columns (fields).</p>
+        </div>
+        <div class="term-card">
+          <div class="term-name">Rows / Records</div>
+          <p>A single entry in a table. One row = one instance of the subject (e.g., one customer, one order).</p>
+        </div>
+        <div class="term-card">
+          <div class="term-name">Columns / Fields</div>
+          <p>An attribute of the subject. Each column has a name and a defined data type (e.g., CustomerName TEXT, OrderDate DATE).</p>
+        </div>
+        <div class="term-card">
+          <div class="term-name">Keys</div>
+          <p>Special columns that uniquely identify rows (Primary Key) or link tables together (Foreign Key).</p>
+        </div>
+        <div class="term-card">
+          <div class="term-name">Indexes</div>
+          <p>Structures that speed up data retrieval—similar to the index in the back of a book.</p>
+        </div>
+        <div class="term-card">
+          <div class="term-name">Views</div>
+          <p>Virtual tables built from stored queries. Simplify complex data access without duplicating data.</p>
+        </div>
+        <div class="term-card">
+          <div class="term-name">Stored Procedures</div>
+          <p>Pre-written blocks of SQL code stored in the database and executed on demand.</p>
+        </div>
+        <div class="term-card">
+          <div class="term-name">Constraints</div>
+          <p>Rules that enforce data integrity (e.g., NOT NULL, UNIQUE, CHECK, FOREIGN KEY).</p>
+        </div>
+        <div class="term-card">
+          <div class="term-name">Triggers</div>
+          <p>Automated actions that execute in response to INSERT, UPDATE, or DELETE events on a table.</p>
+        </div>
+      </div>
+
+      <h4>Visualizing a Simple Table</h4>
+      <table class="styled-table">
+        <thead>
+          <tr>
+            <th>CustomerID (PK)</th>
+            <th>FirstName</th>
+            <th>LastName</th>
+            <th>Email</th>
+            <th>City</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr><td>1001</td><td>Maria</td><td>Garcia</td><td>mgarcia@mail.com</td><td>Miami</td></tr>
+          <tr><td>1002</td><td>James</td><td>Okafor</td><td>jokafor@mail.com</td><td>Atlanta</td></tr>
+          <tr><td>1003</td><td>Linda</td><td>Chen</td><td>lchen@mail.com</td><td>Houston</td></tr>
+        </tbody>
+      </table>
+      <p>Each <strong>row</strong> is one customer record. Each <strong>column</strong> is one attribute. CustomerID is the <strong>Primary Key</strong>—it uniquely identifies each row.</p>
+
+      <div class="callout callout-info">
+        <span class="callout-icon">ℹ️</span>
+        <div class="callout-body">
+          <strong>Data vs. a Spreadsheet</strong>
+          A spreadsheet stores data but lacks built-in relationships between sheets, strict data types, multi-user access controls, or transaction support. Databases are engineered to handle all of these at scale.
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+
+  <!-- ─────────────────────────────────────── -->
+  <!-- SECTION 2 – METADATA                   -->
+  <!-- ─────────────────────────────────────── -->
+  <div class="section-label" id="sec2">
+    <div class="num">2</div>
+    <h2>Metadata</h2>
+  </div>
+
+  <div class="card">
+    <div class="card-header open" onclick="toggle(this)">
+      <div class="ch-left">
+        <span class="card-icon">🏷️</span>
+        <h3><span>Outcome 2</span>Definition, Purpose &amp; Examples</h3>
+      </div>
+      <button class="toggle-btn open">▲</button>
+    </div>
+    <div class="card-body open">
+
+      <div class="def-box">
+        <div class="def-label">Definition</div>
+        <p><strong>Metadata</strong> is "data about data." It describes the structure, format, constraints, and context of the actual data stored in a database—without being the data itself.</p>
+      </div>
+
+      <p>If you think of the database as a library, the <em>books</em> are your data. Metadata is everything on the card catalog entry: author, genre, page count, language, shelf location. It tells you <em>about</em> the book, not what's inside it.</p>
+
+      <h4>Where Metadata Lives in a Database</h4>
+      <p>In most relational database systems (like Microsoft SQL Server, MySQL, or PostgreSQL), metadata is stored in a special area called the <strong>data dictionary</strong> or <strong>system catalog</strong>. This is queried automatically whenever you or the DBMS needs to understand the structure of the data.</p>
+
+      <h4>Categories of Database Metadata with Examples</h4>
+      <table class="styled-table">
+        <thead>
+          <tr>
+            <th>Category</th>
+            <th>Example</th>
+            <th>What It Describes</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>Table Metadata</td>
+            <td>Table name: <em>Orders</em></td>
+            <td>The name and existence of a table in the database</td>
+          </tr>
+          <tr>
+            <td>Column Metadata</td>
+            <td>Column: <em>OrderDate</em>, Type: <em>DATE</em></td>
+            <td>Column name, data type, and position in the table</td>
+          </tr>
+          <tr>
+            <td>Constraint Metadata</td>
+            <td><em>OrderID</em> is NOT NULL and PRIMARY KEY</td>
+            <td>Rules that enforce data integrity on columns</td>
+          </tr>
+          <tr>
+            <td>Relationship Metadata</td>
+            <td><em>Orders.CustomerID</em> → <em>Customers.CustomerID</em></td>
+            <td>Foreign key links between tables</td>
+          </tr>
+          <tr>
+            <td>Index Metadata</td>
+            <td>Index <em>idx_last_name</em> on <em>Customers(LastName)</em></td>
+            <td>Which columns are indexed for faster lookups</td>
+          </tr>
+          <tr>
+            <td>Size/Storage Metadata</td>
+            <td>VARCHAR(100) — max 100 characters</td>
+            <td>Storage allocation and field size limits</td>
+          </tr>
+          <tr>
+            <td>Audit Metadata</td>
+            <td>CreatedAt: <em>2024-09-01 08:32:17</em></td>
+            <td>When a record was created or last modified</td>
+          </tr>
+          <tr>
+            <td>Permission Metadata</td>
+            <td>User <em>jsmith</em> has SELECT on <em>Employees</em></td>
+            <td>Access rights and security settings</td>
+          </tr>
+        </tbody>
+      </table>
+
+      <h4>Metadata in Action — SQL Example</h4>
+      <p>In SQL Server you can query the system catalog to see metadata about your tables:</p>
+      <div class="code-block"><span class="cmt">-- Query metadata: see all columns in the 'Customers' table</span>
+<span class="kw">SELECT</span>
+    COLUMN_NAME,
+    DATA_TYPE,
+    CHARACTER_MAXIMUM_LENGTH,
+    IS_NULLABLE
+<span class="kw">FROM</span>
+    INFORMATION_SCHEMA.COLUMNS
+<span class="kw">WHERE</span>
+    TABLE_NAME = <span class="str">'Customers'</span>
+<span class="kw">ORDER BY</span>
+    ORDINAL_POSITION;</div>
+
+      <p>This query returns <em>metadata</em>—information describing the columns in the Customers table, not the customer records themselves.</p>
+
+      <div class="callout callout-key">
+        <span class="callout-icon">🔑</span>
+        <div class="callout-body">
+          <strong>Key Takeaway</strong>
+          Metadata is essential for database management. It tells the DBMS how to store, validate, retrieve, and secure your data. Without metadata, the database has no way to interpret raw bytes.
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+
+  <!-- ─────────────────────────────────────── -->
+  <!-- SECTION 3 – RELATIONAL DATABASES       -->
+  <!-- ─────────────────────────────────────── -->
+  <div class="section-label" id="sec3">
+    <div class="num">3</div>
+    <h2>The Relational Database</h2>
+  </div>
+
+  <div class="card">
+    <div class="card-header open" onclick="toggle(this)">
+      <div class="ch-left">
+        <span class="card-icon">🔗</span>
+        <h3><span>Outcome 3</span>Purpose &amp; Structure of Relational Databases</h3>
+      </div>
+      <button class="toggle-btn open">▲</button>
+    </div>
+    <div class="card-body open">
+
+      <div class="def-box">
+        <div class="def-label">Definition</div>
+        <p>A <strong>relational database</strong> organizes data into two-dimensional tables (relations) and uses defined relationships between those tables to eliminate redundancy and maintain data integrity. It is based on E.F. Codd's <em>Relational Model</em> (1970).</p>
+      </div>
+
+      <h4>The Core Purpose</h4>
+      <p>The relational model was created to solve two major problems in early data storage:</p>
+      <ul>
+        <li><strong>Data Redundancy</strong> — storing the same data in multiple places, leading to inconsistencies when updates occur</li>
+        <li><strong>Data Anomalies</strong> — update, insertion, and deletion errors that arise from poor data organization</li>
+      </ul>
+
+      <h4>How Relationships Work: Keys</h4>
+      <div class="two-col">
+        <div class="callout callout-info">
+          <span class="callout-icon">🔑</span>
+          <div class="callout-body">
+            <strong>Primary Key (PK)</strong>
+            A column (or combination) whose value uniquely identifies each row in a table. No two rows can share the same PK value, and it cannot be NULL.
+            <br/><br/>Example: <em>CustomerID</em> in the Customers table.
+          </div>
+        </div>
+        <div class="callout callout-tip">
+          <span class="callout-icon">🔗</span>
+          <div class="callout-body">
+            <strong>Foreign Key (FK)</strong>
+            A column in one table that references the Primary Key of another table. This link is the "relation" in relational database.
+            <br/><br/>Example: <em>Orders.CustomerID</em> references <em>Customers.CustomerID</em>.
+          </div>
+        </div>
+      </div>
+
+      <h4>Visualizing a Relationship</h4>
+      <p>Below are two related tables. The <strong>Orders</strong> table links back to the <strong>Customers</strong> table through a Foreign Key. This means we never have to repeat the customer's name and address inside every order—we simply reference their ID.</p>
+
+      <table class="styled-table">
+        <thead><tr><th colspan="5">🟦 Customers Table</th></tr>
+          <tr><th>CustomerID (PK)</th><th>FirstName</th><th>LastName</th><th>Email</th><th>City</th></tr>
+        </thead>
+        <tbody>
+          <tr><td>1001</td><td>Maria</td><td>Garcia</td><td>mgarcia@mail.com</td><td>Miami</td></tr>
+          <tr><td>1002</td><td>James</td><td>Okafor</td><td>jokafor@mail.com</td><td>Atlanta</td></tr>
+        </tbody>
+      </table>
+
+      <table class="styled-table">
+        <thead><tr><th colspan="4">🟩 Orders Table</th></tr>
+          <tr><th>OrderID (PK)</th><th>CustomerID (FK)</th><th>OrderDate</th><th>TotalAmount</th></tr>
+        </thead>
+        <tbody>
+          <tr><td>5001</td><td>1001</td><td>2024-10-15</td><td>$142.00</td></tr>
+          <tr><td>5002</td><td>1001</td><td>2024-11-02</td><td>$89.50</td></tr>
+          <tr><td>5003</td><td>1002</td><td>2024-11-10</td><td>$220.00</td></tr>
+        </tbody>
+      </table>
+
+      <p>Notice that <strong>Maria Garcia's</strong> name and email are stored only once in Customers. Both her orders (5001 and 5002) simply store <em>1001</em> as the CustomerID. If her email changes, you update it in <strong>one place</strong>—not inside every order.</p>
+
+      <h4>Key Benefits of the Relational Model</h4>
+      <table class="styled-table">
+        <thead><tr><th>Benefit</th><th>Explanation</th></tr></thead>
+        <tbody>
+          <tr><td>Reduces Redundancy</td><td>Data is stored once and referenced, not duplicated across many records</td></tr>
+          <tr><td>Enforces Integrity</td><td>Foreign key constraints prevent orphaned records (e.g., an order for a non-existent customer)</td></tr>
+          <tr><td>Enables Complex Queries</td><td>SQL JOIN operations let you combine data from multiple tables on demand</td></tr>
+          <tr><td>Scales Cleanly</td><td>Adding new related entities only requires new tables and key references</td></tr>
+          <tr><td>Standardized Language</td><td>SQL is the universal language for all relational databases</td></tr>
+        </tbody>
+      </table>
+
+      <div class="callout callout-warning">
+        <span class="callout-icon">⚠️</span>
+        <div class="callout-body">
+          <strong>Relational vs. Non-Relational (NoSQL)</strong>
+          Not all databases are relational. NoSQL databases (like MongoDB or Cassandra) store data as documents, key-value pairs, or graphs. They trade strict structure for flexibility and horizontal scalability. The relational model remains the dominant paradigm for structured business data.
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+
+  <!-- ─────────────────────────────────────── -->
+  <!-- SECTION 4 – DATA, INFORMATION, KNOWLEDGE -->
+  <!-- ─────────────────────────────────────── -->
+  <div class="section-label" id="sec4">
+    <div class="num">4</div>
+    <h2>Data, Information &amp; Knowledge</h2>
+  </div>
+
+  <div class="card">
+    <div class="card-header open" onclick="toggle(this)">
+      <div class="ch-left">
+        <span class="card-icon">🧠</span>
+        <h3><span>Outcome 4</span>The DIKW Hierarchy: From Raw Facts to Wisdom</h3>
+      </div>
+      <button class="toggle-btn open">▲</button>
+    </div>
+    <div class="card-body open">
+
+      <p>Databases store <strong>data</strong>—but the ultimate goal is to enable <strong>information</strong> and <strong>knowledge</strong>. Understanding the difference between these three concepts (and wisdom) is fundamental to database design and use.</p>
+
+      <h4>The DIKW Model</h4>
+      <p>The <strong>DIKW Pyramid</strong> (Data → Information → Knowledge → Wisdom) describes how raw facts are transformed into insight and action.</p>
+
+      <!-- DIKW Pyramid Visual -->
+      <div class="pyramid-wrap">
+
+        <div class="pyramid-row">
+          <div class="pyramid-block" style="background:#8e44ad;width:140px;">🌟 Wisdom</div>
+          <div class="pyramid-desc"><strong>Wisdom:</strong> Knowing <em>when and why</em> to act. "Our store's revenue dropped 20% in October. We should run a promotion before the holiday season." — Judgment built on experience and knowledge.</div>
+        </div>
+
+        <div class="pyramid-row">
+          <div class="pyramid-block" style="background:#1a7a4a;width:200px;">💡 Knowledge</div>
+          <div class="pyramid-desc"><strong>Knowledge:</strong> Patterns and insights drawn from information. "October sales are consistently lower than November. Holiday promotions consistently boost revenue by 30%." — Understanding <em>why</em> and predicting outcomes.</div>
+        </div>
+
+        <div class="pyramid-row">
+          <div class="pyramid-block" style="background:#1b6ca8;width:260px;">📊 Information</div>
+          <div class="pyramid-desc"><strong>Information:</strong> Data that has been processed and given context. "Total sales in October 2024 = $42,000. Total sales in September 2024 = $52,000. October was 19% lower." — Data with meaning.</div>
+        </div>
+
+        <div class="pyramid-row">
+          <div class="pyramid-block" style="background:#0d1b2a;width:320px;">🔢 Data</div>
+          <div class="pyramid-desc"><strong>Data:</strong> Raw, unprocessed facts and figures. <code>42000, 52000, 10-2024, 09-2024</code> — Numbers with no context, no interpretation, no meaning on their own.</div>
+        </div>
+
+      </div>
+
+      <h4>Detailed Comparison</h4>
+      <div class="compare-box">
+        <div class="compare-header">
+          <div>📊 Information</div>
+          <div>💡 Knowledge</div>
+        </div>
+        <div class="compare-row">
+          <div>Processed and organized data</div>
+          <div>Synthesized from multiple pieces of information</div>
+        </div>
+        <div class="compare-row">
+          <div>Answers <em>What?</em> and <em>How many?</em></div>
+          <div>Answers <em>Why?</em> and <em>What will happen if...?</em></div>
+        </div>
+        <div class="compare-row">
+          <div>Contextual — has structure and meaning</div>
+          <div>Experiential — built from patterns and analysis over time</div>
+        </div>
+        <div class="compare-row">
+          <div>"Sales are down this month"</div>
+          <div>"Sales drop every October; a promotion will help"</div>
+        </div>
+        <div class="compare-row">
+          <div>Output of a database query</div>
+          <div>Output of analysis, reporting, and expertise</div>
+        </div>
+      </div>
+
+      <h4>Database Examples of the Hierarchy</h4>
+      <table class="styled-table">
+        <thead>
+          <tr><th>Level</th><th>Database Context</th><th>Real-World Example</th></tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>Data</td>
+            <td>Raw values in a table cell</td>
+            <td>37.2, "F", "2024-11-10 08:42", Patient ID 8823</td>
+          </tr>
+          <tr>
+            <td>Information</td>
+            <td>Query result with context</td>
+            <td>"Patient 8823 had a fever of 37.2°F on Nov 10 at 8:42 AM"</td>
+          </tr>
+          <tr>
+            <td>Knowledge</td>
+            <td>Trends from aggregated reports</td>
+            <td>"Patients with temp &gt; 37°F show 40% readmission within 7 days"</td>
+          </tr>
+          <tr>
+            <td>Wisdom</td>
+            <td>Decision driven by knowledge</td>
+            <td>"Discharge protocols should include follow-up calls for fever patients"</td>
+          </tr>
+        </tbody>
+      </table>
+
+      <div class="callout callout-key">
+        <span class="callout-icon">🔑</span>
+        <div class="callout-body">
+          <strong>Why This Matters for Databases</strong>
+          Databases are the foundation of the DIKW hierarchy. They store the <em>raw data</em>. Through queries, reports, and analysis, that data becomes <em>information</em> and eventually <em>knowledge</em> that drives business decisions. A poorly designed database produces unreliable information and, consequently, flawed decisions.
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+
+  <!-- ─────────────────────────────────────── -->
+  <!-- SECTION 5 – IMPORTANCE OF MANAGEMENT   -->
+  <!-- ─────────────────────────────────────── -->
+  <div class="section-label" id="sec5">
+    <div class="num">5</div>
+    <h2>The Importance of Managing the Database</h2>
+  </div>
+
+  <div class="card">
+    <div class="card-header open" onclick="toggle(this)">
+      <div class="ch-left">
+        <span class="card-icon">⚙️</span>
+        <h3><span>Outcome 5</span>Why Database Management Matters</h3>
+      </div>
+      <button class="toggle-btn open">▲</button>
+    </div>
+    <div class="card-body open">
+
+      <p>A database without proper management quickly becomes unreliable, insecure, and unusable. Database management is the ongoing process of maintaining, securing, tuning, and evolving a database to ensure it continues to serve its users accurately and efficiently.</p>
+
+      <h4>Core Pillars of Database Management</h4>
+
+      <div class="term-grid">
+        <div class="term-card" style="border-top-color:#1a7a4a;">
+          <div class="term-name" style="color:#1a7a4a;">🛡️ Data Integrity</div>
+          <p>Ensuring data is accurate, consistent, and trustworthy. Enforced through constraints, validation rules, and transactions (ACID properties).</p>
+        </div>
+        <div class="term-card" style="border-top-color:#b5372a;">
+          <div class="term-name" style="color:#b5372a;">🔒 Security</div>
+          <p>Controlling who can read, write, or modify data. Includes user roles, permissions, encryption, and auditing access logs.</p>
+        </div>
+        <div class="term-card" style="border-top-color:#5b3fa6;">
+          <div class="term-name" style="color:#5b3fa6;">💾 Backup &amp; Recovery</div>
+          <p>Protecting against data loss from hardware failure, human error, or disasters. Regular backups and tested recovery plans are essential.</p>
+        </div>
+        <div class="term-card" style="border-top-color:#f0a500;">
+          <div class="term-name" style="color:#c47f00;">⚡ Performance</div>
+          <p>Monitoring and tuning query speed, index efficiency, and resource usage so the database responds quickly as it grows.</p>
+        </div>
+        <div class="term-card" style="border-top-color:#1b6ca8;">
+          <div class="term-name" style="color:#1b6ca8;">👥 Concurrency</div>
+          <p>Allowing many users to read/write simultaneously without conflict. Handled through transactions, locking, and isolation levels.</p>
+        </div>
+        <div class="term-card" style="border-top-color:#0d1b2a;">
+          <div class="term-name" style="color:#0d1b2a;">📐 Schema Evolution</div>
+          <p>Safely adding new tables, columns, and relationships as business needs change—without breaking existing data or applications.</p>
+        </div>
+      </div>
+
+      <h4>ACID Properties — The Foundation of Data Reliability</h4>
+      <p>Every transaction in a well-managed relational database must satisfy the four ACID properties:</p>
+      <table class="styled-table">
+        <thead><tr><th>Property</th><th>Meaning</th><th>Example</th></tr></thead>
+        <tbody>
+          <tr>
+            <td>Atomicity</td>
+            <td>A transaction is all-or-nothing. If any step fails, the entire transaction is rolled back.</td>
+            <td>Bank transfer: debit <em>and</em> credit must both succeed—or neither happens.</td>
+          </tr>
+          <tr>
+            <td>Consistency</td>
+            <td>Every transaction brings the database from one valid state to another. No rules are broken.</td>
+            <td>After any transaction, all foreign key and constraint rules still hold.</td>
+          </tr>
+          <tr>
+            <td>Isolation</td>
+            <td>Concurrent transactions are executed as if they were sequential. One transaction's changes are invisible to others until committed.</td>
+            <td>Two users booking the last available seat both see it available—only one succeeds.</td>
+          </tr>
+          <tr>
+            <td>Durability</td>
+            <td>Once committed, a transaction's changes persist even if the system crashes immediately after.</td>
+            <td>Your submitted order is saved even if the server crashes one second later.</td>
+          </tr>
+        </tbody>
+      </table>
+
+      <h4>What Happens Without Good Management?</h4>
+      <div class="callout callout-warning">
+        <span class="callout-icon">⚠️</span>
+        <div class="callout-body">
+          <strong>Real Consequences of Poor Database Management</strong>
+          <ul style="margin-top:6px;padding-left:18px;">
+            <li><strong>Data Loss</strong> — No backup means a hardware failure loses everything permanently</li>
+            <li><strong>Security Breaches</strong> — Unmanaged permissions can expose sensitive data to unauthorized users</li>
+            <li><strong>Performance Degradation</strong> — Unindexed tables slow to a crawl as millions of records accumulate</li>
+            <li><strong>Corrupt Data</strong> — Missing integrity constraints allow logically impossible values to be stored</li>
+            <li><strong>Downtime</strong> — Poor capacity planning can cause system failures during peak usage</li>
+            <li><strong>Compliance Violations</strong> — Regulations like HIPAA, PCI-DSS, and GDPR require specific data handling; non-compliance has legal consequences</li>
+          </ul>
+        </div>
+      </div>
+
+      <h4>The Role of the DBA (Database Administrator)</h4>
+      <p>A <strong>Database Administrator (DBA)</strong> is the professional responsible for managing the database environment. Their responsibilities span the entire lifecycle of the database:</p>
+      <ul>
+        <li>Installing, configuring, and upgrading the DBMS software</li>
+        <li>Designing and maintaining the database schema</li>
+        <li>Implementing and testing backup and recovery procedures</li>
+        <li>Managing user accounts, roles, and permissions</li>
+        <li>Monitoring performance and applying tuning recommendations</li>
+        <li>Ensuring compliance with data governance and security policies</li>
+      </ul>
+
+    </div>
+  </div>
+
+
+  <!-- ─────────────────────────────────────── -->
+  <!-- SECTION 6 – COMMON DBMS PLATFORMS      -->
+  <!-- ─────────────────────────────────────── -->
+  <div class="section-label" id="sec6">
+    <div class="num">6</div>
+    <h2>Commonly Used Database Management Systems</h2>
+  </div>
+
+  <div class="card">
+    <div class="card-header open" onclick="toggle(this)">
+      <div class="ch-left">
+        <span class="card-icon">🖥️</span>
+        <h3><span>Outcome 6</span>What Is a DBMS &amp; Major Platforms</h3>
+      </div>
+      <button class="toggle-btn open">▲</button>
+    </div>
+    <div class="card-body open">
+
+      <div class="def-box">
+        <div class="def-label">Definition</div>
+        <p>A <strong>Database Management System (DBMS)</strong> is the software layer that sits between users/applications and the database itself. It handles creating, reading, updating, deleting, securing, and maintaining data on behalf of the users.</p>
+      </div>
+
+      <p>The DBMS is what you actually install and interact with. When we say "SQL Server" or "MySQL," we are referring to a specific DBMS product. Without a DBMS, raw database files are inaccessible and meaningless.</p>
+
+      <h4>Functions Performed by a DBMS</h4>
+      <ul>
+        <li>Interpreting SQL queries and returning results</li>
+        <li>Enforcing constraints and referential integrity</li>
+        <li>Managing concurrent multi-user access with locking and transactions</li>
+        <li>Maintaining the data dictionary (metadata storage)</li>
+        <li>Providing security controls (authentication, authorization)</li>
+        <li>Performing backup, recovery, and replication operations</li>
+        <li>Optimizing query execution plans for performance</li>
+      </ul>
+
+      <h4>Major DBMS Platforms</h4>
+      <div class="dbms-grid">
+
+        <div class="dbms-card">
+          <div class="dbms-logo">🟦</div>
+          <div class="dbms-name">Microsoft SQL Server</div>
+          <div class="dbms-vendor">Microsoft Corporation</div>
+          <p>Enterprise-grade relational DBMS tightly integrated with the Windows/Azure ecosystem. Industry standard for enterprise applications, reporting, and business intelligence. Uses T-SQL dialect.</p>
+          <span class="dbms-tag comm">Commercial</span>
+          <span class="dbms-tag">Relational</span>
+          <span class="dbms-tag">T-SQL</span>
+        </div>
+
+        <div class="dbms-card">
+          <div class="dbms-logo">🐬</div>
+          <div class="dbms-name">MySQL</div>
+          <div class="dbms-vendor">Oracle Corporation (open-source)</div>
+          <p>The world's most widely deployed open-source RDBMS. The de facto standard for web applications and the "M" in the LAMP/WAMP stack. Powers platforms like Facebook, YouTube, and WordPress.</p>
+          <span class="dbms-tag oss">Open Source</span>
+          <span class="dbms-tag">Relational</span>
+          <span class="dbms-tag">Web Apps</span>
+        </div>
+
+        <div class="dbms-card">
+          <div class="dbms-logo">🐘</div>
+          <div class="dbms-name">PostgreSQL</div>
+          <div class="dbms-vendor">PostgreSQL Global Dev Group</div>
+          <p>Advanced open-source RDBMS known for standards compliance, extensibility, and support for complex data types (JSON, arrays, geospatial). Preferred for analytical and complex applications.</p>
+          <span class="dbms-tag oss">Open Source</span>
+          <span class="dbms-tag">Relational</span>
+          <span class="dbms-tag">Advanced</span>
+        </div>
+
+        <div class="dbms-card">
+          <div class="dbms-logo">🔴</div>
+          <div class="dbms-name">Oracle Database</div>
+          <div class="dbms-vendor">Oracle Corporation</div>
+          <p>Long-standing leader in enterprise database solutions. Dominant in large-scale, mission-critical industries (banking, healthcare, government) where maximum reliability is required.</p>
+          <span class="dbms-tag comm">Commercial</span>
+          <span class="dbms-tag">Relational</span>
+          <span class="dbms-tag">Enterprise</span>
+        </div>
+
+        <div class="dbms-card">
+          <div class="dbms-logo">🪶</div>
+          <div class="dbms-name">SQLite</div>
+          <div class="dbms-vendor">Public Domain (D. Richard Hipp)</div>
+          <p>Lightweight, serverless, self-contained relational engine embedded directly in the application. No installation required. Used in mobile apps (iOS/Android), browsers, and embedded systems.</p>
+          <span class="dbms-tag oss">Open Source</span>
+          <span class="dbms-tag">Embedded</span>
+          <span class="dbms-tag">Serverless</span>
+        </div>
+
+        <div class="dbms-card">
+          <div class="dbms-logo">🍃</div>
+          <div class="dbms-name">MongoDB</div>
+          <div class="dbms-vendor">MongoDB, Inc.</div>
+          <p>Leading document-oriented NoSQL database. Stores data as flexible JSON-like documents instead of rows and columns—ideal when data structure varies or changes frequently.</p>
+          <span class="dbms-tag oss">Open Source</span>
+          <span class="dbms-tag nosql">NoSQL</span>
+          <span class="dbms-tag">Document Store</span>
+        </div>
+
+      </div>
+
+      <h4>Quick Comparison: When to Use Which?</h4>
+      <table class="styled-table">
+        <thead>
+          <tr>
+            <th>DBMS</th>
+            <th>Best For</th>
+            <th>License</th>
+            <th>SQL?</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>SQL Server</td>
+            <td>Enterprise apps, BI/Reporting, .NET environments</td>
+            <td>Commercial (free Express ed.)</td>
+            <td>Yes (T-SQL)</td>
+          </tr>
+          <tr>
+            <td>MySQL</td>
+            <td>Web applications, startups, high read workloads</td>
+            <td>Open Source (GPL) / Commercial</td>
+            <td>Yes</td>
+          </tr>
+          <tr>
+            <td>PostgreSQL</td>
+            <td>Complex queries, data analytics, geospatial data</td>
+            <td>Open Source (PostgreSQL License)</td>
+            <td>Yes</td>
+          </tr>
+          <tr>
+            <td>Oracle DB</td>
+            <td>Large enterprise, banking, ERP systems</td>
+            <td>Commercial</td>
+            <td>Yes (PL/SQL)</td>
+          </tr>
+          <tr>
+            <td>SQLite</td>
+            <td>Mobile apps, local storage, testing</td>
+            <td>Public Domain</td>
+            <td>Yes (subset)</td>
+          </tr>
+          <tr>
+            <td>MongoDB</td>
+            <td>Flexible schemas, JSON data, real-time apps</td>
+            <td>Open Source / Commercial</td>
+            <td>No (MQL)</td>
+          </tr>
+        </tbody>
+      </table>
+
+      <div class="callout callout-info">
+        <span class="callout-icon">📌</span>
+        <div class="callout-body">
+          <strong>Course Focus</strong>
+          This course focuses on <strong>Microsoft SQL Server</strong> using <strong>T-SQL</strong>. The concepts you learn—tables, queries, keys, normalization, transactions—apply universally across all relational DBMS platforms with minor syntax differences.
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+
+  <!-- ─────────────────────────────────────── -->
+  <!-- SECTION – MODULE SUMMARY               -->
+  <!-- ─────────────────────────────────────── -->
+  <div class="section-label" style="margin-top:48px;">
+    <div class="num" style="background:var(--gold);color:var(--navy);">✓</div>
+    <h2>Module Summary &amp; Key Terms</h2>
+  </div>
+
+  <div class="card">
+    <div class="card-header open" onclick="toggle(this)">
+      <div class="ch-left">
+        <span class="card-icon">📋</span>
+        <h3><span>Review</span>What You've Learned — Key Terms Glossary</h3>
+      </div>
+      <button class="toggle-btn open">▲</button>
+    </div>
+    <div class="card-body open">
+
+      <div class="strip">
+        <strong>Congratulations on completing Module 1!</strong> You've built the foundational vocabulary and conceptual framework for everything that follows in this course. Every future topic—normalization, SQL queries, indexes, transactions—builds directly on these ideas.
+      </div>
+
+      <h4>Essential Vocabulary</h4>
+      <table class="styled-table">
+        <thead><tr><th>Term</th><th>Definition</th></tr></thead>
+        <tbody>
+          <tr><td>Database</td><td>An organized, structured collection of related data stored electronically</td></tr>
+          <tr><td>Table</td><td>A structured set of rows and columns that stores data about a single subject</td></tr>
+          <tr><td>Row (Record)</td><td>A single entry representing one instance of the subject in a table</td></tr>
+          <tr><td>Column (Field)</td><td>An attribute or property of the subject; each column has a name and data type</td></tr>
+          <tr><td>Primary Key</td><td>A column that uniquely identifies every row in a table; cannot be NULL or duplicate</td></tr>
+          <tr><td>Foreign Key</td><td>A column that references the Primary Key of another table, establishing a relationship</td></tr>
+          <tr><td>Metadata</td><td>"Data about data" — describes the structure, type, and constraints of the actual data</td></tr>
+          <tr><td>Data Dictionary</td><td>The system catalog that stores all metadata for a database</td></tr>
+          <tr><td>Relational Database</td><td>A database that organizes data into related tables, eliminating redundancy via keys</td></tr>
+          <tr><td>Data</td><td>Raw, unprocessed facts and figures with no inherent meaning or context</td></tr>
+          <tr><td>Information</td><td>Processed data given context and meaning — answers "what?"</td></tr>
+          <tr><td>Knowledge</td><td>Patterns and insights synthesized from information — answers "why?" and predicts outcomes</td></tr>
+          <tr><td>DIKW Model</td><td>Data → Information → Knowledge → Wisdom hierarchy</td></tr>
+          <tr><td>DBMS</td><td>Database Management System — software that manages database creation, access, and maintenance</td></tr>
+          <tr><td>DBA</td><td>Database Administrator — the professional responsible for managing the database environment</td></tr>
+          <tr><td>ACID</td><td>Atomicity, Consistency, Isolation, Durability — properties guaranteeing reliable transactions</td></tr>
+          <tr><td>SQL</td><td>Structured Query Language — the standard language for interacting with relational databases</td></tr>
+          <tr><td>Constraint</td><td>A rule that restricts the values allowed in a column (NOT NULL, UNIQUE, FK, CHECK)</td></tr>
+        </tbody>
+      </table>
+
+      <h4>Module Outcome Checklist</h4>
+      <div class="callout callout-tip">
+        <span class="callout-icon">✅</span>
+        <div class="callout-body">
+          <ul style="list-style:none;padding:0;margin:0;">
+            <li>☐ I can define a <strong>database</strong> and list the objects it contains (tables, keys, views, etc.)</li>
+            <li style="margin-top:6px;">☐ I can define <strong>metadata</strong> and give at least 3 examples from a database context</li>
+            <li style="margin-top:6px;">☐ I can explain why a <strong>relational database</strong> uses keys to avoid data redundancy</li>
+            <li style="margin-top:6px;">☐ I can explain the difference between <strong>data</strong>, <strong>information</strong>, and <strong>knowledge</strong> using the DIKW model</li>
+            <li style="margin-top:6px;">☐ I can identify at least 3 reasons why <strong>managing a database</strong> is important (integrity, security, performance, etc.)</li>
+            <li style="margin-top:6px;">☐ I can name at least 4 common <strong>DBMS platforms</strong> and describe a use case for each</li>
+          </ul>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+</main>
+
+<!-- ══════════════════ FOOTER ══════════════════ -->
+<footer>
+  <span>COP 4708 – Introduction to Databases</span> &nbsp;|&nbsp; Module 1: Foundations of Databases
+  <br/>
+  <span style="font-weight:300;color:#4a6a80;font-size:.78rem;margin-top:6px;display:block;">
+    Supports CLO 3: Develop the ability to manipulate databases using database management tools, techniques, and computer skills.
+  </span>
+</footer>
+
+<!-- ══════════════════ SCRIPT ══════════════════ -->
+<script>
+  function toggle(header) {
+    const body = header.nextElementSibling;
+    const btn  = header.querySelector('.toggle-btn');
+    const isOpen = body.classList.contains('open');
+
+    body.classList.toggle('open', !isOpen);
+    header.classList.toggle('open', !isOpen);
+    btn.classList.toggle('open', !isOpen);
+    btn.textContent = isOpen ? '▲' : '▲';
+    // flip via CSS transform; text stays same
+  }
+
+  function setAll(open) {
+    document.querySelectorAll('.card-body').forEach(b => {
+      b.classList.toggle('open', open);
+    });
+    document.querySelectorAll('.card-header').forEach(h => {
+      h.classList.toggle('open', open);
+    });
+    document.querySelectorAll('.toggle-btn').forEach(btn => {
+      btn.classList.toggle('open', open);
+    });
+  }
+</script>
+</body>
+</html>

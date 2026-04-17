@@ -1,0 +1,2007 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Florida Civics Literacy Exam – Study Guide</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700;900&family=Source+Serif+4:ital,wght@0,300;0,400;0,600;1,400&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --navy:      #0d1b35;
+    --navy-mid:  #162444;
+    --navy-light:#1e3060;
+    --gold:      #c9952a;
+    --gold-light:#e4b84a;
+    --gold-pale: #f5e6c8;
+    --crimson:   #8b1a2e;
+    --crimson-light: #b52040;
+    --cream:     #faf7f0;
+    --cream-dark:#f0ead8;
+    --text-dark: #1a1208;
+    --text-mid:  #3d3220;
+    --text-light:#6b5a3e;
+    --white:     #ffffff;
+    --star-gold: #e8c547;
+  }
+
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: 'Source Serif 4', Georgia, serif;
+    background: var(--cream);
+    color: var(--text-dark);
+    line-height: 1.7;
+  }
+
+  /* ─── HEADER ─────────────────────────────────────────── */
+  header {
+    background: var(--navy);
+    padding: 0;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .header-stripe {
+    height: 8px;
+    background: repeating-linear-gradient(
+      90deg,
+      var(--crimson) 0px, var(--crimson) 80px,
+      var(--white) 80px, var(--white) 160px
+    );
+  }
+
+  .header-inner {
+    max-width: 960px;
+    margin: 0 auto;
+    padding: 48px 32px 40px;
+    display: flex;
+    align-items: flex-start;
+    gap: 32px;
+    position: relative;
+    z-index: 1;
+  }
+
+  .seal-circle {
+    flex-shrink: 0;
+    width: 96px;
+    height: 96px;
+    border-radius: 50%;
+    border: 3px solid var(--gold);
+    background: var(--navy-light);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 48px;
+    box-shadow: 0 0 0 6px rgba(201,149,42,0.2);
+  }
+
+  .header-text h1 {
+    font-family: 'Playfair Display', Georgia, serif;
+    font-size: 2.4rem;
+    font-weight: 900;
+    color: var(--white);
+    line-height: 1.15;
+    letter-spacing: -0.01em;
+  }
+
+  .header-text h1 span {
+    color: var(--gold-light);
+  }
+
+  .header-text .subtitle {
+    margin-top: 10px;
+    font-size: 1rem;
+    color: rgba(255,255,255,0.72);
+    font-style: italic;
+    letter-spacing: 0.02em;
+  }
+
+  .header-badges {
+    display: flex;
+    gap: 12px;
+    margin-top: 16px;
+    flex-wrap: wrap;
+  }
+
+  .badge {
+    background: rgba(201,149,42,0.18);
+    border: 1px solid var(--gold);
+    color: var(--gold-light);
+    font-size: 0.75rem;
+    font-family: 'JetBrains Mono', monospace;
+    padding: 4px 10px;
+    border-radius: 3px;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+  }
+
+  .header-stripe-bottom {
+    height: 5px;
+    background: linear-gradient(90deg, var(--gold) 0%, var(--gold-light) 50%, var(--gold) 100%);
+  }
+
+  /* ─── INTRO BANNER ───────────────────────────────────── */
+  .intro-banner {
+    background: var(--navy-mid);
+    border-left: 5px solid var(--gold);
+    color: var(--cream);
+    padding: 20px 28px;
+    max-width: 960px;
+    margin: 32px auto 0;
+    border-radius: 0 6px 6px 0;
+    font-size: 0.97rem;
+    line-height: 1.65;
+  }
+
+  .intro-banner strong { color: var(--gold-light); }
+
+  /* ─── MAIN LAYOUT ────────────────────────────────────── */
+  main {
+    max-width: 960px;
+    margin: 32px auto 60px;
+    padding: 0 24px;
+  }
+
+  /* ─── SECTION CARDS ──────────────────────────────────── */
+  .topic-section {
+    background: var(--white);
+    border-radius: 8px;
+    margin-bottom: 20px;
+    box-shadow: 0 2px 10px rgba(13,27,53,0.09);
+    overflow: hidden;
+    border: 1px solid rgba(13,27,53,0.12);
+  }
+
+  .topic-header {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    padding: 20px 24px;
+    cursor: pointer;
+    user-select: none;
+    background: var(--navy);
+    transition: background 0.2s;
+  }
+
+  .topic-header:hover { background: var(--navy-light); }
+
+  .topic-icon {
+    font-size: 1.6rem;
+    flex-shrink: 0;
+    width: 44px;
+    height: 44px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: rgba(201,149,42,0.15);
+    border-radius: 6px;
+    border: 1px solid rgba(201,149,42,0.35);
+  }
+
+  .topic-title-group { flex: 1; }
+
+  .topic-number {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.7rem;
+    color: var(--gold);
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    margin-bottom: 2px;
+  }
+
+  .topic-title {
+    font-family: 'Playfair Display', Georgia, serif;
+    font-size: 1.15rem;
+    font-weight: 700;
+    color: var(--white);
+  }
+
+  .topic-toggle {
+    color: var(--gold);
+    font-size: 1.3rem;
+    transition: transform 0.3s;
+    flex-shrink: 0;
+  }
+
+  .topic-section.open .topic-toggle {
+    transform: rotate(180deg);
+  }
+
+  .topic-body {
+    display: none;
+    padding: 28px 28px 24px;
+    border-top: 3px solid var(--gold);
+  }
+
+  .topic-section.open .topic-body { display: block; }
+
+  /* ─── CONTENT INSIDE SECTIONS ────────────────────────── */
+  .topic-body h3 {
+    font-family: 'Playfair Display', Georgia, serif;
+    font-size: 1.05rem;
+    color: var(--navy);
+    margin: 22px 0 10px;
+    padding-bottom: 4px;
+    border-bottom: 2px solid var(--cream-dark);
+  }
+
+  .topic-body h3:first-child { margin-top: 0; }
+
+  .topic-body p {
+    font-size: 0.96rem;
+    color: var(--text-mid);
+    margin-bottom: 10px;
+    line-height: 1.72;
+  }
+
+  .topic-body ul, .topic-body ol {
+    padding-left: 22px;
+    margin-bottom: 12px;
+  }
+
+  .topic-body li {
+    font-size: 0.94rem;
+    color: var(--text-mid);
+    margin-bottom: 6px;
+    line-height: 1.65;
+  }
+
+  .topic-body li strong { color: var(--navy); }
+
+  /* ─── QUESTION BOXES ─────────────────────────────────── */
+  .question-block {
+    background: var(--cream);
+    border-radius: 6px;
+    border-left: 4px solid var(--gold);
+    padding: 14px 18px;
+    margin: 8px 0;
+  }
+
+  .question-block .q-label {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.68rem;
+    color: var(--gold);
+    text-transform: uppercase;
+    letter-spacing: 0.09em;
+    margin-bottom: 4px;
+    font-weight: 500;
+  }
+
+  .question-block .q-text {
+    font-size: 0.94rem;
+    color: var(--text-dark);
+    font-weight: 600;
+  }
+
+  .question-block .q-hint {
+    font-size: 0.87rem;
+    color: var(--text-light);
+    margin-top: 5px;
+    font-style: italic;
+  }
+
+  /* ─── KEY FACT BOXES ─────────────────────────────────── */
+  .key-fact {
+    background: linear-gradient(135deg, var(--navy) 0%, var(--navy-light) 100%);
+    color: var(--cream);
+    border-radius: 6px;
+    padding: 14px 18px;
+    margin: 14px 0;
+    font-size: 0.93rem;
+    line-height: 1.6;
+  }
+
+  .key-fact .kf-label {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.66rem;
+    color: var(--gold-light);
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    margin-bottom: 4px;
+  }
+
+  .key-fact strong { color: var(--gold-light); }
+
+  /* ─── ALERT / WARNING BOXES ──────────────────────────── */
+  .alert-box {
+    background: #fff5f5;
+    border-left: 4px solid var(--crimson);
+    border-radius: 0 6px 6px 0;
+    padding: 12px 16px;
+    margin: 14px 0;
+    font-size: 0.91rem;
+    color: var(--crimson);
+  }
+
+  .alert-box strong { color: var(--crimson); }
+
+  /* ─── RESOURCE LINKS ─────────────────────────────────── */
+  .resource-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+    gap: 10px;
+    margin-top: 12px;
+  }
+
+  .resource-link {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    background: var(--cream);
+    border: 1px solid var(--cream-dark);
+    border-radius: 6px;
+    padding: 10px 14px;
+    text-decoration: none;
+    color: var(--navy);
+    font-size: 0.88rem;
+    font-weight: 600;
+    transition: border-color 0.2s, background 0.2s;
+  }
+
+  .resource-link:hover {
+    background: var(--gold-pale);
+    border-color: var(--gold);
+    color: var(--navy);
+  }
+
+  .resource-link .r-icon { font-size: 1.1rem; flex-shrink: 0; }
+  .resource-link .r-desc { font-size: 0.76rem; color: var(--text-light); font-weight: 400; margin-top: 1px; }
+
+  /* ─── TWO-COLUMN LAYOUT ──────────────────────────────── */
+  .two-col {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 16px;
+    margin: 14px 0;
+  }
+
+  .two-col .col-box {
+    background: var(--cream);
+    border-radius: 6px;
+    padding: 14px 16px;
+    border: 1px solid var(--cream-dark);
+  }
+
+  .col-box h4 {
+    font-family: 'Playfair Display', serif;
+    font-size: 0.92rem;
+    color: var(--navy);
+    margin-bottom: 8px;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+
+  .col-box ul { padding-left: 18px; }
+  .col-box li { font-size: 0.87rem; color: var(--text-mid); }
+
+  /* ─── AMENDMENTS TABLE ───────────────────────────────── */
+  .amend-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 0.88rem;
+    margin: 14px 0;
+  }
+
+  .amend-table th {
+    background: var(--navy);
+    color: var(--gold-light);
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.75rem;
+    text-transform: uppercase;
+    letter-spacing: 0.07em;
+    padding: 9px 13px;
+    text-align: left;
+  }
+
+  .amend-table td {
+    padding: 9px 13px;
+    border-bottom: 1px solid var(--cream-dark);
+    color: var(--text-mid);
+    vertical-align: top;
+    line-height: 1.55;
+  }
+
+  .amend-table tr:nth-child(even) td { background: var(--cream); }
+  .amend-table td:first-child {
+    font-family: 'JetBrains Mono', monospace;
+    font-weight: 500;
+    color: var(--crimson);
+    white-space: nowrap;
+  }
+
+  /* ─── TIMELINE ───────────────────────────────────────── */
+  .timeline { margin: 14px 0; }
+
+  .tl-item {
+    display: flex;
+    gap: 14px;
+    margin-bottom: 12px;
+    align-items: flex-start;
+  }
+
+  .tl-year {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.78rem;
+    font-weight: 500;
+    color: var(--white);
+    background: var(--navy);
+    padding: 3px 8px;
+    border-radius: 4px;
+    flex-shrink: 0;
+    min-width: 56px;
+    text-align: center;
+  }
+
+  .tl-text { font-size: 0.9rem; color: var(--text-mid); line-height: 1.55; padding-top: 2px; }
+  .tl-text strong { color: var(--text-dark); }
+
+  /* ─── TOPIC NAV ──────────────────────────────────────── */
+  .toc-bar {
+    background: var(--navy-mid);
+    border-radius: 8px;
+    padding: 20px 24px;
+    margin-bottom: 28px;
+  }
+
+  .toc-bar h2 {
+    font-family: 'Playfair Display', serif;
+    font-size: 1rem;
+    color: var(--gold-light);
+    margin-bottom: 14px;
+    letter-spacing: 0.04em;
+  }
+
+  .toc-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+    gap: 6px;
+  }
+
+  .toc-item {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    background: rgba(255,255,255,0.06);
+    border-radius: 4px;
+    padding: 7px 11px;
+    cursor: pointer;
+    text-decoration: none;
+    color: rgba(255,255,255,0.82);
+    font-size: 0.84rem;
+    transition: background 0.15s, color 0.15s;
+  }
+
+  .toc-item:hover {
+    background: rgba(201,149,42,0.2);
+    color: var(--gold-light);
+  }
+
+  .toc-num {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.68rem;
+    color: var(--gold);
+  }
+
+  /* ─── FOOTER ─────────────────────────────────────────── */
+  footer {
+    background: var(--navy);
+    color: rgba(255,255,255,0.55);
+    text-align: center;
+    padding: 24px;
+    font-size: 0.82rem;
+    line-height: 1.7;
+  }
+
+  footer a { color: var(--gold-light); text-decoration: none; }
+  footer a:hover { text-decoration: underline; }
+
+  /* ─── EXPAND ALL BUTTON ──────────────────────────────── */
+  .controls-bar {
+    display: flex;
+    gap: 10px;
+    margin-bottom: 20px;
+    flex-wrap: wrap;
+    align-items: center;
+  }
+
+  .ctrl-btn {
+    background: var(--navy);
+    color: var(--gold-light);
+    border: 1px solid var(--gold);
+    padding: 7px 16px;
+    border-radius: 4px;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.78rem;
+    letter-spacing: 0.05em;
+    cursor: pointer;
+    transition: background 0.2s;
+  }
+
+  .ctrl-btn:hover { background: var(--navy-light); }
+
+  .progress-note {
+    font-size: 0.82rem;
+    color: var(--text-light);
+    font-style: italic;
+    margin-left: auto;
+  }
+
+  @media (max-width: 640px) {
+    .header-inner { flex-direction: column; gap: 16px; }
+    .header-text h1 { font-size: 1.7rem; }
+    .two-col { grid-template-columns: 1fr; }
+    .toc-grid { grid-template-columns: 1fr 1fr; }
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="header-stripe"></div>
+  <div class="header-inner">
+    <div class="seal-circle">🏛️</div>
+    <div class="header-text">
+      <h1>Florida <span>Civics Literacy</span><br>Exam Study Guide</h1>
+      <p class="subtitle">Comprehensive preparation for the Florida Civic Literacy Act examination</p>
+      <div class="header-badges">
+        <span class="badge">12 Core Topics</span>
+        <span class="badge">SB 1108 Aligned</span>
+        <span class="badge">Practice Questions</span>
+        <span class="badge">Source Links</span>
+      </div>
+    </div>
+  </div>
+  <div class="header-stripe-bottom"></div>
+</header>
+
+<main>
+
+  <div class="intro-banner">
+    <strong>About This Guide:</strong> Florida's Civic Literacy Act (SB 1108, 2021) requires all students at state colleges and universities to demonstrate civic literacy before graduation — either by passing a statewide exam or by completing an approved civics course. This guide covers the <strong>12 major topic areas</strong> most commonly tested, with typical exam questions, key facts, and direct links to authoritative sources for deeper study.
+  </div>
+
+  <br>
+
+  <div class="toc-bar">
+    <h2>📋 Topics at a Glance</h2>
+    <div class="toc-grid">
+      <a class="toc-item" onclick="openSection('s1')"><span class="toc-num">01</span> Founding Principles & Declaration</a>
+      <a class="toc-item" onclick="openSection('s2')"><span class="toc-num">02</span> U.S. Constitution</a>
+      <a class="toc-item" onclick="openSection('s3')"><span class="toc-num">03</span> Bill of Rights & Amendments</a>
+      <a class="toc-item" onclick="openSection('s4')"><span class="toc-num">04</span> Three Branches of Government</a>
+      <a class="toc-item" onclick="openSection('s5')"><span class="toc-num">05</span> Federalism & State Government</a>
+      <a class="toc-item" onclick="openSection('s6')"><span class="toc-num">06</span> The Legislative Process</a>
+      <a class="toc-item" onclick="openSection('s7')"><span class="toc-num">07</span> Elections & Voting Rights</a>
+      <a class="toc-item" onclick="openSection('s8')"><span class="toc-num">08</span> Civil Rights & Equal Protection</a>
+      <a class="toc-item" onclick="openSection('s9')"><span class="toc-num">09</span> Florida Government & Constitution</a>
+      <a class="toc-item" onclick="openSection('s10')"><span class="toc-num">10</span> U.S. Foreign Policy</a>
+      <a class="toc-item" onclick="openSection('s11')"><span class="toc-num">11</span> Free Enterprise & Economics</a>
+      <a class="toc-item" onclick="openSection('s12')"><span class="toc-num">12</span> Historical Documents & Eras</a>
+    </div>
+  </div>
+
+  <div class="controls-bar">
+    <button class="ctrl-btn" onclick="expandAll()">▼ Expand All</button>
+    <button class="ctrl-btn" onclick="collapseAll()">▲ Collapse All</button>
+    <span class="progress-note">Click any section header to expand / collapse</span>
+  </div>
+
+
+  <!-- ═══════════════════════════════════════════════════════ -->
+  <!-- SECTION 1: FOUNDING PRINCIPLES & DECLARATION           -->
+  <!-- ═══════════════════════════════════════════════════════ -->
+  <div class="topic-section" id="s1">
+    <div class="topic-header" onclick="toggleSection('s1')">
+      <div class="topic-icon">📜</div>
+      <div class="topic-title-group">
+        <div class="topic-number">Topic 01</div>
+        <div class="topic-title">Founding Principles &amp; the Declaration of Independence</div>
+      </div>
+      <div class="topic-toggle">▼</div>
+    </div>
+    <div class="topic-body">
+
+      <h3>Core Founding Principles</h3>
+      <p>The American republic was built on Enlightenment-era ideas drawn from philosophers like John Locke, Montesquieu, and Jean-Jacques Rousseau. These principles form the ideological bedrock of U.S. democracy.</p>
+      <ul>
+        <li><strong>Popular Sovereignty:</strong> Government authority derives from the consent of the governed — the people are the ultimate source of political power.</li>
+        <li><strong>Natural Rights / Unalienable Rights:</strong> People possess rights that cannot be taken away by any government — life, liberty, and the pursuit of happiness.</li>
+        <li><strong>Limited Government:</strong> Government power is restricted by law and a written constitution; no one is above the law.</li>
+        <li><strong>Separation of Powers:</strong> Government is divided into three independent branches to prevent tyranny.</li>
+        <li><strong>Checks and Balances:</strong> Each branch can limit the powers of the other two branches.</li>
+        <li><strong>Republicanism:</strong> Citizens elect representatives to make laws on their behalf rather than governing directly themselves.</li>
+        <li><strong>Federalism:</strong> Power is divided between the national government and state governments.</li>
+        <li><strong>Individual Rights:</strong> The rights of individuals are protected even against majority rule.</li>
+      </ul>
+
+      <h3>The Declaration of Independence (1776)</h3>
+      <div class="key-fact">
+        <div class="kf-label">⭐ Key Fact</div>
+        The Declaration of Independence was adopted by the Second Continental Congress on <strong>July 4, 1776</strong>. Its primary author was <strong>Thomas Jefferson</strong>, with revisions by Benjamin Franklin and John Adams.
+      </div>
+      <p>The Declaration has four main parts:</p>
+      <ul>
+        <li><strong>Preamble:</strong> States the purpose and philosophical basis — all men are created equal and possess unalienable rights.</li>
+        <li><strong>Statement of Rights:</strong> Lists natural rights: life, liberty, and the pursuit of happiness; government derives power from the consent of the governed.</li>
+        <li><strong>List of Grievances:</strong> 27 charges against King George III justifying independence.</li>
+        <li><strong>Declaration:</strong> Formally declares the colonies to be free and independent states.</li>
+      </ul>
+
+      <div class="question-block">
+        <div class="q-label">📝 Typical Exam Question</div>
+        <div class="q-text">What is the primary purpose of government according to the Declaration of Independence?</div>
+        <div class="q-hint">Answer: To secure the unalienable rights of the people (life, liberty, and the pursuit of happiness).</div>
+      </div>
+      <div class="question-block">
+        <div class="q-label">📝 Typical Exam Question</div>
+        <div class="q-text">Which philosopher most directly influenced the phrase "all men are created equal" in the Declaration of Independence?</div>
+        <div class="q-hint">Answer: John Locke — his Second Treatise of Government (1689) described natural rights of life, liberty, and property.</div>
+      </div>
+      <div class="question-block">
+        <div class="q-label">📝 Typical Exam Question</div>
+        <div class="q-text">According to the Declaration, what right do the people have when a government becomes destructive of these rights?</div>
+        <div class="q-hint">Answer: The right to alter or abolish that government and establish a new one.</div>
+      </div>
+      <div class="question-block">
+        <div class="q-label">📝 Typical Exam Question</div>
+        <div class="q-text">What document established the first frame of government for the United States after independence?</div>
+        <div class="q-hint">Answer: The Articles of Confederation (ratified 1781). It was later replaced by the U.S. Constitution (1789).</div>
+      </div>
+
+      <h3>Key Vocabulary</h3>
+      <ul>
+        <li><strong>Unalienable rights:</strong> Rights that cannot be surrendered or taken away</li>
+        <li><strong>Social contract:</strong> The agreement between citizens and their government</li>
+        <li><strong>Tyranny:</strong> Cruel or oppressive government rule</li>
+        <li><strong>Sovereignty:</strong> Supreme authority to govern</li>
+        <li><strong>Consent of the governed:</strong> Government legitimacy requires approval of the people</li>
+      </ul>
+
+      <h3>📚 Study Resources</h3>
+      <div class="resource-grid">
+        <a href="https://www.archives.gov/founding-docs/declaration-transcript" target="_blank" class="resource-link">
+          <span class="r-icon">🏛️</span>
+          <div><div>Full Text – Declaration</div><div class="r-desc">National Archives (official transcript)</div></div>
+        </a>
+        <a href="https://constitutioncenter.org/the-constitution/historic-document-library/detail/the-declaration-of-independence" target="_blank" class="resource-link">
+          <span class="r-icon">📖</span>
+          <div><div>Constitution Center</div><div class="r-desc">Interactive Declaration resources</div></div>
+        </a>
+        <a href="https://www.loc.gov/item/90898358/" target="_blank" class="resource-link">
+          <span class="r-icon">📚</span>
+          <div><div>Library of Congress</div><div class="r-desc">Declaration background & history</div></div>
+        </a>
+        <a href="https://www.khanacademy.org/humanities/us-government-and-civics/us-gov-foundations/us-gov-origins-of-american-government/a/the-declaration-of-independence" target="_blank" class="resource-link">
+          <span class="r-icon">🎓</span>
+          <div><div>Khan Academy</div><div class="r-desc">Origins of American Government</div></div>
+        </a>
+      </div>
+
+    </div>
+  </div>
+
+
+  <!-- ═══════════════════════════════════════════════════════ -->
+  <!-- SECTION 2: U.S. CONSTITUTION                           -->
+  <!-- ═══════════════════════════════════════════════════════ -->
+  <div class="topic-section" id="s2">
+    <div class="topic-header" onclick="toggleSection('s2')">
+      <div class="topic-icon">📋</div>
+      <div class="topic-title-group">
+        <div class="topic-number">Topic 02</div>
+        <div class="topic-title">The United States Constitution</div>
+      </div>
+      <div class="topic-toggle">▼</div>
+    </div>
+    <div class="topic-body">
+
+      <h3>Overview & Context</h3>
+      <p>The U.S. Constitution was written during the Constitutional Convention in Philadelphia during the summer of <strong>1787</strong> and ratified by the required nine states on <strong>June 21, 1788</strong>. It replaced the weak Articles of Confederation and established the framework of the federal government that continues today.</p>
+
+      <div class="key-fact">
+        <div class="kf-label">⭐ Key Fact</div>
+        The Preamble begins: <strong>"We the People of the United States, in Order to form a more perfect Union…"</strong> — establishing that authority comes from the people (popular sovereignty).
+      </div>
+
+      <h3>The Seven Articles</h3>
+      <table class="amend-table">
+        <thead>
+          <tr><th>Article</th><th>Subject</th><th>Key Provisions</th></tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>Art. I</td>
+            <td>The Legislature</td>
+            <td>Creates a bicameral Congress (Senate + House); grants specific enumerated powers including taxing, declaring war, regulating commerce</td>
+          </tr>
+          <tr>
+            <td>Art. II</td>
+            <td>The Executive</td>
+            <td>Creates the Presidency; qualifications (35 years old, natural-born citizen, 14 years a resident); commander-in-chief; treaty power</td>
+          </tr>
+          <tr>
+            <td>Art. III</td>
+            <td>The Judiciary</td>
+            <td>Creates the Supreme Court; defines treason; Congress may establish lower courts</td>
+          </tr>
+          <tr>
+            <td>Art. IV</td>
+            <td>States' Relations</td>
+            <td>Full Faith and Credit Clause; Privileges and Immunities; guarantees republican form of government to each state</td>
+          </tr>
+          <tr>
+            <td>Art. V</td>
+            <td>Amendment Process</td>
+            <td>Two methods to propose (2/3 of Congress or national convention); two methods to ratify (3/4 of states)</td>
+          </tr>
+          <tr>
+            <td>Art. VI</td>
+            <td>Supremacy Clause</td>
+            <td>Constitution is the "supreme Law of the Land"; federal law supersedes conflicting state law</td>
+          </tr>
+          <tr>
+            <td>Art. VII</td>
+            <td>Ratification</td>
+            <td>9 of 13 states needed to ratify; became effective June 21, 1788</td>
+          </tr>
+        </tbody>
+      </table>
+
+      <h3>Constitutional Principles</h3>
+      <div class="two-col">
+        <div class="col-box">
+          <h4>🔒 Enumerated Powers</h4>
+          <ul>
+            <li>Powers explicitly listed in the Constitution</li>
+            <li>Article I, Section 8 lists Congress's powers</li>
+            <li>Examples: coin money, declare war, regulate interstate commerce</li>
+          </ul>
+        </div>
+        <div class="col-box">
+          <h4>🌐 Implied Powers</h4>
+          <ul>
+            <li>Powers not stated but reasonably inferred</li>
+            <li>Based on the Necessary and Proper ("Elastic") Clause — Art. I, Sec. 8</li>
+            <li>Example: creating a national bank</li>
+          </ul>
+        </div>
+        <div class="col-box">
+          <h4>⚖️ Judicial Review</h4>
+          <ul>
+            <li>Power of courts to invalidate laws that violate the Constitution</li>
+            <li>Established in <em>Marbury v. Madison</em> (1803)</li>
+            <li>Not explicitly in the Constitution — inferred by Chief Justice Marshall</li>
+          </ul>
+        </div>
+        <div class="col-box">
+          <h4>🚫 Reserved Powers</h4>
+          <ul>
+            <li>Powers not given to federal government stay with states or the people</li>
+            <li>Guaranteed by the 10th Amendment</li>
+            <li>Examples: marriage law, driver's licenses, education</li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="question-block">
+        <div class="q-label">📝 Typical Exam Question</div>
+        <div class="q-text">What is the "Supremacy Clause" and where is it found?</div>
+        <div class="q-hint">Answer: Article VI — it declares the Constitution, federal laws, and treaties to be the supreme law of the land, taking precedence over conflicting state laws.</div>
+      </div>
+      <div class="question-block">
+        <div class="q-label">📝 Typical Exam Question</div>
+        <div class="q-text">How many states were required to ratify the Constitution before it took effect?</div>
+        <div class="q-hint">Answer: 9 out of 13 states.</div>
+      </div>
+      <div class="question-block">
+        <div class="q-label">📝 Typical Exam Question</div>
+        <div class="q-text">What document preceded the Constitution and why was it replaced?</div>
+        <div class="q-hint">Answer: The Articles of Confederation (1781). It was replaced because it created a weak national government with no power to tax, no executive branch, and no authority to regulate commerce between states.</div>
+      </div>
+      <div class="question-block">
+        <div class="q-label">📝 Typical Exam Question</div>
+        <div class="q-text">What is the "Necessary and Proper Clause" and what powers does it grant?</div>
+        <div class="q-hint">Answer: Article I, Section 8, Clause 18 — gives Congress power to make all laws "necessary and proper" to carry out its enumerated powers. Also called the Elastic Clause because it stretches congressional authority.</div>
+      </div>
+
+      <h3>The Federalist Papers</h3>
+      <p>The Federalist Papers (1787–88) were 85 essays written by <strong>Alexander Hamilton, James Madison, and John Jay</strong> (under the pen name "Publius") to persuade New York to ratify the Constitution. Key essays include:</p>
+      <ul>
+        <li><strong>Federalist No. 10</strong> (Madison) — dangers of factions; why a large republic protects against tyranny of the majority</li>
+        <li><strong>Federalist No. 51</strong> (Madison) — necessity of checks and balances; "ambition must be made to counteract ambition"</li>
+        <li><strong>Federalist No. 78</strong> (Hamilton) — defense of an independent judiciary and judicial review</li>
+      </ul>
+
+      <h3>📚 Study Resources</h3>
+      <div class="resource-grid">
+        <a href="https://www.archives.gov/founding-docs/constitution-transcript" target="_blank" class="resource-link">
+          <span class="r-icon">🏛️</span>
+          <div><div>Full Text – Constitution</div><div class="r-desc">National Archives (official)</div></div>
+        </a>
+        <a href="https://constitutioncenter.org/the-constitution/articles" target="_blank" class="resource-link">
+          <span class="r-icon">📖</span>
+          <div><div>Constitution Center</div><div class="r-desc">Interactive Articles Explorer</div></div>
+        </a>
+        <a href="https://avalon.law.yale.edu/subject_menus/fed.asp" target="_blank" class="resource-link">
+          <span class="r-icon">⚖️</span>
+          <div><div>Federalist Papers</div><div class="r-desc">Yale Avalon Project – all 85 essays</div></div>
+        </a>
+        <a href="https://www.uscourts.gov/about-federal-courts/educational-resources/about-educational-outreach/activity-resources/what-does" target="_blank" class="resource-link">
+          <span class="r-icon">🎓</span>
+          <div><div>U.S. Courts</div><div class="r-desc">Constitution educational resources</div></div>
+        </a>
+      </div>
+
+    </div>
+  </div>
+
+
+  <!-- ═══════════════════════════════════════════════════════ -->
+  <!-- SECTION 3: BILL OF RIGHTS & AMENDMENTS                 -->
+  <!-- ═══════════════════════════════════════════════════════ -->
+  <div class="topic-section" id="s3">
+    <div class="topic-header" onclick="toggleSection('s3')">
+      <div class="topic-icon">⚖️</div>
+      <div class="topic-title-group">
+        <div class="topic-number">Topic 03</div>
+        <div class="topic-title">Bill of Rights &amp; Constitutional Amendments</div>
+      </div>
+      <div class="topic-toggle">▼</div>
+    </div>
+    <div class="topic-body">
+
+      <h3>The Bill of Rights (Amendments 1–10, ratified 1791)</h3>
+      <p>The Bill of Rights was proposed by James Madison and ratified in 1791. Anti-Federalists demanded it as a condition of ratifying the Constitution. It protects individual liberties from federal government infringement.</p>
+
+      <table class="amend-table">
+        <thead>
+          <tr><th>Amendment</th><th>Right Protected</th><th>Key Details</th></tr>
+        </thead>
+        <tbody>
+          <tr><td>1st</td><td>Freedom of religion, speech, press, assembly, petition</td><td>Prohibits government from establishing religion; protects expressive freedoms</td></tr>
+          <tr><td>2nd</td><td>Right to keep and bear arms</td><td>"Well regulated Militia" and individual right to bear arms</td></tr>
+          <tr><td>3rd</td><td>No quartering of soldiers</td><td>Government cannot force citizens to house soldiers in peacetime</td></tr>
+          <tr><td>4th</td><td>Protection from unreasonable searches and seizures</td><td>Requires warrants based on probable cause; exclusionary rule</td></tr>
+          <tr><td>5th</td><td>Due process, self-incrimination, double jeopardy, grand jury, takings</td><td>No person shall be "compelled to be a witness against himself"</td></tr>
+          <tr><td>6th</td><td>Right to speedy trial, jury, counsel, confront witnesses</td><td>Right to an attorney in criminal cases</td></tr>
+          <tr><td>7th</td><td>Civil jury trial</td><td>Right to jury in civil cases over $20</td></tr>
+          <tr><td>8th</td><td>No cruel and unusual punishment; no excessive bail/fines</td><td>Bans torture and disproportionate punishments</td></tr>
+          <tr><td>9th</td><td>Unenumerated rights retained by the people</td><td>Listing rights in the Constitution doesn't mean others don't exist</td></tr>
+          <tr><td>10th</td><td>Powers reserved to states or the people</td><td>Limits federal power; foundation of states' rights arguments</td></tr>
+        </tbody>
+      </table>
+
+      <h3>Other Key Amendments (11–27)</h3>
+      <table class="amend-table">
+        <thead>
+          <tr><th>Amendment</th><th>Year</th><th>What It Did</th></tr>
+        </thead>
+        <tbody>
+          <tr><td>13th</td><td>1865</td><td>Abolished slavery and involuntary servitude (except as punishment for crime)</td></tr>
+          <tr><td>14th</td><td>1868</td><td>Citizenship for all born/naturalized in U.S.; Due Process and Equal Protection Clauses; overturned <em>Dred Scott</em></td></tr>
+          <tr><td>15th</td><td>1870</td><td>Voting rights cannot be denied based on race, color, or previous servitude</td></tr>
+          <tr><td>16th</td><td>1913</td><td>Congress may levy an income tax</td></tr>
+          <tr><td>17th</td><td>1913</td><td>Direct election of U.S. Senators by popular vote (previously chosen by state legislatures)</td></tr>
+          <tr><td>18th</td><td>1919</td><td>Prohibited manufacture and sale of alcohol (Prohibition)</td></tr>
+          <tr><td>19th</td><td>1920</td><td>Women's right to vote</td></tr>
+          <tr><td>21st</td><td>1933</td><td>Repealed Prohibition (18th Amendment) — only amendment to repeal another</td></tr>
+          <tr><td>22nd</td><td>1951</td><td>Presidential term limits — maximum two terms</td></tr>
+          <tr><td>24th</td><td>1964</td><td>Abolished poll taxes in federal elections</td></tr>
+          <tr><td>25th</td><td>1967</td><td>Presidential succession and procedures for presidential disability</td></tr>
+          <tr><td>26th</td><td>1971</td><td>Lowered voting age from 21 to 18</td></tr>
+          <tr><td>27th</td><td>1992</td><td>Congressional pay increases cannot take effect until after the next election</td></tr>
+        </tbody>
+      </table>
+
+      <div class="question-block">
+        <div class="q-label">📝 Typical Exam Question</div>
+        <div class="q-text">Which amendment extended citizenship and equal protection to all persons born or naturalized in the United States?</div>
+        <div class="q-hint">Answer: The 14th Amendment (1868) — it also includes the Due Process Clause that has been used to apply most Bill of Rights protections to state governments.</div>
+      </div>
+      <div class="question-block">
+        <div class="q-label">📝 Typical Exam Question</div>
+        <div class="q-text">The 1st Amendment prohibits Congress from making laws that do what?</div>
+        <div class="q-hint">Answer: Establish a religion (Establishment Clause) or prohibit the free exercise of religion; abridge freedom of speech, press, assembly, or the right to petition the government.</div>
+      </div>
+      <div class="question-block">
+        <div class="q-label">📝 Typical Exam Question</div>
+        <div class="q-text">What does "incorporation" mean in the context of the Bill of Rights?</div>
+        <div class="q-hint">Answer: Through the 14th Amendment's Due Process Clause, the Supreme Court has applied (incorporated) most Bill of Rights protections against state governments, not just the federal government.</div>
+      </div>
+      <div class="question-block">
+        <div class="q-label">📝 Typical Exam Question</div>
+        <div class="q-text">Which amendment abolished slavery? Which gave women the right to vote?</div>
+        <div class="q-hint">Answer: 13th Amendment (1865) abolished slavery. 19th Amendment (1920) granted women's suffrage.</div>
+      </div>
+
+      <h3>📚 Study Resources</h3>
+      <div class="resource-grid">
+        <a href="https://www.archives.gov/founding-docs/bill-of-rights-transcript" target="_blank" class="resource-link">
+          <span class="r-icon">🏛️</span>
+          <div><div>Bill of Rights – Full Text</div><div class="r-desc">National Archives</div></div>
+        </a>
+        <a href="https://constitutioncenter.org/the-constitution/amendments" target="_blank" class="resource-link">
+          <span class="r-icon">📖</span>
+          <div><div>All 27 Amendments</div><div class="r-desc">National Constitution Center</div></div>
+        </a>
+        <a href="https://www.law.cornell.edu/constitution/billofrights" target="_blank" class="resource-link">
+          <span class="r-icon">⚖️</span>
+          <div><div>Cornell LII</div><div class="r-desc">Annotated Bill of Rights with case law</div></div>
+        </a>
+        <a href="https://www.aclu.org/know-your-rights" target="_blank" class="resource-link">
+          <span class="r-icon">🛡️</span>
+          <div><div>ACLU – Know Your Rights</div><div class="r-desc">Practical civil liberties guide</div></div>
+        </a>
+      </div>
+
+    </div>
+  </div>
+
+
+  <!-- ═══════════════════════════════════════════════════════ -->
+  <!-- SECTION 4: THREE BRANCHES OF GOVERNMENT                -->
+  <!-- ═══════════════════════════════════════════════════════ -->
+  <div class="topic-section" id="s4">
+    <div class="topic-header" onclick="toggleSection('s4')">
+      <div class="topic-icon">🏛️</div>
+      <div class="topic-title-group">
+        <div class="topic-number">Topic 04</div>
+        <div class="topic-title">The Three Branches of Government</div>
+      </div>
+      <div class="topic-toggle">▼</div>
+    </div>
+    <div class="topic-body">
+
+      <div class="key-fact">
+        <div class="kf-label">⭐ Key Concept</div>
+        The separation of powers was inspired by French philosopher <strong>Montesquieu's</strong> <em>The Spirit of the Laws</em> (1748). The Framers intentionally divided government into three branches to prevent any single person or group from gaining too much power.
+      </div>
+
+      <h3>🏛️ Legislative Branch (Congress) — Article I</h3>
+      <div class="two-col">
+        <div class="col-box">
+          <h4>🏠 House of Representatives</h4>
+          <ul>
+            <li>435 members total</li>
+            <li>2-year terms</li>
+            <li>Apportioned by state population</li>
+            <li>Must be 25 years old, 7-year citizen</li>
+            <li>Initiates all revenue (tax) bills</li>
+            <li>Has sole power of impeachment</li>
+          </ul>
+        </div>
+        <div class="col-box">
+          <h4>🏛️ Senate</h4>
+          <ul>
+            <li>100 members (2 per state)</li>
+            <li>6-year terms (staggered)</li>
+            <li>Must be 30 years old, 9-year citizen</li>
+            <li>Confirms presidential appointments</li>
+            <li>Ratifies treaties (2/3 vote)</li>
+            <li>Conducts impeachment trials</li>
+          </ul>
+        </div>
+      </div>
+
+      <h3>🏢 Executive Branch (President) — Article II</h3>
+      <ul>
+        <li><strong>Qualifications:</strong> Natural-born citizen, at least 35 years old, 14-year U.S. resident</li>
+        <li><strong>Term:</strong> 4 years; limited to 2 terms by 22nd Amendment (1951)</li>
+        <li><strong>Election:</strong> Via the Electoral College — electors chosen by states (number = senators + representatives)</li>
+        <li><strong>Roles:</strong> Commander-in-Chief of the military; chief diplomat; chief executive; head of state</li>
+        <li><strong>Powers:</strong> Veto legislation; grant pardons; nominate federal judges and cabinet officers; make executive agreements and treaties</li>
+        <li><strong>Presidential Succession:</strong> Vice President → Speaker of the House → President Pro Tempore of the Senate → Cabinet officers in order of creation</li>
+      </ul>
+
+      <h3>⚖️ Judicial Branch (Federal Courts) — Article III</h3>
+      <ul>
+        <li><strong>Supreme Court:</strong> 9 justices (1 Chief Justice + 8 Associate Justices); life tenure (during good behavior)</li>
+        <li><strong>Appointment:</strong> Nominated by the President; confirmed by the Senate</li>
+        <li><strong>Jurisdiction:</strong> Original jurisdiction in limited cases; appellate jurisdiction over lower courts</li>
+        <li><strong>Judicial Review:</strong> Power to declare laws unconstitutional (<em>Marbury v. Madison</em>, 1803)</li>
+        <li><strong>Court Hierarchy:</strong> U.S. District Courts → U.S. Courts of Appeals → U.S. Supreme Court</li>
+      </ul>
+
+      <h3>Checks and Balances — How They Work</h3>
+      <table class="amend-table">
+        <thead>
+          <tr><th>Branch</th><th>Checks on Legislative</th><th>Checks on Executive</th><th>Checks on Judicial</th></tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>Congress</td>
+            <td>—</td>
+            <td>Override veto (2/3 vote); confirm appointments; control budget; impeach/remove</td>
+            <td>Confirm judges; impeach judges; amend the Constitution; change court jurisdiction</td>
+          </tr>
+          <tr>
+            <td>President</td>
+            <td>Veto bills; call special sessions; recommend legislation</td>
+            <td>—</td>
+            <td>Nominate judges; pardon power</td>
+          </tr>
+          <tr>
+            <td>Courts</td>
+            <td>Declare laws unconstitutional</td>
+            <td>Declare executive actions unconstitutional</td>
+            <td>—</td>
+          </tr>
+        </tbody>
+      </table>
+
+      <div class="question-block">
+        <div class="q-label">📝 Typical Exam Question</div>
+        <div class="q-text">How many members are in the U.S. House of Representatives? How many are in the Senate?</div>
+        <div class="q-hint">Answer: House: 435 members. Senate: 100 members (2 per state).</div>
+      </div>
+      <div class="question-block">
+        <div class="q-label">📝 Typical Exam Question</div>
+        <div class="q-text">What happens if a president vetoes a bill? How can Congress respond?</div>
+        <div class="q-hint">Answer: The bill does not become law. Congress can override the veto with a 2/3 vote in both the House and Senate.</div>
+      </div>
+      <div class="question-block">
+        <div class="q-label">📝 Typical Exam Question</div>
+        <div class="q-text">Which branch of government has the power to declare war?</div>
+        <div class="q-hint">Answer: Congress (Article I). However, the President is Commander-in-Chief of the military and may deploy forces. The War Powers Act (1973) limits presidential military action without congressional approval to 60 days.</div>
+      </div>
+      <div class="question-block">
+        <div class="q-label">📝 Typical Exam Question</div>
+        <div class="q-text">What is the process for impeachment?</div>
+        <div class="q-hint">Answer: The House of Representatives votes to impeach (simple majority). The Senate then holds a trial, presided over by the Chief Justice. A 2/3 Senate vote is required to convict and remove the official from office.</div>
+      </div>
+
+      <h3>📚 Study Resources</h3>
+      <div class="resource-grid">
+        <a href="https://www.senate.gov/reference/reference_index_subjects/Constitution_vrd.htm" target="_blank" class="resource-link">
+          <span class="r-icon">🏛️</span>
+          <div><div>U.S. Senate</div><div class="r-desc">Constitutional powers reference</div></div>
+        </a>
+        <a href="https://www.whitehouse.gov/about-the-white-house/our-government/" target="_blank" class="resource-link">
+          <span class="r-icon">🏢</span>
+          <div><div>The White House</div><div class="r-desc">Our Government – official overview</div></div>
+        </a>
+        <a href="https://www.supremecourt.gov/about/about.aspx" target="_blank" class="resource-link">
+          <span class="r-icon">⚖️</span>
+          <div><div>Supreme Court</div><div class="r-desc">Official SCOTUS about page</div></div>
+        </a>
+        <a href="https://www.usa.gov/branches-of-government" target="_blank" class="resource-link">
+          <span class="r-icon">🇺🇸</span>
+          <div><div>USA.gov</div><div class="r-desc">Three branches overview</div></div>
+        </a>
+      </div>
+
+    </div>
+  </div>
+
+
+  <!-- ═══════════════════════════════════════════════════════ -->
+  <!-- SECTION 5: FEDERALISM & STATE GOVERNMENT               -->
+  <!-- ═══════════════════════════════════════════════════════ -->
+  <div class="topic-section" id="s5">
+    <div class="topic-header" onclick="toggleSection('s5')">
+      <div class="topic-icon">🗺️</div>
+      <div class="topic-title-group">
+        <div class="topic-number">Topic 05</div>
+        <div class="topic-title">Federalism &amp; State Government</div>
+      </div>
+      <div class="topic-toggle">▼</div>
+    </div>
+    <div class="topic-body">
+
+      <h3>What Is Federalism?</h3>
+      <p>Federalism is the division of power between the national (federal) government and state governments. The U.S. federal system was a compromise between those who wanted a strong national government and those who wanted states to remain powerful. Neither level of government is subordinate to the other in its own sphere.</p>
+
+      <div class="two-col">
+        <div class="col-box">
+          <h4>🇺🇸 Delegated (Enumerated) Powers — Federal</h4>
+          <ul>
+            <li>Coin money</li>
+            <li>Declare war / raise armies</li>
+            <li>Regulate interstate &amp; foreign commerce</li>
+            <li>Conduct foreign policy / make treaties</li>
+            <li>Run the postal service</li>
+            <li>Establish federal courts</li>
+          </ul>
+        </div>
+        <div class="col-box">
+          <h4>🌴 Reserved Powers — States</h4>
+          <ul>
+            <li>Establish local governments</li>
+            <li>Regulate intrastate commerce</li>
+            <li>Conduct elections</li>
+            <li>Establish public schools</li>
+            <li>Marriage and divorce laws</li>
+            <li>Issue licenses (drivers, professional)</li>
+          </ul>
+        </div>
+        <div class="col-box">
+          <h4>🤝 Concurrent Powers — Shared</h4>
+          <ul>
+            <li>Collect taxes</li>
+            <li>Build roads</li>
+            <li>Borrow money</li>
+            <li>Establish courts</li>
+            <li>Create and enforce laws</li>
+            <li>Spend for general welfare</li>
+          </ul>
+        </div>
+        <div class="col-box">
+          <h4>🚫 Denied Powers — Neither Level</h4>
+          <ul>
+            <li>States cannot make treaties</li>
+            <li>States cannot coin money</li>
+            <li>Neither may grant titles of nobility</li>
+            <li>Neither may pass ex post facto laws</li>
+            <li>Neither may pass bills of attainder</li>
+          </ul>
+        </div>
+      </div>
+
+      <h3>Types of Federalism Over Time</h3>
+      <div class="timeline">
+        <div class="tl-item"><div class="tl-year">1789–1865</div><div class="tl-text"><strong>Dual Federalism ("Layer Cake"):</strong> Federal and state governments operate separately in distinct spheres. States had broad powers; federal government was limited.</div></div>
+        <div class="tl-item"><div class="tl-year">1933–1964</div><div class="tl-text"><strong>Cooperative Federalism ("Marble Cake"):</strong> Federal and state programs become intertwined. New Deal era grants-in-aid; shared goals and administration.</div></div>
+        <div class="tl-item"><div class="tl-year">1964–1980</div><div class="tl-text"><strong>Creative / Coercive Federalism:</strong> Federal government sets conditions on grants; uses fiscal power to influence state policy. Great Society programs; unfunded mandates emerge.</div></div>
+        <div class="tl-item"><div class="tl-year">1980–present</div><div class="tl-text"><strong>New Federalism / Devolution:</strong> Efforts to return power to states; block grants replacing categorical grants; state flexibility increased.</div></div>
+      </div>
+
+      <h3>Interstate Relations — Article IV</h3>
+      <ul>
+        <li><strong>Full Faith and Credit Clause:</strong> States must recognize the public acts, records, and court proceedings of other states (e.g., driver's licenses, birth certificates)</li>
+        <li><strong>Privileges and Immunities Clause:</strong> States cannot discriminate against citizens of other states in basic rights</li>
+        <li><strong>Extradition:</strong> States must return fugitives wanted in other states</li>
+        <li><strong>Interstate Compacts:</strong> States may enter agreements with each other (with congressional approval for significant compacts)</li>
+      </ul>
+
+      <div class="question-block">
+        <div class="q-label">📝 Typical Exam Question</div>
+        <div class="q-text">Which amendment reserves powers not delegated to the federal government to the states or the people?</div>
+        <div class="q-hint">Answer: The 10th Amendment.</div>
+      </div>
+      <div class="question-block">
+        <div class="q-label">📝 Typical Exam Question</div>
+        <div class="q-text">What is a "block grant" and how does it differ from a "categorical grant"?</div>
+        <div class="q-hint">Answer: A block grant gives states money for a broad policy area with few restrictions (more flexibility). A categorical grant is given for a specific, narrowly-defined purpose with strict conditions on how the money must be spent.</div>
+      </div>
+      <div class="question-block">
+        <div class="q-label">📝 Typical Exam Question</div>
+        <div class="q-text">What does the "Full Faith and Credit Clause" require?</div>
+        <div class="q-hint">Answer: States must recognize and honor the public records, acts, and court decisions of other states (e.g., a valid marriage in one state must be recognized in all states).</div>
+      </div>
+
+      <h3>📚 Study Resources</h3>
+      <div class="resource-grid">
+        <a href="https://www.ncsl.org/research/about-state-legislatures/federalism-and-preemption.aspx" target="_blank" class="resource-link">
+          <span class="r-icon">📋</span>
+          <div><div>NCSL – Federalism</div><div class="r-desc">National Conference of State Legislatures</div></div>
+        </a>
+        <a href="https://www.brookings.edu/topic/federalism/" target="_blank" class="resource-link">
+          <span class="r-icon">🔬</span>
+          <div><div>Brookings Institution</div><div class="r-desc">Federalism research &amp; analysis</div></div>
+        </a>
+        <a href="https://www.usa.gov/state-government" target="_blank" class="resource-link">
+          <span class="r-icon">🗺️</span>
+          <div><div>USA.gov – State Government</div><div class="r-desc">Official state government resources</div></div>
+        </a>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- ═══════════════════════════════════════════════════════ -->
+  <!-- SECTION 6: THE LEGISLATIVE PROCESS                     -->
+  <!-- ═══════════════════════════════════════════════════════ -->
+  <div class="topic-section" id="s6">
+    <div class="topic-header" onclick="toggleSection('s6')">
+      <div class="topic-icon">📝</div>
+      <div class="topic-title-group">
+        <div class="topic-number">Topic 06</div>
+        <div class="topic-title">The Legislative Process — How a Bill Becomes Law</div>
+      </div>
+      <div class="topic-toggle">▼</div>
+    </div>
+    <div class="topic-body">
+
+      <h3>Steps for a Bill to Become Law</h3>
+      <div class="timeline">
+        <div class="tl-item"><div class="tl-year">Step 1</div><div class="tl-text"><strong>Introduction:</strong> A member of Congress introduces a bill. In the House, it is dropped in the "hopper." Bills can originate in either chamber, except revenue bills which must originate in the House.</div></div>
+        <div class="tl-item"><div class="tl-year">Step 2</div><div class="tl-text"><strong>Committee Referral:</strong> The bill is sent to the appropriate standing committee. The committee may hold hearings, mark up (amend) the bill, pass it, or "table" (kill) it. Most bills die in committee.</div></div>
+        <div class="tl-item"><div class="tl-year">Step 3</div><div class="tl-text"><strong>Floor Debate &amp; Vote:</strong> The full chamber debates and votes on the bill. In the Senate, a bill can be filibustered — a senator may speak indefinitely to delay a vote. A <em>cloture</em> vote (60 senators) ends a filibuster.</div></div>
+        <div class="tl-item"><div class="tl-year">Step 4</div><div class="tl-text"><strong>Other Chamber:</strong> The bill must pass the other chamber (House or Senate) in identical form. If it passes with changes, a <em>Conference Committee</em> reconciles the differences.</div></div>
+        <div class="tl-item"><div class="tl-year">Step 5</div><div class="tl-text"><strong>Presidential Action:</strong> The President may: (1) Sign the bill — it becomes law; (2) Veto the bill — returned to Congress; (3) Take no action — if Congress is in session for 10 days, it becomes law; if Congress adjourns within 10 days, it is a "pocket veto."</div></div>
+        <div class="tl-item"><div class="tl-year">Step 6</div><div class="tl-text"><strong>Veto Override:</strong> Congress can override a presidential veto with a 2/3 majority vote in both chambers. The bill then becomes law without the President's signature.</div></div>
+      </div>
+
+      <h3>Types of Congressional Powers</h3>
+      <ul>
+        <li><strong>Enumerated (Expressed) Powers:</strong> Explicitly listed in Article I, Sec. 8 (e.g., coin money, declare war, regulate commerce)</li>
+        <li><strong>Implied Powers:</strong> Reasonably inferred from the Necessary and Proper Clause</li>
+        <li><strong>Non-legislative Powers:</strong> Electoral duties, oversight of executive agencies, confirmation of appointments, ratification of treaties (Senate), amendment ratification</li>
+      </ul>
+
+      <h3>Congressional Leadership</h3>
+      <div class="two-col">
+        <div class="col-box">
+          <h4>🏠 House Leadership</h4>
+          <ul>
+            <li><strong>Speaker of the House:</strong> Elected by full House; 2nd in line to presidency</li>
+            <li><strong>Majority Leader:</strong> Manages floor agenda</li>
+            <li><strong>Minority Leader:</strong> Leads opposition</li>
+            <li><strong>Whips:</strong> Ensure party members vote together</li>
+          </ul>
+        </div>
+        <div class="col-box">
+          <h4>🏛️ Senate Leadership</h4>
+          <ul>
+            <li><strong>Vice President:</strong> President of the Senate; votes only to break ties</li>
+            <li><strong>President Pro Tempore:</strong> Senior majority senator; presides in VP's absence</li>
+            <li><strong>Majority/Minority Leaders:</strong> Control legislative agenda</li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="question-block">
+        <div class="q-label">📝 Typical Exam Question</div>
+        <div class="q-text">What is a "filibuster" and how can it be stopped in the Senate?</div>
+        <div class="q-hint">Answer: A filibuster is a tactic where senators speak at length to delay or prevent a vote. It is ended by cloture — a vote of 60 senators to close debate.</div>
+      </div>
+      <div class="question-block">
+        <div class="q-label">📝 Typical Exam Question</div>
+        <div class="q-text">Where must revenue (tax) bills originate?</div>
+        <div class="q-hint">Answer: All revenue bills must originate in the House of Representatives (Article I, Section 7).</div>
+      </div>
+      <div class="question-block">
+        <div class="q-label">📝 Typical Exam Question</div>
+        <div class="q-text">What is a "pocket veto"?</div>
+        <div class="q-hint">Answer: If the President takes no action on a bill and Congress adjourns within 10 days of receiving it, the bill dies — a "pocket veto." No override is possible because Congress is not in session.</div>
+      </div>
+
+      <h3>📚 Study Resources</h3>
+      <div class="resource-grid">
+        <a href="https://www.congress.gov/legislative-process" target="_blank" class="resource-link">
+          <span class="r-icon">🏛️</span>
+          <div><div>Congress.gov</div><div class="r-desc">Official legislative process guide</div></div>
+        </a>
+        <a href="https://www.house.gov/the-house-explained/the-legislative-process" target="_blank" class="resource-link">
+          <span class="r-icon">🏠</span>
+          <div><div>House.gov</div><div class="r-desc">How the House works</div></div>
+        </a>
+        <a href="https://www.senate.gov/legislative/common/briefing/Senate_legislative_process.htm" target="_blank" class="resource-link">
+          <span class="r-icon">🏛️</span>
+          <div><div>Senate.gov</div><div class="r-desc">Senate legislative process</div></div>
+        </a>
+      </div>
+
+    </div>
+  </div>
+
+
+  <!-- ═══════════════════════════════════════════════════════ -->
+  <!-- SECTION 7: ELECTIONS & VOTING RIGHTS                   -->
+  <!-- ═══════════════════════════════════════════════════════ -->
+  <div class="topic-section" id="s7">
+    <div class="topic-header" onclick="toggleSection('s7')">
+      <div class="topic-icon">🗳️</div>
+      <div class="topic-title-group">
+        <div class="topic-number">Topic 07</div>
+        <div class="topic-title">Elections &amp; Voting Rights</div>
+      </div>
+      <div class="topic-toggle">▼</div>
+    </div>
+    <div class="topic-body">
+
+      <h3>The Electoral College</h3>
+      <p>The President of the United States is not elected by direct popular vote. Instead, the Framers created the <strong>Electoral College</strong> — a group of electors chosen by each state to formally cast votes for President and Vice President.</p>
+      <ul>
+        <li><strong>Total Electors:</strong> 538 (one per member of Congress = 435 House + 100 Senate + 3 for D.C. per the 23rd Amendment)</li>
+        <li><strong>Majority Needed:</strong> 270 electoral votes to win the presidency</li>
+        <li><strong>Winner-Take-All:</strong> Most states award all their electors to the popular vote winner in that state (Maine and Nebraska use proportional systems)</li>
+        <li><strong>Contingent Election:</strong> If no candidate reaches 270, the House of Representatives chooses the President (one vote per state delegation), and the Senate chooses the Vice President</li>
+        <li><strong>12th Amendment (1804):</strong> Requires separate ballots for President and Vice President</li>
+      </ul>
+
+      <h3>Expansion of Voting Rights — Timeline</h3>
+      <div class="timeline">
+        <div class="tl-item"><div class="tl-year">1789</div><div class="tl-text">Original Constitution: voting qualifications left to states; largely limited to white male property owners</div></div>
+        <div class="tl-item"><div class="tl-year">1870</div><div class="tl-text"><strong>15th Amendment:</strong> Cannot deny vote based on race, color, or previous servitude; gave formerly enslaved men the right to vote</div></div>
+        <div class="tl-item"><div class="tl-year">1920</div><div class="tl-text"><strong>19th Amendment:</strong> Women's suffrage — women granted the right to vote nationwide</div></div>
+        <div class="tl-item"><div class="tl-year">1924</div><div class="tl-text">Native Americans granted citizenship (Indian Citizenship Act)</div></div>
+        <div class="tl-item"><div class="tl-year">1964</div><div class="tl-text"><strong>24th Amendment:</strong> Abolished poll taxes in federal elections (disenfranchised poor voters, especially Black citizens in the South)</div></div>
+        <div class="tl-item"><div class="tl-year">1965</div><div class="tl-text"><strong>Voting Rights Act of 1965:</strong> Prohibited discriminatory voting practices; federal oversight of elections in states with history of discrimination</div></div>
+        <div class="tl-item"><div class="tl-year">1971</div><div class="tl-text"><strong>26th Amendment:</strong> Lowered voting age from 21 to 18 — driven by Vietnam War protests ("old enough to fight, old enough to vote")</div></div>
+      </div>
+
+      <h3>Types of Primaries &amp; Elections</h3>
+      <ul>
+        <li><strong>Primary Election:</strong> Voters select a party's candidate for the general election; may be open (any voter) or closed (registered party members only)</li>
+        <li><strong>General Election:</strong> Final election where voters choose among party nominees and independents</li>
+        <li><strong>Caucus:</strong> Party members meet in groups to discuss and select candidates (e.g., Iowa caucuses)</li>
+        <li><strong>Runoff Election:</strong> Held when no candidate receives the required percentage of votes in a primary</li>
+        <li><strong>Special Election:</strong> Called to fill a vacant seat between regular elections</li>
+        <li><strong>Recall Election:</strong> Allows voters to remove an elected official before their term ends</li>
+      </ul>
+
+      <h3>Congressional Elections</h3>
+      <ul>
+        <li><strong>Midterm Elections:</strong> Held every 2 years between presidential elections; all 435 House seats and 1/3 of Senate seats are contested</li>
+        <li><strong>Redistricting:</strong> Drawing of congressional district boundaries; occurs every 10 years after the census</li>
+        <li><strong>Gerrymandering:</strong> Manipulating district boundaries to favor a party or group — named after Governor Elbridge Gerry of Massachusetts (1812)</li>
+      </ul>
+
+      <div class="question-block">
+        <div class="q-label">📝 Typical Exam Question</div>
+        <div class="q-text">How many electoral votes are needed to win the presidency?</div>
+        <div class="q-hint">Answer: 270 out of 538 total electoral votes.</div>
+      </div>
+      <div class="question-block">
+        <div class="q-label">📝 Typical Exam Question</div>
+        <div class="q-text">What happens if no presidential candidate wins a majority of electoral votes?</div>
+        <div class="q-hint">Answer: The election goes to the House of Representatives, where each state delegation casts one vote to choose the President. This is called a contingent election. The Senate chooses the Vice President.</div>
+      </div>
+      <div class="question-block">
+        <div class="q-label">📝 Typical Exam Question</div>
+        <div class="q-text">Which amendment gave 18-year-olds the right to vote?</div>
+        <div class="q-hint">Answer: The 26th Amendment (1971).</div>
+      </div>
+      <div class="question-block">
+        <div class="q-label">📝 Typical Exam Question</div>
+        <div class="q-text">What was the purpose of the Voting Rights Act of 1965?</div>
+        <div class="q-hint">Answer: It prohibited racially discriminatory voting practices (such as literacy tests) and provided for federal oversight of elections in states and counties with a history of discrimination. It was meant to enforce the 15th Amendment.</div>
+      </div>
+
+      <h3>📚 Study Resources</h3>
+      <div class="resource-grid">
+        <a href="https://www.fec.gov/introduction-campaign-finance/how-elections-work/" target="_blank" class="resource-link">
+          <span class="r-icon">🗳️</span>
+          <div><div>FEC – How Elections Work</div><div class="r-desc">Federal Election Commission</div></div>
+        </a>
+        <a href="https://www.archives.gov/electoral-college/about" target="_blank" class="resource-link">
+          <span class="r-icon">🏛️</span>
+          <div><div>Electoral College</div><div class="r-desc">National Archives – official guide</div></div>
+        </a>
+        <a href="https://www.justice.gov/crt/voting-section" target="_blank" class="resource-link">
+          <span class="r-icon">⚖️</span>
+          <div><div>DOJ Voting Section</div><div class="r-desc">Voting Rights Act enforcement</div></div>
+        </a>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- ═══════════════════════════════════════════════════════ -->
+  <!-- SECTION 8: CIVIL RIGHTS & EQUAL PROTECTION             -->
+  <!-- ═══════════════════════════════════════════════════════ -->
+  <div class="topic-section" id="s8">
+    <div class="topic-header" onclick="toggleSection('s8')">
+      <div class="topic-icon">✊</div>
+      <div class="topic-title-group">
+        <div class="topic-number">Topic 08</div>
+        <div class="topic-title">Civil Rights &amp; Equal Protection</div>
+      </div>
+      <div class="topic-toggle">▼</div>
+    </div>
+    <div class="topic-body">
+
+      <h3>Civil Rights vs. Civil Liberties</h3>
+      <div class="two-col">
+        <div class="col-box">
+          <h4>🛡️ Civil Liberties</h4>
+          <ul>
+            <li>Freedoms that <em>protect individuals from government</em></li>
+            <li>Primarily in the Bill of Rights</li>
+            <li>Examples: freedom of speech, right to bear arms, protection from unreasonable search</li>
+            <li>"What the government <strong>cannot</strong> do to you"</li>
+          </ul>
+        </div>
+        <div class="col-box">
+          <h4>⚖️ Civil Rights</h4>
+          <ul>
+            <li>Rights that ensure <em>equal treatment</em> under the law</li>
+            <li>Rooted in the 14th Amendment's Equal Protection Clause</li>
+            <li>Examples: freedom from discrimination in housing, employment, voting</li>
+            <li>"What the government <strong>must</strong> do for you"</li>
+          </ul>
+        </div>
+      </div>
+
+      <h3>The Civil Rights Movement – Key Events</h3>
+      <div class="timeline">
+        <div class="tl-item"><div class="tl-year">1954</div><div class="tl-text"><strong>Brown v. Board of Education:</strong> Supreme Court unanimously ruled segregated public schools unconstitutional — overturned <em>Plessy v. Ferguson</em> (1896)'s "separate but equal" doctrine</div></div>
+        <div class="tl-item"><div class="tl-year">1955</div><div class="tl-text"><strong>Montgomery Bus Boycott:</strong> Rosa Parks refused to give up her seat; 381-day boycott desegregated Montgomery buses; elevated Dr. Martin Luther King Jr.</div></div>
+        <div class="tl-item"><div class="tl-year">1963</div><div class="tl-text"><strong>March on Washington:</strong> 250,000+ marchers; Dr. King delivered "I Have a Dream" speech at the Lincoln Memorial</div></div>
+        <div class="tl-item"><div class="tl-year">1964</div><div class="tl-text"><strong>Civil Rights Act of 1964:</strong> Banned discrimination based on race, color, religion, sex, or national origin in employment and public accommodations</div></div>
+        <div class="tl-item"><div class="tl-year">1965</div><div class="tl-text"><strong>Voting Rights Act of 1965:</strong> Outlawed discriminatory voting practices; followed "Bloody Sunday" on the Edmund Pettus Bridge in Selma, Alabama</div></div>
+        <div class="tl-item"><div class="tl-year">1968</div><div class="tl-text"><strong>Fair Housing Act:</strong> Prohibited discrimination in sale, rental, and financing of housing based on race, religion, national origin</div></div>
+      </div>
+
+      <h3>Key Landmark Supreme Court Cases</h3>
+      <table class="amend-table">
+        <thead>
+          <tr><th>Case</th><th>Year</th><th>Decision</th></tr>
+        </thead>
+        <tbody>
+          <tr><td>Marbury v. Madison</td><td>1803</td><td>Established judicial review — courts can strike down unconstitutional laws</td></tr>
+          <tr><td>McCulloch v. Maryland</td><td>1819</td><td>Upheld implied powers; federal law supreme over state law</td></tr>
+          <tr><td>Dred Scott v. Sandford</td><td>1857</td><td>Denied citizenship to Black Americans — later overturned by 13th &amp; 14th Amendments</td></tr>
+          <tr><td>Plessy v. Ferguson</td><td>1896</td><td>Established "separate but equal" doctrine — upheld racial segregation</td></tr>
+          <tr><td>Brown v. Board of Education</td><td>1954</td><td>Overturned <em>Plessy</em>; segregated schools are unconstitutional</td></tr>
+          <tr><td>Miranda v. Arizona</td><td>1966</td><td>Suspects must be informed of their rights upon arrest (Miranda rights)</td></tr>
+          <tr><td>Roe v. Wade</td><td>1973</td><td>Established constitutional right to abortion — overturned by <em>Dobbs v. Jackson</em> (2022)</td></tr>
+          <tr><td>Tinker v. Des Moines</td><td>1969</td><td>Students retain 1st Amendment rights in school; "students don't shed rights at the schoolhouse gate"</td></tr>
+          <tr><td>Obergefell v. Hodges</td><td>2015</td><td>Legalized same-sex marriage nationwide under the 14th Amendment</td></tr>
+        </tbody>
+      </table>
+
+      <div class="question-block">
+        <div class="q-label">📝 Typical Exam Question</div>
+        <div class="q-text">What constitutional clause did the Supreme Court use to end school segregation in <em>Brown v. Board of Education</em>?</div>
+        <div class="q-hint">Answer: The Equal Protection Clause of the 14th Amendment.</div>
+      </div>
+      <div class="question-block">
+        <div class="q-label">📝 Typical Exam Question</div>
+        <div class="q-text">What are "Miranda rights" and what case established them?</div>
+        <div class="q-hint">Answer: Miranda v. Arizona (1966). Police must inform suspects of: the right to remain silent; that anything said can be used against them; the right to an attorney; and that if they cannot afford one, one will be appointed.</div>
+      </div>
+
+      <h3>📚 Study Resources</h3>
+      <div class="resource-grid">
+        <a href="https://www.civilrights.org/resources/civilrights101/history.html" target="_blank" class="resource-link">
+          <span class="r-icon">✊</span>
+          <div><div>CivilRights.org</div><div class="r-desc">History of the civil rights movement</div></div>
+        </a>
+        <a href="https://www.archives.gov/research/civil-rights" target="_blank" class="resource-link">
+          <span class="r-icon">🏛️</span>
+          <div><div>National Archives</div><div class="r-desc">Civil rights records &amp; history</div></div>
+        </a>
+        <a href="https://www.oyez.org/cases" target="_blank" class="resource-link">
+          <span class="r-icon">⚖️</span>
+          <div><div>Oyez Project</div><div class="r-desc">Supreme Court cases audio &amp; summaries</div></div>
+        </a>
+        <a href="https://kinginstitute.stanford.edu/" target="_blank" class="resource-link">
+          <span class="r-icon">🕊️</span>
+          <div><div>King Institute – Stanford</div><div class="r-desc">MLK papers &amp; civil rights history</div></div>
+        </a>
+      </div>
+
+    </div>
+  </div>
+
+
+  <!-- ═══════════════════════════════════════════════════════ -->
+  <!-- SECTION 9: FLORIDA GOVERNMENT & CONSTITUTION           -->
+  <!-- ═══════════════════════════════════════════════════════ -->
+  <div class="topic-section" id="s9">
+    <div class="topic-header" onclick="toggleSection('s9')">
+      <div class="topic-icon">🌴</div>
+      <div class="topic-title-group">
+        <div class="topic-number">Topic 09</div>
+        <div class="topic-title">Florida Government &amp; Constitution</div>
+      </div>
+      <div class="topic-toggle">▼</div>
+    </div>
+    <div class="topic-body">
+
+      <div class="alert-box">
+        <strong>⚠️ Florida-Specific Content:</strong> This section is especially important for the Florida Civics Literacy Exam, which places emphasis on Florida government, history, and civic engagement alongside federal civics content.
+      </div>
+
+      <h3>Florida's State Government Structure</h3>
+      <p>Like the federal government, Florida's state government is divided into three branches:</p>
+
+      <div class="two-col">
+        <div class="col-box">
+          <h4>🏛️ Legislative Branch</h4>
+          <ul>
+            <li><strong>Florida Legislature</strong> — bicameral</li>
+            <li><strong>Senate:</strong> 40 members, 4-year terms</li>
+            <li><strong>House:</strong> 120 members, 2-year terms</li>
+            <li>Term limits: 8 consecutive years in each chamber</li>
+            <li>Meets in Tallahassee (the state capital)</li>
+            <li>Regular session: 60 days each year</li>
+          </ul>
+        </div>
+        <div class="col-box">
+          <h4>🏢 Executive Branch</h4>
+          <ul>
+            <li><strong>Governor:</strong> 4-year term; max 2 consecutive terms</li>
+            <li>Cabinet: Attorney General, Chief Financial Officer, Commissioner of Agriculture</li>
+            <li>Governor nominates state judges from list provided by Judicial Nominating Commissions</li>
+            <li>Can veto legislation and line-item veto budget items</li>
+          </ul>
+        </div>
+      </div>
+
+      <h3>Florida Constitution — Key Features</h3>
+      <ul>
+        <li><strong>Current Constitution:</strong> Florida's Constitution of 1968 (the sixth Florida constitution)</li>
+        <li><strong>Declaration of Rights:</strong> Article I — includes all rights in the U.S. Bill of Rights plus additional Florida protections (e.g., right to privacy, right to work)</li>
+        <li><strong>Constitutional Amendments:</strong> Can be placed on the ballot by the Legislature (joint resolution), citizens' initiative (petition with valid signatures equal to 8% of votes cast in last presidential election in 2/3 of congressional districts), constitutional revision commission (every 20 years), taxation and budget reform commission, or court ruling</li>
+        <li><strong>Approval Threshold:</strong> Constitutional amendments must receive at least <strong>60% voter approval</strong> to pass</li>
+        <li><strong>Right to Privacy:</strong> Florida's constitution explicitly guarantees a right to privacy — broader than the federal implied right</li>
+      </ul>
+
+      <h3>Florida Judicial System</h3>
+      <ul>
+        <li><strong>Supreme Court:</strong> 7 justices; highest court; final authority on Florida law</li>
+        <li><strong>District Courts of Appeal (5):</strong> Intermediate appellate courts; review trial court decisions</li>
+        <li><strong>Circuit Courts (20 circuits):</strong> Major trial courts; handle felonies, civil cases over $30,000, family law, probate</li>
+        <li><strong>County Courts:</strong> Handle misdemeanors, civil cases under $30,000, traffic violations</li>
+        <li><strong>Merit Retention:</strong> Appellate judges face merit retention votes (not contested elections)</li>
+      </ul>
+
+      <h3>Florida History Highlights</h3>
+      <div class="timeline">
+        <div class="tl-item"><div class="tl-year">1513</div><div class="tl-text">Juan Ponce de León arrives; named the land "La Florida" (Spanish for "Flowery" or "Land of Flowers")</div></div>
+        <div class="tl-item"><div class="tl-year">1565</div><div class="tl-text">St. Augustine founded by Pedro Menéndez de Avilés — oldest continuously inhabited European settlement in the U.S.</div></div>
+        <div class="tl-item"><div class="tl-year">1821</div><div class="tl-text">Spain cedes Florida to the United States (Adams-Onís Treaty)</div></div>
+        <div class="tl-item"><div class="tl-year">1845</div><div class="tl-text">Florida admitted to the Union as the 27th state (March 3, 1845)</div></div>
+        <div class="tl-item"><div class="tl-year">1861</div><div class="tl-text">Florida secedes from the Union; joins the Confederacy during the Civil War</div></div>
+        <div class="tl-item"><div class="tl-year">1868</div><div class="tl-text">Florida readmitted to the Union after the Civil War</div></div>
+        <div class="tl-item"><div class="tl-year">1969</div><div class="tl-text">Apollo 11 launches from Kennedy Space Center, Cape Canaveral — first Moon landing</div></div>
+      </div>
+
+      <h3>Florida State Symbols</h3>
+      <ul>
+        <li><strong>State Motto:</strong> "In God We Trust"</li>
+        <li><strong>State Nickname:</strong> The Sunshine State</li>
+        <li><strong>State Bird:</strong> Northern Mockingbird</li>
+        <li><strong>State Flower:</strong> Orange Blossom</li>
+        <li><strong>State Tree:</strong> Sabal Palm (Cabbage Palm)</li>
+        <li><strong>State Song:</strong> "Swanee River (Old Folks at Home)" by Stephen Foster</li>
+        <li><strong>Capital:</strong> Tallahassee</li>
+        <li><strong>Largest City:</strong> Jacksonville</li>
+      </ul>
+
+      <div class="question-block">
+        <div class="q-label">📝 Typical Exam Question</div>
+        <div class="q-text">How many members are in the Florida Senate and House of Representatives?</div>
+        <div class="q-hint">Answer: Florida Senate: 40 members. Florida House of Representatives: 120 members.</div>
+      </div>
+      <div class="question-block">
+        <div class="q-label">📝 Typical Exam Question</div>
+        <div class="q-text">What percentage of votes is required to pass a constitutional amendment in Florida?</div>
+        <div class="q-hint">Answer: 60% of votes cast on the amendment in a general election.</div>
+      </div>
+      <div class="question-block">
+        <div class="q-label">📝 Typical Exam Question</div>
+        <div class="q-text">When was Florida admitted to the United States as a state?</div>
+        <div class="q-hint">Answer: March 3, 1845 — Florida became the 27th state.</div>
+      </div>
+      <div class="question-block">
+        <div class="q-label">📝 Typical Exam Question</div>
+        <div class="q-text">What is the oldest continuously inhabited European settlement in the United States?</div>
+        <div class="q-hint">Answer: St. Augustine, Florida — founded in 1565 by Pedro Menéndez de Avilés under the Spanish crown.</div>
+      </div>
+
+      <h3>📚 Study Resources</h3>
+      <div class="resource-grid">
+        <a href="https://www.flsenate.gov/Laws/Constitution" target="_blank" class="resource-link">
+          <span class="r-icon">📋</span>
+          <div><div>Florida Constitution</div><div class="r-desc">Full text – Florida Senate website</div></div>
+        </a>
+        <a href="https://www.myflorida.com/myflorida/government/" target="_blank" class="resource-link">
+          <span class="r-icon">🌴</span>
+          <div><div>MyFlorida.com</div><div class="r-desc">Official Florida government portal</div></div>
+        </a>
+        <a href="https://dos.fl.gov/florida-facts/florida-history/" target="_blank" class="resource-link">
+          <span class="r-icon">📚</span>
+          <div><div>Florida Dept. of State</div><div class="r-desc">Florida history &amp; facts</div></div>
+        </a>
+        <a href="https://www.flcourts.gov/courts" target="_blank" class="resource-link">
+          <span class="r-icon">⚖️</span>
+          <div><div>Florida Courts</div><div class="r-desc">Official court system overview</div></div>
+        </a>
+      </div>
+
+    </div>
+  </div>
+
+
+  <!-- ═══════════════════════════════════════════════════════ -->
+  <!-- SECTION 10: U.S. FOREIGN POLICY                        -->
+  <!-- ═══════════════════════════════════════════════════════ -->
+  <div class="topic-section" id="s10">
+    <div class="topic-header" onclick="toggleSection('s10')">
+      <div class="topic-icon">🌍</div>
+      <div class="topic-title-group">
+        <div class="topic-number">Topic 10</div>
+        <div class="topic-title">U.S. Foreign Policy &amp; National Security</div>
+      </div>
+      <div class="topic-toggle">▼</div>
+    </div>
+    <div class="topic-body">
+
+      <h3>Foreign Policy Authority</h3>
+      <p>Foreign policy power in the U.S. is shared between the executive and legislative branches, a principle called <strong>"invitation to struggle"</strong>:</p>
+      <ul>
+        <li><strong>President:</strong> Commander-in-Chief; negotiates treaties; appoints ambassadors; recognizes foreign governments; executive agreements (no Senate approval needed)</li>
+        <li><strong>Senate:</strong> Ratifies treaties (requires 2/3 vote); confirms ambassadors; declares war (shared with House)</li>
+        <li><strong>Congress:</strong> Controls the budget for military and foreign aid; can pass legislation affecting trade and sanctions</li>
+        <li><strong>War Powers Act (1973):</strong> Limits presidential military deployments to 60 days without congressional authorization (enacted over Nixon's veto after Vietnam)</li>
+      </ul>
+
+      <h3>Key Foreign Policy Doctrines &amp; Events</h3>
+      <div class="timeline">
+        <div class="tl-item"><div class="tl-year">1823</div><div class="tl-text"><strong>Monroe Doctrine:</strong> Declared Western Hemisphere off-limits to European colonization; U.S. would view interference as a threat to national security</div></div>
+        <div class="tl-item"><div class="tl-year">1918</div><div class="tl-text"><strong>Wilson's 14 Points:</strong> Post-WWI framework for peace; included concept of self-determination and the League of Nations</div></div>
+        <div class="tl-item"><div class="tl-year">1947</div><div class="tl-text"><strong>Truman Doctrine &amp; Marshall Plan:</strong> U.S. commits to containing Soviet communism; economic aid to rebuild war-torn Europe</div></div>
+        <div class="tl-item"><div class="tl-year">1947</div><div class="tl-text"><strong>National Security Act (1947):</strong> Created the CIA, NSC (National Security Council), and the Department of Defense; unified military command</div></div>
+        <div class="tl-item"><div class="tl-year">1949</div><div class="tl-text"><strong>NATO Founded:</strong> North Atlantic Treaty Organization — collective defense alliance (Article 5: attack on one is attack on all)</div></div>
+        <div class="tl-item"><div class="tl-year">1962</div><div class="tl-text"><strong>Cuban Missile Crisis:</strong> 13-day standoff between U.S. and Soviet Union over nuclear missiles in Cuba; resolved diplomatically by Kennedy and Khrushchev</div></div>
+        <div class="tl-item"><div class="tl-year">1991</div><div class="tl-text">Cold War ends with dissolution of the Soviet Union; U.S. emerges as the sole superpower</div></div>
+        <div class="tl-item"><div class="tl-year">2001</div><div class="tl-text"><strong>September 11 attacks:</strong> Led to the War on Terror, invasion of Afghanistan, USA PATRIOT Act, and creation of the Department of Homeland Security</div></div>
+      </div>
+
+      <h3>Key International Organizations</h3>
+      <ul>
+        <li><strong>United Nations (UN):</strong> Founded 1945; 193 member states; promotes peace, security, human rights, and development; Security Council (5 permanent members: U.S., UK, France, Russia, China) has veto power</li>
+        <li><strong>NATO:</strong> Military alliance of 32 democracies; founded 1949; collective defense commitment</li>
+        <li><strong>World Bank &amp; IMF:</strong> International financial institutions providing loans and stabilization for developing nations</li>
+        <li><strong>WTO (World Trade Organization):</strong> Governs international trade rules; resolves trade disputes</li>
+        <li><strong>OAS (Organization of American States):</strong> Regional body for Western Hemisphere cooperation</li>
+      </ul>
+
+      <div class="question-block">
+        <div class="q-label">📝 Typical Exam Question</div>
+        <div class="q-text">What does the Monroe Doctrine state and when was it issued?</div>
+        <div class="q-hint">Answer: Issued in 1823 by President James Monroe — it declared that European powers could not establish new colonies in the Americas and that any attempt to extend their influence would be considered a threat to U.S. security.</div>
+      </div>
+      <div class="question-block">
+        <div class="q-label">📝 Typical Exam Question</div>
+        <div class="q-text">What is the significance of Article 5 of the NATO Treaty?</div>
+        <div class="q-hint">Answer: Article 5 is the collective defense provision — an armed attack against one NATO member is considered an attack against all members, obligating mutual defense. It has only been invoked once, following the September 11, 2001 attacks.</div>
+      </div>
+
+      <h3>📚 Study Resources</h3>
+      <div class="resource-grid">
+        <a href="https://history.state.gov/milestones" target="_blank" class="resource-link">
+          <span class="r-icon">🌍</span>
+          <div><div>State Dept. – Milestones</div><div class="r-desc">U.S. foreign policy history</div></div>
+        </a>
+        <a href="https://www.cfr.org/backgrounder/us-foreign-policy" target="_blank" class="resource-link">
+          <span class="r-icon">🔬</span>
+          <div><div>Council on Foreign Relations</div><div class="r-desc">U.S. foreign policy backgrounder</div></div>
+        </a>
+        <a href="https://www.un.org/en/about-us" target="_blank" class="resource-link">
+          <span class="r-icon">🏳️</span>
+          <div><div>United Nations</div><div class="r-desc">Official UN about page</div></div>
+        </a>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- ═══════════════════════════════════════════════════════ -->
+  <!-- SECTION 11: FREE ENTERPRISE & ECONOMICS               -->
+  <!-- ═══════════════════════════════════════════════════════ -->
+  <div class="topic-section" id="s11">
+    <div class="topic-header" onclick="toggleSection('s11')">
+      <div class="topic-icon">💰</div>
+      <div class="topic-title-group">
+        <div class="topic-number">Topic 11</div>
+        <div class="topic-title">Free Enterprise System &amp; Economic Principles</div>
+      </div>
+      <div class="topic-toggle">▼</div>
+    </div>
+    <div class="topic-body">
+
+      <h3>The American Free Enterprise System</h3>
+      <p>The United States operates a <strong>mixed market economy</strong> based primarily on free enterprise (capitalism) principles, with some government regulation and social programs. Florida's constitution specifically protects the right to work and free enterprise.</p>
+
+      <div class="two-col">
+        <div class="col-box">
+          <h4>✅ Characteristics of Free Enterprise</h4>
+          <ul>
+            <li>Private ownership of property and businesses</li>
+            <li>Profit motive drives production</li>
+            <li>Competition determines prices</li>
+            <li>Freedom of choice for consumers and producers</li>
+            <li>Limited government intervention</li>
+          </ul>
+        </div>
+        <div class="col-box">
+          <h4>🏛️ Government's Role in the Economy</h4>
+          <ul>
+            <li>Enforce contracts and property rights</li>
+            <li>Regulate monopolies (antitrust laws)</li>
+            <li>Provide public goods (roads, defense)</li>
+            <li>Address externalities (pollution regulation)</li>
+            <li>Stabilize the economy (fiscal &amp; monetary policy)</li>
+          </ul>
+        </div>
+      </div>
+
+      <h3>Key Economic Concepts</h3>
+      <ul>
+        <li><strong>Supply and Demand:</strong> When supply increases, prices tend to fall; when demand increases, prices tend to rise; the market reaches equilibrium where supply equals demand</li>
+        <li><strong>Gross Domestic Product (GDP):</strong> Total value of all goods and services produced in the country in one year — the primary measure of economic size</li>
+        <li><strong>Inflation:</strong> General rise in price levels; reduces purchasing power; measured by the Consumer Price Index (CPI)</li>
+        <li><strong>Recession:</strong> Two consecutive quarters of negative GDP growth; characterized by high unemployment and reduced economic activity</li>
+        <li><strong>Fiscal Policy:</strong> Government use of spending and taxation to influence the economy (Congress and the President control this)</li>
+        <li><strong>Monetary Policy:</strong> Control of the money supply and interest rates by the Federal Reserve (independent central bank)</li>
+        <li><strong>Federal Reserve ("The Fed"):</strong> Central bank of the U.S.; controls interest rates and money supply; promotes maximum employment and stable prices</li>
+        <li><strong>National Debt vs. Budget Deficit:</strong> A deficit is when annual spending exceeds revenue; the national debt is the accumulated total of all past deficits</li>
+      </ul>
+
+      <h3>The Federal Budget Process</h3>
+      <ul>
+        <li>The President submits a proposed budget to Congress each February</li>
+        <li>Congress passes a budget resolution and 12 appropriations bills</li>
+        <li><strong>Mandatory Spending:</strong> Required by law — Social Security, Medicare, Medicaid, interest on the national debt (~70% of budget)</li>
+        <li><strong>Discretionary Spending:</strong> Set annually by Congress — defense, education, transportation (~30% of budget)</li>
+        <li>Revenue comes primarily from income taxes, payroll taxes, and corporate taxes</li>
+      </ul>
+
+      <div class="question-block">
+        <div class="q-label">📝 Typical Exam Question</div>
+        <div class="q-text">What is the role of the Federal Reserve in the U.S. economy?</div>
+        <div class="q-hint">Answer: The Federal Reserve is the central bank of the U.S. It conducts monetary policy by controlling interest rates and the money supply to promote maximum employment, stable prices, and moderate long-term interest rates.</div>
+      </div>
+      <div class="question-block">
+        <div class="q-label">📝 Typical Exam Question</div>
+        <div class="q-text">What is the difference between fiscal policy and monetary policy?</div>
+        <div class="q-hint">Answer: Fiscal policy = government taxing and spending decisions (controlled by Congress and the President). Monetary policy = control of money supply and interest rates (controlled by the Federal Reserve, which is independent).</div>
+      </div>
+
+      <h3>📚 Study Resources</h3>
+      <div class="resource-grid">
+        <a href="https://www.federalreserve.gov/aboutthefed.htm" target="_blank" class="resource-link">
+          <span class="r-icon">🏦</span>
+          <div><div>Federal Reserve</div><div class="r-desc">About the Fed – official page</div></div>
+        </a>
+        <a href="https://www.bea.gov/data/gdp/gross-domestic-product" target="_blank" class="resource-link">
+          <span class="r-icon">📊</span>
+          <div><div>Bureau of Econ. Analysis</div><div class="r-desc">GDP and economic data</div></div>
+        </a>
+        <a href="https://www.econedlink.org/" target="_blank" class="resource-link">
+          <span class="r-icon">🎓</span>
+          <div><div>EconEdLink</div><div class="r-desc">Economics education resources</div></div>
+        </a>
+      </div>
+
+    </div>
+  </div>
+
+
+  <!-- ═══════════════════════════════════════════════════════ -->
+  <!-- SECTION 12: HISTORICAL DOCUMENTS & ERAS                -->
+  <!-- ═══════════════════════════════════════════════════════ -->
+  <div class="topic-section" id="s12">
+    <div class="topic-header" onclick="toggleSection('s12')">
+      <div class="topic-icon">📚</div>
+      <div class="topic-title-group">
+        <div class="topic-number">Topic 12</div>
+        <div class="topic-title">Key Historical Documents &amp; American Eras</div>
+      </div>
+      <div class="topic-toggle">▼</div>
+    </div>
+    <div class="topic-body">
+
+      <h3>Essential Historical Documents</h3>
+      <table class="amend-table">
+        <thead>
+          <tr><th>Document</th><th>Date</th><th>Significance</th></tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>Magna Carta</td>
+            <td>1215</td>
+            <td>English document limiting royal power; established rule of law and due process — direct ancestor of American constitutional principles</td>
+          </tr>
+          <tr>
+            <td>Mayflower Compact</td>
+            <td>1620</td>
+            <td>First written self-government agreement in the colonies; established consent of the governed principle in America</td>
+          </tr>
+          <tr>
+            <td>Common Sense (Thomas Paine)</td>
+            <td>1776</td>
+            <td>Pamphlet arguing for colonial independence from Britain; widely read and influential in building public support for revolution</td>
+          </tr>
+          <tr>
+            <td>Declaration of Independence</td>
+            <td>1776</td>
+            <td>Declared independence; stated founding philosophy of natural rights and popular sovereignty</td>
+          </tr>
+          <tr>
+            <td>Articles of Confederation</td>
+            <td>1781</td>
+            <td>First national government framework; proved too weak (no taxing power, no executive); replaced by the Constitution</td>
+          </tr>
+          <tr>
+            <td>U.S. Constitution</td>
+            <td>1788</td>
+            <td>Supreme law of the land; established three-branch federal government with checks and balances</td>
+          </tr>
+          <tr>
+            <td>The Federalist Papers</td>
+            <td>1787–88</td>
+            <td>Essays by Hamilton, Madison, and Jay defending the Constitution; essential guide to constitutional interpretation</td>
+          </tr>
+          <tr>
+            <td>Emancipation Proclamation</td>
+            <td>1863</td>
+            <td>Executive order by Lincoln declaring enslaved people in Confederate states "forever free"; shifted Civil War to a war to end slavery</td>
+          </tr>
+          <tr>
+            <td>Gettysburg Address</td>
+            <td>1863</td>
+            <td>Lincoln's speech redefining the Civil War as a fight for human equality and government "of the people, by the people, for the people"</td>
+          </tr>
+          <tr>
+            <td>Washington's Farewell Address</td>
+            <td>1796</td>
+            <td>Warned against political factions (parties) and permanent foreign alliances; shaped early American foreign policy</td>
+          </tr>
+        </tbody>
+      </table>
+
+      <h3>Key American Historical Eras</h3>
+      <div class="timeline">
+        <div class="tl-item"><div class="tl-year">1607–1776</div><div class="tl-text"><strong>Colonial Era:</strong> 13 British colonies established along the Atlantic Coast; colonial assemblies develop tradition of self-governance; Salutary Neglect; tensions over taxation without representation</div></div>
+        <div class="tl-item"><div class="tl-year">1776–1789</div><div class="tl-text"><strong>Revolutionary &amp; Founding Era:</strong> American Revolution; Declaration of Independence; Articles of Confederation; Constitutional Convention; Constitution ratified</div></div>
+        <div class="tl-item"><div class="tl-year">1789–1825</div><div class="tl-text"><strong>Early Republic:</strong> First presidents; first political parties (Federalists vs. Democratic-Republicans); Louisiana Purchase (1803); War of 1812; Era of Good Feelings</div></div>
+        <div class="tl-item"><div class="tl-year">1820–1860</div><div class="tl-text"><strong>Antebellum Era / Expansion:</strong> Manifest Destiny; Missouri Compromise; Mexican-American War; expansion of slavery debate; Dred Scott decision; sectional crisis</div></div>
+        <div class="tl-item"><div class="tl-year">1861–1865</div><div class="tl-text"><strong>Civil War:</strong> Union vs. Confederacy; fought over slavery and states' rights; 600,000+ deaths; Union preserved; slavery ended by 13th Amendment</div></div>
+        <div class="tl-item"><div class="tl-year">1865–1877</div><div class="tl-text"><strong>Reconstruction:</strong> Rebuilding the South; 13th, 14th, 15th Amendments (Reconstruction Amendments); federal troops in South; rise of Jim Crow laws after withdrawal</div></div>
+        <div class="tl-item"><div class="tl-year">1877–1920</div><div class="tl-text"><strong>Gilded Age &amp; Progressive Era:</strong> Industrialization; immigration; robber barons; trust-busting; women's suffrage movement; 16th–19th Amendments</div></div>
+        <div class="tl-item"><div class="tl-year">1929–1945</div><div class="tl-text"><strong>Great Depression &amp; WWII:</strong> Stock market crash (1929); FDR's New Deal; U.S. enters WWII after Pearl Harbor (Dec. 7, 1941); victory in Europe (V-E Day) and Pacific (V-J Day) in 1945</div></div>
+        <div class="tl-item"><div class="tl-year">1945–1991</div><div class="tl-text"><strong>Cold War Era:</strong> Ideological struggle between U.S. democracy and Soviet communism; Korean War; Vietnam War; civil rights movement; moon landing; fall of Berlin Wall (1989)</div></div>
+        <div class="tl-item"><div class="tl-year">1991–present</div><div class="tl-text"><strong>Post-Cold War &amp; Modern Era:</strong> U.S. as lone superpower; Gulf War; September 11 &amp; War on Terror; Great Recession (2008); COVID-19 pandemic (2020)</div></div>
+      </div>
+
+      <h3>Founding Fathers — Key Figures</h3>
+      <ul>
+        <li><strong>George Washington:</strong> Commander-in-Chief of Continental Army; 1st President; set precedent of two-term limit; "Father of His Country"</li>
+        <li><strong>John Adams:</strong> 2nd President; Federalist; helped draft Declaration; negotiated peace with Britain</li>
+        <li><strong>Thomas Jefferson:</strong> Primary author of the Declaration of Independence; 3rd President; Louisiana Purchase; Democratic-Republican</li>
+        <li><strong>James Madison:</strong> "Father of the Constitution"; co-wrote Federalist Papers; 4th President; proposed Bill of Rights</li>
+        <li><strong>Alexander Hamilton:</strong> 1st Secretary of the Treasury; created national bank; strong Federalist; co-wrote Federalist Papers</li>
+        <li><strong>Benjamin Franklin:</strong> Diplomat; inventor; delegate to Constitutional Convention; helped negotiate Treaty of Paris (1783)</li>
+        <li><strong>John Jay:</strong> 1st Chief Justice of the Supreme Court; co-wrote Federalist Papers; negotiated Jay's Treaty with Britain</li>
+      </ul>
+
+      <div class="question-block">
+        <div class="q-label">📝 Typical Exam Question</div>
+        <div class="q-text">What was the significance of the Emancipation Proclamation and what did it actually do?</div>
+        <div class="q-hint">Answer: Issued January 1, 1863, it declared enslaved people in Confederate states "forever free." It did not free enslaved people in border states (which remained in the Union). It transformed the Civil War's purpose to include the abolition of slavery and prevented European powers from supporting the Confederacy.</div>
+      </div>
+      <div class="question-block">
+        <div class="q-label">📝 Typical Exam Question</div>
+        <div class="q-text">Who wrote Common Sense and why was it important?</div>
+        <div class="q-hint">Answer: Thomas Paine wrote Common Sense (1776). It was one of the most widely read pamphlets in American history, arguing in plain language for independence from Britain and republican government. It helped turn colonial public opinion toward revolution.</div>
+      </div>
+      <div class="question-block">
+        <div class="q-label">📝 Typical Exam Question</div>
+        <div class="q-text">What were the Reconstruction Amendments and what did each accomplish?</div>
+        <div class="q-hint">Answer: 13th Amendment (1865) — abolished slavery. 14th Amendment (1868) — granted citizenship to all born or naturalized in the U.S.; equal protection. 15th Amendment (1870) — prohibited denying the right to vote based on race.</div>
+      </div>
+
+      <h3>📚 Study Resources</h3>
+      <div class="resource-grid">
+        <a href="https://www.archives.gov/founding-docs" target="_blank" class="resource-link">
+          <span class="r-icon">🏛️</span>
+          <div><div>Founding Documents</div><div class="r-desc">National Archives – all key docs</div></div>
+        </a>
+        <a href="https://www.history.com/topics/american-history" target="_blank" class="resource-link">
+          <span class="r-icon">📺</span>
+          <div><div>History.com</div><div class="r-desc">American history articles &amp; videos</div></div>
+        </a>
+        <a href="https://www.loc.gov/classroom-materials/united-states-history-primary-source-timeline/" target="_blank" class="resource-link">
+          <span class="r-icon">📚</span>
+          <div><div>Library of Congress</div><div class="r-desc">Primary source timeline</div></div>
+        </a>
+        <a href="https://www.digitalhistory.uh.edu/" target="_blank" class="resource-link">
+          <span class="r-icon">🖥️</span>
+          <div><div>Digital History (UH)</div><div class="r-desc">Comprehensive U.S. history textbook</div></div>
+        </a>
+      </div>
+
+    </div>
+  </div>
+
+
+  <!-- ═══════════════════════════════════════════════════════ -->
+  <!-- EXAM TIPS SECTION                                      -->
+  <!-- ═══════════════════════════════════════════════════════ -->
+  <div class="topic-section" id="tips" style="border: 2px solid var(--gold);">
+    <div class="topic-header" onclick="toggleSection('tips')" style="background: linear-gradient(135deg, var(--crimson) 0%, #6b1222 100%);">
+      <div class="topic-icon">🎯</div>
+      <div class="topic-title-group">
+        <div class="topic-number">Exam Prep</div>
+        <div class="topic-title">Test-Taking Tips &amp; High-Priority Review Items</div>
+      </div>
+      <div class="topic-toggle">▼</div>
+    </div>
+    <div class="topic-body">
+
+      <h3>📌 Most Frequently Tested Topics</h3>
+      <ul>
+        <li>The three branches of government, their powers, and checks and balances</li>
+        <li>The Bill of Rights — what each of the first 10 amendments protects</li>
+        <li>The Electoral College process and required electoral votes (270)</li>
+        <li>How a bill becomes a law (including filibusters, veto, and override)</li>
+        <li>The 14th Amendment — citizenship, due process, equal protection</li>
+        <li>Key Supreme Court cases (especially Brown, Miranda, Marbury, and Tinker)</li>
+        <li>Florida-specific content: constitution, admission date, legislature structure</li>
+        <li>Constitutional amendments — especially Reconstruction Amendments (13th, 14th, 15th) and voting amendments (19th, 24th, 26th)</li>
+        <li>The Declaration of Independence — purpose, principles, and authorship</li>
+        <li>Federalism — types of powers and the Supremacy Clause</li>
+      </ul>
+
+      <h3>🧠 Memory Strategies</h3>
+      <ul>
+        <li><strong>Amendments Trick:</strong> Amendments 1–10 = Bill of Rights; odd-numbered amendments after 10 often deal with electoral/governmental structure; amendments in the teens and twenties often deal with voting rights expansion</li>
+        <li><strong>Articles 1-2-3:</strong> "LEJ" — Legislative, Executive, Judicial — in that order</li>
+        <li><strong>Senate vs. House:</strong> Senate = "Seniority/6 years/60 cloture"; House = "Hustling/2 years/revenue bills"</li>
+        <li><strong>Checks mnemonic:</strong> "PVC" — President vetoes, Veto can be overridden, Courts can strike down (judicial review)</li>
+        <li><strong>Florida specifics:</strong> 40 senators, 120 house members, 60% for amendments, 27th state, March 3, 1845</li>
+      </ul>
+
+      <h3>⚠️ Common Mistakes to Avoid</h3>
+      <ul>
+        <li>Confusing the <strong>Bill of Rights</strong> (protects from federal government) with general civil rights laws</li>
+        <li>Thinking the President can declare war — only <strong>Congress</strong> can declare war</li>
+        <li>Confusing <strong>impeachment</strong> (House charges) with <strong>removal</strong> (Senate conviction)</li>
+        <li>Forgetting that treaty ratification requires <strong>2/3 of the Senate</strong> (not a simple majority)</li>
+        <li>Mixing up <strong>enumerated powers</strong> (listed) vs. <strong>reserved powers</strong> (kept by states)</li>
+        <li>Thinking the Supreme Court has 10 or 12 justices — it has <strong>9</strong></li>
+        <li>Assuming the Emancipation Proclamation freed <strong>all</strong> enslaved people — it only applied to Confederate states</li>
+      </ul>
+
+      <h3>📋 Quick Reference — Numbers to Know</h3>
+      <table class="amend-table">
+        <thead><tr><th>What</th><th>Number</th></tr></thead>
+        <tbody>
+          <tr><td>House of Representatives members</td><td>435</td></tr>
+          <tr><td>Senate members</td><td>100</td></tr>
+          <tr><td>Supreme Court justices</td><td>9</td></tr>
+          <tr><td>Electoral votes total</td><td>538</td></tr>
+          <tr><td>Electoral votes to win presidency</td><td>270</td></tr>
+          <tr><td>States needed to ratify Constitution (original)</td><td>9 of 13</td></tr>
+          <tr><td>States needed to ratify an amendment</td><td>3/4 (38 of 50)</td></tr>
+          <tr><td>Congress vote to override veto</td><td>2/3 both chambers</td></tr>
+          <tr><td>Senate vote to ratify treaty</td><td>2/3 (67 senators)</td></tr>
+          <tr><td>Florida Senate members</td><td>40</td></tr>
+          <tr><td>Florida House members</td><td>120</td></tr>
+          <tr><td>Florida amendment approval threshold</td><td>60%</td></tr>
+          <tr><td>Florida statehood order</td><td>27th state</td></tr>
+          <tr><td>Total Constitutional amendments</td><td>27</td></tr>
+        </tbody>
+      </table>
+
+    </div>
+  </div>
+
+</main>
+
+<footer>
+  <p>Florida Civics Literacy Exam Study Guide &nbsp;|&nbsp; Aligned with Florida SB 1108 (Civic Literacy Act, 2021)</p>
+  <p style="margin-top:6px;">For official exam information, visit the <a href="https://www.fldoe.org/policy/articulation/civic-literacy.stml" target="_blank">Florida Department of Education</a> &nbsp;|&nbsp; Exam administered through <a href="https://www.floridashines.org/degrees-and-courses/courses/general-education-civic-literacy-competency" target="_blank">Florida Shines</a></p>
+  <p style="margin-top:6px; font-size:0.75rem;">This guide is intended as a study aid. Always verify content with official FLDOE materials and primary sources. Links lead to authoritative external resources.</p>
+</footer>
+
+<script>
+  function toggleSection(id) {
+    const section = document.getElementById(id);
+    section.classList.toggle('open');
+  }
+
+  function openSection(id) {
+    const section = document.getElementById(id);
+    section.classList.add('open');
+    section.scrollIntoView({ behavior: 'smooth', block: 'start' });
+  }
+
+  function expandAll() {
+    document.querySelectorAll('.topic-section').forEach(s => s.classList.add('open'));
+  }
+
+  function collapseAll() {
+    document.querySelectorAll('.topic-section').forEach(s => s.classList.remove('open'));
+  }
+</script>
+
+</body>
+</html>

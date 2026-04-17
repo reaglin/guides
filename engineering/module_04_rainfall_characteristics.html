@@ -1,0 +1,1045 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Module 4: Florida Rainfall Characteristics — BMPFast Stormwater Training</title>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700&family=Source+Serif+4:ital,wght@0,300;0,400;0,600;1,400&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet" />
+  <style>
+    :root {
+      --forest-green:   #2D5016;
+      --mid-green:      #3D6B1F;
+      --light-green:    #5C8A35;
+      --accent-green:   #7AAF4A;
+      --warm-white:     #FAF7F2;
+      --off-white:      #F2EDE4;
+      --parchment:      #E8E0D0;
+      --text-dark:      #1A1A14;
+      --text-body:      #2C2C22;
+      --text-muted:     #5A5A48;
+      --rule-color:     #C8BC9E;
+      --mono-bg:        #F0EBE0;
+    }
+
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    html { scroll-behavior: smooth; font-size: 17px; }
+
+    body {
+      font-family: 'Source Serif 4', Georgia, serif;
+      background: var(--warm-white);
+      color: var(--text-body);
+      line-height: 1.75;
+    }
+
+    /* ── HEADER ── */
+    .site-header {
+      background: var(--forest-green);
+      color: var(--warm-white);
+      padding: 0;
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      box-shadow: 0 2px 12px rgba(0,0,0,0.3);
+    }
+    .header-inner {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 0.65rem 2rem;
+      display: flex;
+      align-items: center;
+      gap: 1.5rem;
+    }
+    .module-badge {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.65rem;
+      font-weight: 600;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      background: var(--accent-green);
+      color: var(--forest-green);
+      padding: 0.25rem 0.65rem;
+      border-radius: 2px;
+      white-space: nowrap;
+    }
+    .header-title {
+      font-family: 'Playfair Display', serif;
+      font-size: 1.05rem;
+      font-weight: 600;
+      color: var(--warm-white);
+      letter-spacing: 0.01em;
+    }
+    .header-meta {
+      margin-left: auto;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.65rem;
+      color: var(--accent-green);
+      letter-spacing: 0.08em;
+      text-align: right;
+      white-space: nowrap;
+    }
+
+    /* ── HERO ── */
+    .hero {
+      background: linear-gradient(160deg, var(--forest-green) 0%, var(--mid-green) 60%, #4A7A28 100%);
+      color: var(--warm-white);
+      padding: 4rem 2rem 3.5rem;
+      position: relative;
+      overflow: hidden;
+    }
+    .hero::before {
+      content: '';
+      position: absolute; inset: 0;
+      background: repeating-linear-gradient(
+        90deg,
+        transparent,
+        transparent 60px,
+        rgba(255,255,255,0.03) 60px,
+        rgba(255,255,255,0.03) 61px
+      );
+    }
+    .hero-inner {
+      max-width: 860px;
+      margin: 0 auto;
+      position: relative;
+    }
+    .hero-kicker {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.7rem;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: var(--accent-green);
+      margin-bottom: 1rem;
+    }
+    .hero h1 {
+      font-family: 'Playfair Display', serif;
+      font-size: 2.8rem;
+      font-weight: 700;
+      line-height: 1.18;
+      color: var(--warm-white);
+      margin-bottom: 1.25rem;
+    }
+    .hero-sub {
+      font-size: 1.05rem;
+      color: rgba(250,247,242,0.85);
+      font-style: italic;
+      max-width: 620px;
+      margin-bottom: 2rem;
+    }
+    .hero-byline {
+      display: flex;
+      gap: 2.5rem;
+      flex-wrap: wrap;
+    }
+    .hero-byline-item {
+      display: flex;
+      flex-direction: column;
+      gap: 0.2rem;
+    }
+    .hero-byline-label {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.6rem;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      color: var(--accent-green);
+    }
+    .hero-byline-value {
+      font-size: 0.9rem;
+      color: var(--warm-white);
+    }
+
+    /* ── LAYOUT ── */
+    .layout {
+      max-width: 1200px;
+      margin: 0 auto;
+      display: grid;
+      grid-template-columns: 220px 1fr;
+      gap: 0;
+      padding: 0;
+    }
+
+    /* ── SIDEBAR NAV ── */
+    .sidebar {
+      padding: 2.5rem 1.5rem 3rem;
+      border-right: 1px solid var(--parchment);
+      position: sticky;
+      top: 52px;
+      height: calc(100vh - 52px);
+      overflow-y: auto;
+    }
+    .sidebar-label {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.6rem;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      color: var(--text-muted);
+      margin-bottom: 1rem;
+      padding-bottom: 0.5rem;
+      border-bottom: 1px solid var(--parchment);
+    }
+    .sidebar nav { display: flex; flex-direction: column; gap: 0.15rem; }
+    .sidebar a {
+      font-family: 'Source Serif 4', serif;
+      font-size: 0.8rem;
+      color: var(--text-muted);
+      text-decoration: none;
+      padding: 0.3rem 0.6rem;
+      border-left: 2px solid transparent;
+      border-radius: 0 2px 2px 0;
+      transition: all 0.15s;
+    }
+    .sidebar a:hover,
+    .sidebar a.active {
+      color: var(--forest-green);
+      border-left-color: var(--accent-green);
+      background: var(--off-white);
+    }
+    .sidebar a.sub { padding-left: 1.2rem; font-size: 0.75rem; }
+
+    /* ── MAIN CONTENT ── */
+    .main {
+      padding: 3rem 3rem 4rem;
+      min-width: 0;
+    }
+
+    /* ── SECTION ── */
+    .section { margin-bottom: 3.5rem; scroll-margin-top: 70px; }
+
+    .section-number {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.65rem;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      color: var(--accent-green);
+      margin-bottom: 0.4rem;
+    }
+    h2.section-title {
+      font-family: 'Playfair Display', serif;
+      font-size: 1.7rem;
+      font-weight: 700;
+      color: var(--forest-green);
+      margin-bottom: 0.3rem;
+      line-height: 1.25;
+    }
+    .section-rule {
+      width: 48px;
+      height: 3px;
+      background: var(--accent-green);
+      margin: 0.6rem 0 1.4rem;
+      border-radius: 2px;
+    }
+
+    h3.subsection-title {
+      font-family: 'Playfair Display', serif;
+      font-size: 1.15rem;
+      font-weight: 600;
+      color: var(--mid-green);
+      margin: 2rem 0 0.75rem;
+    }
+
+    p { margin-bottom: 1rem; }
+
+    /* ── EQUATION BLOCK ── */
+    .equation-block {
+      background: var(--mono-bg);
+      border: 1px solid var(--parchment);
+      border-left: 4px solid var(--accent-green);
+      border-radius: 4px;
+      padding: 1rem 1.5rem;
+      margin: 1.5rem 0;
+      text-align: center;
+    }
+    .equation-label {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.65rem;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      color: var(--text-muted);
+      margin-bottom: 0.4rem;
+    }
+    .equation-text {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 1rem;
+      font-weight: 600;
+      color: var(--forest-green);
+    }
+
+    /* ── CALLOUT ── */
+    .callout {
+      background: var(--off-white);
+      border: 1px solid var(--parchment);
+      border-left: 4px solid var(--forest-green);
+      border-radius: 4px;
+      padding: 1rem 1.4rem;
+      margin: 1.5rem 0;
+      font-style: italic;
+      color: var(--text-dark);
+    }
+
+    /* ── DATA TABLE ── */
+    .data-table-wrap { overflow-x: auto; margin: 1.5rem 0; }
+    table.data-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 0.88rem;
+    }
+    table.data-table thead tr {
+      background: var(--forest-green);
+      color: var(--warm-white);
+    }
+    table.data-table thead th {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.7rem;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      padding: 0.65rem 1rem;
+      text-align: left;
+    }
+    table.data-table tbody tr:nth-child(even) { background: var(--off-white); }
+    table.data-table tbody td {
+      padding: 0.6rem 1rem;
+      border-bottom: 1px solid var(--parchment);
+    }
+    table.data-table tfoot td {
+      padding: 0.5rem 1rem;
+      font-style: italic;
+      font-size: 0.8rem;
+      color: var(--text-muted);
+      border-top: 2px solid var(--parchment);
+    }
+
+    /* ── STATS GRID ── */
+    .stats-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+      gap: 1rem;
+      margin: 1.5rem 0;
+    }
+    .stat-card {
+      background: var(--off-white);
+      border: 1px solid var(--parchment);
+      border-top: 3px solid var(--accent-green);
+      padding: 1rem;
+      border-radius: 4px;
+    }
+    .stat-value {
+      font-family: 'Playfair Display', serif;
+      font-size: 1.6rem;
+      font-weight: 700;
+      color: var(--forest-green);
+      line-height: 1.1;
+    }
+    .stat-label {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.65rem;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--text-muted);
+      margin-top: 0.3rem;
+    }
+    .stat-note {
+      font-size: 0.8rem;
+      color: var(--text-muted);
+      margin-top: 0.2rem;
+    }
+
+    /* ── STEP LIST ── */
+    .step-list { display: flex; flex-direction: column; gap: 0.75rem; margin: 1.25rem 0; counter-reset: steps; }
+    .step-item {
+      display: grid;
+      grid-template-columns: 2.2rem 1fr;
+      gap: 0.75rem;
+      align-items: start;
+      counter-increment: steps;
+    }
+    .step-num {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.75rem;
+      font-weight: 600;
+      color: var(--warm-white);
+      background: var(--forest-green);
+      border-radius: 50%;
+      width: 2rem;
+      height: 2rem;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+      margin-top: 0.1rem;
+    }
+    .step-content strong {
+      display: block;
+      color: var(--forest-green);
+      font-size: 0.9rem;
+      margin-bottom: 0.15rem;
+    }
+    .step-content p { margin: 0; font-size: 0.9rem; }
+
+    /* ── CRITERIA TABLE ── */
+    .criteria-block {
+      background: var(--mono-bg);
+      border: 1px solid var(--parchment);
+      border-radius: 4px;
+      padding: 1rem 1.4rem;
+      margin: 1.25rem 0;
+    }
+    .criteria-block h4 {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.7rem;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--mid-green);
+      margin-bottom: 0.75rem;
+    }
+    .criteria-row {
+      display: flex;
+      gap: 1rem;
+      padding: 0.4rem 0;
+      border-bottom: 1px solid var(--parchment);
+      font-size: 0.9rem;
+    }
+    .criteria-row:last-child { border-bottom: none; }
+    .criteria-threshold {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.85rem;
+      color: var(--forest-green);
+      font-weight: 600;
+      min-width: 120px;
+    }
+
+    /* ── GRAPHIC PLACEHOLDER ── */
+    .graphic-placeholder {
+      width: 100%;
+      background: var(--off-white);
+      border: 2px dashed var(--parchment);
+      border-radius: 4px;
+      padding: 2.5rem 1.5rem;
+      margin: 1.75rem 0;
+      text-align: center;
+    }
+    .graphic-placeholder .gp-icon {
+      font-size: 2rem;
+      color: var(--parchment);
+      margin-bottom: 0.75rem;
+    }
+    .graphic-placeholder .gp-title {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.7rem;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      color: var(--accent-green);
+      margin-bottom: 0.4rem;
+    }
+    .graphic-placeholder .gp-desc {
+      font-size: 0.85rem;
+      color: var(--text-muted);
+      max-width: 520px;
+      margin: 0 auto;
+    }
+
+    /* ── SUMMARY BOX ── */
+    .summary-box {
+      background: var(--forest-green);
+      color: var(--warm-white);
+      border-radius: 6px;
+      padding: 2rem 2.25rem;
+      margin: 2rem 0;
+    }
+    .summary-box h3 {
+      font-family: 'Playfair Display', serif;
+      font-size: 1.25rem;
+      color: var(--warm-white);
+      margin-bottom: 1.25rem;
+      padding-bottom: 0.6rem;
+      border-bottom: 1px solid rgba(255,255,255,0.2);
+    }
+    .summary-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 1.25rem;
+    }
+    .summary-item { }
+    .summary-item-label {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.65rem;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--accent-green);
+      margin-bottom: 0.4rem;
+    }
+    .summary-item-content {
+      font-size: 0.88rem;
+      color: rgba(250,247,242,0.9);
+    }
+
+    /* ── SECTION DIVIDER ── */
+    .section-divider {
+      border: none;
+      border-top: 1px solid var(--parchment);
+      margin: 0 0 3.5rem;
+    }
+
+    /* ── FOOTER ── */
+    .site-footer {
+      background: var(--forest-green);
+      color: rgba(250,247,242,0.6);
+      padding: 1.5rem 2rem;
+      text-align: center;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.65rem;
+      letter-spacing: 0.1em;
+    }
+    .site-footer strong { color: var(--accent-green); }
+
+    /* ── RESPONSIVE ── */
+    @media (max-width: 860px) {
+      .layout { grid-template-columns: 1fr; }
+      .sidebar { display: none; }
+      .main { padding: 2rem 1.25rem 3rem; }
+      .hero h1 { font-size: 2rem; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- STICKY HEADER -->
+<header class="site-header">
+  <div class="header-inner">
+    <span class="module-badge">Module 04</span>
+    <span class="header-title">Florida Rainfall Characteristics</span>
+    <span class="header-meta">BMPFast Stormwater Training<br>January 2026</span>
+  </div>
+</header>
+
+<!-- HERO -->
+<div class="hero">
+  <div class="hero-inner">
+    <div class="hero-kicker">BMPFast Stormwater Toolbox · Catchment Characteristics</div>
+    <h1>Florida Rainfall Characteristics</h1>
+    <p class="hero-sub">A comprehensive analysis of precipitation patterns, variability, and hydrologic implications across the Sunshine State.</p>
+    <div class="hero-byline">
+      <div class="hero-byline-item">
+        <span class="hero-byline-label">Author</span>
+        <span class="hero-byline-value">Harvey H. Harper</span>
+      </div>
+      <div class="hero-byline-item">
+        <span class="hero-byline-label">Date</span>
+        <span class="hero-byline-value">January 2026</span>
+      </div>
+      <div class="hero-byline-item">
+        <span class="hero-byline-label">Source</span>
+        <span class="hero-byline-value">Environmental Research &amp; Design, Inc.</span>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- MAIN LAYOUT -->
+<div class="layout">
+
+  <!-- SIDEBAR -->
+  <aside class="sidebar">
+    <div class="sidebar-label">Contents</div>
+    <nav>
+      <a href="#s1">1. Precipitation Fundamentals</a>
+      <a href="#s2">2. Rainfall Data Overview</a>
+      <a href="#s3">3. Meteorological Data Sources</a>
+      <a href="#s4">4. Spatial Analysis</a>
+      <a href="#s4a" class="sub">Annual Precipitation Map</a>
+      <a href="#s4b" class="sub">Revised FDEP Map</a>
+      <a href="#s5">5. Event-Scale Analysis</a>
+      <a href="#s5a" class="sub">Meteorological Evaluation</a>
+      <a href="#s5b" class="sub">Variability Assessment</a>
+      <a href="#s6">6. Frequency Distributions</a>
+      <a href="#s7">7. Statewide Event Characteristics</a>
+      <a href="#s8">8. Inter-Event Dry Periods</a>
+      <a href="#s9">9. Summary &amp; Conclusions</a>
+      <a href="#references">References</a>
+    </nav>
+  </aside>
+
+  <!-- MAIN -->
+  <main class="main">
+
+    <!-- SECTION 1 -->
+    <section class="section" id="s1">
+      <div class="section-number">Section 01</div>
+      <h2 class="section-title">Precipitation Fundamentals</h2>
+      <div class="section-rule"></div>
+
+      <p>Precipitation is the fundamental driver of the hydrologic cycle, serving as the primary input that determines how water moves across and through the landscape. In Florida, where water resources are both abundant and critically important, understanding rainfall behavior is essential for managing stormwater, protecting water quality, and designing effective treatment systems. Every drop of rain that falls must ultimately follow one of three pathways: it becomes runoff, infiltrates into the soil, or returns to the atmosphere through evapotranspiration.</p>
+
+      <div class="graphic-placeholder">
+        <div class="gp-icon">⛅</div>
+        <div class="gp-title">Figure 1.1 — Hydrologic Cycle</div>
+        <div class="gp-desc">Diagram illustrating the hydrologic cycle including precipitation (rain and snow), plant transpiration, surface runoff, groundwater recharge, and evaporation to atmosphere from creeks and lakes.</div>
+      </div>
+
+      <p>The <strong>runoff component</strong> of precipitation is of particular importance to water-resource managers and environmental engineers. Runoff is the portion of rainfall that flows across impervious and pervious surfaces, collecting pollutants along the way before being conveyed into stormwater management systems, drainage networks, and ultimately receiving water bodies such as lakes, rivers, wetlands, and estuaries. This runoff must be both conveyed safely to prevent flooding and treated adequately to protect downstream ecosystems and drinking water sources.</p>
+
+      <p>Understanding precipitation — its intensity, duration, frequency, and spatial variability — is therefore essential to understanding and quantifying runoff. Without accurate rainfall data, engineers and scientists cannot reliably estimate runoff volumes, design stormwater infrastructure, or evaluate the performance of best management practices (BMPs). Rainfall characteristics directly influence pollutant loading, system sizing, and treatment efficiency across every watershed in the state.</p>
+
+      <div class="equation-block">
+        <div class="equation-label">Basic Hydrologic Equation</div>
+        <div class="equation-text">Rainfall = Runoff + Infiltration + Evapotranspiration</div>
+      </div>
+
+      <p>This foundational equation governs all stormwater design in Florida. The balance between these three components varies based on soil type, land cover, antecedent moisture conditions, rainfall intensity, and event duration. Accurately characterizing rainfall is the first step in solving this equation for any given site.</p>
+
+      <p>Florida's subtropical climate produces highly seasonal and spatially variable rainfall patterns. Summer convective storms can deliver intense, localized rainfall, while winter frontal systems tend to produce more widespread, lower-intensity events. These contrasting patterns have profound implications for how stormwater systems are designed and operated throughout the state.</p>
+    </section>
+
+    <hr class="section-divider" />
+
+    <!-- SECTION 2 -->
+    <section class="section" id="s2">
+      <div class="section-number">Section 02</div>
+      <h2 class="section-title">Rainfall Data Overview</h2>
+      <div class="section-rule"></div>
+
+      <p>Since rainfall is the primary driver of the hydrologic cycle, any comprehensive assessment of stormwater management in Florida must begin with a thorough evaluation of precipitation characteristics. Recognizing this foundational need, the <strong>2007 study</strong> undertaken by the Environmental Research and Design (ERD) team included an extensive analysis of rainfall patterns throughout the entire state of Florida. The goal was to develop a robust dataset that would inform stormwater design criteria, BMP performance modeling, and Water Management District permitting processes.</p>
+
+      <p>The study evaluated multiple dimensions of rainfall behavior across Florida, providing a multi-faceted understanding of how precipitation varies both spatially and temporally. The key parameters examined included:</p>
+
+      <div class="step-list">
+        <div class="step-item">
+          <div class="step-num">1</div>
+          <div class="step-content">
+            <strong>Annual and Event Rainfall Depths</strong>
+            <p>Comprehensive measurement of total annual precipitation as well as depths of individual storm events at monitoring sites across Florida. This data forms the baseline for all hydrologic modeling and stormwater system design in the state.</p>
+          </div>
+        </div>
+        <div class="step-item">
+          <div class="step-num">2</div>
+          <div class="step-content">
+            <strong>Rainfall Variability Throughout Florida</strong>
+            <p>Analysis of how rainfall differs across geographic regions of Florida, encompassing both total annual rainfall amounts and the variability observed in individual rain events. Florida's unique geography — a long, narrow peninsula surrounded by water — creates striking differences in precipitation from north to south and coast to coast.</p>
+          </div>
+        </div>
+        <div class="step-item">
+          <div class="step-num">3</div>
+          <div class="step-content">
+            <strong>Inter-Event Dry Periods</strong>
+            <p>Evaluation of the time intervals between successive rain events, which is critical for understanding recovery time for stormwater retention and treatment systems. Dry periods allow infiltration-based systems to drain and regain capacity, directly influencing their long-term performance and pollutant removal efficiency.</p>
+          </div>
+        </div>
+      </div>
+
+      <p>Together, these three categories of rainfall data provide a holistic picture of Florida's precipitation regime. Understanding not just how much rain falls, but how it falls — in what sized events, how frequently, and with what recovery time between storms — is essential for designing stormwater systems that function reliably under real-world conditions. The findings from this study continue to underpin regulatory guidance and engineering practice throughout the state.</p>
+    </section>
+
+    <hr class="section-divider" />
+
+    <!-- SECTION 3 -->
+    <section class="section" id="s3">
+      <div class="section-number">Section 03</div>
+      <h2 class="section-title">Available Meteorological Data</h2>
+      <div class="section-rule"></div>
+
+      <p>The foundation of any credible rainfall analysis lies in the quality, coverage, and duration of the underlying meteorological records. For this study, historical rainfall data were downloaded for a <strong>30-year period spanning 1971 through 2000</strong>. This three-decade window aligns with the standard climatological normal period defined by the World Meteorological Organization (WMO), providing a statistically robust and internationally recognized timeframe for characterizing long-term precipitation trends.</p>
+
+      <p>Data were collected from a total of <strong>111 recording stations</strong> distributed across the state of Florida, part of the national network of rain gauges maintained by the National Weather Service and the National Climatic Data Center (NCDC). The geographic distribution of these stations provided broad spatial coverage, capturing the diverse climatic zones found across Florida.</p>
+
+      <div class="graphic-placeholder">
+        <div class="gp-icon">📍</div>
+        <div class="gp-title">Figure 3.1 — Florida Meteorological Monitoring Network</div>
+        <div class="gp-desc">Map of Florida showing the locations of the 111 recording stations used in the 2007 rainfall characterization study. Stations are distributed statewide from the Panhandle to the Keys, spanning all Water Management District regions.</div>
+      </div>
+
+      <p>The data from these 111 stations were used to accomplish three primary objectives: evaluate annual rainfall depths across the state, assess spatial and temporal rainfall variability, and develop the statewide annual rainfall characterizations including isopleth contour maps that are now standard tools in Florida stormwater permitting and design. The 30-year record ensures that both typical and atypical years — including drought periods and unusually wet seasons — are captured, producing a reliable representation of Florida's long-term precipitation climate.</p>
+    </section>
+
+    <hr class="section-divider" />
+
+    <!-- SECTION 4 -->
+    <section class="section" id="s4">
+      <div class="section-number">Section 04</div>
+      <h2 class="section-title">Spatial Analysis of Annual Precipitation</h2>
+      <div class="section-rule"></div>
+
+      <h3 class="subsection-title" id="s4a">Average Annual Florida Precipitation: 1971–2000</h3>
+
+      <p>Using the historical data collected from 111 monitoring stations, <strong>rainfall isopleths</strong> — lines of equal precipitation — were developed for the 1971–2000 period. These isopleth maps provide a visual and quantitative representation of how annual rainfall varies geographically across the state, serving as an essential reference tool for engineers, regulators, and researchers.</p>
+
+      <div class="graphic-placeholder">
+        <div class="gp-icon">🗺️</div>
+        <div class="gp-title">Figure 4.1 — Average Annual Florida Precipitation, 1971–2000</div>
+        <div class="gp-desc">Isopleth contour map of Florida showing average annual precipitation in inches per year. Color-coded contour bands range from approximately 38 in/yr (lowest, shown in red/orange in the Keys) to 66 in/yr (highest, shown in purple/lavender in portions of the Panhandle and central peninsula). Contour lines are labeled at 2-inch intervals.</div>
+      </div>
+
+      <p>The resulting maps reveal that <strong>Florida rainfall is highly variable</strong>, ranging from approximately <strong>38 inches per year</strong> in the driest areas to as much as <strong>66 inches per year</strong> in the wettest regions, depending on geographic location. The Panhandle and portions of the central peninsula tend to receive higher totals, while the Florida Keys and some coastal areas receive comparatively less precipitation. This spatial variability has significant implications for stormwater system design, as a facility in Pensacola must handle nearly twice the annual precipitation of one in Key West.</p>
+
+      <div class="callout">
+        <strong>Regulatory Application:</strong> Isopleth maps are used to determine project-specific rainfall values for Water Management District (WMD) permits and serve as inputs for <strong>BMPTRAINS</strong>, the standard stormwater model for evaluating BMP treatment performance in Florida.
+      </div>
+
+      <h3 class="subsection-title" id="s4b">Revised FDEP Rainfall Contour Map</h3>
+
+      <p>The Florida Department of Environmental Protection (FDEP) subsequently released a revised rainfall contour map based on precipitation data collected during the <strong>1990–2020</strong> period. This updated map was developed to provide a more contemporary picture of Florida's rainfall distribution, reflecting three decades of more recent meteorological observations.</p>
+
+      <div class="graphic-placeholder">
+        <div class="gp-icon">🗺️</div>
+        <div class="gp-title">Figure 4.2 — Revised FDEP Annual Rainfall Contour Map, 1990–2020</div>
+        <div class="gp-desc">Updated FDEP contour map showing average annual precipitation across Florida for the 1990–2020 period. Ranges from 41.60 to 65.70 inches per year. Warm colors (brown/tan) indicate lower rainfall totals primarily in the Panhandle coastal areas and southern portions; green tones indicate moderate rainfall through most of the peninsula; highest totals appear in the Tampa Bay area and portions of the central peninsula.</div>
+      </div>
+
+      <p>A detailed comparison between the original ERD isopleth map (1971–2000) and the revised FDEP map reveals that the two datasets are remarkably consistent, confirming that Florida's broad-scale precipitation patterns have remained relatively stable over the combined 50-year observation window. Key regional differences observed include:</p>
+
+      <div class="data-table-wrap">
+        <table class="data-table">
+          <thead>
+            <tr>
+              <th>Region</th>
+              <th>ERD Map (1971–2000)</th>
+              <th>FDEP Map (1990–2020)</th>
+              <th>Difference</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>Panhandle</td>
+              <td>Higher values</td>
+              <td>Slightly lower values</td>
+              <td>Modest reduction in average annual precipitation in northwestern Florida over the more recent period</td>
+            </tr>
+            <tr>
+              <td>Tampa Bay Area</td>
+              <td>Baseline values</td>
+              <td>Slightly higher values</td>
+              <td>Marginal increase, potentially reflecting localized shifts in convective storm patterns or urbanization effects</td>
+            </tr>
+            <tr>
+              <td>Statewide (overall)</td>
+              <td colspan="2" style="text-align:center">Little overall difference between maps</td>
+              <td>Strong agreement confirms stability of Florida's annual rainfall geography over 50-year period</td>
+            </tr>
+          </tbody>
+          <tfoot>
+            <tr><td colspan="4">FDEP map range: 41.60 to 65.70 in/yr (Keys to Northwest Panhandle).</td></tr>
+          </tfoot>
+        </table>
+      </div>
+
+      <p>The strong agreement between the two maps provides confidence that the original 1971–2000 isopleth data remain a valid reference for historical analyses and long-term planning. For practitioners, either map provides a reliable basis for stormwater engineering calculations, depending on the regulatory context.</p>
+    </section>
+
+    <hr class="section-divider" />
+
+    <!-- SECTION 5 -->
+    <section class="section" id="s5">
+      <div class="section-number">Section 05</div>
+      <h2 class="section-title">Event-Scale Meteorological Analysis</h2>
+      <div class="section-rule"></div>
+
+      <h3 class="subsection-title" id="s5a">Meteorological Evaluation: Individual Rain Events</h3>
+
+      <p>While annual rainfall totals provide a valuable overview of Florida's precipitation climate, the behavior of <strong>individual rain events</strong> is what ultimately drives stormwater system design and performance. A single large storm can generate more runoff and pollutant loading than weeks of smaller events combined. To understand these dynamics, the study undertook a detailed meteorological evaluation focused on the characteristics of discrete rainfall events across the state.</p>
+
+      <p>Historical <strong>1-hour rainfall data</strong> were obtained from the NCDC for every available meteorological station. Of the 111 Florida stations in the broader dataset, <strong>45 stations</strong> had sufficiently detailed hourly records to support this event-scale analysis, with data availability ranging from <strong>25 to 59 years</strong> per site.</p>
+
+      <p>The analytical methodology for the initial event-scale evaluation proceeded through the following steps. Individual rain events were defined using a <strong>3-hour separation criterion</strong> — any gap of 3 or more hours without measurable rainfall marks the boundary between two separate events. From the defined events, a comprehensive historical dataset of daily rain events over the full period of record was created for each monitoring site, capturing variability in individual event depths and the duration of inter-event dry periods. Finally, frequency distributions of individual rain events were developed for each site, revealing how often events of different magnitudes occur on an annual basis.</p>
+
+      <p>This event-level analysis is essential because stormwater treatment systems — particularly retention and detention basins — respond to individual storms, not annual averages. The frequency, depth, and spacing of rain events determine how often a system captures and treats runoff, how much runoff bypasses treatment during large storms, and how much recovery time the system has between events to regain capacity through infiltration and evapotranspiration.</p>
+
+      <h3 class="subsection-title" id="s5b">Evaluation of Meteorological Variability</h3>
+
+      <p>Building upon the broader meteorological evaluation, a more focused analysis was conducted to assess rainfall variability at a finer scale. For this phase, a subset of <strong>11 stations</strong> was specifically selected based on the availability of high-quality hourly records, chosen to represent the geographic diversity of Florida while ensuring sufficient data depth for robust statistical analysis. Of these 11 stations, 9 have 45 or more years of continuous records.</p>
+
+      <div class="graphic-placeholder">
+        <div class="gp-icon">📍</div>
+        <div class="gp-title">Figure 5.1 — Selected Meteorological Stations for Event-Scale Variability Analysis</div>
+        <div class="gp-desc">Map of Florida showing the 11 meteorological stations selected for the detailed event-scale analysis: Pensacola, Tallahassee, Jacksonville, Branford, Cross City, Orlando, Tampa, Melbourne, Fort Myers, Miami, and Key West.</div>
+      </div>
+
+      <p>A critical methodological refinement in this phase was the adoption of a <strong>variable separation criterion</strong> to define individual rain events, improving upon the simple 3-hour rule used in the initial analysis:</p>
+
+      <div class="criteria-block">
+        <h4>Event Separation Criteria</h4>
+        <div class="criteria-row">
+          <span class="criteria-threshold">Events ≤ 0.25 in</span>
+          <span>3-hour separation used to define the boundary between individual events. Small events dissipate quickly, and a shorter gap is appropriate for distinguishing them.</span>
+        </div>
+        <div class="criteria-row">
+          <span class="criteria-threshold">Events &gt; 0.25 in</span>
+          <span>6-hour separation applied. Larger storms may include natural lulls in rainfall, and a longer gap prevents artificially splitting a single large event into multiple smaller ones.</span>
+        </div>
+      </div>
+
+      <p>This dual-criteria approach provides a more physically realistic representation of storm behavior, particularly during Florida's convective summer season when heavy thunderstorms may pulse on and off over several hours. Using the refined event definitions, <strong>annual frequency distributions</strong> of individual rain events were developed, characterizing how often events of various sizes occur each year at each of the 11 locations.</p>
+    </section>
+
+    <hr class="section-divider" />
+
+    <!-- SECTION 6 -->
+    <section class="section" id="s6">
+      <div class="section-number">Section 06</div>
+      <h2 class="section-title">Rainfall Event Frequency Distributions</h2>
+      <div class="section-rule"></div>
+
+      <p>The frequency distributions developed from the historical event database reveal a consistent and important pattern across Florida's monitoring stations: the vast majority of individual rain events are relatively small, while truly large storms are comparatively rare. This finding has profound implications for stormwater system design and performance evaluation.</p>
+
+      <div class="graphic-placeholder">
+        <div class="gp-icon">📊</div>
+        <div class="gp-title">Figure 6.1 — Typical Rainfall Event Frequency Distribution (North Florida — Branford)</div>
+        <div class="gp-desc">Bar chart showing the number of annual rainfall events by event depth category for the Branford, Florida monitoring station. The x-axis represents event rainfall in inches (from 0.10 to greater than 9.00 inches). The y-axis shows the number of annual events (0 to 50). Three data resolution zones are shown: 0.1-inch intervals for events 0 to 0.50 in, 0.5-inch intervals for events 0.50 to 5.00 in, and 1.0-inch intervals for events above 5.00 in. The distribution is strongly right-skewed, with the 0–0.10 inch bin containing approximately 45 events per year, declining sharply with increasing event depth.</div>
+      </div>
+
+      <p>The frequency distributions are characterized by three key patterns observable at nearly all Florida monitoring stations:</p>
+
+      <p><strong>Dominance of small events.</strong> Events are tallied in 0.1-inch depth bins at the finest resolution. The highest frequencies are concentrated in the smallest bins, with events under 0.10 inches being the most common occurrence at nearly every station. Aggregating events into half-inch bins clearly demonstrates that most rain events are less than 0.5 inches in depth.</p>
+
+      <p><strong>Rarity of large events.</strong> At broader resolution, it becomes evident that only a relatively small number of annual events deliver large rainfall depths exceeding 1 or 2 inches. These rare but intense events are responsible for the majority of stormwater runoff and pollutant transport.</p>
+
+      <p><strong>Statewide consistency with local variation.</strong> The frequency distribution curves follow similar but variable patterns across all monitoring stations throughout Florida. While the general shape — steeply declining frequency with increasing event depth — is consistent statewide, the specific numbers of events in each size category differ from station to station, reflecting the influence of local climate factors including proximity to coastlines, latitude, and urban heat island effects.</p>
+
+      <div class="callout">
+        <strong>Design Implication:</strong> Because the overwhelming majority of rain events are small, stormwater systems designed to capture and treat relatively modest storm depths (e.g., the first 0.5 to 1.0 inch of rainfall) will effectively address the vast majority of annual runoff events. However, the infrequent large storms that exceed system capacity can generate substantial untreated runoff, making bypass management a critical design consideration.
+      </div>
+    </section>
+
+    <hr class="section-divider" />
+
+    <!-- SECTION 7 -->
+    <section class="section" id="s7">
+      <div class="section-number">Section 07</div>
+      <h2 class="section-title">Statewide Rainfall Event Characteristics</h2>
+      <div class="section-rule"></div>
+
+      <p>The event-level analysis across the 11 selected meteorological stations reveals striking differences in rainfall behavior depending on geographic location within Florida. While the general pattern of predominantly small events holds statewide, the <strong>total number of annual rain events</strong> and the distribution between small and large events vary significantly from site to site.</p>
+
+      <div class="stats-grid">
+        <div class="stat-card">
+          <div class="stat-value">158</div>
+          <div class="stat-label">Events / Year</div>
+          <div class="stat-note">Miami — highest annual event count</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-value">104</div>
+          <div class="stat-label">Events / Year</div>
+          <div class="stat-note">Cross City — lowest annual event count</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-value">93.5%</div>
+          <div class="stat-label">Events &lt; 1 inch</div>
+          <div class="stat-note">Key West — maximum percentage</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-value">84.0%</div>
+          <div class="stat-label">Events &lt; 1 inch</div>
+          <div class="stat-note">Pensacola — minimum percentage</div>
+        </div>
+      </div>
+
+      <div class="graphic-placeholder">
+        <div class="gp-icon">📊</div>
+        <div class="gp-title">Figure 7.1 — Number of Annual Rainfall Events by Monitoring Station</div>
+        <div class="gp-desc">Bar chart comparing the total number of annual rainfall events at 11 Florida meteorological stations: Branford, Cross City, Fort Myers, Jacksonville, Key West, Melbourne, Miami, Orlando, Pensacola, Tallahassee, and Tampa. Miami shows the highest count (~158 events/yr) and Cross City the lowest (~104 events/yr). A dashed reference line is drawn at approximately 120 events/yr.</div>
+      </div>
+
+      <div class="graphic-placeholder">
+        <div class="gp-icon">📊</div>
+        <div class="gp-title">Figure 7.2 — Percentage of Annual Events Less Than 1 Inch by Monitoring Station</div>
+        <div class="gp-desc">Bar chart showing the percentage of annual rainfall events producing less than 1 inch of rainfall at the same 11 Florida monitoring stations. Values range from 84.0% (Pensacola) to 93.5% (Key West). A dashed reference line is shown at 88%. All stations show that the majority of events are less than 1 inch in depth.</div>
+      </div>
+
+      <p>The contrast between Miami and Cross City illustrates the geographic diversity of Florida's precipitation climate. Miami, located in the subtropical southeastern tip of the peninsula, experiences warm, moisture-laden air from the Gulf Stream and Atlantic Ocean year-round, producing frequent convective showers and thunderstorms. Cross City, situated in the rural Big Bend region of north-central Florida, receives substantially fewer events, reflecting its more continental-influenced climate and greater distance from tropical moisture sources.</p>
+
+      <div class="callout">
+        Florida rainfall is highly variable in the number of both "small" and "large" events. Rainfall depth impacts both <strong>runoff generation</strong> and <strong>treatment system efficiency</strong>, making this variability a critical factor in stormwater engineering design throughout the state.
+      </div>
+    </section>
+
+    <hr class="section-divider" />
+
+    <!-- SECTION 8 -->
+    <section class="section" id="s8">
+      <div class="section-number">Section 08</div>
+      <h2 class="section-title">Variability in Inter-Event Dry Periods</h2>
+      <div class="section-rule"></div>
+
+      <p>The time between successive rain events — known as the <strong>inter-event dry period</strong> — is one of the most important parameters for stormwater system design and performance evaluation. Retention-based BMPs, which rely on infiltration and evapotranspiration to recover storage capacity between storms, are particularly sensitive to this parameter. Shorter dry periods mean less recovery time, potentially reducing the system's ability to capture and treat the next storm event.</p>
+
+      <p>Analysis of the 11 selected monitoring stations reveals significant variability in average inter-event dry periods across Florida, with pronounced differences between the wet season and dry season.</p>
+
+      <div class="graphic-placeholder">
+        <div class="gp-icon">📊</div>
+        <div class="gp-title">Figure 8.1 — Mean Antecedent Dry Period by Monitoring Station (Wet and Dry Seasons)</div>
+        <div class="gp-desc">Grouped bar chart showing mean antecedent dry periods (in days) for 11 Florida monitoring stations. Blue bars represent the dry season; pink/magenta bars represent the wet season. Y-axis ranges from 0 to 6 days. Dry season values range from approximately 3.36 to 5.63 days across all stations. Wet season values are consistently lower, ranging from 1.42 to 2.27 days. Station-specific wet/dry season pairs shown for: Branford (4.40/2.1), Cross City (4.87/2.0), Fort Myers (5.63/1.75), Jacksonville (3.59/1.85), Key West (4.14/1.85), Melbourne (3.92/2.27), Miami (3.03/1.42), Orlando (3.96/1.75), Pensacola (3.36/2.0), Tallahassee (3.73/1.9), Tampa (4.65/1.95).</div>
+      </div>
+
+      <div class="data-table-wrap">
+        <table class="data-table">
+          <thead>
+            <tr>
+              <th>Station</th>
+              <th>Dry Season Mean (days)</th>
+              <th>Wet Season Mean (days)</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr><td>Branford</td><td>4.40</td><td>~2.1</td></tr>
+            <tr><td>Cross City</td><td>4.87</td><td>~2.0</td></tr>
+            <tr><td>Fort Myers</td><td>5.63</td><td>~1.75</td></tr>
+            <tr><td>Jacksonville</td><td>3.59</td><td>~1.85</td></tr>
+            <tr><td>Key West</td><td>4.14</td><td>~1.85</td></tr>
+            <tr><td>Melbourne</td><td>3.92</td><td>2.27</td></tr>
+            <tr><td>Miami</td><td>3.03</td><td>1.42</td></tr>
+            <tr><td>Orlando</td><td>3.96</td><td>~1.75</td></tr>
+            <tr><td>Pensacola</td><td>3.36</td><td>~2.0</td></tr>
+            <tr><td>Tallahassee</td><td>3.73</td><td>~1.9</td></tr>
+            <tr><td>Tampa</td><td>4.65</td><td>~1.95</td></tr>
+          </tbody>
+          <tfoot>
+            <tr><td colspan="3">Note: Wet season values approximately derived from presentation data; exact values may vary slightly from source data.</td></tr>
+          </tfoot>
+        </table>
+      </div>
+
+      <p>The data show that dry periods range from as short as <strong>1.42 days</strong> (~34 hours) during the wet season at Miami to as long as <strong>5.63 days</strong> during the dry season at Fort Myers. This nearly fourfold difference has substantial implications for how stormwater systems are sized and how their long-term performance is modeled.</p>
+
+      <p>Variability in rainfall frequency has two critical engineering implications:</p>
+
+      <p><strong>Runoff C Values.</strong> The runoff coefficient (C value) represents the fraction of rainfall that becomes runoff. Shorter inter-event dry periods mean soils remain saturated longer, increasing C values and producing more runoff per event. Sites with compressed dry periods will generate proportionally more runoff than those with longer recovery intervals, even if total annual rainfall is identical.</p>
+
+      <p><strong>BMP Recovery and Performance Efficiency.</strong> The recovery and performance efficiency of stormwater management systems — especially retention-based systems — depends directly on how much time is available between events for water to infiltrate into the soil. Systems in regions with short dry periods may not fully recover between storms, reducing their effective treatment volume and long-term pollutant removal efficiency.</p>
+    </section>
+
+    <hr class="section-divider" />
+
+    <!-- SECTION 9 -->
+    <section class="section" id="s9">
+      <div class="section-number">Section 09</div>
+      <h2 class="section-title">Summary and Conclusions</h2>
+      <div class="section-rule"></div>
+
+      <p>The comprehensive analysis of Florida's rainfall characteristics reveals a precipitation regime that is highly variable across multiple dimensions — spatially, temporally, and in terms of individual event behavior. This variability has direct and measurable impacts on stormwater runoff volumes, pollutant loading, and the design and performance efficiency of best management practices throughout the state.</p>
+
+      <div class="summary-box">
+        <h3>Key Findings</h3>
+        <div class="summary-grid">
+          <div class="summary-item">
+            <div class="summary-item-label">Annual Rainfall Range</div>
+            <div class="summary-item-content">38 in/yr (Key West) to 68 in/yr (Tallahassee and Pensacola). A nearly twofold difference across the state requires location-specific rainfall data for stormwater design.</div>
+          </div>
+          <div class="summary-item">
+            <div class="summary-item-label">Annual Event Count</div>
+            <div class="summary-item-content">104 events/yr (Cross City) to 158 events/yr (Miami). Higher event counts translate to more frequent stormwater loading and require faster system recovery rates.</div>
+          </div>
+          <div class="summary-item">
+            <div class="summary-item-label">Rain Event Depths</div>
+            <div class="summary-item-content">Most rain events are less than 0.5 inch. Approximately 84–94% of all annual events produce less than 1 inch of rainfall, confirming that properly sized retention systems can address the vast majority of annual storm events.</div>
+          </div>
+          <div class="summary-item">
+            <div class="summary-item-label">Wet Season Dry Periods</div>
+            <div class="summary-item-content">1.42 days (34 hrs) to 2.27 days (54 hrs). These compressed recovery windows are critical constraints for retention-based systems that must drain between events to maintain treatment effectiveness.</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="callout">
+        <strong>Conclusion:</strong> Rainfall variability impacts runoff volumes and BMP efficiencies throughout the State. Understanding the spatial and temporal patterns of Florida's precipitation is the foundation upon which all effective stormwater management, regulatory permitting, and environmental protection decisions are built. Engineers and water-resource managers must account for local rainfall characteristics when designing, sizing, and evaluating stormwater treatment systems to ensure they perform as intended under real-world conditions.
+      </div>
+    </section>
+
+    <hr class="section-divider" />
+
+    <!-- REFERENCES -->
+    <section class="section" id="references">
+      <div class="section-number">References</div>
+      <h2 class="section-title">Referenced Materials &amp; Graphics</h2>
+      <div class="section-rule"></div>
+
+      <p>The following figures and documents are referenced in this training module. Full-resolution graphics and source materials should be appended to this document or linked via the BMPFast resource portal.</p>
+
+      <div class="data-table-wrap">
+        <table class="data-table">
+          <thead>
+            <tr>
+              <th>Figure</th>
+              <th>Description</th>
+              <th>Source</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><span style="font-family:'JetBrains Mono',monospace;font-size:0.8rem">Fig. 1.1</span></td>
+              <td>Hydrologic Cycle diagram showing precipitation, runoff, infiltration, groundwater, and evapotranspiration pathways</td>
+              <td>Standard hydrologic reference; ERD presentation</td>
+            </tr>
+            <tr>
+              <td><span style="font-family:'JetBrains Mono',monospace;font-size:0.8rem">Fig. 3.1</span></td>
+              <td>Map of Florida with 111 NCDC/NWS recording station locations used for 1971–2000 analysis</td>
+              <td>ERD (2007) — Florida Rainfall Characteristics Study</td>
+            </tr>
+            <tr>
+              <td><span style="font-family:'JetBrains Mono',monospace;font-size:0.8rem">Fig. 4.1</span></td>
+              <td>Average Annual Florida Precipitation isopleth contour map, 1971–2000 (38–66 in/yr)</td>
+              <td>ERD (2007) — Florida Rainfall Characteristics Study; used in BMPTRAINS and WMD permitting</td>
+            </tr>
+            <tr>
+              <td><span style="font-family:'JetBrains Mono',monospace;font-size:0.8rem">Fig. 4.2</span></td>
+              <td>Revised FDEP Annual Rainfall Contour Map, 1990–2020 (41.60–65.70 in/yr)</td>
+              <td>Florida Department of Environmental Protection (FDEP)</td>
+            </tr>
+            <tr>
+              <td><span style="font-family:'JetBrains Mono',monospace;font-size:0.8rem">Fig. 5.1</span></td>
+              <td>Map of 11 selected meteorological stations for event-scale variability analysis</td>
+              <td>ERD (2007) — Florida Rainfall Characteristics Study</td>
+            </tr>
+            <tr>
+              <td><span style="font-family:'JetBrains Mono',monospace;font-size:0.8rem">Fig. 6.1</span></td>
+              <td>Typical Rainfall Event Frequency Distribution bar chart — North Florida (Branford station)</td>
+              <td>ERD (2007) — Florida Rainfall Characteristics Study</td>
+            </tr>
+            <tr>
+              <td><span style="font-family:'JetBrains Mono',monospace;font-size:0.8rem">Fig. 7.1</span></td>
+              <td>Number of Annual Rainfall Events by monitoring station (11 stations)</td>
+              <td>ERD (2007) — Florida Rainfall Characteristics Study</td>
+            </tr>
+            <tr>
+              <td><span style="font-family:'JetBrains Mono',monospace;font-size:0.8rem">Fig. 7.2</span></td>
+              <td>Percentage of Annual Events Less Than 1 Inch by monitoring station (11 stations)</td>
+              <td>ERD (2007) — Florida Rainfall Characteristics Study</td>
+            </tr>
+            <tr>
+              <td><span style="font-family:'JetBrains Mono',monospace;font-size:0.8rem">Fig. 8.1</span></td>
+              <td>Mean Antecedent Dry Period by station — wet season vs. dry season comparison bar chart</td>
+              <td>ERD (2007) — Florida Rainfall Characteristics Study</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <h3 class="subsection-title">Source Documents</h3>
+      <p>Harper, H.H. (2007). <em>Florida Rainfall Characteristics</em>. Environmental Research &amp; Design, Inc. Prepared in support of the BMPFast Stormwater Toolbox and the BMPTRAINS stormwater modeling framework.</p>
+      <p>Florida Department of Environmental Protection (FDEP). Revised Annual Rainfall Contour Map, 1990–2020. Used for current WMD permitting applications.</p>
+      <p>National Climatic Data Center (NCDC). Historical 1-hour and daily rainfall records for Florida meteorological stations, periods of record 1971–2000 and selected station records through 2000s.</p>
+    </section>
+
+  </main>
+</div>
+
+<!-- FOOTER -->
+<footer class="site-footer">
+  <strong>BMPFast Stormwater Training Program</strong> · Module 04: Florida Rainfall Characteristics ·
+  Prepared by Harvey H. Harper, Environmental Research &amp; Design, Inc. · January 2026
+</footer>
+
+<script>
+  // Sidebar active link highlighting on scroll
+  const sections = document.querySelectorAll('section[id]');
+  const navLinks = document.querySelectorAll('.sidebar nav a');
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) {
+        navLinks.forEach(link => link.classList.remove('active'));
+        const active = document.querySelector(`.sidebar nav a[href="#${entry.target.id}"]`);
+        if (active) active.classList.add('active');
+      }
+    });
+  }, { rootMargin: '-20% 0px -70% 0px' });
+  sections.forEach(s => observer.observe(s));
+</script>
+
+</body>
+</html>

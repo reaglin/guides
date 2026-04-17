@@ -1,0 +1,1637 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Module 10: Retention Systems — BMPFast Stormwater Training</title>
+<link href="https://fonts.googleapis.com/css2?family=Source+Serif+4:ital,opsz,wght@0,8..60,300;0,8..60,400;0,8..60,600;0,8..60,700;1,8..60,400&family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --forest: #2d5016;
+    --forest-mid: #3d6b1f;
+    --forest-light: #5a8f32;
+    --forest-pale: #c8ddb0;
+    --warm-white: #faf8f2;
+    --warm-off: #f2ede0;
+    --warm-rule: #e0d8c4;
+    --ink: #1e1e18;
+    --ink-mid: #3a3a2e;
+    --ink-light: #6b6854;
+    --accent: #8b5a0a;
+    --accent-light: #c8871a;
+    --danger: #7a1f1f;
+  }
+
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  html { font-size: 17px; scroll-behavior: smooth; }
+
+  body {
+    font-family: 'Source Serif 4', Georgia, serif;
+    background: var(--warm-white);
+    color: var(--ink);
+    line-height: 1.72;
+  }
+
+  /* ── LAYOUT ── */
+  .page-wrap {
+    display: flex;
+    min-height: 100vh;
+  }
+
+  /* ── SIDEBAR ── */
+  .sidebar {
+    width: 260px;
+    flex-shrink: 0;
+    background: var(--forest);
+    color: var(--warm-white);
+    position: sticky;
+    top: 0;
+    height: 100vh;
+    overflow-y: auto;
+    padding: 2rem 0 3rem;
+  }
+
+  .sidebar-brand {
+    padding: 0 1.5rem 1.5rem;
+    border-bottom: 1px solid rgba(255,255,255,0.15);
+    margin-bottom: 1.5rem;
+  }
+
+  .sidebar-brand .module-label {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.65rem;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--forest-pale);
+    display: block;
+    margin-bottom: 0.35rem;
+  }
+
+  .sidebar-brand .module-title {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.1rem;
+    line-height: 1.3;
+    color: #fff;
+  }
+
+  .sidebar nav ul {
+    list-style: none;
+    padding: 0 0.75rem;
+  }
+
+  .sidebar nav ul li a {
+    display: block;
+    padding: 0.45rem 0.75rem;
+    border-radius: 4px;
+    color: rgba(255,255,255,0.78);
+    text-decoration: none;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.72rem;
+    letter-spacing: 0.03em;
+    transition: background 0.15s, color 0.15s;
+    line-height: 1.4;
+  }
+
+  .sidebar nav ul li a:hover,
+  .sidebar nav ul li a.active {
+    background: rgba(255,255,255,0.12);
+    color: #fff;
+  }
+
+  .sidebar nav ul li.section-head {
+    margin-top: 1.1rem;
+    padding: 0 0.75rem 0.2rem;
+  }
+
+  .sidebar nav ul li.section-head span {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.6rem;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    color: var(--forest-pale);
+    opacity: 0.7;
+  }
+
+  /* ── MAIN CONTENT ── */
+  .main {
+    flex: 1;
+    min-width: 0;
+    overflow-x: hidden;
+  }
+
+  /* ── HERO ── */
+  .hero {
+    background: var(--forest);
+    color: var(--warm-white);
+    padding: 4rem 3.5rem 3.5rem;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .hero::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23ffffff' fill-opacity='0.03'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
+  }
+
+  .hero-eyebrow {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.72rem;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--forest-pale);
+    margin-bottom: 1rem;
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+  }
+
+  .hero-eyebrow::before {
+    content: '';
+    display: inline-block;
+    width: 32px;
+    height: 1px;
+    background: var(--forest-pale);
+  }
+
+  .hero h1 {
+    font-family: 'Playfair Display', serif;
+    font-size: clamp(2.2rem, 4vw, 3.2rem);
+    font-weight: 700;
+    line-height: 1.15;
+    margin-bottom: 1.25rem;
+    max-width: 720px;
+  }
+
+  .hero-meta {
+    display: flex;
+    gap: 2rem;
+    flex-wrap: wrap;
+  }
+
+  .hero-meta-item {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.73rem;
+    letter-spacing: 0.05em;
+    color: rgba(255,255,255,0.65);
+  }
+
+  .hero-meta-item strong {
+    display: block;
+    color: var(--forest-pale);
+    font-size: 0.65rem;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    margin-bottom: 0.15rem;
+  }
+
+  /* ── CONTENT AREA ── */
+  .content {
+    padding: 3rem 3.5rem 5rem;
+    max-width: 960px;
+  }
+
+  /* ── SECTIONS ── */
+  .section {
+    margin-bottom: 4rem;
+  }
+
+  .section-number {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.65rem;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--forest-light);
+    display: block;
+    margin-bottom: 0.4rem;
+  }
+
+  h2 {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.85rem;
+    font-weight: 700;
+    color: var(--forest);
+    line-height: 1.2;
+    margin-bottom: 1.4rem;
+    padding-bottom: 0.75rem;
+    border-bottom: 2px solid var(--forest-pale);
+  }
+
+  h3 {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.25rem;
+    font-weight: 600;
+    color: var(--forest-mid);
+    margin-top: 2rem;
+    margin-bottom: 0.8rem;
+  }
+
+  h4 {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.78rem;
+    font-weight: 600;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--accent);
+    margin-top: 1.5rem;
+    margin-bottom: 0.5rem;
+  }
+
+  p { margin-bottom: 1rem; }
+
+  strong { color: var(--forest); font-weight: 600; }
+
+  /* ── DEFINITION BLOCKS ── */
+  .def-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1.5rem;
+    margin: 1.5rem 0;
+  }
+
+  @media (max-width: 700px) {
+    .def-grid { grid-template-columns: 1fr; }
+  }
+
+  .def-block {
+    border-left: 4px solid var(--forest);
+    padding: 1.25rem 1.5rem;
+    background: var(--warm-off);
+    border-radius: 0 6px 6px 0;
+  }
+
+  .def-block.detention {
+    border-left-color: var(--accent);
+  }
+
+  .def-block .def-term {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.1rem;
+    font-weight: 700;
+    color: var(--forest);
+    margin-bottom: 0.5rem;
+    text-decoration: underline;
+    text-underline-offset: 3px;
+  }
+
+  .def-block.detention .def-term {
+    color: var(--accent);
+  }
+
+  .def-block ul {
+    margin: 0.5rem 0 0 1.2rem;
+    font-size: 0.93rem;
+  }
+
+  .def-block ul li { margin-bottom: 0.3rem; }
+
+  .def-block ul ul {
+    margin-top: 0.3rem;
+    list-style: circle;
+  }
+
+  /* ── IMAGE PLACEHOLDER ── */
+  .figure {
+    width: 100%;
+    margin: 1.75rem 0;
+  }
+
+  .figure-placeholder {
+    width: 100%;
+    background: var(--warm-off);
+    border: 2px dashed var(--forest-pale);
+    border-radius: 6px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    color: var(--ink-light);
+    min-height: 200px;
+    padding: 1.5rem;
+    text-align: center;
+  }
+
+  .figure-placeholder .icon {
+    font-size: 2rem;
+    opacity: 0.4;
+  }
+
+  .figure-placeholder .fig-label {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.68rem;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--forest-light);
+    font-weight: 600;
+  }
+
+  .figure-placeholder .fig-desc {
+    font-size: 0.88rem;
+    max-width: 480px;
+    line-height: 1.5;
+  }
+
+  .figure-caption {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.73rem;
+    color: var(--ink-light);
+    letter-spacing: 0.04em;
+    margin-top: 0.5rem;
+    padding-left: 0.5rem;
+    border-left: 2px solid var(--forest-pale);
+    line-height: 1.4;
+  }
+
+  /* ── CALLOUT / NOTE BOXES ── */
+  .callout {
+    background: var(--warm-off);
+    border-left: 4px solid var(--forest-light);
+    padding: 1.1rem 1.5rem;
+    margin: 1.5rem 0;
+    border-radius: 0 6px 6px 0;
+    font-size: 0.95rem;
+  }
+
+  .callout.conclusion {
+    border-left-color: var(--danger);
+    background: #f9f0f0;
+  }
+
+  .callout .callout-label {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.63rem;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--forest-light);
+    display: block;
+    margin-bottom: 0.35rem;
+    font-weight: 600;
+  }
+
+  .callout.conclusion .callout-label {
+    color: var(--danger);
+  }
+
+  /* ── COMPARISON TABLE ── */
+  .criteria-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 1.5rem 0;
+    font-size: 0.92rem;
+  }
+
+  .criteria-table th {
+    background: var(--forest);
+    color: #fff;
+    padding: 0.7rem 1.2rem;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.72rem;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    text-align: left;
+  }
+
+  .criteria-table td {
+    padding: 0.7rem 1.2rem;
+    border-bottom: 1px solid var(--warm-rule);
+    vertical-align: top;
+  }
+
+  .criteria-table tr:nth-child(even) td {
+    background: var(--warm-off);
+  }
+
+  /* ── EFFICIENCY TABLE ── */
+  .eff-table-wrap {
+    overflow-x: auto;
+    margin: 1.5rem 0;
+  }
+
+  .eff-table {
+    border-collapse: collapse;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.65rem;
+    min-width: 750px;
+  }
+
+  .eff-table caption {
+    font-family: 'Source Serif 4', serif;
+    font-size: 0.85rem;
+    color: var(--ink-mid);
+    margin-bottom: 0.5rem;
+    text-align: left;
+    caption-side: top;
+    font-style: italic;
+  }
+
+  .eff-table th {
+    background: var(--forest);
+    color: #fff;
+    padding: 0.35rem 0.4rem;
+    text-align: center;
+    border: 1px solid var(--forest-mid);
+    white-space: nowrap;
+  }
+
+  .eff-table th.row-head {
+    text-align: left;
+    padding-left: 0.6rem;
+  }
+
+  .eff-table td {
+    padding: 0.3rem 0.4rem;
+    text-align: center;
+    border: 1px solid var(--warm-rule);
+  }
+
+  .eff-table tr:nth-child(even) td {
+    background: var(--warm-off);
+  }
+
+  .eff-table td.row-head {
+    background: var(--forest-pale);
+    font-weight: 600;
+    color: var(--forest);
+    text-align: left;
+    padding-left: 0.6rem;
+    border-color: var(--forest-pale);
+  }
+
+  /* ── LAYERS BLOCK (Pervious Concrete) ── */
+  .layer-stack {
+    border: 1px solid var(--warm-rule);
+    border-radius: 6px;
+    overflow: hidden;
+    margin: 1.5rem 0;
+  }
+
+  .layer {
+    padding: 0.85rem 1.4rem;
+    border-bottom: 1px solid var(--warm-rule);
+    display: flex;
+    gap: 1.2rem;
+    align-items: flex-start;
+  }
+
+  .layer:last-child { border-bottom: none; }
+
+  .layer-name {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.72rem;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    font-weight: 600;
+    color: var(--forest);
+    min-width: 160px;
+    flex-shrink: 0;
+  }
+
+  .layer-desc {
+    font-size: 0.91rem;
+    color: var(--ink-mid);
+    line-height: 1.5;
+  }
+
+  .layer:nth-child(1) { background: #e8e8e8; }
+  .layer:nth-child(2) { background: #d4d0c8; }
+  .layer:nth-child(3) { background: #c0b898; }
+  .layer:nth-child(4) { background: #d6c8a8; }
+
+  /* ── SWALE SECTION ── */
+  .swale-specs {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 1rem;
+    margin: 1.5rem 0;
+  }
+
+  @media (max-width: 640px) {
+    .swale-specs { grid-template-columns: 1fr 1fr; }
+  }
+
+  .spec-card {
+    background: var(--warm-off);
+    border-radius: 6px;
+    padding: 0.9rem 1.1rem;
+    border-top: 3px solid var(--forest-light);
+  }
+
+  .spec-card .spec-label {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.63rem;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--ink-light);
+    display: block;
+    margin-bottom: 0.2rem;
+  }
+
+  .spec-card .spec-value {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.88rem;
+    font-weight: 600;
+    color: var(--forest);
+  }
+
+  /* ── CHART DATA BOX ── */
+  .chart-meta {
+    background: var(--warm-off);
+    border: 1px solid var(--warm-rule);
+    border-radius: 6px;
+    padding: 0.9rem 1.3rem;
+    margin-bottom: 0.75rem;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 0.3rem 2rem;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.73rem;
+  }
+
+  .chart-meta-item { display: flex; gap: 0.4rem; align-items: baseline; }
+  .chart-meta-item .cm-key { color: var(--forest-light); font-weight: 600; }
+  .chart-meta-item .cm-val { color: var(--ink-mid); }
+
+  /* ── OPTIONS GRID ── */
+  .options-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+    gap: 1rem;
+    margin: 1.5rem 0;
+  }
+
+  .option-card {
+    background: var(--warm-off);
+    border: 1px solid var(--warm-rule);
+    border-top: 3px solid var(--forest-light);
+    border-radius: 4px;
+    overflow: hidden;
+  }
+
+  .option-card .oc-placeholder {
+    height: 120px;
+    background: var(--forest-pale);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--forest);
+    font-size: 1.5rem;
+    opacity: 0.5;
+  }
+
+  .option-card .oc-label {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.7rem;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    font-weight: 600;
+    color: var(--forest);
+    padding: 0.6rem 0.8rem 0.5rem;
+  }
+
+  /* ── BULLET STYLED ── */
+  .tech-list {
+    margin: 0.75rem 0 0.75rem 0;
+    padding-left: 1.5rem;
+  }
+
+  .tech-list li {
+    margin-bottom: 0.45rem;
+    line-height: 1.6;
+    font-size: 0.95rem;
+  }
+
+  .tech-list li::marker {
+    color: var(--forest-light);
+  }
+
+  /* ── ASSUMPTIONS BLOCK ── */
+  .assumptions-block {
+    counter-reset: assumption;
+    margin: 1rem 0;
+  }
+
+  .assumption-item {
+    padding: 0.75rem 1.2rem 0.75rem 1.2rem;
+    border-left: 3px solid var(--forest-pale);
+    margin-bottom: 0.75rem;
+    background: var(--warm-off);
+    border-radius: 0 4px 4px 0;
+    font-size: 0.94rem;
+  }
+
+  .assumption-item ul {
+    margin: 0.4rem 0 0 1.4rem;
+    font-size: 0.88rem;
+  }
+
+  .assumption-item ul li { margin-bottom: 0.25rem; }
+
+  /* ── HORIZONTAL RULE ── */
+  hr.section-rule {
+    border: none;
+    border-top: 1px solid var(--warm-rule);
+    margin: 3rem 0;
+  }
+
+  /* ── REFERENCE LIST ── */
+  .ref-list {
+    margin: 1rem 0;
+    padding-left: 1.5rem;
+    font-size: 0.9rem;
+    color: var(--ink-mid);
+  }
+
+  .ref-list li { margin-bottom: 0.5rem; }
+
+  /* ── SUMMARY BOX ── */
+  .summary-box {
+    background: var(--forest);
+    color: #fff;
+    border-radius: 8px;
+    padding: 2rem 2.5rem;
+    margin: 2rem 0;
+  }
+
+  .summary-box h3 {
+    color: var(--forest-pale);
+    font-family: 'Playfair Display', serif;
+    font-size: 1.1rem;
+    margin-top: 0;
+    margin-bottom: 1rem;
+  }
+
+  .summary-box ul {
+    padding-left: 1.4rem;
+    font-size: 0.95rem;
+    line-height: 1.65;
+  }
+
+  .summary-box ul li {
+    margin-bottom: 0.5rem;
+    color: rgba(255,255,255,0.9);
+  }
+
+  .summary-box ul li::marker { color: var(--forest-pale); }
+
+  /* ── APPENDIX FIGURES ── */
+  .appendix-section {
+    background: var(--warm-off);
+    border-top: 4px solid var(--forest);
+    padding: 3rem 3.5rem 4rem;
+  }
+
+  .appendix-section h2 {
+    color: var(--forest);
+    border-bottom-color: var(--forest-pale);
+  }
+
+  .appendix-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1.5rem;
+    margin-top: 1.5rem;
+  }
+
+  @media (max-width: 640px) {
+    .appendix-grid { grid-template-columns: 1fr; }
+  }
+
+  .appendix-figure {
+    border: 1px solid var(--warm-rule);
+    border-radius: 6px;
+    overflow: hidden;
+    background: var(--warm-white);
+  }
+
+  .appendix-figure .af-placeholder {
+    height: 180px;
+    background: var(--forest-pale);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--forest);
+    font-size: 2rem;
+    opacity: 0.4;
+  }
+
+  .appendix-figure .af-caption {
+    padding: 0.75rem 1rem;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.68rem;
+    letter-spacing: 0.06em;
+    color: var(--ink-mid);
+    border-top: 1px solid var(--warm-rule);
+  }
+
+  .appendix-figure .af-caption strong {
+    display: block;
+    color: var(--forest);
+    margin-bottom: 0.2rem;
+  }
+
+  /* ── SCROLLBAR ── */
+  .sidebar::-webkit-scrollbar { width: 4px; }
+  .sidebar::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.2); border-radius: 2px; }
+</style>
+</head>
+<body>
+
+<div class="page-wrap">
+
+  <!-- SIDEBAR NAV -->
+  <aside class="sidebar">
+    <div class="sidebar-brand">
+      <span class="module-label">BMPFast Training · Module 10</span>
+      <span class="module-title">Retention Systems</span>
+    </div>
+    <nav>
+      <ul>
+        <li class="section-head"><span>Overview</span></li>
+        <li><a href="#definitions">1. Definitions</a></li>
+        <li><a href="#common-systems">2. Common Systems</a></li>
+
+        <li class="section-head"><span>System Types</span></li>
+        <li><a href="#retention-pond">3. Retention Pond</a></li>
+        <li><a href="#swale-section">4. Swale Section</a></li>
+        <li><a href="#roadside-swales">5. Roadside Swales</a></li>
+        <li><a href="#swale-performance">6. Swale Performance</a></li>
+        <li><a href="#pervious-concrete">7. Pervious Concrete</a></li>
+        <li><a href="#retention-options">8. Other Options</a></li>
+
+        <li class="section-head"><span>Modeling</span></li>
+        <li><a href="#modeling-methods">9. Modeling Methods</a></li>
+        <li><a href="#efficiency-assumptions">10. Efficiency Assumptions</a></li>
+        <li><a href="#removal-tables">11. Removal Efficiency Tables</a></li>
+        <li><a href="#online-retention">12. On-Line Retention</a></li>
+        <li><a href="#drawdown">13. Drawdown Impacts</a></li>
+        <li><a href="#regional">14. Regional Variability</a></li>
+        <li><a href="#retention-depth">15. Required Depths</a></li>
+        <li><a href="#bmpfast-calc">16. BMPFast Calculations</a></li>
+
+        <li class="section-head"><span>Conclusion</span></li>
+        <li><a href="#summary">17. Summary</a></li>
+        <li><a href="#figures">Appendix: Figures</a></li>
+      </ul>
+    </nav>
+  </aside>
+
+  <!-- MAIN CONTENT -->
+  <div class="main">
+
+    <!-- HERO -->
+    <header class="hero">
+      <div class="hero-eyebrow">BMPFast Stormwater Learning System</div>
+      <h1>Retention Systems</h1>
+      <div class="hero-meta">
+        <div class="hero-meta-item">
+          <strong>Author</strong>Harvey H. Harper
+        </div>
+        <div class="hero-meta-item">
+          <strong>Date</strong>January 2026
+        </div>
+        <div class="hero-meta-item">
+          <strong>Module</strong>10 of Series
+        </div>
+        <div class="hero-meta-item">
+          <strong>Series</strong>BMPFast Stormwater Toolbox
+        </div>
+      </div>
+    </header>
+
+    <!-- CONTENT -->
+    <div class="content">
+
+      <!-- ═══════════════════════════════════════════════════════ -->
+      <!-- SECTION 1: DEFINITIONS -->
+      <!-- ═══════════════════════════════════════════════════════ -->
+      <section class="section" id="definitions">
+        <span class="section-number">Section 01</span>
+        <h2>Definitions</h2>
+
+        <p>Stormwater management practices are broadly classified as either <strong>retention</strong> or <strong>detention</strong> systems. Understanding this distinction is fundamental to selecting appropriate best management practices (BMPs) and complying with regulatory requirements.</p>
+
+        <div class="def-grid">
+          <div class="def-block">
+            <div class="def-term">Retention</div>
+            <p>A group of stormwater practices where the treatment volume is evacuated by either percolation into groundwater or evaporation. Key characteristics:</p>
+            <ul>
+              <li>No surface discharge for treatment volume</li>
+              <li>Substantial reduction in runoff volume</li>
+              <li>Retention practices include:
+                <ul>
+                  <li>Infiltration/Retention pond</li>
+                  <li>Harvesting (Reuse irrigation)</li>
+                  <li>Underground storage systems</li>
+                </ul>
+              </li>
+            </ul>
+          </div>
+          <div class="def-block detention">
+            <div class="def-term">Detention</div>
+            <p>A group of stormwater practices where the treatment volume is detained for a period of time before release. Key characteristics:</p>
+            <ul>
+              <li>Discharge of treatment volume over a period of days</li>
+              <li>No significant reduction in runoff volume</li>
+              <li>Detention practices include:
+                <ul>
+                  <li>Wet detention</li>
+                  <li>Dry detention</li>
+                </ul>
+              </li>
+            </ul>
+          </div>
+        </div>
+      </section>
+
+      <!-- ═══════════════════════════════════════════════════════ -->
+      <!-- SECTION 2: COMMON SYSTEMS -->
+      <!-- ═══════════════════════════════════════════════════════ -->
+      <section class="section" id="common-systems">
+        <span class="section-number">Section 02</span>
+        <h2>Common Retention Systems</h2>
+
+        <p>Four broad categories of retention systems are widely employed in Florida stormwater management practice. Each operates on the principle of eliminating or greatly reducing surface discharge of the stormwater treatment volume.</p>
+
+        <div class="options-grid">
+          <div class="option-card">
+            <div class="oc-placeholder">🌿</div>
+            <div class="oc-label">Retention Areas</div>
+          </div>
+          <div class="option-card">
+            <div class="oc-placeholder">🌾</div>
+            <div class="oc-label">Roadside Swales</div>
+          </div>
+          <div class="option-card">
+            <div class="oc-placeholder">⬛</div>
+            <div class="oc-label">Exfiltration Systems</div>
+          </div>
+          <div class="option-card">
+            <div class="oc-placeholder">🔲</div>
+            <div class="oc-label">Permeable Pavements</div>
+          </div>
+        </div>
+
+        <div class="figure">
+          <div class="figure-placeholder" style="min-height:260px;">
+            <span class="icon">📷</span>
+            <span class="fig-label">Figure 2.1 — Photo Collage</span>
+            <span class="fig-desc">Four photographs showing examples of each common retention system type: retention area with curbed landscaped inlet, roadside vegetated swale, precast concrete exfiltration arch units during installation, and permeable pavement infiltration test.</span>
+          </div>
+          <div class="figure-caption">Common retention system types: retention areas, roadside swales, exfiltration systems, and permeable pavements. (Source: Harper, 2026)</div>
+        </div>
+      </section>
+
+      <!-- ═══════════════════════════════════════════════════════ -->
+      <!-- SECTION 3: RETENTION POND -->
+      <!-- ═══════════════════════════════════════════════════════ -->
+      <section class="section" id="retention-pond">
+        <span class="section-number">Section 03</span>
+        <h2>Retention Pond</h2>
+
+        <p>A retention (infiltration) pond is a dry pond designed to capture and infiltrate runoff into the groundwater. The treatment volume is recovered entirely by percolation; there is no control structure outlet for the pollution abatement volume. An overflow weir may be provided for on-line systems to pass peak attenuation storage.</p>
+
+        <div class="figure">
+          <div class="figure-placeholder" style="min-height:300px;">
+            <span class="icon">📐</span>
+            <span class="fig-label">Figure 3.1 — Retention Pond Cross-Section</span>
+            <span class="fig-desc">Engineering cross-section diagram of a retention pond showing: Top of Bank, Weir Crest Elevation (for on-line systems), Peak Attenuation Storage (for on-line systems), Pollution Abatement Volume, Treatment Volume Recovery by Infiltration Into Groundwater, 4:1 Side Slope (typical), 0.3 m (1 ft) minimum freeboard, 0.9 m (3 ft) minimum separation from Seasonal High Groundwater Table Elevation.</span>
+          </div>
+          <div class="figure-caption">Figure 3.1. Typical retention pond cross-section. Dimensions shown are minimum regulatory requirements. (Source: Harper, 2026)</div>
+        </div>
+
+        <h3>Design Criteria: Current vs. New Rule</h3>
+
+        <p>Florida's stormwater regulations have established design criteria for retention ponds that have evolved significantly with the 2024 rule update. The table below compares treatment volume requirements under both frameworks.</p>
+
+        <table class="criteria-table">
+          <thead>
+            <tr>
+              <th>Design Parameter</th>
+              <th>Current Criteria</th>
+              <th>New Rule (2024)</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>Treatment Volume Basis</td>
+              <td>0.5"–1.0" of runoff; Runoff from 1" of rainfall; 1.25" over impervious areas</td>
+              <td>Retention depth determined by desired efficiency</td>
+            </tr>
+          </tbody>
+        </table>
+
+        <div class="callout">
+          <span class="callout-label">Key Design Elements</span>
+          Under the new performance-based rule, the required retention depth is not fixed but is instead calculated based on the specific pollution abatement efficiency target for the project, the site's DCIA percentage, non-DCIA curve number, and the applicable meteorological zone.
+        </div>
+      </section>
+
+      <!-- ═══════════════════════════════════════════════════════ -->
+      <!-- SECTION 4: TYPICAL SWALE SECTION -->
+      <!-- ═══════════════════════════════════════════════════════ -->
+      <section class="section" id="swale-section">
+        <span class="section-number">Section 04</span>
+        <h2>Typical Swale Section</h2>
+
+        <p>Stormwater swales designed as retention systems must meet minimum dimensional requirements that ensure adequate treatment volume storage while maintaining stable side slopes for vegetation establishment and safety.</p>
+
+        <div class="figure">
+          <div class="figure-placeholder" style="min-height:280px;">
+            <span class="icon">📐</span>
+            <span class="fig-label">Figure 4.1 — Typical Swale Cross-Section</span>
+            <span class="fig-desc">Engineering cross-section of a retention swale showing: width (W), treatment depth (D), W:D ratio ≥ 6:1, Treatment Volume Storage zone, Treatment Recovery by Infiltration arrows pointing downward through the bottom, Side Slopes ≥ 3(H):1(V) on both sides, and Seasonal High Groundwater Table Elevation shown below the bottom of swale.</span>
+          </div>
+          <div class="figure-caption">Figure 4.1. Typical retention swale cross-section showing required dimensional relationships and groundwater separation. (Source: Harper, 2026)</div>
+        </div>
+
+        <h3>Key Geometric Requirements</h3>
+
+        <div class="swale-specs">
+          <div class="spec-card">
+            <span class="spec-label">Width-to-Depth Ratio</span>
+            <span class="spec-value">W:D ≥ 6:1</span>
+          </div>
+          <div class="spec-card">
+            <span class="spec-label">Side Slopes</span>
+            <span class="spec-value">≥ 3(H):1(V)</span>
+          </div>
+          <div class="spec-card">
+            <span class="spec-label">Recovery Method</span>
+            <span class="spec-value">Infiltration</span>
+          </div>
+          <div class="spec-card">
+            <span class="spec-label">GWT Separation</span>
+            <span class="spec-value">Per District rules</span>
+          </div>
+          <div class="spec-card">
+            <span class="spec-label">Treatment Volume</span>
+            <span class="spec-value">Full volume stored</span>
+          </div>
+          <div class="spec-card">
+            <span class="spec-label">Surface Discharge</span>
+            <span class="spec-value">None for Tv</span>
+          </div>
+        </div>
+      </section>
+
+      <!-- ═══════════════════════════════════════════════════════ -->
+      <!-- SECTION 5: ROADSIDE SWALES -->
+      <!-- ═══════════════════════════════════════════════════════ -->
+      <section class="section" id="roadside-swales">
+        <span class="section-number">Section 05</span>
+        <h2>Roadside Swales</h2>
+
+        <p>Roadside swales serve a dual function in stormwater management — they simultaneously convey runoff and provide treatment through infiltration. As linear retention systems, they are particularly well-suited for roadway corridors where traditional retention ponds are impractical.</p>
+
+        <h3>Functional Characteristics</h3>
+
+        <ul class="tech-list">
+          <li>Combine conveyance and treatment within a single linear feature</li>
+          <li>Used as linear retention systems along roadway corridors</li>
+          <li>Swale blocks, check dams, or raised inlets may be used to impound water for infiltration</li>
+          <li>A large portion of the runoff infiltrates during conveyance even without impoundment structures</li>
+        </ul>
+
+        <div class="figure">
+          <div class="figure-placeholder" style="min-height:220px;">
+            <span class="icon">📷</span>
+            <span class="fig-label">Figure 5.1 — Roadside Swale Examples</span>
+            <span class="fig-desc">Two photographs: upper image shows a residential roadside swale with natural grade slope; lower image shows a roadside swale in a residential neighborhood with a raised inlet structure allowing water storage in the swale (labeled in original image).</span>
+          </div>
+          <div class="figure-caption">Figure 5.1. Roadside swales with and without raised inlets for runoff impoundment. (Source: Harper, 2026)</div>
+        </div>
+
+        <h3>Case Study: Impact of Drainage "Improvements"</h3>
+
+        <p>This case study illustrates how conventional drainage improvements can inadvertently eliminate the water quality benefits provided by existing retention swale systems.</p>
+
+        <div class="figure">
+          <div class="figure-placeholder" style="min-height:260px;">
+            <span class="icon">📷</span>
+            <span class="fig-label">Figure 5.2 — Before/After Swale Conversion</span>
+            <span class="fig-desc">Three photographs with directional arrow showing system change: upper photo shows original roadside swale with raised swale block (labeled) preventing runoff from entering lake; lower left shows swale after conversion to stormsewer with grated inlet; lower right shows former swale area with inlet blocked by leaves (labeled).</span>
+          </div>
+          <div class="figure-caption">Figure 5.2. Drainage "improvements" converting a retention swale to a stormsewer system, eliminating runoff retention. (Source: Harper, 2026)</div>
+        </div>
+
+        <div class="callout conclusion">
+          <span class="callout-label">Case Study Finding</span>
+          A roadside swale equipped with swale blocks successfully retained a large portion of roadway runoff, preventing it from entering an adjacent lake. When drainage "improvements" were installed and the swale converted to a stormsewer system, runoff retention was eliminated. Leaves and associated pollutants previously captured in the swale now discharge directly to the lake.
+        </div>
+      </section>
+
+      <!-- ═══════════════════════════════════════════════════════ -->
+      <!-- SECTION 6: SWALE PERFORMANCE EVALUATION -->
+      <!-- ═══════════════════════════════════════════════════════ -->
+      <section class="section" id="swale-performance">
+        <span class="section-number">Section 06</span>
+        <h2>Evaluation of Grassed Swale Performance Efficiency</h2>
+
+        <p>A systematic field evaluation of grassed swale performance was conducted circa 1982–83 to quantify pollutant removal along the length of swale systems. The study methodology involved controlled loading of nutrients and metals to measure concentration reductions as a function of distance and flow velocity.</p>
+
+        <h3>Study Methodology</h3>
+
+        <div class="figure">
+          <div class="figure-placeholder" style="min-height:240px;">
+            <span class="icon">📷</span>
+            <span class="fig-label">Figure 6.1 — Grassed Swale Study Setup (~1982–83)</span>
+            <span class="fig-desc">Four field photographs showing the experimental setup: pump and dosing equipment at swale inlet; overview of test swale during flow event; researcher collecting water samples at downstream monitoring station; view of swale outlet and receiving water area. Caption: "Water source is spiked with nutrients and metals and pumped into swale. Water runs down swale, and samples and flow data are collected."</span>
+          </div>
+          <div class="figure-caption">Figure 6.1. Experimental setup for grassed swale performance evaluation, Maitland Blvd., Orange County, Florida, ~1982–83. (Source: Harper, 2026)</div>
+        </div>
+
+        <h3>Results: Higher Flow Velocity (Test 1 — January 24, 1983)</h3>
+
+        <div class="chart-meta">
+          <div class="chart-meta-item"><span class="cm-key">Site:</span><span class="cm-val">Maitland Blvd.</span></div>
+          <div class="chart-meta-item"><span class="cm-key">Flow Velocity:</span><span class="cm-val">2.58 m/min (0.14 ft/sec)</span></div>
+          <div class="chart-meta-item"><span class="cm-key">Soils:</span><span class="cm-val">Sandy, dry</span></div>
+          <div class="chart-meta-item"><span class="cm-key">Hydraulic Depth:</span><span class="cm-val">0.038 m (1.5 inches)</span></div>
+          <div class="chart-meta-item"><span class="cm-key">Vegetation:</span><span class="cm-val">Bahia Grass</span></div>
+          <div class="chart-meta-item"><span class="cm-key">Date:</span><span class="cm-val">1/24/83</span></div>
+        </div>
+
+        <div class="figure">
+          <div class="figure-placeholder" style="min-height:260px;">
+            <span class="icon">📈</span>
+            <span class="fig-label">Figure 6.2 — Percent of Inflow Concentration vs. Distance Along Swale (Test 1)</span>
+            <span class="fig-desc">Line graph with x-axis: Distance Along Swale (m), 0–60 m; y-axis: Percent of Inflow Concentration, 0–140%. Six parameter lines plotted: Zn (red), Cu (pink), Al (green), Fe (blue), Pb (dark green), Cr (cyan). Zn shows strong removal trend decreasing to ~23% by 54 m. Pb shows variable behavior with increase at 8 m (~125%) then decrease. Flow velocity: 2.58 m/min.</span>
+          </div>
+          <div class="figure-caption">Figure 6.2. Heavy metal removal efficiency along swale length under higher flow velocity conditions (2.58 m/min). (Source: Harper, 2026)</div>
+        </div>
+
+        <h3>Results: Lower Flow Velocity (Test 2 — February 7, 1983)</h3>
+
+        <div class="chart-meta">
+          <div class="chart-meta-item"><span class="cm-key">Site:</span><span class="cm-val">Maitland Blvd.</span></div>
+          <div class="chart-meta-item"><span class="cm-key">Flow Velocity:</span><span class="cm-val">1.37 m/min (0.07 ft/sec)</span></div>
+          <div class="chart-meta-item"><span class="cm-key">Soils:</span><span class="cm-val">Sandy, dry</span></div>
+          <div class="chart-meta-item"><span class="cm-key">Hydraulic Depth:</span><span class="cm-val">0.033 m (1.3 inches)</span></div>
+          <div class="chart-meta-item"><span class="cm-key">Vegetation:</span><span class="cm-val">Bahia Grass</span></div>
+          <div class="chart-meta-item"><span class="cm-key">Date:</span><span class="cm-val">2/07/83</span></div>
+        </div>
+
+        <div class="figure">
+          <div class="figure-placeholder" style="min-height:260px;">
+            <span class="icon">📈</span>
+            <span class="fig-label">Figure 6.3 — Percent of Inflow Concentration vs. Distance Along Swale (Test 2)</span>
+            <span class="fig-desc">Line graph with x-axis: Distance Along Swale (m), 0–60 m; y-axis: Percent of Inflow Concentration, 0–120%. Six parameter lines plotted: Zn (red), Cu (pink), Al (green), Fe (blue), Pb (dark green), Cr (cyan). Zn shows strong removal to ~8% at 54 m. Al remains at ~75% throughout. Fe decreases to ~30%. Flow velocity: 1.37 m/min (about half of Test 1), demonstrating substantially improved removal at lower velocity.</span>
+          </div>
+          <div class="figure-caption">Figure 6.3. Heavy metal removal efficiency along swale length under lower flow velocity conditions (1.37 m/min), demonstrating enhanced performance with increased residence time. (Source: Harper, 2026)</div>
+        </div>
+
+        <div class="callout">
+          <span class="callout-label">Key Finding</span>
+          <strong>Removal efficiencies are enhanced at lower flow velocities and longer residence times.</strong> Comparing Test 1 (2.58 m/min) with Test 2 (1.37 m/min), zinc removal at 54 m improved from approximately 77% to 92%. This finding underscores the importance of swale design elements — such as check dams and raised inlets — that reduce conveyance velocity and increase hydraulic residence time.
+        </div>
+      </section>
+
+      <!-- ═══════════════════════════════════════════════════════ -->
+      <!-- SECTION 7: PERVIOUS CONCRETE -->
+      <!-- ═══════════════════════════════════════════════════════ -->
+      <section class="section" id="pervious-concrete">
+        <span class="section-number">Section 07</span>
+        <h2>Pervious Concrete</h2>
+
+        <p>Pervious (porous) concrete is a permeable pavement technology that allows stormwater to pass through the pavement surface and into a subsurface reservoir, where it infiltrates into the native soil. It is commonly used in parking areas and low-traffic roadways as an alternative to conventional impervious surfaces.</p>
+
+        <div class="figure">
+          <div class="figure-placeholder" style="min-height:160px;">
+            <span class="icon">📷</span>
+            <span class="fig-label">Figure 7.1 — Pervious Concrete vs. Conventional Asphalt</span>
+            <span class="fig-desc">Photograph of a parking area showing a clear visual comparison between standard asphalt paving (left, with visible surface runoff pooling) and pervious concrete (right, with water visibly infiltrating through the surface). Both sections labeled in original image.</span>
+          </div>
+          <div class="figure-caption">Figure 7.1. Side-by-side comparison of conventional asphalt paving and pervious concrete. (Source: Harper, 2026)</div>
+        </div>
+
+        <h3>Layer Composition</h3>
+
+        <p>Pervious concrete pavement systems consist of multiple engineered layers designed to manage infiltration, provide structural support, and store treatment volume:</p>
+
+        <div class="figure">
+          <div class="figure-placeholder" style="min-height:220px;">
+            <span class="icon">📐</span>
+            <span class="fig-label">Figure 7.2 — Pervious Concrete Layer Diagram</span>
+            <span class="fig-desc">Detailed cross-section schematic showing four distinct horizontal layers from top to bottom: (1) Surface Course — diagonal hash pattern; (2) Filter Course — fine aggregate shown as small dots; (3) Reservoir Base Course — large aggregate shown as rounded stones; (4) Existing Soil — brick/hatched pattern. Each layer is labeled with bracketed annotations on the right side showing name and specifications.</span>
+          </div>
+          <div class="figure-caption">Figure 7.2. Pervious concrete pavement layer composition schematic. (Source: Harper, 2026)</div>
+        </div>
+
+        <div class="layer-stack">
+          <div class="layer">
+            <div class="layer-name">Surface Course</div>
+            <div class="layer-desc">1/2" to 3/4" aggregate mix · 2.5 to 4" thickness typical. Open-graded mix providing high permeability while maintaining structural load capacity.</div>
+          </div>
+          <div class="layer">
+            <div class="layer-name">Filter Course</div>
+            <div class="layer-desc">1/2" aggregate, 2" thick. Prevents migration of surface course aggregate into the reservoir base while allowing free drainage.</div>
+          </div>
+          <div class="layer">
+            <div class="layer-name">Reservoir Base Course</div>
+            <div class="layer-desc">1" to 2" aggregate. Voids volume is designed for the required retention volume. Thickness is determined based on storage volume required to achieve the desired treatment efficiency.</div>
+          </div>
+          <div class="layer">
+            <div class="layer-name">Existing Soil</div>
+            <div class="layer-desc">Minimal compaction to retain porosity and permeability. Native soil infiltration rate governs the long-term drawdown performance of the system.</div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ═══════════════════════════════════════════════════════ -->
+      <!-- SECTION 8: ADDITIONAL RETENTION OPTIONS -->
+      <!-- ═══════════════════════════════════════════════════════ -->
+      <section class="section" id="retention-options">
+        <span class="section-number">Section 08</span>
+        <h2>Additional Retention Options</h2>
+
+        <p>Beyond conventional retention ponds and swales, a range of distributed retention practices can be applied at the parcel or site level to reduce delivered runoff volumes. While these options are generally applicable to smaller areas, their widespread adoption can meaningfully reduce total runoff loads delivered to receiving waters.</p>
+
+        <div class="figure">
+          <div class="figure-placeholder" style="min-height:280px;">
+            <span class="icon">📷</span>
+            <span class="fig-label">Figure 8.1 — Retention Options Photo Array</span>
+            <span class="fig-desc">Five photographs arranged in a grid showing: (1) Permeable Pavers — interlocking brick pavers in a parking area with natural mulch border; (2) Permeable Concrete/Asphalt — close-up of water being discharged onto pervious asphalt, showing rapid infiltration; (3) Permeable Planters — raised planter with trees and shrubs adjacent to an urban walkway; (4) Grassed Parking Areas — turf grid system used in overflow parking area; (5) Rain Gardens — small residential bioretention area edged with river rock and planted with native wildflowers.</span>
+          </div>
+          <div class="figure-caption">Figure 8.1. Distributed retention options applicable at parcel and site scales. (Source: Harper, 2026)</div>
+        </div>
+
+        <h3>Distributed Retention Practice Types</h3>
+
+        <ul class="tech-list">
+          <li><strong>Permeable Pavers:</strong> Interlocking pavers with aggregate-filled joints allowing infiltration. Suitable for driveways, walkways, and parking.</li>
+          <li><strong>Permeable Concrete/Asphalt:</strong> Open-graded mix allowing water passage through pavement matrix. See Section 7 for detailed layer composition.</li>
+          <li><strong>Permeable Planters:</strong> Raised or in-ground planting areas designed to capture and infiltrate runoff from adjacent impervious surfaces.</li>
+          <li><strong>Grassed Parking Areas:</strong> Turf reinforcement grids or grass block pavers for low-frequency or overflow parking areas.</li>
+          <li><strong>Rain Gardens:</strong> Shallow vegetated depressions designed to capture and infiltrate runoff from roofs, driveways, and streets.</li>
+        </ul>
+
+        <div class="callout">
+          <span class="callout-label">Application Note</span>
+          Most of these options are designed for small areas and applied on a parcel basis. While they cannot substitute for required treatment facilities, they can further reduce the delivered runoff volume and assist in meeting water quality objectives for the overall project.
+        </div>
+      </section>
+
+      <hr class="section-rule">
+
+      <!-- ═══════════════════════════════════════════════════════ -->
+      <!-- SECTION 9: RETENTION MODELING METHODS -->
+      <!-- ═══════════════════════════════════════════════════════ -->
+      <section class="section" id="modeling-methods">
+        <span class="section-number">Section 09</span>
+        <h2>Retention Modeling Methods</h2>
+
+        <p>An evaluation of the efficiency of dry retention practices was conducted by Harper and Baker (2007) for the Florida Department of Environmental Protection (FDEP). This foundational analysis underpins the performance-based design approach incorporated in both the BMPFast model and Florida's 2024 Stormwater Rule.</p>
+
+        <h3>Modeling Framework</h3>
+
+        <p>The study was based on a continuous simulation of runoff from a hypothetical 1-acre site using the SCS curve number methodology. The comprehensive parametric analysis covered a wide range of site conditions representative of Florida development scenarios.</p>
+
+        <h3>Analysis Parameters</h3>
+
+        <div class="assumptions-block">
+          <div class="assumption-item">
+            <strong>DCIA Range:</strong> Directly Connected Impervious Area percentages from 0% to 100% in 10-unit intervals
+          </div>
+          <div class="assumption-item">
+            <strong>Non-DCIA Curve Numbers:</strong> Values from 30 to 90 in 10-unit intervals, representing the range of pervious area conditions from open sandy soils to heavily urbanized pervious surfaces
+          </div>
+          <div class="assumption-item">
+            <strong>Rainfall Data:</strong> Runoff calculated for continuous historical rainfall data sets for each of the 45 hourly Florida meteorological sites. Generally, 30–50 years of data per site were available, providing statistically robust results across Florida's diverse rainfall climatology.
+          </div>
+        </div>
+      </section>
+
+      <!-- ═══════════════════════════════════════════════════════ -->
+      <!-- SECTION 10: EFFICIENCY MODELING ASSUMPTIONS -->
+      <!-- ═══════════════════════════════════════════════════════ -->
+      <section class="section" id="efficiency-assumptions">
+        <span class="section-number">Section 10</span>
+        <h2>Efficiency Modeling Assumptions</h2>
+
+        <p>The retention efficiency model relies on several key assumptions that define how pollutant removal is related to runoff volume retention. These assumptions are well-supported by available research and provide a defensible basis for regulatory application.</p>
+
+        <h3>Fundamental Efficiency Relationship</h3>
+
+        <p>The analysis assumes that the efficiency of an infiltration/retention practice is directly related to the portion of the annual runoff volume retained. For example, if 50% of the annual runoff volume is retained, the removal efficiency for Total Nitrogen (TN) and Total Phosphorus (TP) is also 50%. This relationship rests on two supporting assumptions:</p>
+
+        <ul class="tech-list">
+          <li>Assumes no change in runoff concentrations during the individual storm event (concentrations are uniform, regardless of timing within event)</li>
+          <li>Ignores groundwater loading contributions</li>
+        </ul>
+
+        <h3>Continuous Simulation Approach</h3>
+
+        <p>Performance efficiency was calculated using a continuous simulation of runoff inputs into a theoretical dry retention pond, based on individual storm events over the entire available rainfall record for all 45 hourly meteorological stations. Treatment logic applied after runoff enters the pond:</p>
+
+        <div class="assumptions-block">
+          <div class="assumption-item">
+            <strong>Events where runoff volume ≤ treatment volume:</strong> A removal efficiency of 100% is assumed — the entire event volume is captured and retained.
+          </div>
+          <div class="assumption-item">
+            <strong>Events where runoff volume > treatment volume:</strong>
+            <ul>
+              <li>100% removal for inputs up to the treatment volume</li>
+              <li>0% removal for inputs in excess of the treatment volume — excess water bypasses the pond without treatment</li>
+            </ul>
+          </div>
+        </div>
+
+        <h3>Drawdown Assumptions</h3>
+
+        <p>A hypothetical drawdown curve is used to evacuate water from the pond, calibrated to common Water Management District drawdown requirements:</p>
+
+        <ul class="tech-list">
+          <li>Recovery of 50% of treatment volume in 24 hours</li>
+          <li>Recovery of 100% of treatment volume in 72 hours</li>
+        </ul>
+
+        <h3>First Flush Assumption</h3>
+
+        <p>The model assumes no significant "first flush" effect from the watershed. While small watersheds (less than 5–10 acres) may exhibit first-flush behavior for certain rain events, there is no evidence that larger watersheds exhibit first-flush effects on a continuous basis. No consistent research supports this concept as a basis for design at typical project scales.</p>
+
+        <h3>Efficiency Calculation and Data Aggregation</h3>
+
+        <ul class="tech-list">
+          <li>Pond efficiency is equal to the fraction of annual runoff volume infiltrated</li>
+          <li>Separate model runs were conducted for the entire period of rainfall record at each of the 45 hourly meteorological sites</li>
+          <li>Data were summarized by meteorological zone for use in design applications</li>
+        </ul>
+      </section>
+
+      <!-- ═══════════════════════════════════════════════════════ -->
+      <!-- SECTION 11: MODELED REMOVAL EFFICIENCY TABLES -->
+      <!-- ═══════════════════════════════════════════════════════ -->
+      <section class="section" id="removal-tables">
+        <span class="section-number">Section 11</span>
+        <h2>Modeled Dry Retention Removal Efficiencies</h2>
+
+        <p>Tables were generated of retention efficiency for each meteorological zone in 0.25-inch intervals from 0.25 to 4.0 inches — 16 separate tables per zone, 80 tables total. The following example tables present mean annual mass removal efficiencies for Zone 1 at retention depths of 0.25 inches and 0.50 inches.</p>
+
+        <p><em>Source: Harper and Baker (2007) — Appendix D</em></p>
+
+        <h3>Mean Annual Mass Removal Efficiencies — 0.25 Inches of Retention, Zone 1</h3>
+
+        <div class="eff-table-wrap">
+          <table class="eff-table">
+            <caption>Table 11.1. Mean Annual Mass Removal Efficiencies (%) for 0.25 inches of Retention, Meteorological Zone 1. Rows = Non-DCIA Curve Number (CN); Columns = Percent DCIA.</caption>
+            <thead>
+              <tr>
+                <th class="row-head">NDCIA CN</th>
+                <th>5</th><th>10</th><th>15</th><th>20</th><th>25</th><th>30</th><th>35</th>
+                <th>40</th><th>45</th><th>50</th><th>55</th><th>60</th><th>65</th>
+                <th>70</th><th>75</th><th>80</th><th>85</th><th>90</th><th>95</th><th>100</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr><td class="row-head">30</td><td>86.2</td><td>81.3</td><td>73.3</td><td>65.5</td><td>58.7</td><td>53.0</td><td>48.3</td><td>44.2</td><td>40.8</td><td>37.9</td><td>35.3</td><td>33.1</td><td>31.1</td><td>29.4</td><td>27.8</td><td>26.4</td><td>25.1</td><td>24.0</td><td>22.9</td><td>21.9</td></tr>
+              <tr><td class="row-head">35</td><td>81.6</td><td>78.7</td><td>71.7</td><td>64.5</td><td>58.0</td><td>52.5</td><td>47.9</td><td>44.0</td><td>40.6</td><td>37.7</td><td>35.2</td><td>33.0</td><td>31.0</td><td>29.3</td><td>27.8</td><td>26.4</td><td>25.1</td><td>23.9</td><td>22.9</td><td>21.9</td></tr>
+              <tr><td class="row-head">40</td><td>76.4</td><td>75.5</td><td>69.6</td><td>63.1</td><td>57.1</td><td>51.9</td><td>47.4</td><td>43.6</td><td>40.3</td><td>37.5</td><td>35.0</td><td>32.9</td><td>30.9</td><td>29.2</td><td>27.7</td><td>26.3</td><td>25.1</td><td>23.9</td><td>22.9</td><td>21.9</td></tr>
+              <tr><td class="row-head">45</td><td>70.7</td><td>71.7</td><td>67.2</td><td>61.4</td><td>55.9</td><td>51.0</td><td>46.8</td><td>43.1</td><td>40.0</td><td>37.2</td><td>34.8</td><td>32.7</td><td>30.8</td><td>29.1</td><td>27.6</td><td>26.3</td><td>25.0</td><td>23.9</td><td>22.9</td><td>21.9</td></tr>
+              <tr><td class="row-head">50</td><td>64.7</td><td>67.5</td><td>64.2</td><td>59.4</td><td>54.5</td><td>50.0</td><td>46.0</td><td>42.6</td><td>39.5</td><td>36.9</td><td>34.6</td><td>32.5</td><td>30.7</td><td>29.0</td><td>27.5</td><td>26.2</td><td>25.0</td><td>23.9</td><td>22.9</td><td>21.9</td></tr>
+              <tr><td class="row-head">55</td><td>58.6</td><td>62.8</td><td>60.9</td><td>57.0</td><td>52.7</td><td>48.7</td><td>45.1</td><td>41.8</td><td>39.0</td><td>36.5</td><td>34.2</td><td>32.3</td><td>30.5</td><td>28.9</td><td>27.4</td><td>26.1</td><td>24.9</td><td>23.9</td><td>22.9</td><td>21.9</td></tr>
+              <tr><td class="row-head">60</td><td>52.8</td><td>57.8</td><td>57.1</td><td>54.2</td><td>50.7</td><td>47.1</td><td>43.9</td><td>40.9</td><td>38.3</td><td>35.9</td><td>33.8</td><td>31.9</td><td>30.2</td><td>28.7</td><td>27.3</td><td>26.0</td><td>24.9</td><td>23.8</td><td>22.8</td><td>21.9</td></tr>
+              <tr><td class="row-head">65</td><td>47.3</td><td>52.6</td><td>53.0</td><td>51.1</td><td>48.3</td><td>45.3</td><td>42.5</td><td>39.8</td><td>37.4</td><td>35.3</td><td>33.3</td><td>31.5</td><td>29.9</td><td>28.4</td><td>27.1</td><td>25.9</td><td>24.8</td><td>23.8</td><td>22.8</td><td>21.9</td></tr>
+              <tr><td class="row-head">70</td><td>42.2</td><td>47.3</td><td>48.6</td><td>47.6</td><td>45.6</td><td>43.2</td><td>40.8</td><td>38.5</td><td>36.4</td><td>34.4</td><td>32.6</td><td>31.0</td><td>29.5</td><td>28.1</td><td>26.9</td><td>25.7</td><td>24.7</td><td>23.7</td><td>22.8</td><td>21.9</td></tr>
+              <tr><td class="row-head">75</td><td>37.8</td><td>42.2</td><td>43.9</td><td>43.7</td><td>42.4</td><td>40.7</td><td>38.8</td><td>36.9</td><td>35.1</td><td>33.4</td><td>31.8</td><td>30.4</td><td>29.0</td><td>27.8</td><td>26.6</td><td>25.5</td><td>24.5</td><td>23.6</td><td>22.7</td><td>21.9</td></tr>
+              <tr><td class="row-head">80</td><td>34.0</td><td>37.5</td><td>39.4</td><td>39.4</td><td>38.8</td><td>37.7</td><td>36.4</td><td>34.9</td><td>33.5</td><td>32.1</td><td>30.8</td><td>29.5</td><td>28.3</td><td>27.2</td><td>26.2</td><td>25.2</td><td>24.3</td><td>23.5</td><td>22.7</td><td>21.9</td></tr>
+              <tr><td class="row-head">85</td><td>30.8</td><td>33.1</td><td>34.3</td><td>34.8</td><td>34.7</td><td>34.2</td><td>33.4</td><td>32.5</td><td>31.4</td><td>30.4</td><td>29.4</td><td>28.4</td><td>27.4</td><td>26.5</td><td>25.7</td><td>24.8</td><td>24.1</td><td>23.3</td><td>22.6</td><td>21.9</td></tr>
+              <tr><td class="row-head">90</td><td>27.9</td><td>29.2</td><td>29.9</td><td>30.3</td><td>30.3</td><td>30.2</td><td>29.8</td><td>29.3</td><td>28.8</td><td>28.2</td><td>27.5</td><td>26.8</td><td>26.2</td><td>25.5</td><td>24.9</td><td>24.2</td><td>23.6</td><td>23.0</td><td>22.5</td><td>21.9</td></tr>
+              <tr><td class="row-head">95</td><td>25.3</td><td>25.6</td><td>25.8</td><td>25.9</td><td>26.0</td><td>25.9</td><td>25.8</td><td>25.6</td><td>25.4</td><td>25.2</td><td>24.9</td><td>24.6</td><td>24.3</td><td>24.0</td><td>23.6</td><td>23.3</td><td>23.0</td><td>22.6</td><td>22.3</td><td>21.9</td></tr>
+              <tr><td class="row-head">98</td><td>23.8</td><td>23.8</td><td>23.8</td><td>23.7</td><td>23.7</td><td>23.6</td><td>23.5</td><td>23.4</td><td>23.3</td><td>23.2</td><td>23.1</td><td>23.0</td><td>22.9</td><td>22.8</td><td>22.6</td><td>22.5</td><td>22.4</td><td>22.2</td><td>22.1</td><td>21.9</td></tr>
+            </tbody>
+          </table>
+        </div>
+
+        <h3>Mean Annual Mass Removal Efficiencies — 0.50 Inches of Retention, Zone 1</h3>
+
+        <div class="eff-table-wrap">
+          <table class="eff-table">
+            <caption>Table 11.2. Mean Annual Mass Removal Efficiencies (%) for 0.50 inches of Retention, Meteorological Zone 1. Rows = Non-DCIA Curve Number (CN); Columns = Percent DCIA.</caption>
+            <thead>
+              <tr>
+                <th class="row-head">NDCIA CN</th>
+                <th>5</th><th>10</th><th>15</th><th>20</th><th>25</th><th>30</th><th>35</th>
+                <th>40</th><th>45</th><th>50</th><th>55</th><th>60</th><th>65</th>
+                <th>70</th><th>75</th><th>80</th><th>85</th><th>90</th><th>95</th><th>100</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr><td class="row-head">30</td><td>91.8</td><td>91.5</td><td>88.3</td><td>84.0</td><td>79.5</td><td>75.0</td><td>70.7</td><td>66.6</td><td>62.9</td><td>59.6</td><td>56.5</td><td>53.6</td><td>51.1</td><td>48.7</td><td>46.6</td><td>44.6</td><td>42.8</td><td>41.1</td><td>39.6</td><td>38.1</td></tr>
+              <tr><td class="row-head">35</td><td>88.2</td><td>89.1</td><td>86.6</td><td>82.8</td><td>78.6</td><td>74.3</td><td>70.1</td><td>66.2</td><td>62.6</td><td>59.3</td><td>56.3</td><td>53.5</td><td>51.0</td><td>48.7</td><td>46.5</td><td>44.6</td><td>42.8</td><td>41.1</td><td>39.6</td><td>38.1</td></tr>
+              <tr><td class="row-head">40</td><td>84.0</td><td>86.3</td><td>84.4</td><td>81.2</td><td>77.4</td><td>73.4</td><td>69.4</td><td>65.7</td><td>62.2</td><td>59.0</td><td>56.0</td><td>53.3</td><td>50.8</td><td>48.5</td><td>46.4</td><td>44.5</td><td>42.7</td><td>41.1</td><td>39.6</td><td>38.1</td></tr>
+              <tr><td class="row-head">45</td><td>79.6</td><td>82.9</td><td>81.9</td><td>79.3</td><td>75.9</td><td>72.2</td><td>68.5</td><td>65.0</td><td>61.7</td><td>58.6</td><td>55.7</td><td>53.0</td><td>50.6</td><td>48.4</td><td>46.3</td><td>44.4</td><td>42.7</td><td>41.0</td><td>39.5</td><td>38.1</td></tr>
+              <tr><td class="row-head">50</td><td>74.8</td><td>79.1</td><td>79.0</td><td>77.0</td><td>74.1</td><td>70.8</td><td>67.4</td><td>64.1</td><td>61.0</td><td>58.0</td><td>55.3</td><td>52.7</td><td>50.4</td><td>48.2</td><td>46.2</td><td>44.3</td><td>42.6</td><td>41.0</td><td>39.5</td><td>38.1</td></tr>
+              <tr><td class="row-head">55</td><td>70.1</td><td>74.9</td><td>75.6</td><td>74.2</td><td>71.9</td><td>69.1</td><td>66.1</td><td>63.0</td><td>60.1</td><td>57.3</td><td>54.7</td><td>52.3</td><td>50.0</td><td>47.9</td><td>46.0</td><td>44.2</td><td>42.5</td><td>40.9</td><td>39.5</td><td>38.1</td></tr>
+              <tr><td class="row-head">60</td><td>65.5</td><td>70.4</td><td>71.7</td><td>71.1</td><td>69.4</td><td>67.0</td><td>64.4</td><td>61.7</td><td>59.1</td><td>56.5</td><td>54.1</td><td>51.8</td><td>49.6</td><td>47.6</td><td>45.8</td><td>44.0</td><td>42.4</td><td>40.9</td><td>39.4</td><td>38.1</td></tr>
+              <tr><td class="row-head">65</td><td>61.0</td><td>65.8</td><td>67.5</td><td>67.6</td><td>66.4</td><td>64.7</td><td>62.5</td><td>60.2</td><td>57.8</td><td>55.5</td><td>53.3</td><td>51.1</td><td>49.1</td><td>47.2</td><td>45.5</td><td>43.8</td><td>42.3</td><td>40.8</td><td>39.4</td><td>38.1</td></tr>
+              <tr><td class="row-head">70</td><td>56.7</td><td>61.1</td><td>63.1</td><td>63.6</td><td>63.1</td><td>61.9</td><td>60.2</td><td>58.3</td><td>56.3</td><td>54.3</td><td>52.3</td><td>50.3</td><td>48.5</td><td>46.8</td><td>45.1</td><td>43.5</td><td>42.1</td><td>40.7</td><td>39.4</td><td>38.1</td></tr>
+              <tr><td class="row-head">75</td><td>52.7</td><td>56.6</td><td>58.6</td><td>59.3</td><td>59.3</td><td>58.6</td><td>57.5</td><td>56.0</td><td>54.4</td><td>52.7</td><td>51.0</td><td>49.3</td><td>47.7</td><td>46.1</td><td>44.6</td><td>43.2</td><td>41.8</td><td>40.5</td><td>39.3</td><td>38.1</td></tr>
+              <tr><td class="row-head">80</td><td>49.1</td><td>52.2</td><td>54.1</td><td>55.0</td><td>55.2</td><td>54.9</td><td>54.2</td><td>53.2</td><td>52.1</td><td>50.8</td><td>49.4</td><td>48.0</td><td>46.6</td><td>45.3</td><td>44.0</td><td>42.7</td><td>41.5</td><td>40.3</td><td>39.2</td><td>38.1</td></tr>
+              <tr><td class="row-head">85</td><td>46.1</td><td>48.3</td><td>49.7</td><td>50.5</td><td>50.8</td><td>50.8</td><td>50.5</td><td>49.9</td><td>49.2</td><td>48.3</td><td>47.3</td><td>46.3</td><td>45.2</td><td>44.2</td><td>43.1</td><td>42.1</td><td>41.1</td><td>40.0</td><td>39.1</td><td>38.1</td></tr>
+              <tr><td class="row-head">90</td><td>43.5</td><td>44.8</td><td>45.6</td><td>46.1</td><td>46.4</td><td>46.5</td><td>46.4</td><td>46.1</td><td>45.7</td><td>45.2</td><td>44.6</td><td>44.0</td><td>43.3</td><td>42.6</td><td>41.9</td><td>41.1</td><td>40.4</td><td>39.6</td><td>38.9</td><td>38.1</td></tr>
+              <tr><td class="row-head">95</td><td>41.1</td><td>41.5</td><td>41.9</td><td>41.9</td><td>42.1</td><td>42.1</td><td>42.0</td><td>41.9</td><td>41.8</td><td>41.6</td><td>41.3</td><td>41.1</td><td>40.8</td><td>40.4</td><td>40.1</td><td>39.7</td><td>39.3</td><td>38.9</td><td>38.5</td><td>38.1</td></tr>
+              <tr><td class="row-head">98</td><td>39.8</td><td>39.8</td><td>39.8</td><td>39.8</td><td>39.8</td><td>39.7</td><td>39.7</td><td>39.6</td><td>39.5</td><td>39.4</td><td>39.3</td><td>39.2</td><td>39.1</td><td>39.0</td><td>38.9</td><td>38.7</td><td>38.6</td><td>38.4</td><td>38.3</td><td>38.1</td></tr>
+            </tbody>
+          </table>
+        </div>
+
+        <p><em>Complete tables for all five meteorological zones and retention depths from 0.25 to 4.0 inches are provided in Harper and Baker (2007), Appendix D.</em></p>
+      </section>
+
+      <!-- ═══════════════════════════════════════════════════════ -->
+      <!-- SECTION 12: ON-LINE RETENTION EFFECTIVENESS -->
+      <!-- ═══════════════════════════════════════════════════════ -->
+      <section class="section" id="online-retention">
+        <span class="section-number">Section 12</span>
+        <h2>Effectiveness of On-Line Retention</h2>
+
+        <p>The modeled removal efficiency for a 0.50-inch on-line retention system varies substantially based on the site's DCIA percentage and the non-DCIA curve number. Understanding these relationships allows engineers to anticipate performance under different site conditions.</p>
+
+        <div class="figure">
+          <div class="figure-placeholder" style="min-height:300px;">
+            <span class="icon">📈</span>
+            <span class="fig-label">Figure 12.1 — Effectiveness of On-Line Retention (0.50 Inch over watershed)</span>
+            <span class="fig-desc">Line graph with x-axis: Non-DCIA Curve Number (20–100); y-axis: Percent Removal (50–100%). Nine curves plotted for DCIA values of 10, 20, 30, 40, 50, 60, 70, 80, and 90. All curves show declining efficiency as the non-DCIA CN increases. Higher DCIA values produce lower removal efficiencies at all CN values. At DCIA=10, removal ranges from ~99% (CN=25) to ~61% (CN=98). At DCIA=90, removal ranges from ~83% (CN=25) to ~57% (CN=98). Curves converge at high CN values.</span>
+          </div>
+          <div class="figure-caption">Figure 12.1. Removal efficiency of 0.50-inch on-line retention system as a function of non-DCIA Curve Number and DCIA percentage. (Source: Harper &amp; Baker, 2007)</div>
+        </div>
+
+        <div class="def-grid">
+          <div class="def-block">
+            <div class="def-term" style="color:var(--danger); text-decoration:none;">Efficiency Decreases As:</div>
+            <ul>
+              <li>DCIA increases (more impervious area generates greater runoff volume)</li>
+              <li>Non-DCIA CN value increases (greater runoff from pervious areas)</li>
+            </ul>
+          </div>
+          <div class="def-block">
+            <div class="def-term">Efficiency Increases As:</div>
+            <ul>
+              <li>DCIA decreases (less impervious area relative to treatment volume)</li>
+              <li>Non-DCIA CN value decreases (more permeable pervious areas)</li>
+            </ul>
+          </div>
+        </div>
+      </section>
+
+      <!-- ═══════════════════════════════════════════════════════ -->
+      <!-- SECTION 13: DRAWDOWN IMPACTS -->
+      <!-- ═══════════════════════════════════════════════════════ -->
+      <section class="section" id="drawdown">
+        <span class="section-number">Section 13</span>
+        <h2>Impacts of Accelerated Drawdown on Retention Efficiencies</h2>
+
+        <p>A key question in retention system design is whether the rate of drawdown (treatment volume recovery) significantly affects overall annual pollutant removal efficiency. The modeling results demonstrate that this effect is relatively small.</p>
+
+        <h3>Comparison: 72-Hour vs. 36-Hour Drawdown</h3>
+
+        <div class="figure">
+          <div class="figure-placeholder" style="min-height:280px;">
+            <span class="icon">📈</span>
+            <span class="fig-label">Figure 13.1 — Change in Retention Efficiency: 72-Hour vs. 36-Hour Drawdown</span>
+            <span class="fig-desc">Line graph with x-axis: Treatment Depth (inches), 0–4"; y-axis: Percent Change in Treatment (%), 0–4%. Six curves for Zone 1, Zone 2, Zone 3, Zone 4, Zone 5, and Statewide. All curves show a peak change at approximately 0.25" treatment depth (2.8–3.7%) that rapidly decreases to near zero by 2.0" treatment depth. Indicates that halving the drawdown time (72 to 36 hours) produces only minor efficiency improvements, particularly for larger retention volumes.</span>
+          </div>
+          <div class="figure-caption">Figure 13.1. Change in mean annual retention efficiency from doubling the drawdown rate (72-hour to 36-hour recovery), by meteorological zone and statewide average. (Source: Harper &amp; Baker, 2007)</div>
+        </div>
+
+        <div class="callout">
+          <span class="callout-label">Finding</span>
+          Increasing the rate of drawdown has minimal impact on treatment efficiency. Doubling the rate of recovery from 72 to 36 hours increases the retention efficiency by only 3–4% — and only for shallow retention depths. For retention depths greater than 2 inches, the improvement is less than 1%.
+        </div>
+
+        <h3>Comparison: Multiple Drawdown Rates vs. Standard 3-Day Drawdown</h3>
+
+        <div class="figure">
+          <div class="figure-placeholder" style="min-height:280px;">
+            <span class="icon">📈</span>
+            <span class="fig-label">Figure 13.2 — Percent Change in Retention Efficiency vs. Standard 3-Day Drawdown (Cross City Station)</span>
+            <span class="fig-desc">Line graph with x-axis: Treatment Depth (inches), 0–4"; y-axis: Percent Change in Treatment (%), –10 to +4%. Three curves plotted: Difference Between 1.5 Day and 3 Day (red, positive values 0–3%); Difference Between 7 Day and 3 Day (blue, negative values –4.5 to –1%); Difference Between 14 Day and 3 Day (green, negative values –8.5 to –2%). Demonstrates asymmetry: faster drawdown yields small positive gains while slower drawdown yields larger negative impacts on efficiency.</span>
+          </div>
+          <div class="figure-caption">Figure 13.2. Effect of varying drawdown times relative to standard 3-day drawdown on mean dry retention treatment efficiency, Cross City meteorological station. (Source: Harper &amp; Baker, 2007)</div>
+        </div>
+
+        <div class="callout">
+          <span class="callout-label">Key Asymmetry Finding</span>
+          Increasing the rate of drawdown has minimal impact on treatment efficiency. However, <strong>decreasing the rate of drawdown has a substantially larger negative impact on efficiency than the positive impact from increasing the rate.</strong> Extending recovery from 3 days to 14 days can reduce efficiency by up to 8–9% for shallow retention depths. This asymmetry has important implications for projects where site soils have lower infiltration rates.
+        </div>
+      </section>
+
+      <!-- ═══════════════════════════════════════════════════════ -->
+      <!-- SECTION 14: REGIONAL VARIABILITY -->
+      <!-- ═══════════════════════════════════════════════════════ -->
+      <section class="section" id="regional">
+        <span class="section-number">Section 14</span>
+        <h2>Regional Variability in Treatment Efficiency of Dry Retention</h2>
+
+        <p>The performance efficiency of retention systems is not uniform across Florida. Differences in rainfall patterns — particularly event frequency, intensity, and seasonal distribution — result in significant variability in how well a given retention depth will perform in different parts of the state.</p>
+
+        <h3>Comparison: 0.5-Inch Runoff vs. 1-Inch Rainfall Criteria</h3>
+        <p><em>Scenario: 40% DCIA and non-DCIA CN of 70</em></p>
+
+        <div class="figure">
+          <div class="figure-placeholder" style="min-height:280px;">
+            <span class="icon">📊</span>
+            <span class="fig-label">Figure 14.1 — Regional Treatment Efficiency Comparison by Zone</span>
+            <span class="fig-desc">Paired bar chart for each of five Florida meteorological zones (Zone 1 through Zone 5). Each zone shows two bars: blue bar for "Treatment for Runoff from 1.0-Inch of Rainfall" and pink/magenta bar for "Treatment for 0.5-Inches of Runoff." y-axis: Treatment Efficiency (%), 40–75%. Results: Zone 1 — 50% (blue), 59% (pink); Zone 2 — 57% (blue), 70% (pink); Zone 3 — 54% (blue), 63% (pink); Zone 4 — 55% (blue), 65% (pink); Zone 5 — 51% (blue), 60% (pink). Pink (0.5" runoff) bars consistently exceed blue (1" rainfall) bars across all zones.</span>
+          </div>
+          <div class="figure-caption">Figure 14.1. Regional variability in treatment efficiency for 40% DCIA and non-DCIA CN=70, comparing design criteria based on 0.5 inches of runoff vs. runoff from 1 inch of rainfall. (Source: Harper &amp; Baker, 2007)</div>
+        </div>
+
+        <ul class="tech-list">
+          <li>Performance efficiency of retention systems varies throughout the state due to differences in meteorological characteristics between zones</li>
+          <li>Design criteria based on treatment of 0.5 inch of runoff provide better annual mass removal than treatment of 1 inch of rainfall across all five meteorological zones</li>
+        </ul>
+
+        <div class="callout conclusion">
+          <span class="callout-label">Conclusion</span>
+          Design criteria based on retention of 0.5 inch of runoff or runoff from 1-inch of rainfall both <strong>fail to meet the 80% treatment objective</strong> for typical Florida development conditions. Performance-based design using the meteorological zone-specific efficiency tables is required to consistently achieve treatment objectives.
+        </div>
+      </section>
+
+      <!-- ═══════════════════════════════════════════════════════ -->
+      <!-- SECTION 15: RETENTION DEPTH REQUIREMENTS -->
+      <!-- ═══════════════════════════════════════════════════════ -->
+      <section class="section" id="retention-depth">
+        <span class="section-number">Section 15</span>
+        <h2>Retention Depth Required for Target Removal Efficiencies</h2>
+
+        <h3>Depth for 80% Mass Removal: Melbourne vs. Pensacola</h3>
+
+        <p>The retention depth required to achieve 80% pollutant mass removal varies significantly between meteorological zones. The contour plots below compare requirements at Melbourne (Zone 3, central Florida) and Pensacola (Zone 5, northwest Florida) for the full range of DCIA and non-DCIA curve number combinations.</p>
+
+        <div class="figure">
+          <div class="figure-placeholder" style="min-height:320px;">
+            <span class="icon">🗺️</span>
+            <span class="fig-label">Figure 15.1 — Retention Depth Required for 80% Removal (Melbourne vs. Pensacola)</span>
+            <span class="fig-desc">Two side-by-side contour/isopleth plots. Left plot (Melbourne): x-axis = Non-DCIA Curve Number (30–100); y-axis = Percent DCIA (10–100%). Color scale from deep purple (0.0") through blue, green, yellow to orange-red (1.8"). A reference dot at ~80% DCIA, CN=70 falls in the green/yellow range (~1.0"). Much of the plot is cool-colored (less than 1.0"). Right plot (Pensacola): Same axes and scales. Reference dot at same location falls in yellow-orange range (~1.3–1.5"). Large portions of the plot are warm-colored (1.4–1.8+"), indicating substantially higher treatment depth requirements, especially for high DCIA and high CN combinations.</span>
+          </div>
+          <div class="figure-caption">Figure 15.1. Retention depth (inches) required to achieve 80% mean annual mass removal. Melbourne (Zone 3) vs. Pensacola (Zone 5). Note the substantially higher requirements at Pensacola for equivalent site conditions. (Source: Harper &amp; Baker, 2007)</div>
+        </div>
+
+        <div class="callout">
+          <span class="callout-label">Design Implication</span>
+          The same project constructed in Pensacola would require a larger retention depth than a project in Melbourne due to differences in rainfall characteristics. A project at 80% DCIA and non-DCIA CN=70 might require approximately 1.0" retention in Melbourne but 1.3–1.5" in Pensacola to achieve equivalent 80% annual mass removal.
+        </div>
+
+        <h3>Depth for 95% Mass Removal: State-Wide Average</h3>
+
+        <p>The statewide-average contour plot for achieving 95% mass removal illustrates that substantially greater retention depths are required for this higher performance target, particularly for sites with higher DCIA percentages and less permeable pervious areas.</p>
+
+        <div class="figure">
+          <div class="figure-placeholder" style="min-height:380px;">
+            <span class="icon">🗺️</span>
+            <span class="fig-label">Figure 15.2 — Retention Depth Required for 95% Mass Removal (State-Wide Average)</span>
+            <span class="fig-desc">Single large contour/isopleth plot. x-axis = Non-DCIA Curve Number (30–100); y-axis = Percent DCIA (10–100%). Color scale from deep purple (0.0") through blue, green, yellow, orange to red (4.0"+), in 0.25" intervals. A reference dot at ~80% DCIA, CN=70 falls in the yellow-orange range (~2.5–2.75"). Lower DCIA and lower CN combinations (bottom-left) remain in the blue-green range (≤1.0"). Upper-right corner (high DCIA, high CN) requires 4.0"+ retention. Demonstrates that 95% removal is achievable for low-DCIA sites but requires very deep retention for highly urbanized sites.</span>
+          </div>
+          <div class="figure-caption">Figure 15.2. Retention depth (inches) required to achieve 95% mean annual mass removal, statewide average. (Source: Harper &amp; Baker, 2007)</div>
+        </div>
+      </section>
+
+      <!-- ═══════════════════════════════════════════════════════ -->
+      <!-- SECTION 16: BMPFAST RETENTION CALCULATIONS -->
+      <!-- ═══════════════════════════════════════════════════════ -->
+      <section class="section" id="bmpfast-calc">
+        <span class="section-number">Section 16</span>
+        <h2>BMPFast Retention Efficiency Calculations</h2>
+
+        <p>Calculation of runoff in the BMPFast model uses the tabular retention efficiency relationships developed by Harper and Baker (2007), Appendix D. The model interpolates within and between tables to calculate the precise efficiency for any combination of input parameters.</p>
+
+        <h3>Required Input Data</h3>
+
+        <ul class="tech-list">
+          <li><strong>Rainfall meteorological zone:</strong> Determined from the Florida rainfall zone map based on project location (Zones 1–5)</li>
+          <li><strong>Annual rainfall depth:</strong> Obtained from annual rainfall isopleth maps for the project area</li>
+          <li><strong>Project DCIA:</strong> Directly Connected Impervious Area percentage for the project catchment</li>
+          <li><strong>Non-DCIA curve number:</strong> SCS curve number for the pervious portions of the catchment</li>
+          <li><strong>Retention provided or desired performance efficiency:</strong> Either the depth of retention system provided (to calculate resulting efficiency) or the target efficiency (to calculate required retention depth)</li>
+        </ul>
+
+        <div class="callout">
+          <span class="callout-label">Computational Method</span>
+          BMPFast conducts iterations within and between the 80 efficiency tables to calculate the appropriate efficiency or required retention depth for the specific combination of zone, rainfall, DCIA, and curve number. This automated interpolation procedure eliminates the need for manual table lookup and significantly reduces calculation time for complex projects.
+        </div>
+      </section>
+
+      <!-- ═══════════════════════════════════════════════════════ -->
+      <!-- SECTION 17: SUMMARY -->
+      <!-- ═══════════════════════════════════════════════════════ -->
+      <section class="section" id="summary">
+        <span class="section-number">Section 17</span>
+        <h2>Summary</h2>
+
+        <div class="summary-box">
+          <h3>Key Takeaways — Retention Systems</h3>
+          <ul>
+            <li>Efficiencies of retention systems vary significantly throughout the State due to variability in meteorological characteristics between the five Florida rainfall zones.</li>
+            <li>Changes in recovery time (drawdown rate) have little impact on retention system performance — a finding that simplifies design by reducing the sensitivity of retention performance to soil infiltration rate variability.</li>
+            <li>Design criteria based on fixed retention depths (0.5" runoff or 1" rainfall) fail to consistently achieve the 80% annual mass removal treatment objective across Florida's diverse rainfall regions.</li>
+            <li>Performance-based retention design using zone-specific efficiency tables provides a technically defensible approach that accounts for regional rainfall variability.</li>
+            <li>The BMPFast model automates the iterative table interpolation process, enabling efficient performance-based retention design calculations for any Florida project location.</li>
+          </ul>
+        </div>
+
+        <h3>References</h3>
+        <ol class="ref-list">
+          <li>Harper, H.H. and D.M. Baker (2007). <em>Evaluation of Current Stormwater Design Criteria within the State of Florida</em>. Prepared for the Florida Department of Environmental Protection. Environmental Research and Design, Inc., Orlando, FL.</li>
+          <li>Florida Department of Environmental Protection (2024). <em>Stormwater Rule Update — Applicant's Handbook Volume I</em>. Tallahassee, FL.</li>
+        </ol>
+      </section>
+
+    </div><!-- /content -->
+
+    <!-- APPENDIX FIGURES -->
+    <div class="appendix-section" id="figures">
+      <div class="content" style="padding-top:0;">
+        <span class="section-number">Appendix</span>
+        <h2>Referenced Figures</h2>
+        <p>The following figures are referenced within this module. Insert the corresponding source images from the original presentation in the spaces below.</p>
+
+        <div class="appendix-grid">
+          <div class="appendix-figure">
+            <div class="af-placeholder">📐</div>
+            <div class="af-caption">
+              <strong>Figure A-1. Retention Pond Cross-Section (Slide 4)</strong>
+              Typical cross-section showing Top of Bank, Weir Crest Elevation, Pollution Abatement Volume, Peak Attenuation Storage, Treatment Volume Recovery by Infiltration, 4:1 side slope, minimum freeboard, and seasonal high groundwater table elevation.
+            </div>
+          </div>
+          <div class="appendix-figure">
+            <div class="af-placeholder">📐</div>
+            <div class="af-caption">
+              <strong>Figure A-2. Typical Swale Cross-Section (Slide 5)</strong>
+              Swale cross-section showing W:D ≥ 6:1, side slopes ≥ 3(H):1(V), treatment volume storage, infiltration arrows, and seasonal high groundwater table elevation.
+            </div>
+          </div>
+          <div class="appendix-figure">
+            <div class="af-placeholder">📈</div>
+            <div class="af-caption">
+              <strong>Figure A-3. Swale Metal Removal — Test 1 (Slide 9)</strong>
+              Percent of inflow concentration vs. distance along swale (0–60 m) for Zn, Cu, Al, Fe, Pb, Cr. Site: Maitland Blvd., 1/24/83. Flow velocity 2.58 m/min.
+            </div>
+          </div>
+          <div class="appendix-figure">
+            <div class="af-placeholder">📈</div>
+            <div class="af-caption">
+              <strong>Figure A-4. Swale Metal Removal — Test 2 (Slide 10)</strong>
+              Percent of inflow concentration vs. distance along swale (0–60 m) for Zn, Cu, Al, Fe, Pb, Cr. Site: Maitland Blvd., 2/07/83. Flow velocity 1.37 m/min. Enhanced removal at lower velocity.
+            </div>
+          </div>
+          <div class="appendix-figure">
+            <div class="af-placeholder">🗺️</div>
+            <div class="af-caption">
+              <strong>Figure A-5. Retention Depth for 80% Removal: Melbourne vs. Pensacola (Slide 21)</strong>
+              Side-by-side contour plots of required treatment depth (0.0–1.8") by % DCIA and Non-DCIA CN for Melbourne and Pensacola meteorological stations.
+            </div>
+          </div>
+          <div class="appendix-figure">
+            <div class="af-placeholder">🗺️</div>
+            <div class="af-caption">
+              <strong>Figure A-6. Retention Depth for 95% Removal: Statewide Average (Slide 22)</strong>
+              Contour plot of required treatment depth (0.0–4.0"+) by % DCIA and Non-DCIA CN for Florida statewide average conditions.
+            </div>
+          </div>
+          <div class="appendix-figure">
+            <div class="af-placeholder">📈</div>
+            <div class="af-caption">
+              <strong>Figure A-7. Effectiveness of On-Line Retention 0.50" (Slide 17)</strong>
+              Percent removal vs. Non-DCIA Curve Number for DCIA values 10–90. Demonstrates declining efficiency with increasing DCIA and increasing CN.
+            </div>
+          </div>
+          <div class="appendix-figure">
+            <div class="af-placeholder">📈</div>
+            <div class="af-caption">
+              <strong>Figure A-8. Drawdown Impact Charts (Slides 18–19)</strong>
+              Two charts: (1) Change in efficiency 72hr vs. 36hr drawdown by zone; (2) Percent change vs. standard 3-day drawdown for 1.5, 7, and 14 day alternatives (Cross City station).
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div><!-- /main -->
+</div><!-- /page-wrap -->
+
+<script>
+  // Active sidebar link highlighting on scroll
+  const sections = document.querySelectorAll('section[id], div[id="figures"]');
+  const navLinks = document.querySelectorAll('.sidebar nav a');
+
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) {
+        navLinks.forEach(link => {
+          link.classList.remove('active');
+          if (link.getAttribute('href') === '#' + entry.target.id) {
+            link.classList.add('active');
+          }
+        });
+      }
+    });
+  }, { rootMargin: '-20% 0px -70% 0px' });
+
+  sections.forEach(s => observer.observe(s));
+</script>
+</body>
+</html>

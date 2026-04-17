@@ -1,0 +1,1411 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>COP 3530 – Data Structures Overview</title>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=IBM+Plex+Mono:wght@400;600&family=Lato:wght@300;400;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --navy:     #0d1b2a;
+    --navy-mid: #1b2e45;
+    --navy-lt:  #243b55;
+    --teal:     #1a7a8a;
+    --teal-lt:  #23a6b8;
+    --amber:    #f4a823;
+    --amber-lt: #f9c46a;
+    --green:    #2cb67d;
+    --red:      #e05c5c;
+    --purple:   #7c6af7;
+    --text:     #e8edf2;
+    --text-dim: #9db0c3;
+    --card-bg:  #162132;
+    --border:   #2a3f58;
+    --white:    #ffffff;
+  }
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: 'Lato', sans-serif;
+    background: var(--navy);
+    color: var(--text);
+    line-height: 1.7;
+    font-size: 15px;
+  }
+
+  /* ── HERO HEADER ── */
+  .hero {
+    background: linear-gradient(135deg, #0d1b2a 0%, #1b3a5c 50%, #0d2a38 100%);
+    border-bottom: 3px solid var(--amber);
+    padding: 48px 40px 36px;
+    position: relative;
+    overflow: hidden;
+  }
+  .hero::before {
+    content: '';
+    position: absolute; inset: 0;
+    background: repeating-linear-gradient(
+      45deg,
+      transparent,
+      transparent 40px,
+      rgba(26,122,138,0.04) 40px,
+      rgba(26,122,138,0.04) 41px
+    );
+    pointer-events: none;
+  }
+  .hero-badge {
+    display: inline-block;
+    background: var(--teal);
+    color: var(--white);
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    padding: 4px 14px;
+    border-radius: 3px;
+    margin-bottom: 14px;
+  }
+  .hero h1 {
+    font-family: 'Syne', sans-serif;
+    font-size: clamp(28px, 5vw, 46px);
+    font-weight: 800;
+    color: var(--white);
+    line-height: 1.15;
+    letter-spacing: -0.5px;
+  }
+  .hero h1 span { color: var(--amber); }
+  .hero-sub {
+    font-family: 'Syne', sans-serif;
+    font-size: 16px;
+    color: var(--teal-lt);
+    margin-top: 8px;
+    font-weight: 600;
+    letter-spacing: 0.5px;
+  }
+  .hero-meta {
+    display: flex;
+    gap: 28px;
+    margin-top: 22px;
+    flex-wrap: wrap;
+  }
+  .hero-meta span {
+    display: flex;
+    align-items: center;
+    gap: 7px;
+    font-size: 13px;
+    color: var(--text-dim);
+    font-family: 'IBM Plex Mono', monospace;
+  }
+  .hero-meta span b { color: var(--amber-lt); }
+
+  /* ── MAIN CONTENT WRAPPER ── */
+  .container { max-width: 1100px; margin: 0 auto; padding: 36px 28px 60px; }
+
+  /* ── SECTION TITLES ── */
+  .section-title {
+    font-family: 'Syne', sans-serif;
+    font-size: 22px;
+    font-weight: 800;
+    color: var(--teal-lt);
+    border-left: 4px solid var(--amber);
+    padding-left: 14px;
+    margin: 44px 0 20px;
+    letter-spacing: 0.2px;
+  }
+  .section-title.first { margin-top: 10px; }
+
+  /* ── INTRO CARD ── */
+  .intro-card {
+    background: var(--card-bg);
+    border: 1px solid var(--border);
+    border-left: 4px solid var(--teal);
+    border-radius: 8px;
+    padding: 22px 26px;
+    margin-bottom: 10px;
+    font-size: 15px;
+    color: var(--text);
+    line-height: 1.75;
+  }
+  .intro-card p + p { margin-top: 12px; }
+
+  /* ── COLLAPSIBLE DETAILS ── */
+  details {
+    background: var(--card-bg);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    margin-bottom: 10px;
+    overflow: hidden;
+    transition: box-shadow 0.2s;
+  }
+  details[open] { box-shadow: 0 0 0 2px var(--teal); }
+  details[open] summary { border-bottom: 1px solid var(--border); }
+
+  summary {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 15px 20px;
+    cursor: pointer;
+    list-style: none;
+    font-family: 'Syne', sans-serif;
+    font-size: 15px;
+    font-weight: 700;
+    color: var(--text);
+    user-select: none;
+  }
+  summary::-webkit-details-marker { display: none; }
+  summary::after {
+    content: '▸';
+    margin-left: auto;
+    color: var(--teal-lt);
+    font-size: 14px;
+    transition: transform 0.2s;
+  }
+  details[open] summary::after { transform: rotate(90deg); }
+  summary:hover { background: rgba(26,122,138,0.08); }
+
+  .summary-icon {
+    width: 32px; height: 32px;
+    border-radius: 6px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 15px;
+    flex-shrink: 0;
+  }
+
+  .details-body { padding: 18px 22px 22px; }
+
+  /* ── LEVEL BADGES ── */
+  .level-badge {
+    display: inline-block;
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 10px;
+    font-weight: 600;
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+    padding: 3px 10px;
+    border-radius: 20px;
+    margin-left: 6px;
+  }
+  .level-fundamental  { background: rgba(44,182,125,0.18); color: #4ddba0; border: 1px solid rgba(44,182,125,0.3); }
+  .level-intermediate { background: rgba(244,168,35,0.15); color: #f4a823; border: 1px solid rgba(244,168,35,0.3); }
+  .level-advanced     { background: rgba(26,122,138,0.2);  color: #23a6b8; border: 1px solid rgba(26,122,138,0.35); }
+  .level-expert       { background: rgba(124,106,247,0.18); color: #a99af9; border: 1px solid rgba(124,106,247,0.3); }
+
+  /* ── DATA STRUCTURE CARDS GRID ── */
+  .ds-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(290px, 1fr));
+    gap: 14px;
+    margin-top: 4px;
+  }
+  .ds-card {
+    background: var(--navy-mid);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 16px 18px;
+    transition: transform 0.15s, border-color 0.15s;
+  }
+  .ds-card:hover { transform: translateY(-2px); border-color: var(--teal); }
+  .ds-card-header {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 8px;
+    margin-bottom: 8px;
+  }
+  .ds-card-name {
+    font-family: 'Syne', sans-serif;
+    font-weight: 700;
+    font-size: 14px;
+    color: var(--white);
+  }
+  .ds-card p {
+    font-size: 13px;
+    color: var(--text-dim);
+    line-height: 1.6;
+  }
+  .ds-card .coverage-tag {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    margin-top: 10px;
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 11px;
+    color: var(--text-dim);
+  }
+  .coverage-tag .dot {
+    width: 8px; height: 8px; border-radius: 50%;
+    flex-shrink: 0;
+  }
+  .dot-full    { background: var(--green); }
+  .dot-partial { background: var(--amber); }
+  .dot-intro   { background: var(--teal-lt); }
+  .dot-none    { background: #4a5568; }
+
+  /* ── COVERAGE LEGEND ── */
+  .legend {
+    display: flex;
+    gap: 20px;
+    flex-wrap: wrap;
+    background: var(--navy-mid);
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    padding: 12px 18px;
+    margin-bottom: 18px;
+    font-size: 12px;
+    font-family: 'IBM Plex Mono', monospace;
+  }
+  .legend-item { display: flex; align-items: center; gap: 7px; color: var(--text-dim); }
+
+  /* ── CODE BLOCK ── */
+  .code-block {
+    background: #0a1520;
+    border: 1px solid var(--border);
+    border-left: 3px solid var(--teal);
+    border-radius: 6px;
+    padding: 16px 18px;
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 13px;
+    color: #c9d8e8;
+    overflow-x: auto;
+    white-space: pre;
+    line-height: 1.65;
+    margin: 10px 0;
+  }
+  .code-comment { color: #516a82; }
+  .code-keyword { color: var(--teal-lt); }
+  .code-val     { color: var(--amber-lt); }
+
+  /* ── ALGO TABLE ── */
+  .algo-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 13px;
+    margin-top: 6px;
+  }
+  .algo-table thead tr {
+    background: var(--navy-lt);
+    font-family: 'Syne', sans-serif;
+    font-weight: 700;
+    font-size: 12px;
+    text-transform: uppercase;
+    letter-spacing: 0.8px;
+    color: var(--text-dim);
+  }
+  .algo-table th, .algo-table td {
+    padding: 10px 14px;
+    text-align: left;
+    border-bottom: 1px solid var(--border);
+  }
+  .algo-table tbody tr:hover { background: rgba(26,122,138,0.07); }
+  .algo-table .mono { font-family: 'IBM Plex Mono', monospace; color: var(--amber-lt); }
+
+  /* ── CAREER CARDS ── */
+  .career-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(310px, 1fr));
+    gap: 14px;
+    margin-top: 4px;
+  }
+  .career-card {
+    background: var(--navy-mid);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 18px 20px;
+  }
+  .career-card-header {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 10px;
+  }
+  .career-icon {
+    width: 38px; height: 38px;
+    border-radius: 8px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 18px;
+    flex-shrink: 0;
+  }
+  .career-title {
+    font-family: 'Syne', sans-serif;
+    font-weight: 700;
+    font-size: 14.5px;
+    color: var(--white);
+  }
+  .career-card p { font-size: 13px; color: var(--text-dim); line-height: 1.6; }
+  .career-uses {
+    margin-top: 10px;
+    padding-top: 10px;
+    border-top: 1px solid var(--border);
+    font-size: 12px;
+    font-family: 'IBM Plex Mono', monospace;
+    color: var(--text-dim);
+  }
+  .career-uses strong { color: var(--teal-lt); }
+
+  /* ── INFO CALLOUT ── */
+  .callout {
+    border-radius: 7px;
+    padding: 14px 18px;
+    margin: 12px 0;
+    font-size: 14px;
+    line-height: 1.65;
+    display: flex;
+    gap: 12px;
+    align-items: flex-start;
+  }
+  .callout-info    { background: rgba(26,122,138,0.15); border: 1px solid rgba(26,122,138,0.35); }
+  .callout-tip     { background: rgba(244,168,35,0.12); border: 1px solid rgba(244,168,35,0.28); }
+  .callout-warn    { background: rgba(224,92,92,0.12);  border: 1px solid rgba(224,92,92,0.28); }
+  .callout-icon    { font-size: 18px; flex-shrink: 0; margin-top: 1px; }
+  .callout-content { flex: 1; }
+  .callout-content strong { display: block; margin-bottom: 4px; font-family: 'Syne', sans-serif; font-size: 13px; letter-spacing: 0.4px; }
+
+  /* ── COMPLEXITY PILL ── */
+  .cpill {
+    display: inline-block;
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 11px;
+    padding: 2px 8px;
+    border-radius: 4px;
+    margin: 1px;
+  }
+  .cp-on   { background: rgba(44,182,125,0.18); color: #4ddba0; }
+  .cp-ologn{ background: rgba(26,122,138,0.2);  color: #23a6b8; }
+  .cp-on2  { background: rgba(224,92,92,0.18);  color: #f07070; }
+  .cp-o1   { background: rgba(244,168,35,0.18); color: #f4a823; }
+
+  /* ── FOOTER ── */
+  footer {
+    text-align: center;
+    padding: 28px 20px;
+    border-top: 1px solid var(--border);
+    font-size: 12px;
+    font-family: 'IBM Plex Mono', monospace;
+    color: var(--text-dim);
+    margin-top: 24px;
+  }
+  footer span { color: var(--amber); }
+</style>
+</head>
+<body>
+
+<!-- ═══════════════════════════════════ HERO ═══════════════════════════════════ -->
+<header class="hero">
+  <div class="hero-badge">COP 3530 · Computer Science</div>
+  <h1>Data Structures<br><span>Complete Course Overview</span></h1>
+  <div class="hero-sub">From Arrays to Advanced Graphs — A Roadmap of the Discipline</div>
+  <div class="hero-meta">
+    <span>📘 <b>Course:</b> COP 3530</span>
+    <span>🏛️ <b>Level:</b> Undergraduate Junior/Senior</span>
+    <span>🧩 <b>Module:</b> Overview &amp; Orientation</span>
+    <span>⚡ <b>Topics:</b> Fundamental → Expert</span>
+  </div>
+</header>
+
+<div class="container">
+
+  <!-- ═══════════════════ SECTION 1: WHAT IS DATA STRUCTURES ═══════════════════ -->
+  <div class="section-title first">What Is This Course?</div>
+
+  <div class="intro-card">
+    <p><strong>Data Structures</strong> is the study of how information is organized, stored, and accessed in computer memory — and how that organization affects the speed and efficiency of every operation performed on that data. It is one of the most foundational courses in computer science because every program, from a simple to-do list to a search engine indexing billions of web pages, depends on choosing the right structure for the right problem.</p>
+    <p>A <strong>data structure</strong> is a specific way of arranging data so that it can be used efficiently. Paired with <strong>algorithms</strong> — the step-by-step procedures for processing that data — data structures form the building blocks of all software engineering. The famous maxim from computer scientist Niklaus Wirth captures it precisely: <em>"Algorithms + Data Structures = Programs."</em></p>
+    <p>This course builds your ability to select, implement, and analyze the right tool for the job. By the end, you will think in terms of time complexity, space trade-offs, and structural properties rather than reaching for the first available solution.</p>
+  </div>
+
+  <div class="callout callout-info">
+    <span class="callout-icon">🗺️</span>
+    <div class="callout-content">
+      <strong>How to Use This Overview</strong>
+      Each section below is expandable. Topics are grouped by difficulty level from Fundamental through Expert.
+      Each data structure card shows its coverage status in COP 3530 — use the legend to interpret the indicators.
+      Detailed guides for every structure and algorithm listed here will be available as separate course modules.
+    </div>
+  </div>
+
+  <!-- Coverage Legend -->
+  <div class="legend">
+    <div class="legend-item"><div class="dot dot-full"></div> Full Coverage in COP 3530</div>
+    <div class="legend-item"><div class="dot dot-partial"></div> Partial / Introduction</div>
+    <div class="legend-item"><div class="dot dot-intro"></div> Concept Overview Only</div>
+    <div class="legend-item"><div class="dot dot-none"></div> Beyond Course Scope</div>
+  </div>
+
+
+  <!-- ═══════════════════ SECTION 2: FUNDAMENTAL DATA STRUCTURES ═══════════════════ -->
+  <div class="section-title">Fundamental Data Structures</div>
+  <p style="color:var(--text-dim); margin-bottom:18px; font-size:14px;">These structures form the bedrock of all computer science. Every programmer must have deep, fluent knowledge of these before advancing.</p>
+
+  <!-- Arrays & Dynamic Arrays -->
+  <details open>
+    <summary>
+      <div class="summary-icon" style="background:rgba(44,182,125,0.18);">📦</div>
+      Arrays &amp; Dynamic Arrays
+      <span class="level-badge level-fundamental">Fundamental</span>
+    </summary>
+    <div class="details-body">
+      <div class="ds-grid">
+        <div class="ds-card">
+          <div class="ds-card-header">
+            <div class="ds-card-name">Static Array</div>
+            <span class="level-badge level-fundamental">Fundamental</span>
+          </div>
+          <p>A contiguous block of memory holding elements of the same type, indexed from 0. Fixed in size at creation. The simplest and most memory-efficient structure, with instant O(1) random access by index. The foundation for understanding memory addressing.</p>
+          <div class="coverage-tag"><div class="dot dot-full"></div> Full Coverage</div>
+        </div>
+        <div class="ds-card">
+          <div class="ds-card-header">
+            <div class="ds-card-name">Dynamic Array (Vector)</div>
+            <span class="level-badge level-fundamental">Fundamental</span>
+          </div>
+          <p>An array that automatically resizes by doubling capacity when full. Amortized O(1) appends with O(1) random access. Used behind C++ <code style="color:var(--amber-lt)">std::vector</code> and Java's <code style="color:var(--amber-lt)">ArrayList</code>. Understanding amortized analysis begins here.</p>
+          <div class="coverage-tag"><div class="dot dot-full"></div> Full Coverage</div>
+        </div>
+        <div class="ds-card">
+          <div class="ds-card-header">
+            <div class="ds-card-name">Multi-Dimensional Arrays</div>
+            <span class="level-badge level-fundamental">Fundamental</span>
+          </div>
+          <p>Arrays of arrays used to represent matrices, grids, and tabular data. Critical for dynamic programming, image processing, and graph adjacency matrix representations. Row-major vs. column-major memory layouts affect cache performance.</p>
+          <div class="coverage-tag"><div class="dot dot-partial"></div> Partial Coverage</div>
+        </div>
+      </div>
+    </div>
+  </details>
+
+  <!-- Linked Lists -->
+  <details>
+    <summary>
+      <div class="summary-icon" style="background:rgba(26,122,138,0.2);">🔗</div>
+      Linked Lists
+      <span class="level-badge level-fundamental">Fundamental</span>
+    </summary>
+    <div class="details-body">
+      <div class="callout callout-tip">
+        <span class="callout-icon">💡</span>
+        <div class="callout-content">Linked lists trade away random access (O(n) lookup) in exchange for efficient insertions and deletions at any position without shifting elements. They are the first pointer-based structure most students encounter, making them essential for building intuition about heap memory and references.</div>
+      </div>
+      <div class="ds-grid">
+        <div class="ds-card">
+          <div class="ds-card-header">
+            <div class="ds-card-name">Singly Linked List</div>
+            <span class="level-badge level-fundamental">Fundamental</span>
+          </div>
+          <p>Each node holds data and a pointer to the next node. The list ends at a null pointer. Traversal is one-directional. Used as the basis for stacks and queues. Foundational for understanding pointer manipulation, node creation, and dynamic memory.</p>
+          <div class="coverage-tag"><div class="dot dot-full"></div> Full Coverage</div>
+        </div>
+        <div class="ds-card">
+          <div class="ds-card-header">
+            <div class="ds-card-name">Doubly Linked List</div>
+            <span class="level-badge level-fundamental">Fundamental</span>
+          </div>
+          <p>Each node holds data plus pointers to both the next and previous nodes. Enables O(1) insertion and deletion at both ends, and supports reverse traversal. Used in browser history, undo/redo systems, and as the backing structure of <code style="color:var(--amber-lt)">std::list</code>.</p>
+          <div class="coverage-tag"><div class="dot dot-full"></div> Full Coverage</div>
+        </div>
+        <div class="ds-card">
+          <div class="ds-card-header">
+            <div class="ds-card-name">Circular Linked List</div>
+            <span class="level-badge level-fundamental">Fundamental</span>
+          </div>
+          <p>The tail node's next pointer points back to the head, forming a loop. Used in round-robin schedulers, circular buffers, and Josephus-problem type algorithms. Requires careful traversal logic to avoid infinite loops.</p>
+          <div class="coverage-tag"><div class="dot dot-partial"></div> Partial Coverage</div>
+        </div>
+      </div>
+    </div>
+  </details>
+
+  <!-- Stacks & Queues -->
+  <details>
+    <summary>
+      <div class="summary-icon" style="background:rgba(244,168,35,0.18);">📚</div>
+      Stacks &amp; Queues
+      <span class="level-badge level-fundamental">Fundamental</span>
+    </summary>
+    <div class="details-body">
+      <div class="ds-grid">
+        <div class="ds-card">
+          <div class="ds-card-header">
+            <div class="ds-card-name">Stack (LIFO)</div>
+            <span class="level-badge level-fundamental">Fundamental</span>
+          </div>
+          <p>Last-In, First-Out structure. Core operations: <em>push</em> (add to top), <em>pop</em> (remove top), <em>peek</em> (view top). All O(1). Implemented with arrays or linked lists. Used for function call frames, expression evaluation, undo systems, and depth-first search.</p>
+          <div class="coverage-tag"><div class="dot dot-full"></div> Full Coverage</div>
+        </div>
+        <div class="ds-card">
+          <div class="ds-card-header">
+            <div class="ds-card-name">Queue (FIFO)</div>
+            <span class="level-badge level-fundamental">Fundamental</span>
+          </div>
+          <p>First-In, First-Out structure. Core operations: <em>enqueue</em> (add to rear), <em>dequeue</em> (remove from front). Used in breadth-first search, print spoolers, task scheduling, and message queues. Circular array implementation avoids wasted space.</p>
+          <div class="coverage-tag"><div class="dot dot-full"></div> Full Coverage</div>
+        </div>
+        <div class="ds-card">
+          <div class="ds-card-header">
+            <div class="ds-card-name">Deque (Double-Ended Queue)</div>
+            <span class="level-badge level-fundamental">Fundamental</span>
+          </div>
+          <p>Supports O(1) insertion and deletion at both ends. Generalizes both stacks and queues. Used in sliding window problems, undo/redo with front/back access, and as the backing structure for many language standard library data structures.</p>
+          <div class="coverage-tag"><div class="dot dot-full"></div> Full Coverage</div>
+        </div>
+        <div class="ds-card">
+          <div class="ds-card-header">
+            <div class="ds-card-name">Priority Queue</div>
+            <span class="level-badge level-intermediate">Intermediate</span>
+          </div>
+          <p>Elements are dequeued in order of priority rather than insertion order. Usually implemented with a heap. Critical for Dijkstra's algorithm, A* pathfinding, job scheduling, and Huffman encoding. Bridge between fundamental and intermediate structures.</p>
+          <div class="coverage-tag"><div class="dot dot-full"></div> Full Coverage</div>
+        </div>
+      </div>
+    </div>
+  </details>
+
+  <!-- Hash Tables -->
+  <details>
+    <summary>
+      <div class="summary-icon" style="background:rgba(124,106,247,0.2);">🔑</div>
+      Hash Tables &amp; Hash Maps
+      <span class="level-badge level-fundamental">Fundamental</span>
+    </summary>
+    <div class="details-body">
+      <p style="color:var(--text-dim); margin-bottom:14px; font-size:14px;">Hash tables achieve average O(1) lookup, insertion, and deletion — the gold standard for key-value storage. Understanding how they work internally is essential for avoiding worst-case scenarios and writing cache-efficient code.</p>
+      <div class="ds-grid">
+        <div class="ds-card">
+          <div class="ds-card-header">
+            <div class="ds-card-name">Hash Table</div>
+            <span class="level-badge level-fundamental">Fundamental</span>
+          </div>
+          <p>Maps keys to array indices using a hash function. Supports average O(1) get, put, and delete. The foundation of <code style="color:var(--amber-lt)">std::unordered_map</code>, Python dictionaries, and Java's HashMap. Every modern language's most-used container depends on this structure.</p>
+          <div class="coverage-tag"><div class="dot dot-full"></div> Full Coverage</div>
+        </div>
+        <div class="ds-card">
+          <div class="ds-card-header">
+            <div class="ds-card-name">Hash Functions</div>
+            <span class="level-badge level-fundamental">Fundamental</span>
+          </div>
+          <p>The function that transforms a key into a valid array index. Good hash functions distribute keys uniformly to minimize collisions. Common approaches: division method, multiplication method, polynomial rolling hash, FNV hash. Directly affects performance.</p>
+          <div class="coverage-tag"><div class="dot dot-full"></div> Full Coverage</div>
+        </div>
+        <div class="ds-card">
+          <div class="ds-card-header">
+            <div class="ds-card-name">Collision Resolution</div>
+            <span class="level-badge level-fundamental">Fundamental</span>
+          </div>
+          <p>Strategies for handling two keys mapping to the same index. <strong>Chaining:</strong> store a linked list at each slot. <strong>Open Addressing:</strong> probe to find the next available slot (linear probing, quadratic probing, double hashing). Trade-offs involve memory use and cache behavior.</p>
+          <div class="coverage-tag"><div class="dot dot-full"></div> Full Coverage</div>
+        </div>
+        <div class="ds-card">
+          <div class="ds-card-header">
+            <div class="ds-card-name">Hash Set</div>
+            <span class="level-badge level-fundamental">Fundamental</span>
+          </div>
+          <p>A hash table that stores only keys (no associated values). Used to track membership, remove duplicates, and check containment in O(1) average time. The back-end of <code style="color:var(--amber-lt)">std::unordered_set</code> and Python's <code style="color:var(--amber-lt)">set</code>.</p>
+          <div class="coverage-tag"><div class="dot dot-full"></div> Full Coverage</div>
+        </div>
+      </div>
+    </div>
+  </details>
+
+
+  <!-- ═══════════════════ SECTION 3: INTERMEDIATE DATA STRUCTURES ═══════════════════ -->
+  <div class="section-title">Intermediate Data Structures</div>
+  <p style="color:var(--text-dim); margin-bottom:18px; font-size:14px;">These structures introduce hierarchical organization, ordered access, and more complex performance guarantees. Mastery here separates competent programmers from strong ones.</p>
+
+  <!-- Trees -->
+  <details>
+    <summary>
+      <div class="summary-icon" style="background:rgba(44,182,125,0.18);">🌳</div>
+      Trees — Hierarchical Structures
+      <span class="level-badge level-intermediate">Intermediate</span>
+    </summary>
+    <div class="details-body">
+      <div class="callout callout-info">
+        <span class="callout-icon">ℹ️</span>
+        <div class="callout-content">A <strong>tree</strong> is a connected, acyclic graph where one node is designated as the root. Every other node has exactly one parent. Trees model hierarchies naturally: file systems, organization charts, HTML DOM, and decision processes are all trees. Most tree variants in this section share O(log n) average operation time when balanced.</div>
+      </div>
+      <div class="ds-grid">
+        <div class="ds-card">
+          <div class="ds-card-header">
+            <div class="ds-card-name">Binary Tree</div>
+            <span class="level-badge level-intermediate">Intermediate</span>
+          </div>
+          <p>Each node has at most two children (left and right). Forms the base concept for all binary tree variants. Core traversals — in-order, pre-order, post-order, and level-order — apply to all binary trees and must be mastered here.</p>
+          <div class="coverage-tag"><div class="dot dot-full"></div> Full Coverage</div>
+        </div>
+        <div class="ds-card">
+          <div class="ds-card-header">
+            <div class="ds-card-name">Binary Search Tree (BST)</div>
+            <span class="level-badge level-intermediate">Intermediate</span>
+          </div>
+          <p>A binary tree with the ordering property: left subtree values &lt; node &lt; right subtree values. Enables O(log n) average search, insert, and delete. Degrades to O(n) on sorted input, motivating balanced variants. Foundation for understanding tree-based search.</p>
+          <div class="coverage-tag"><div class="dot dot-full"></div> Full Coverage</div>
+        </div>
+        <div class="ds-card">
+          <div class="ds-card-header">
+            <div class="ds-card-name">AVL Tree</div>
+            <span class="level-badge level-intermediate">Intermediate</span>
+          </div>
+          <p>A self-balancing BST that maintains a height-balance condition: for every node, the heights of left and right subtrees differ by at most 1. Rotations (single and double) restore balance after insertions and deletions. Guarantees O(log n) worst-case performance.</p>
+          <div class="coverage-tag"><div class="dot dot-full"></div> Full Coverage</div>
+        </div>
+        <div class="ds-card">
+          <div class="ds-card-header">
+            <div class="ds-card-name">Heap (Binary Heap)</div>
+            <span class="level-badge level-intermediate">Intermediate</span>
+          </div>
+          <p>A complete binary tree stored as an array, satisfying the heap property: each node is greater (max-heap) or smaller (min-heap) than its children. Supports O(1) peek at min/max, O(log n) insert and extract. The natural structure for priority queues and heap sort.</p>
+          <div class="coverage-tag"><div class="dot dot-full"></div> Full Coverage</div>
+        </div>
+        <div class="ds-card">
+          <div class="ds-card-header">
+            <div class="ds-card-name">Trie (Prefix Tree)</div>
+            <span class="level-badge level-intermediate">Intermediate</span>
+          </div>
+          <p>A tree where each path from root to a leaf spells a key, character by character. O(m) search, insert, and delete where m is key length. Used in autocomplete, spell checkers, IP routing, and dictionary lookups. Nodes are shared for common prefixes, saving space.</p>
+          <div class="coverage-tag"><div class="dot dot-full"></div> Full Coverage</div>
+        </div>
+        <div class="ds-card">
+          <div class="ds-card-header">
+            <div class="ds-card-name">B-Tree</div>
+            <span class="level-badge level-intermediate">Intermediate</span>
+          </div>
+          <p>A self-balancing tree where each node can have many children and keys. Designed for disk-based storage: minimizes disk reads by keeping wide, shallow trees. The underlying structure of most relational database indexes and file systems.</p>
+          <div class="coverage-tag"><div class="dot dot-intro"></div> Concept Overview</div>
+        </div>
+      </div>
+    </div>
+  </details>
+
+  <!-- Graphs -->
+  <details>
+    <summary>
+      <div class="summary-icon" style="background:rgba(26,122,138,0.2);">🕸️</div>
+      Graphs — Relational Structures
+      <span class="level-badge level-intermediate">Intermediate</span>
+    </summary>
+    <div class="details-body">
+      <div class="callout callout-tip">
+        <span class="callout-icon">💡</span>
+        <div class="callout-content">Graphs are the most general structure in computer science. Any relationship between entities can be modeled as a graph. Social networks, road maps, dependency systems, the internet itself — all are graphs. Algorithms on graphs (BFS, DFS, shortest path, spanning trees) are the most broadly applicable algorithms in software engineering.</div>
+      </div>
+      <div class="ds-grid">
+        <div class="ds-card">
+          <div class="ds-card-header">
+            <div class="ds-card-name">Graph Fundamentals</div>
+            <span class="level-badge level-intermediate">Intermediate</span>
+          </div>
+          <p>Vertices (nodes) connected by edges. May be directed or undirected, weighted or unweighted, cyclic or acyclic. Understanding the vocabulary — adjacency, degree, path, connected components, cycle — is prerequisite to all graph algorithms.</p>
+          <div class="coverage-tag"><div class="dot dot-full"></div> Full Coverage</div>
+        </div>
+        <div class="ds-card">
+          <div class="ds-card-header">
+            <div class="ds-card-name">Graph Representation</div>
+            <span class="level-badge level-intermediate">Intermediate</span>
+          </div>
+          <p><strong>Adjacency Matrix:</strong> 2D array; O(1) edge lookup, O(V²) space. <strong>Adjacency List:</strong> array of lists; space-efficient for sparse graphs, O(V+E) space. Choice of representation significantly impacts algorithm efficiency and code simplicity.</p>
+          <div class="coverage-tag"><div class="dot dot-full"></div> Full Coverage</div>
+        </div>
+        <div class="ds-card">
+          <div class="ds-card-header">
+            <div class="ds-card-name">Directed Acyclic Graph (DAG)</div>
+            <span class="level-badge level-intermediate">Intermediate</span>
+          </div>
+          <p>A directed graph with no cycles. Used to represent dependency orders, task scheduling, and compilation dependencies. Topological sort — ordering vertices by dependency — is the essential DAG algorithm and is computable in O(V+E).</p>
+          <div class="coverage-tag"><div class="dot dot-full"></div> Full Coverage</div>
+        </div>
+        <div class="ds-card">
+          <div class="ds-card-header">
+            <div class="ds-card-name">Weighted Graph</div>
+            <span class="level-badge level-intermediate">Intermediate</span>
+          </div>
+          <p>Each edge carries a numeric weight representing cost, distance, or capacity. Used in routing, network flow, and minimum spanning tree problems. Enables meaningful shortest-path computation. Dijkstra's and Bellman-Ford algorithms require weighted edges.</p>
+          <div class="coverage-tag"><div class="dot dot-full"></div> Full Coverage</div>
+        </div>
+      </div>
+    </div>
+  </details>
+
+  <!-- Disjoint Set -->
+  <details>
+    <summary>
+      <div class="summary-icon" style="background:rgba(224,92,92,0.18);">🧩</div>
+      Disjoint Set (Union-Find)
+      <span class="level-badge level-intermediate">Intermediate</span>
+    </summary>
+    <div class="details-body">
+      <p style="color:var(--text-dim); margin-bottom:14px; font-size:14px;">A structure that efficiently tracks a collection of non-overlapping sets. Supports two core operations: <strong>Union</strong> (merge two sets) and <strong>Find</strong> (identify which set an element belongs to). With path compression and union by rank, both operations approach O(1) amortized — nearly constant time.</p>
+      <div class="ds-grid">
+        <div class="ds-card">
+          <div class="ds-card-header">
+            <div class="ds-card-name">Union-Find</div>
+            <span class="level-badge level-intermediate">Intermediate</span>
+          </div>
+          <p>Used to determine connected components, detect cycles in undirected graphs, and as the core data structure in Kruskal's minimum spanning tree algorithm. The "path compression" optimization makes this one of the most elegantly efficient structures in CS.</p>
+          <div class="coverage-tag"><div class="dot dot-full"></div> Full Coverage</div>
+        </div>
+      </div>
+    </div>
+  </details>
+
+
+  <!-- ═══════════════════ SECTION 4: ADVANCED DATA STRUCTURES ═══════════════════ -->
+  <div class="section-title">Advanced Data Structures</div>
+  <p style="color:var(--text-dim); margin-bottom:18px; font-size:14px;">These structures require strong fundamentals and introduce sophisticated balancing mechanisms, range query capabilities, and string-processing power. Mastery here opens the door to systems programming and competitive algorithms.</p>
+
+  <!-- Red-Black Trees -->
+  <details>
+    <summary>
+      <div class="summary-icon" style="background:rgba(224,92,92,0.2);">🔴</div>
+      Red-Black Trees &amp; Balanced BSTs
+      <span class="level-badge level-advanced">Advanced</span>
+    </summary>
+    <div class="details-body">
+      <div class="ds-grid">
+        <div class="ds-card">
+          <div class="ds-card-header">
+            <div class="ds-card-name">Red-Black Tree</div>
+            <span class="level-badge level-advanced">Advanced</span>
+          </div>
+          <p>A self-balancing BST that colors nodes red or black and enforces rules to keep the tree approximately balanced. O(log n) guaranteed for all operations. The back-end of <code style="color:var(--amber-lt)">std::map</code>, <code style="color:var(--amber-lt)">std::set</code> in C++, and Java's TreeMap. Less strictly balanced than AVL but faster in practice for insert-heavy workloads.</p>
+          <div class="coverage-tag"><div class="dot dot-full"></div> Full Coverage</div>
+        </div>
+        <div class="ds-card">
+          <div class="ds-card-header">
+            <div class="ds-card-name">2-3 Trees</div>
+            <span class="level-badge level-advanced">Advanced</span>
+          </div>
+          <p>Every internal node has 2 or 3 children, and all leaves are at the same depth. Conceptually simpler than red-black trees and studied as the theoretical basis for understanding B-Trees and red-black tree invariants. Guarantees perfectly balanced structure.</p>
+          <div class="coverage-tag"><div class="dot dot-intro"></div> Concept Overview</div>
+        </div>
+        <div class="ds-card">
+          <div class="ds-card-header">
+            <div class="ds-card-name">Skip List</div>
+            <span class="level-badge level-advanced">Advanced</span>
+          </div>
+          <p>A probabilistic data structure using multiple layers of linked lists to achieve O(log n) average search without tree rotations. Used in Redis, LevelDB, and some real-time databases. Interesting case study in randomized algorithms achieving balanced-tree performance with simpler implementation.</p>
+          <div class="coverage-tag"><div class="dot dot-intro"></div> Concept Overview</div>
+        </div>
+      </div>
+    </div>
+  </details>
+
+  <!-- Segment Trees & Fenwick -->
+  <details>
+    <summary>
+      <div class="summary-icon" style="background:rgba(26,122,138,0.2);">📊</div>
+      Segment Trees &amp; Fenwick Trees
+      <span class="level-badge level-advanced">Advanced</span>
+    </summary>
+    <div class="details-body">
+      <div class="callout callout-info">
+        <span class="callout-icon">ℹ️</span>
+        <div class="callout-content">Both structures solve the <strong>range query problem</strong>: given an array, answer aggregate queries (sum, min, max) over any sub-range efficiently, and support point updates. Naively, this takes O(n) per query. These structures reduce it to O(log n), which is transformative for applications processing millions of range queries.</div>
+      </div>
+      <div class="ds-grid">
+        <div class="ds-card">
+          <div class="ds-card-header">
+            <div class="ds-card-name">Segment Tree</div>
+            <span class="level-badge level-advanced">Advanced</span>
+          </div>
+          <p>A binary tree where each node stores an aggregate over a sub-range of the array. Supports O(log n) range queries and O(log n) point updates. Can be extended for range updates with lazy propagation. Highly versatile — applies to sum, min, max, GCD, and custom aggregation functions.</p>
+          <div class="coverage-tag"><div class="dot dot-intro"></div> Concept Overview</div>
+        </div>
+        <div class="ds-card">
+          <div class="ds-card-header">
+            <div class="ds-card-name">Fenwick Tree (BIT)</div>
+            <span class="level-badge level-advanced">Advanced</span>
+          </div>
+          <p>A compact array structure using binary index relationships to compute prefix sums in O(log n) with O(log n) updates. Significantly simpler to implement than a segment tree for sum-specific queries. Named after Peter Fenwick; also called Binary Indexed Tree (BIT). Beloved in competitive programming.</p>
+          <div class="coverage-tag"><div class="dot dot-intro"></div> Concept Overview</div>
+        </div>
+      </div>
+    </div>
+  </details>
+
+  <!-- String Structures -->
+  <details>
+    <summary>
+      <div class="summary-icon" style="background:rgba(124,106,247,0.2);">🔤</div>
+      Advanced String Structures
+      <span class="level-badge level-advanced">Advanced</span>
+    </summary>
+    <div class="details-body">
+      <div class="ds-grid">
+        <div class="ds-card">
+          <div class="ds-card-header">
+            <div class="ds-card-name">Suffix Array</div>
+            <span class="level-badge level-advanced">Advanced</span>
+          </div>
+          <p>A sorted array of all suffixes of a string. Enables O(m log n) substring search where m is pattern length. Used in data compression, bioinformatics (DNA sequence alignment), and full-text search indexing. More space-efficient than suffix trees.</p>
+          <div class="coverage-tag"><div class="dot dot-none"></div> Beyond Course Scope</div>
+        </div>
+        <div class="ds-card">
+          <div class="ds-card-header">
+            <div class="ds-card-name">Suffix Tree</div>
+            <span class="level-badge level-advanced">Advanced</span>
+          </div>
+          <p>A compressed trie of all suffixes of a string. Supports O(m) pattern matching for any pattern of length m. Used in string algorithms, text compression, and bioinformatics. Ukkonen's algorithm builds one in O(n) time and is considered one of the most elegant algorithms in CS.</p>
+          <div class="coverage-tag"><div class="dot dot-none"></div> Beyond Course Scope</div>
+        </div>
+        <div class="ds-card">
+          <div class="ds-card-header">
+            <div class="ds-card-name">Aho-Corasick Automaton</div>
+            <span class="level-badge level-advanced">Advanced</span>
+          </div>
+          <p>A finite-state machine built from a trie of multiple patterns. Enables simultaneous multi-pattern string search in O(n + m + z) where z is the number of matches. Used in network intrusion detection, bioinformatics, and antivirus software.</p>
+          <div class="coverage-tag"><div class="dot dot-none"></div> Beyond Course Scope</div>
+        </div>
+      </div>
+    </div>
+  </details>
+
+  <!-- ═══════════════════ SECTION 5: EXPERT DATA STRUCTURES ═══════════════════ -->
+  <div class="section-title">Expert / Specialized Data Structures</div>
+  <p style="color:var(--text-dim); margin-bottom:18px; font-size:14px;">These structures appear in systems programming, competitive programming, database internals, and specialized algorithmic domains. COP 3530 introduces awareness of these; deep coverage belongs to graduate-level courses.</p>
+
+  <details>
+    <summary>
+      <div class="summary-icon" style="background:rgba(124,106,247,0.22);">🧠</div>
+      Expert-Level Structures Overview
+      <span class="level-badge level-expert">Expert</span>
+    </summary>
+    <div class="details-body">
+      <div class="ds-grid">
+        <div class="ds-card">
+          <div class="ds-card-header">
+            <div class="ds-card-name">Fibonacci Heap</div>
+            <span class="level-badge level-expert">Expert</span>
+          </div>
+          <p>A collection of heap-ordered trees with amortized O(1) insert, decrease-key, and O(log n) extract-min. Improves Dijkstra's algorithm from O((V+E) log V) to O(V log V + E). Primarily theoretical importance; complex to implement correctly in practice.</p>
+          <div class="coverage-tag"><div class="dot dot-none"></div> Beyond Course Scope</div>
+        </div>
+        <div class="ds-card">
+          <div class="ds-card-header">
+            <div class="ds-card-name">Van Emde Boas Tree</div>
+            <span class="level-badge level-expert">Expert</span>
+          </div>
+          <p>Achieves O(log log U) operations for integer keys in a universe of size U. Bridges the gap between comparison-based O(log n) and RAM-model O(1) operations. Important in theoretical CS for understanding integer data structure lower bounds.</p>
+          <div class="coverage-tag"><div class="dot dot-none"></div> Beyond Course Scope</div>
+        </div>
+        <div class="ds-card">
+          <div class="ds-card-header">
+            <div class="ds-card-name">Persistent Data Structures</div>
+            <span class="level-badge level-expert">Expert</span>
+          </div>
+          <p>Immutable structures where modifications produce new versions rather than mutating in place, preserving all historical states. Central to functional programming (Clojure, Haskell) and version-controlled systems. Path-copying and fat-node techniques enable efficient persistence.</p>
+          <div class="coverage-tag"><div class="dot dot-none"></div> Beyond Course Scope</div>
+        </div>
+        <div class="ds-card">
+          <div class="ds-card-header">
+            <div class="ds-card-name">Bloom Filter</div>
+            <span class="level-badge level-expert">Expert</span>
+          </div>
+          <p>A probabilistic space-efficient structure for set membership testing. Guarantees no false negatives but allows configurable false positive rates. Used in database query optimization, web caches, and spell checkers where approximate membership is acceptable.</p>
+          <div class="coverage-tag"><div class="dot dot-intro"></div> Concept Overview</div>
+        </div>
+        <div class="ds-card">
+          <div class="ds-card-header">
+            <div class="ds-card-name">Treap</div>
+            <span class="level-badge level-expert">Expert</span>
+          </div>
+          <p>A randomized BST that simultaneously satisfies BST property on keys and heap property on randomly-assigned priorities. Expected O(log n) height with high probability. Simpler to implement than AVL or red-black trees while maintaining expected-case balance guarantees.</p>
+          <div class="coverage-tag"><div class="dot dot-none"></div> Beyond Course Scope</div>
+        </div>
+        <div class="ds-card">
+          <div class="ds-card-header">
+            <div class="ds-card-name">KD-Tree</div>
+            <span class="level-badge level-expert">Expert</span>
+          </div>
+          <p>A space-partitioning binary tree for organizing multi-dimensional points. Enables efficient k-nearest neighbor search and range queries in k-dimensional space. Used in graphics, machine learning (kNN classifier), and geographic information systems.</p>
+          <div class="coverage-tag"><div class="dot dot-none"></div> Beyond Course Scope</div>
+        </div>
+      </div>
+      <div class="callout callout-warn" style="margin-top:16px;">
+        <span class="callout-icon">⚠️</span>
+        <div class="callout-content">
+          <strong>A Note on Scope</strong>
+          Expert-level structures are presented here to give you a sense of where the field goes beyond COP 3530. Encountering these in industry or graduate work will be far less intimidating if you've seen them named and contextualized. Focus your mastery on Fundamental and Intermediate structures first.
+        </div>
+      </div>
+    </div>
+  </details>
+
+
+  <!-- ═══════════════════ SECTION 6: ALGORITHM FUNDAMENTALS ═══════════════════ -->
+  <div class="section-title">Algorithm Fundamentals</div>
+  <p style="color:var(--text-dim); margin-bottom:18px; font-size:14px;">Data structures are meaningless without the algorithms that operate on them. COP 3530 covers both, with a strong emphasis on understanding <em>why</em> an algorithm works and how to analyze its efficiency rigorously.</p>
+
+  <!-- Big O & Complexity -->
+  <details open>
+    <summary>
+      <div class="summary-icon" style="background:rgba(244,168,35,0.18);">⏱️</div>
+      Algorithm Analysis — Big-O Notation
+      <span class="level-badge level-fundamental">Fundamental</span>
+    </summary>
+    <div class="details-body">
+      <p style="color:var(--text-dim); font-size:14px; margin-bottom:16px;">Big-O notation describes the upper bound on an algorithm's resource usage (time or space) as input size n grows toward infinity. It is the universal language for comparing algorithmic efficiency and is the single most important analytical tool in this course.</p>
+      <table class="algo-table">
+        <thead>
+          <tr>
+            <th>Complexity Class</th>
+            <th>Name</th>
+            <th>Example</th>
+            <th>n = 1,000</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><span class="cpill cp-o1">O(1)</span></td>
+            <td>Constant</td>
+            <td>Array index access, hash table lookup</td>
+            <td>1 op</td>
+          </tr>
+          <tr>
+            <td><span class="cpill cp-ologn">O(log n)</span></td>
+            <td>Logarithmic</td>
+            <td>Binary search, balanced BST operations</td>
+            <td>~10 ops</td>
+          </tr>
+          <tr>
+            <td><span class="cpill cp-on">O(n)</span></td>
+            <td>Linear</td>
+            <td>Linear search, traversal, array scan</td>
+            <td>1,000 ops</td>
+          </tr>
+          <tr>
+            <td><span class="cpill cp-ologn">O(n log n)</span></td>
+            <td>Linearithmic</td>
+            <td>Merge sort, heap sort, efficient sorts</td>
+            <td>~10,000 ops</td>
+          </tr>
+          <tr>
+            <td><span class="cpill cp-on2">O(n²)</span></td>
+            <td>Quadratic</td>
+            <td>Bubble/insertion/selection sort (naive)</td>
+            <td>1,000,000 ops</td>
+          </tr>
+          <tr>
+            <td><span class="cpill cp-on2">O(2ⁿ)</span></td>
+            <td>Exponential</td>
+            <td>Brute-force subset enumeration</td>
+            <td>2¹⁰⁰⁰ ops ⚠️</td>
+          </tr>
+        </tbody>
+      </table>
+      <div class="callout callout-tip" style="margin-top:14px;">
+        <span class="callout-icon">💡</span>
+        <div class="callout-content">Beyond Big-O, this course covers <strong>Big-Ω</strong> (lower bound), <strong>Big-Θ</strong> (tight bound), best/average/worst-case analysis, amortized analysis, and recurrence relations (Master Theorem). Understanding <em>when</em> a bound applies — and which case it describes — is as important as knowing the formula.</div>
+      </div>
+    </div>
+  </details>
+
+  <!-- Sorting Algorithms -->
+  <details>
+    <summary>
+      <div class="summary-icon" style="background:rgba(44,182,125,0.18);">🔀</div>
+      Sorting Algorithms
+      <span class="level-badge level-fundamental">Fundamental → Intermediate</span>
+    </summary>
+    <div class="details-body">
+      <table class="algo-table">
+        <thead>
+          <tr>
+            <th>Algorithm</th>
+            <th>Best</th>
+            <th>Average</th>
+            <th>Worst</th>
+            <th>Space</th>
+            <th>Stable?</th>
+            <th>COP 3530</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>Bubble Sort</td>
+            <td><span class="mono">O(n)</span></td>
+            <td><span class="mono">O(n²)</span></td>
+            <td><span class="mono">O(n²)</span></td>
+            <td><span class="mono">O(1)</span></td>
+            <td>✅ Yes</td>
+            <td><span class="cpill cp-o1" style="font-size:10px;">Full</span></td>
+          </tr>
+          <tr>
+            <td>Selection Sort</td>
+            <td><span class="mono">O(n²)</span></td>
+            <td><span class="mono">O(n²)</span></td>
+            <td><span class="mono">O(n²)</span></td>
+            <td><span class="mono">O(1)</span></td>
+            <td>❌ No</td>
+            <td><span class="cpill cp-o1" style="font-size:10px;">Full</span></td>
+          </tr>
+          <tr>
+            <td>Insertion Sort</td>
+            <td><span class="mono">O(n)</span></td>
+            <td><span class="mono">O(n²)</span></td>
+            <td><span class="mono">O(n²)</span></td>
+            <td><span class="mono">O(1)</span></td>
+            <td>✅ Yes</td>
+            <td><span class="cpill cp-o1" style="font-size:10px;">Full</span></td>
+          </tr>
+          <tr>
+            <td>Merge Sort</td>
+            <td><span class="mono">O(n log n)</span></td>
+            <td><span class="mono">O(n log n)</span></td>
+            <td><span class="mono">O(n log n)</span></td>
+            <td><span class="mono">O(n)</span></td>
+            <td>✅ Yes</td>
+            <td><span class="cpill cp-o1" style="font-size:10px;">Full</span></td>
+          </tr>
+          <tr>
+            <td>Quick Sort</td>
+            <td><span class="mono">O(n log n)</span></td>
+            <td><span class="mono">O(n log n)</span></td>
+            <td><span class="mono">O(n²)</span></td>
+            <td><span class="mono">O(log n)</span></td>
+            <td>❌ No</td>
+            <td><span class="cpill cp-o1" style="font-size:10px;">Full</span></td>
+          </tr>
+          <tr>
+            <td>Heap Sort</td>
+            <td><span class="mono">O(n log n)</span></td>
+            <td><span class="mono">O(n log n)</span></td>
+            <td><span class="mono">O(n log n)</span></td>
+            <td><span class="mono">O(1)</span></td>
+            <td>❌ No</td>
+            <td><span class="cpill cp-o1" style="font-size:10px;">Full</span></td>
+          </tr>
+          <tr>
+            <td>Counting Sort</td>
+            <td><span class="mono">O(n+k)</span></td>
+            <td><span class="mono">O(n+k)</span></td>
+            <td><span class="mono">O(n+k)</span></td>
+            <td><span class="mono">O(k)</span></td>
+            <td>✅ Yes</td>
+            <td><span class="cpill cp-ologn" style="font-size:10px;">Partial</span></td>
+          </tr>
+          <tr>
+            <td>Radix Sort</td>
+            <td><span class="mono">O(nk)</span></td>
+            <td><span class="mono">O(nk)</span></td>
+            <td><span class="mono">O(nk)</span></td>
+            <td><span class="mono">O(n+k)</span></td>
+            <td>✅ Yes</td>
+            <td><span class="cpill cp-ologn" style="font-size:10px;">Partial</span></td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </details>
+
+  <!-- Searching -->
+  <details>
+    <summary>
+      <div class="summary-icon" style="background:rgba(26,122,138,0.2);">🔍</div>
+      Searching Algorithms
+      <span class="level-badge level-fundamental">Fundamental → Intermediate</span>
+    </summary>
+    <div class="details-body">
+      <div class="ds-grid">
+        <div class="ds-card">
+          <div class="ds-card-header"><div class="ds-card-name">Linear Search</div></div>
+          <p>Scan each element in sequence until the target is found. O(n) time, O(1) space. Works on unsorted data. The baseline for all search algorithm analysis. Optimal when data is unsorted and searches are infrequent.</p>
+          <div class="coverage-tag"><div class="dot dot-full"></div> Full Coverage</div>
+        </div>
+        <div class="ds-card">
+          <div class="ds-card-header"><div class="ds-card-name">Binary Search</div></div>
+          <p>Repeatedly halve the search space by comparing the target to the midpoint. O(log n) time, requires sorted input. One of the most elegant algorithms in CS. Applicable to sorted arrays, monotonic functions, and as a meta-technique (binary search on answer).</p>
+          <div class="coverage-tag"><div class="dot dot-full"></div> Full Coverage</div>
+        </div>
+        <div class="ds-card">
+          <div class="ds-card-header"><div class="ds-card-name">BFS (Breadth-First Search)</div></div>
+          <p>Graph traversal that explores all neighbors at depth d before any at depth d+1. Uses a queue. Finds shortest paths in unweighted graphs. O(V+E) time and space. Foundation for network analysis, shortest path, and level-order tree traversal.</p>
+          <div class="coverage-tag"><div class="dot dot-full"></div> Full Coverage</div>
+        </div>
+        <div class="ds-card">
+          <div class="ds-card-header"><div class="ds-card-name">DFS (Depth-First Search)</div></div>
+          <p>Graph traversal that goes as deep as possible before backtracking. Uses a stack (or recursion). O(V+E) time and space. Used for topological sort, cycle detection, connected components, maze solving, and as the basis for many advanced graph algorithms.</p>
+          <div class="coverage-tag"><div class="dot dot-full"></div> Full Coverage</div>
+        </div>
+      </div>
+    </div>
+  </details>
+
+  <!-- Algorithm Paradigms -->
+  <details>
+    <summary>
+      <div class="summary-icon" style="background:rgba(124,106,247,0.2);">⚙️</div>
+      Algorithm Design Paradigms
+      <span class="level-badge level-intermediate">Intermediate → Advanced</span>
+    </summary>
+    <div class="details-body">
+      <p style="color:var(--text-dim); font-size:14px; margin-bottom:16px;">Beyond individual algorithms, COP 3530 teaches general problem-solving strategies that apply across many problems. Recognizing which paradigm a problem fits is a high-level skill that separates strong CS graduates from the rest.</p>
+      <div class="ds-grid">
+        <div class="ds-card">
+          <div class="ds-card-header">
+            <div class="ds-card-name">Divide &amp; Conquer</div>
+            <span class="level-badge level-intermediate">Intermediate</span>
+          </div>
+          <p>Break the problem into independent sub-problems, solve each recursively, then combine results. Analyzed using recurrence relations and the Master Theorem. Powers merge sort, quick sort, binary search, and Strassen's matrix multiplication.</p>
+          <div class="coverage-tag"><div class="dot dot-full"></div> Full Coverage</div>
+        </div>
+        <div class="ds-card">
+          <div class="ds-card-header">
+            <div class="ds-card-name">Dynamic Programming</div>
+            <span class="level-badge level-intermediate">Intermediate</span>
+          </div>
+          <p>Solve overlapping sub-problems once, storing results in a table (memoization or tabulation). Transforms exponential brute-force into polynomial time. Applies when a problem has <em>optimal substructure</em> and <em>overlapping subproblems</em>. Fibonacci, 0/1 Knapsack, LCS, Dijkstra are all DP.</p>
+          <div class="coverage-tag"><div class="dot dot-full"></div> Full Coverage</div>
+        </div>
+        <div class="ds-card">
+          <div class="ds-card-header">
+            <div class="ds-card-name">Greedy Algorithms</div>
+            <span class="level-badge level-intermediate">Intermediate</span>
+          </div>
+          <p>Make the locally optimal choice at each step with the hope of finding a global optimum. Faster than DP but only correct when a <em>greedy choice property</em> holds. Powers Huffman encoding, Kruskal's MST, Prim's MST, and activity selection problems.</p>
+          <div class="coverage-tag"><div class="dot dot-full"></div> Full Coverage</div>
+        </div>
+        <div class="ds-card">
+          <div class="ds-card-header">
+            <div class="ds-card-name">Backtracking</div>
+            <span class="level-badge level-intermediate">Intermediate</span>
+          </div>
+          <p>Systematic exploration of all possibilities via incremental candidate construction with early abandonment (pruning) of candidates that cannot lead to valid solutions. Used for constraint satisfaction: N-Queens, Sudoku, permutation generation, and graph coloring.</p>
+          <div class="coverage-tag"><div class="dot dot-full"></div> Full Coverage</div>
+        </div>
+        <div class="ds-card">
+          <div class="ds-card-header">
+            <div class="ds-card-name">Two Pointers / Sliding Window</div>
+            <span class="level-badge level-intermediate">Intermediate</span>
+          </div>
+          <p>Use two index pointers moving through an array to solve problems in O(n) that would naively be O(n²). Sliding window maintains a variable-size subarray satisfying a condition. Used for substring problems, subarray sums, and sorted array pair searches.</p>
+          <div class="coverage-tag"><div class="dot dot-partial"></div> Partial Coverage</div>
+        </div>
+        <div class="ds-card">
+          <div class="ds-card-header">
+            <div class="ds-card-name">Graph Algorithms (Weighted)</div>
+            <span class="level-badge level-advanced">Advanced</span>
+          </div>
+          <p>Dijkstra's (single-source shortest path, non-negative weights), Bellman-Ford (handles negative weights), Floyd-Warshall (all-pairs shortest path), Kruskal's and Prim's (minimum spanning tree). Each leverages specific data structures for efficiency.</p>
+          <div class="coverage-tag"><div class="dot dot-full"></div> Full Coverage</div>
+        </div>
+      </div>
+    </div>
+  </details>
+
+
+  <!-- ═══════════════════ SECTION 7: CAREERS ═══════════════════ -->
+  <div class="section-title">Careers That Require Data Structures Knowledge</div>
+  <p style="color:var(--text-dim); margin-bottom:18px; font-size:14px;">Data structures aren't academic exercises — they appear directly in technical interviews and daily work across virtually every software discipline. The following roles demand fluency at varying levels of depth.</p>
+
+  <div class="career-grid">
+
+    <div class="career-card">
+      <div class="career-card-header">
+        <div class="career-icon" style="background:rgba(44,182,125,0.18);">💻</div>
+        <div class="career-title">Software Engineer / Developer</div>
+      </div>
+      <p>The broadest role in tech. Engineers design, build, and maintain software systems across web, mobile, desktop, and embedded platforms. Data structures are assessed directly in technical interviews at virtually every major company (FAANG, Microsoft, Stripe, etc.).</p>
+      <div class="career-uses"><strong>Core DS used:</strong> Arrays, hash maps, linked lists, trees, graphs, stacks/queues for everyday code; heaps and balanced BSTs for performance-critical paths.</div>
+    </div>
+
+    <div class="career-card">
+      <div class="career-card-header">
+        <div class="career-icon" style="background:rgba(26,122,138,0.2);">⚡</div>
+        <div class="career-title">Systems Programmer</div>
+      </div>
+      <p>Builds operating systems, compilers, virtual machines, embedded firmware, and performance-critical libraries. Works at the boundary between hardware and software. Requires deep understanding of memory layout, cache behavior, and algorithmic complexity at the machine level.</p>
+      <div class="career-uses"><strong>Core DS used:</strong> Memory allocators (free lists), page tables (tries), schedulers (heaps/queues), symbol tables (hash tables), IR representation (DAGs).</div>
+    </div>
+
+    <div class="career-card">
+      <div class="career-card-header">
+        <div class="career-icon" style="background:rgba(244,168,35,0.18);">🗄️</div>
+        <div class="career-title">Database Engineer</div>
+      </div>
+      <p>Designs and optimizes database engines, query planners, and storage systems. Builds or tunes indexes, caching layers, and transaction managers. Companies like Oracle, PostgreSQL, MySQL, MongoDB, and Redis are built on sophisticated data structure choices.</p>
+      <div class="career-uses"><strong>Core DS used:</strong> B-Trees and B+-Trees (disk indexes), hash indexes, skip lists (Redis), LSM trees (NoSQL engines), query execution trees.</div>
+    </div>
+
+    <div class="career-card">
+      <div class="career-card-header">
+        <div class="career-icon" style="background:rgba(124,106,247,0.2);">🤖</div>
+        <div class="career-title">Machine Learning / AI Engineer</div>
+      </div>
+      <p>Builds and deploys ML models and the infrastructure that runs them. Efficient data preprocessing, feature engineering, and model serving all rely heavily on knowing the right structure for each task at scale. Performance at billion-record scale requires algorithmic sophistication.</p>
+      <div class="career-uses"><strong>Core DS used:</strong> Matrices (multi-dim arrays), KD-Trees (kNN), priority queues (beam search), graphs (neural network DAGs), hash maps (feature stores).</div>
+    </div>
+
+    <div class="career-card">
+      <div class="career-card-header">
+        <div class="career-icon" style="background:rgba(224,92,92,0.18);">🌐</div>
+        <div class="career-title">Network / Infrastructure Engineer</div>
+      </div>
+      <p>Designs routing protocols, content delivery networks, load balancers, and distributed systems. Routing tables, packet forwarding, and network topology problems are directly graph and trie problems at their core.</p>
+      <div class="career-uses"><strong>Core DS used:</strong> Tries (IP routing / CIDR), graphs (network topology), priority queues (routing protocols like OSPF), hash tables (ARP caches).</div>
+    </div>
+
+    <div class="career-card">
+      <div class="career-card-header">
+        <div class="career-icon" style="background:rgba(26,122,138,0.2);">🔐</div>
+        <div class="career-title">Cybersecurity Engineer</div>
+      </div>
+      <p>Builds systems to detect, prevent, and respond to security threats. Intrusion detection, malware scanning, and network packet analysis all involve real-time string and graph matching at high throughput.</p>
+      <div class="career-uses"><strong>Core DS used:</strong> Hash tables (password/signature storage), Bloom filters (fast lookup), Aho-Corasick automata (multi-pattern malware detection), graphs (attack path analysis).</div>
+    </div>
+
+    <div class="career-card">
+      <div class="career-card-header">
+        <div class="career-icon" style="background:rgba(44,182,125,0.18);">🎮</div>
+        <div class="career-title">Game Developer</div>
+      </div>
+      <p>Builds interactive simulations, real-time rendering engines, physics systems, and AI agents for games. Pathfinding, spatial indexing, animation blending, and game state management all depend directly on data structure choices that affect frame rates.</p>
+      <div class="career-uses"><strong>Core DS used:</strong> KD-Trees / Octrees (spatial partitioning), priority queues (A* pathfinding), graphs (world/level graphs), hash maps (asset caching).</div>
+    </div>
+
+    <div class="career-card">
+      <div class="career-card-header">
+        <div class="career-icon" style="background:rgba(244,168,35,0.18);">📊</div>
+        <div class="career-title">Data Engineer / Analytics Engineer</div>
+      </div>
+      <p>Builds data pipelines, ETL systems, warehouses, and the infrastructure that feeds analysts and data scientists. Processing billions of rows efficiently requires knowing when to reach for sorted structures, hash joins, and columnar representations.</p>
+      <div class="career-uses"><strong>Core DS used:</strong> Hash tables (hash joins in query engines), priority queues (top-k queries), sorted arrays (range scans), trees (query plan optimization).</div>
+    </div>
+
+    <div class="career-card">
+      <div class="career-card-header">
+        <div class="career-icon" style="background:rgba(124,106,247,0.2);">🔬</div>
+        <div class="career-title">Computational Scientist / Bioinformatician</div>
+      </div>
+      <p>Applies algorithms to scientific problems in genomics, computational chemistry, physics simulations, and climate modeling. Sequence alignment, protein structure prediction, and genome assembly are among the most computationally demanding problems in science.</p>
+      <div class="career-uses"><strong>Core DS used:</strong> Suffix arrays and trees (DNA alignment), dynamic programming tables (sequence alignment), graphs (metabolic networks), hash tables (k-mer indexing).</div>
+    </div>
+
+  </div>
+
+  <div class="callout callout-tip" style="margin-top:20px;">
+    <span class="callout-icon">🎯</span>
+    <div class="callout-content">
+      <strong>The Interview Reality</strong>
+      Technical interviews at top software companies almost universally include data structures and algorithms problems. Platforms like LeetCode, HackerRank, and Codeforces are used by millions of candidates. The structures and algorithms covered in COP 3530 map directly to the majority of interview question categories: arrays, strings, trees, graphs, dynamic programming, and greedy algorithms.
+    </div>
+  </div>
+
+
+  <!-- ═══════════════════ SECTION 8: COURSE ROADMAP ═══════════════════ -->
+  <div class="section-title">COP 3530 Course Roadmap</div>
+  <p style="color:var(--text-dim); margin-bottom:18px; font-size:14px;">The following map shows how topics in this course connect and build on each other. Mastering early modules directly enables understanding of later ones — this is not a course where topics are independent.</p>
+
+  <details open>
+    <summary>
+      <div class="summary-icon" style="background:rgba(244,168,35,0.18);">🗺️</div>
+      Topic Dependency Map &amp; Learning Progression
+    </summary>
+    <div class="details-body">
+      <div class="code-block"><span class="code-comment">// COP 3530 — LEARNING PROGRESSION</span>
+
+<span class="code-keyword">UNIT 1: Foundations</span>
+  <span class="code-val">✦</span> Algorithm Analysis (Big-O, Big-Ω, Big-Θ, amortized analysis)
+  <span class="code-val">✦</span> Recursion &amp; Recurrence Relations (Master Theorem)
+  <span class="code-val">✦</span> Arrays &amp; Dynamic Arrays
+          └─ enables ──▶ all array-based implementations
+
+<span class="code-keyword">UNIT 2: Linear Structures</span>
+  <span class="code-val">✦</span> Linked Lists (singly, doubly, circular)
+  <span class="code-val">✦</span> Stacks, Queues, Deques
+  <span class="code-val">✦</span> Hash Tables, Hash Functions, Collision Resolution
+          └─ enables ──▶ graph representations, priority queues
+
+<span class="code-keyword">UNIT 3: Trees</span>
+  <span class="code-val">✦</span> Binary Trees &amp; Traversals
+  <span class="code-val">✦</span> Binary Search Trees (BST)
+  <span class="code-val">✦</span> AVL Trees (rotations, rebalancing)
+  <span class="code-val">✦</span> Red-Black Trees
+  <span class="code-val">✦</span> Heaps &amp; Priority Queues
+  <span class="code-val">✦</span> Tries
+          └─ enables ──▶ graph algorithms, sorting, string algorithms
+
+<span class="code-keyword">UNIT 4: Graphs</span>
+  <span class="code-val">✦</span> Graph Representations (adj. list, adj. matrix)
+  <span class="code-val">✦</span> BFS &amp; DFS
+  <span class="code-val">✦</span> Topological Sort (DAGs)
+  <span class="code-val">✦</span> Shortest Path: Dijkstra's, Bellman-Ford
+  <span class="code-val">✦</span> Minimum Spanning Tree: Kruskal's, Prim's
+  <span class="code-val">✦</span> Union-Find (Disjoint Sets)
+
+<span class="code-keyword">UNIT 5: Sorting &amp; Searching</span>
+  <span class="code-val">✦</span> Comparison sorts: Bubble, Selection, Insertion, Merge, Quick, Heap
+  <span class="code-val">✦</span> Linear-time sorts: Counting, Radix, Bucket
+  <span class="code-val">✦</span> Binary Search &amp; variants
+
+<span class="code-keyword">UNIT 6: Algorithm Design Paradigms</span>
+  <span class="code-val">✦</span> Divide &amp; Conquer
+  <span class="code-val">✦</span> Dynamic Programming (memoization &amp; tabulation)
+  <span class="code-val">✦</span> Greedy Algorithms
+  <span class="code-val">✦</span> Backtracking</div>
+    </div>
+  </details>
+
+  <!-- Quick Reference Card -->
+  <details>
+    <summary>
+      <div class="summary-icon" style="background:rgba(44,182,125,0.18);">⚡</div>
+      Quick Reference — Complexity Cheat Sheet
+    </summary>
+    <div class="details-body">
+      <table class="algo-table">
+        <thead>
+          <tr>
+            <th>Structure</th>
+            <th>Access</th>
+            <th>Search</th>
+            <th>Insert</th>
+            <th>Delete</th>
+            <th>Space</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr><td>Array</td><td class="mono">O(1)</td><td class="mono">O(n)</td><td class="mono">O(n)</td><td class="mono">O(n)</td><td class="mono">O(n)</td></tr>
+          <tr><td>Dynamic Array</td><td class="mono">O(1)</td><td class="mono">O(n)</td><td class="mono">O(1)*</td><td class="mono">O(n)</td><td class="mono">O(n)</td></tr>
+          <tr><td>Singly Linked List</td><td class="mono">O(n)</td><td class="mono">O(n)</td><td class="mono">O(1)</td><td class="mono">O(1)</td><td class="mono">O(n)</td></tr>
+          <tr><td>Stack</td><td class="mono">O(n)</td><td class="mono">O(n)</td><td class="mono">O(1)</td><td class="mono">O(1)</td><td class="mono">O(n)</td></tr>
+          <tr><td>Queue</td><td class="mono">O(n)</td><td class="mono">O(n)</td><td class="mono">O(1)</td><td class="mono">O(1)</td><td class="mono">O(n)</td></tr>
+          <tr><td>Hash Table</td><td class="mono">N/A</td><td class="mono">O(1)*</td><td class="mono">O(1)*</td><td class="mono">O(1)*</td><td class="mono">O(n)</td></tr>
+          <tr><td>BST</td><td class="mono">O(log n)*</td><td class="mono">O(log n)*</td><td class="mono">O(log n)*</td><td class="mono">O(log n)*</td><td class="mono">O(n)</td></tr>
+          <tr><td>AVL Tree</td><td class="mono">O(log n)</td><td class="mono">O(log n)</td><td class="mono">O(log n)</td><td class="mono">O(log n)</td><td class="mono">O(n)</td></tr>
+          <tr><td>Red-Black Tree</td><td class="mono">O(log n)</td><td class="mono">O(log n)</td><td class="mono">O(log n)</td><td class="mono">O(log n)</td><td class="mono">O(n)</td></tr>
+          <tr><td>Binary Heap</td><td class="mono">O(1) peek</td><td class="mono">O(n)</td><td class="mono">O(log n)</td><td class="mono">O(log n)</td><td class="mono">O(n)</td></tr>
+          <tr><td>Trie</td><td class="mono">O(m)</td><td class="mono">O(m)</td><td class="mono">O(m)</td><td class="mono">O(m)</td><td class="mono">O(n·m)</td></tr>
+          <tr><td>Graph (adj. list)</td><td class="mono">N/A</td><td class="mono">O(V+E)</td><td class="mono">O(1)</td><td class="mono">O(E)</td><td class="mono">O(V+E)</td></tr>
+        </tbody>
+      </table>
+      <p style="color:var(--text-dim); font-size:12px; margin-top:10px; font-family:'IBM Plex Mono', monospace;">* = average case &nbsp;|&nbsp; m = key/string length &nbsp;|&nbsp; V = vertices &nbsp;|&nbsp; E = edges</p>
+    </div>
+  </details>
+
+  <!-- Footer -->
+  <footer>
+    <span>COP 3530</span> · Data Structures · Course Overview Module
+    &nbsp;|&nbsp; All structures covered in detail in subsequent course guides
+    &nbsp;|&nbsp; <span>Fundamental → Expert</span>
+  </footer>
+
+</div><!-- end .container -->
+
+<script>
+  // Open the first details in each section by default on load
+  document.addEventListener('DOMContentLoaded', () => {
+    // Smooth summary toggle
+    document.querySelectorAll('summary').forEach(s => {
+      s.addEventListener('click', () => {
+        const d = s.parentElement;
+        if (!d.open) {
+          d.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+        }
+      });
+    });
+  });
+</script>
+
+</body>
+</html>

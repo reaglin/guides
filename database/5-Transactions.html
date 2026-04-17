@@ -1,0 +1,2197 @@
+<!DOCTYPE html>
+<html lang="en"><head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Complete Guide to Database Transactions</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.6;
+            color: #2d2d2d;
+            background-color: #f5f5f5;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        header {
+            background: linear-gradient(135deg, #0078d4 0%, #00bcf2 100%);
+            color: white;
+            padding: 60px 20px;
+            text-align: center;
+            margin-bottom: 40px;
+            border-radius: 8px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+        }
+
+        header h1 {
+            font-size: 2.5em;
+            margin-bottom: 10px;
+            font-weight: 600;
+        }
+
+        header p {
+            font-size: 1.2em;
+            opacity: 0.95;
+        }
+
+        nav {
+            background: white;
+            padding: 24px;
+            margin-bottom: 30px;
+            border-radius: 8px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+            position: sticky;
+            top: 20px;
+            z-index: 100;
+        }
+
+        nav h3 {
+            margin-bottom: 16px;
+            color: #0078d4;
+            font-weight: 600;
+        }
+
+        nav ul {
+            list-style: none;
+        }
+
+        nav ul li {
+            margin-bottom: 10px;
+        }
+
+        nav ul li a {
+            color: #2d2d2d;
+            text-decoration: none;
+            transition: color 0.2s;
+            display: block;
+            padding: 4px 0;
+        }
+
+        nav ul li a:hover {
+            color: #0078d4;
+        }
+
+        section {
+            background: white;
+            padding: 32px;
+            margin-bottom: 24px;
+            border-radius: 8px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        }
+
+        h2 {
+            color: #0078d4;
+            margin-bottom: 24px;
+            padding-bottom: 12px;
+            border-bottom: 3px solid #0078d4;
+            font-size: 2em;
+            font-weight: 600;
+        }
+
+        h3 {
+            color: #00bcf2;
+            margin-top: 28px;
+            margin-bottom: 16px;
+            font-size: 1.5em;
+            font-weight: 600;
+        }
+
+        h4 {
+            color: #5a5a5a;
+            margin-top: 20px;
+            margin-bottom: 12px;
+            font-size: 1.2em;
+            font-weight: 600;
+        }
+
+        p {
+            margin-bottom: 16px;
+            color: #5a5a5a;
+        }
+
+        ul, ol {
+            margin-left: 28px;
+            margin-bottom: 16px;
+            color: #5a5a5a;
+        }
+
+        li {
+            margin-bottom: 8px;
+            line-height: 1.6;
+        }
+
+        code {
+            background: #f0f0f0;
+            padding: 2px 6px;
+            border-radius: 3px;
+            font-family: 'Consolas', 'Courier New', monospace;
+            color: #c7254e;
+            font-size: 0.9em;
+        }
+
+        pre {
+            background: #1e1e1e;
+            color: #d4d4d4;
+            padding: 20px;
+            border-radius: 6px;
+            overflow-x: auto;
+            margin-bottom: 24px;
+            border-left: 4px solid #0078d4;
+            font-family: 'Consolas', 'Courier New', monospace;
+            font-size: 0.9em;
+            line-height: 1.5;
+        }
+
+        pre code {
+            background: none;
+            color: inherit;
+            padding: 0;
+            font-size: 1em;
+        }
+
+        .sql-keyword {
+            color: #569cd6;
+        }
+
+        .sql-string {
+            color: #ce9178;
+        }
+
+        .sql-comment {
+            color: #6a9955;
+        }
+
+        .sql-function {
+            color: #dcdcaa;
+        }
+
+        .tip {
+            background: #e6f4ff;
+            border-left: 4px solid #0078d4;
+            padding: 16px 20px;
+            margin-bottom: 24px;
+            border-radius: 4px;
+        }
+
+        .tip strong {
+            color: #0050a0;
+        }
+
+        .warning {
+            background: #fff4e6;
+            border-left: 4px solid #ff8c00;
+            padding: 16px 20px;
+            margin-bottom: 24px;
+            border-radius: 4px;
+        }
+
+        .warning strong {
+            color: #cc7000;
+        }
+
+        .best-practice {
+            background: #e6f7e6;
+            border-left: 4px solid #28a745;
+            padding: 16px 20px;
+            margin-bottom: 24px;
+            border-radius: 4px;
+        }
+
+        .best-practice strong {
+            color: #1e7e34;
+        }
+
+        .example-box {
+            background: #f8f9fa;
+            border: 2px solid #dee2e6;
+            border-radius: 6px;
+            padding: 20px;
+            margin-bottom: 24px;
+        }
+
+        .example-box h4 {
+            color: #0078d4;
+            margin-top: 0;
+            padding-bottom: 8px;
+            border-bottom: 1px solid #dee2e6;
+        }
+
+        .acid-box {
+            background: #f8f9fa;
+            border: 2px solid #0078d4;
+            border-radius: 6px;
+            padding: 20px;
+            margin-bottom: 24px;
+        }
+
+        .acid-box h4 {
+            color: #0078d4;
+            margin-top: 0;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 24px;
+            background: white;
+        }
+
+        table th, table td {
+            padding: 12px 16px;
+            text-align: left;
+            border: 1px solid #dee2e6;
+        }
+
+        table th {
+            background: #f8f9fa;
+            color: #2d2d2d;
+            font-weight: 600;
+        }
+
+        table tr:hover {
+            background: #f8f9fa;
+        }
+
+        .comparison-table td:first-child {
+            font-weight: 600;
+            background: #f8f9fa;
+        }
+
+        .isolation-level {
+            background: #f8f9fa;
+            border: 2px solid #00bcf2;
+            border-radius: 6px;
+            padding: 20px;
+            margin-bottom: 24px;
+        }
+
+        .isolation-level h4 {
+            color: #00bcf2;
+            margin-top: 0;
+        }
+
+        footer {
+            text-align: center;
+            padding: 32px;
+            color: #5a5a5a;
+            margin-top: 40px;
+        }
+
+        @media (max-width: 768px) {
+            header h1 {
+                font-size: 1.8em;
+            }
+
+            section {
+                padding: 20px;
+            }
+
+            nav {
+                position: static;
+            }
+        }
+    </style>
+<link rel="stylesheet" href="https://templates.lcs.brightspace.com/lib/assets/css/styles.min.css"><link rel="stylesheet" href="/d2l/le/contentstyler/34091/files/View" data-override="override"></head><body><div class="container"><header>
+<h1>🔒 Complete Guide to Database Transactions</h1>
+<p>ACID Properties, Transaction Management, and Best Practices in T-SQL</p>
+</header><nav>
+<h3>📑 Table of Contents</h3>
+<ul>
+<li><a href="#introduction">Introduction to Transactions</a></li>
+<li><a href="#acid">ACID Properties</a></li>
+<li><a href="#acid-implementations">ACID in Different Databases</a></li>
+<li><a href="#tsql-basics">T-SQL Transaction Basics</a></li>
+<li><a href="#isolation-levels">Isolation Levels</a></li>
+<li><a href="#locking">Locking &amp; Concurrency</a></li>
+<li><a href="#stored-procedures">Transactions in Stored Procedures</a></li>
+<li><a href="#nested-transactions">Nested Transactions</a></li>
+<li><a href="#distributed">Distributed Transactions</a></li>
+<li><a href="#use-cases">Common Use Cases</a></li>
+<li><a href="#error-handling">Error Handling</a></li>
+<li><a href="#performance">Performance Considerations</a></li>
+<li><a href="#best-practices">Best Practices</a></li>
+</ul>
+</nav>
+<section id="introduction">
+<h2>Introduction to Transactions</h2>
+<p>A transaction is a logical unit of work that contains one or more database operations. Transactions ensure data integrity by treating multiple operations as a single, indivisible unit that either completes entirely or fails entirely.</p>
+<h3>What is a Transaction?</h3>
+<p>A transaction groups multiple database operations into a single atomic unit with the following characteristics:</p>
+<ul>
+<li><strong>Single Unit:</strong> All operations succeed or all fail together</li>
+<li><strong>Consistent State:</strong> Database moves from one valid state to another</li>
+<li><strong>Isolated Execution:</strong> Concurrent transactions don't interfere with each other</li>
+<li><strong>Permanent Changes:</strong> Once committed, changes survive system failures</li>
+</ul>
+<h3>Why Transactions Matter</h3>
+<div class="example-box">
+<h4>Real-World Example: Bank Transfer</h4>
+<pre><code><span class="sql-comment">-- Without transaction: DANGEROUS!</span>
+<span class="sql-keyword">UPDATE</span> Accounts <span class="sql-keyword">SET</span> Balance = Balance - 500 <span class="sql-keyword">WHERE</span> AccountID = 1;
+<span class="sql-comment">-- System crashes here - money disappears!</span>
+<span class="sql-keyword">UPDATE</span> Accounts <span class="sql-keyword">SET</span> Balance = Balance + 500 <span class="sql-keyword">WHERE</span> AccountID = 2;
+
+<span class="sql-comment">-- With transaction: SAFE!</span>
+<span class="sql-keyword">BEGIN TRANSACTION</span>;
+    <span class="sql-keyword">UPDATE</span> Accounts <span class="sql-keyword">SET</span> Balance = Balance - 500 <span class="sql-keyword">WHERE</span> AccountID = 1;
+    <span class="sql-keyword">UPDATE</span> Accounts <span class="sql-keyword">SET</span> Balance = Balance + 500 <span class="sql-keyword">WHERE</span> AccountID = 2;
+<span class="sql-keyword">COMMIT TRANSACTION</span>;
+<span class="sql-comment">-- Both updates succeed or both fail</span></code></pre>
+</div>
+<h3>Transaction Lifecycle</h3>
+<ol>
+<li><strong>BEGIN:</strong> Transaction starts</li>
+<li><strong>EXECUTE:</strong> Perform database operations</li>
+<li><strong>COMMIT:</strong> Make changes permanent (success)</li>
+<li><strong>ROLLBACK:</strong> Undo all changes (failure)</li>
+</ol>
+<div class="tip"><strong>💡 Key Concept:</strong> Transactions are essential for maintaining data integrity in multi-step operations, especially in scenarios involving money, inventory, or any critical business data.</div>
+</section>
+<section id="acid">
+<h2>ACID Properties</h2>
+<p>ACID is an acronym that describes the four fundamental properties that guarantee reliable transaction processing in database systems.</p>
+<div class="acid-box">
+<h4>A - Atomicity</h4>
+<p><strong>Definition:</strong> All operations in a transaction succeed or all fail. There is no partial completion.</p>
+<p><strong>Analogy:</strong> Like an atom, a transaction cannot be split into smaller parts.</p>
+<p><strong>Implementation:</strong> Transaction log records all changes; rollback undoes incomplete transactions.</p>
+<p><strong>Example:</strong></p>
+<pre><code><span class="sql-keyword">BEGIN TRANSACTION</span>;
+    <span class="sql-keyword">INSERT INTO</span> Orders (CustomerID, TotalAmount) <span class="sql-keyword">VALUES</span> (1, 100);
+    <span class="sql-keyword">INSERT INTO</span> OrderItems (OrderID, ProductID, Qty) <span class="sql-keyword">VALUES</span> (SCOPE_IDENTITY(), 5, 2);
+    <span class="sql-keyword">UPDATE</span> Inventory <span class="sql-keyword">SET</span> Quantity = Quantity - 2 <span class="sql-keyword">WHERE</span> ProductID = 5;
+<span class="sql-keyword">COMMIT TRANSACTION</span>;
+<span class="sql-comment">-- All three operations complete or none do</span></code></pre>
+</div>
+<div class="acid-box">
+<h4>C - Consistency</h4>
+<p><strong>Definition:</strong> Transactions take the database from one valid state to another valid state, preserving all constraints and rules.</p>
+<p><strong>Analogy:</strong> Like a balanced scale - the database remains balanced before and after.</p>
+<p><strong>Implementation:</strong> Constraint checking, triggers, and business logic enforcement.</p>
+<p><strong>Example:</strong></p>
+<pre><code><span class="sql-keyword">BEGIN TRANSACTION</span>;
+    <span class="sql-comment">-- Check constraint: Balance cannot be negative</span>
+    <span class="sql-keyword">UPDATE</span> Accounts <span class="sql-keyword">SET</span> Balance = Balance - 1000 <span class="sql-keyword">WHERE</span> AccountID = 1;
+    <span class="sql-comment">-- If balance would go negative, constraint violation causes rollback</span>
+    <span class="sql-comment">-- Database remains consistent - no negative balances</span>
+<span class="sql-keyword">COMMIT TRANSACTION</span>;</code></pre>
+</div>
+<div class="acid-box">
+<h4>I - Isolation</h4>
+<p><strong>Definition:</strong> Concurrent transactions execute independently without interfering with each other.</p>
+<p><strong>Analogy:</strong> Like separate lanes on a highway - transactions don't collide.</p>
+<p><strong>Implementation:</strong> Locking mechanisms, multi-version concurrency control (MVCC).</p>
+<p><strong>Isolation Levels:</strong> READ UNCOMMITTED, READ COMMITTED, REPEATABLE READ, SERIALIZABLE</p>
+<p><strong>Example:</strong></p>
+<pre><code><span class="sql-comment">-- Transaction 1</span>
+<span class="sql-keyword">BEGIN TRANSACTION</span>;
+    <span class="sql-keyword">UPDATE</span> Products <span class="sql-keyword">SET</span> Price = 100 <span class="sql-keyword">WHERE</span> ProductID = 1;
+    <span class="sql-comment">-- Other transactions don't see Price = 100 yet</span>
+<span class="sql-keyword">COMMIT TRANSACTION</span>;
+<span class="sql-comment">-- Now other transactions see the new price</span></code></pre>
+</div>
+<div class="acid-box">
+<h4>D - Durability</h4>
+<p><strong>Definition:</strong> Once a transaction is committed, changes are permanent and survive system failures.</p>
+<p><strong>Analogy:</strong> Like writing in permanent marker - it can't be erased by accidents.</p>
+<p><strong>Implementation:</strong> Write-ahead logging (WAL), transaction logs written to disk before commit.</p>
+<p><strong>Example:</strong></p>
+<pre><code><span class="sql-keyword">BEGIN TRANSACTION</span>;
+    <span class="sql-keyword">INSERT INTO</span> Orders (CustomerID, TotalAmount) <span class="sql-keyword">VALUES</span> (1, 500);
+<span class="sql-keyword">COMMIT TRANSACTION</span>;
+<span class="sql-comment">-- Even if server crashes now, order is saved</span>
+<span class="sql-comment">-- Transaction log ensures recovery on restart</span></code></pre>
+</div>
+<h3>ACID Trade-offs</h3>
+<table>
+<thead>
+<tr>
+<th>Property</th>
+<th>Benefit</th>
+<th>Cost</th>
+<th>Can Be Relaxed?</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Atomicity</strong></td>
+<td>All-or-nothing guarantee</td>
+<td>Transaction log overhead</td>
+<td>❌ No - fundamental</td>
+</tr>
+<tr>
+<td><strong>Consistency</strong></td>
+<td>Data integrity enforced</td>
+<td>Constraint checking overhead</td>
+<td>⚠️ Dangerous - not recommended</td>
+</tr>
+<tr>
+<td><strong>Isolation</strong></td>
+<td>Prevents interference</td>
+<td>Locking/blocking, reduced concurrency</td>
+<td>✅ Yes - isolation levels</td>
+</tr>
+<tr>
+<td><strong>Durability</strong></td>
+<td>Survives crashes</td>
+<td>Disk I/O, slower commits</td>
+<td>⚠️ Only in specific scenarios</td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="acid-implementations">
+<h2>ACID Implementation Across Databases</h2>
+<p>Different database systems implement ACID properties in various ways, with different trade-offs and capabilities.</p>
+<h3>SQL Server (Microsoft)</h3>
+<table>
+<thead>
+<tr>
+<th>Property</th>
+<th>Implementation</th>
+<th>Features</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Atomicity</strong></td>
+<td>Write-Ahead Logging (WAL)</td>
+<td>Transaction log files (.ldf)</td>
+</tr>
+<tr>
+<td><strong>Consistency</strong></td>
+<td>Constraints, triggers, rules</td>
+<td>CHECK, FK, UNIQUE constraints</td>
+</tr>
+<tr>
+<td><strong>Isolation</strong></td>
+<td>Row versioning, locking</td>
+<td>5 isolation levels, snapshot isolation</td>
+</tr>
+<tr>
+<td><strong>Durability</strong></td>
+<td>Transaction log, checkpoints</td>
+<td>Full, bulk-logged, simple recovery</td>
+</tr>
+</tbody>
+</table>
+<h3>PostgreSQL</h3>
+<table>
+<thead>
+<tr>
+<th>Property</th>
+<th>Implementation</th>
+<th>Features</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Atomicity</strong></td>
+<td>WAL (Write-Ahead Log)</td>
+<td>pg_wal directory</td>
+</tr>
+<tr>
+<td><strong>Consistency</strong></td>
+<td>Constraints, triggers</td>
+<td>DEFERRABLE constraints</td>
+</tr>
+<tr>
+<td><strong>Isolation</strong></td>
+<td>MVCC (Multi-Version Concurrency Control)</td>
+<td>4 isolation levels, excellent concurrency</td>
+</tr>
+<tr>
+<td><strong>Durability</strong></td>
+<td>WAL + fsync</td>
+<td>synchronous_commit setting</td>
+</tr>
+</tbody>
+</table>
+<h3>MySQL (InnoDB)</h3>
+<table>
+<thead>
+<tr>
+<th>Property</th>
+<th>Implementation</th>
+<th>Features</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Atomicity</strong></td>
+<td>Redo logs</td>
+<td>ib_logfile0, ib_logfile1</td>
+</tr>
+<tr>
+<td><strong>Consistency</strong></td>
+<td>Constraints (limited in older versions)</td>
+<td>FK constraints in InnoDB</td>
+</tr>
+<tr>
+<td><strong>Isolation</strong></td>
+<td>MVCC + locking</td>
+<td>4 isolation levels</td>
+</tr>
+<tr>
+<td><strong>Durability</strong></td>
+<td>Doublewrite buffer + redo logs</td>
+<td>innodb_flush_log_at_trx_commit</td>
+</tr>
+</tbody>
+</table>
+<h3>Oracle Database</h3>
+<table>
+<thead>
+<tr>
+<th>Property</th>
+<th>Implementation</th>
+<th>Features</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Atomicity</strong></td>
+<td>Redo logs + undo tablespaces</td>
+<td>Online redo logs</td>
+</tr>
+<tr>
+<td><strong>Consistency</strong></td>
+<td>Constraints, triggers</td>
+<td>Read consistency via undo</td>
+</tr>
+<tr>
+<td><strong>Isolation</strong></td>
+<td>MVCC with undo segments</td>
+<td>READ COMMITTED default, Serializable</td>
+</tr>
+<tr>
+<td><strong>Durability</strong></td>
+<td>Redo logs + COMMIT</td>
+<td>COMMIT NOWAIT option</td>
+</tr>
+</tbody>
+</table>
+<h3>NoSQL Databases</h3>
+<table>
+<thead>
+<tr>
+<th>Database</th>
+<th>ACID Support</th>
+<th>Trade-offs</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>MongoDB</strong></td>
+<td>✅ Full ACID (4.0+) for single document, multi-document transactions</td>
+<td>Performance impact on distributed operations</td>
+</tr>
+<tr>
+<td><strong>Cassandra</strong></td>
+<td>⚠️ Limited - eventual consistency, lightweight transactions</td>
+<td>Prioritizes availability over consistency (AP in CAP)</td>
+</tr>
+<tr>
+<td><strong>Redis</strong></td>
+<td>✅ ACID for single commands, multi-command transactions</td>
+<td>In-memory, durability optional</td>
+</tr>
+<tr>
+<td><strong>DynamoDB</strong></td>
+<td>✅ ACID for single item, TransactWriteItems for multi-item</td>
+<td>Limited to 25 items per transaction</td>
+</tr>
+</tbody>
+</table>
+<h3>CAP Theorem and ACID</h3>
+<p>In distributed systems, the CAP theorem states you can only guarantee two of three properties:</p>
+<ul>
+<li><strong>C (Consistency):</strong> All nodes see the same data</li>
+<li><strong>A (Availability):</strong> System remains operational</li>
+<li><strong>P (Partition Tolerance):</strong> System works despite network failures</li>
+</ul>
+<table>
+<thead>
+<tr>
+<th>Database Type</th>
+<th>CAP Choice</th>
+<th>ACID Level</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Traditional RDBMS</td>
+<td>CA (Consistency + Availability)</td>
+<td>Full ACID</td>
+</tr>
+<tr>
+<td>MongoDB, HBase</td>
+<td>CP (Consistency + Partition Tolerance)</td>
+<td>Strong ACID</td>
+</tr>
+<tr>
+<td>Cassandra, DynamoDB</td>
+<td>AP (Availability + Partition Tolerance)</td>
+<td>Eventual Consistency, Limited ACID</td>
+</tr>
+</tbody>
+</table>
+<div class="tip"><strong>💡 Key Insight:</strong> Traditional relational databases (SQL Server, PostgreSQL, Oracle) provide the strongest ACID guarantees, making them ideal for financial, medical, and other critical applications where data integrity is paramount.</div>
+</section>
+<section id="tsql-basics">
+<h2>T-SQL Transaction Basics</h2>
+<p>SQL Server provides comprehensive transaction support through T-SQL commands and automatic transaction management.</p>
+<h3>Explicit Transactions</h3>
+<pre><code><span class="sql-comment">-- Basic explicit transaction</span>
+<span class="sql-keyword">BEGIN TRANSACTION</span>;
+    <span class="sql-keyword">UPDATE</span> Products <span class="sql-keyword">SET</span> Price = Price * 1.1 <span class="sql-keyword">WHERE</span> CategoryID = 1;
+    <span class="sql-keyword">INSERT INTO</span> PriceHistory (ProductID, OldPrice, NewPrice, ChangeDate)
+    <span class="sql-keyword">SELECT</span> ProductID, Price / 1.1, Price, <span class="sql-function">GETDATE</span>()
+    <span class="sql-keyword">FROM</span> Products <span class="sql-keyword">WHERE</span> CategoryID = 1;
+<span class="sql-keyword">COMMIT TRANSACTION</span>;
+
+<span class="sql-comment">-- Transaction with error handling</span>
+<span class="sql-keyword">BEGIN TRANSACTION</span>;
+    <span class="sql-keyword">BEGIN TRY</span>
+        <span class="sql-keyword">UPDATE</span> Accounts <span class="sql-keyword">SET</span> Balance = Balance - 1000 <span class="sql-keyword">WHERE</span> AccountID = 1;
+        <span class="sql-keyword">UPDATE</span> Accounts <span class="sql-keyword">SET</span> Balance = Balance + 1000 <span class="sql-keyword">WHERE</span> AccountID = 2;
+        <span class="sql-keyword">COMMIT TRANSACTION</span>;
+    <span class="sql-keyword">END TRY</span>
+    <span class="sql-keyword">BEGIN CATCH</span>
+        <span class="sql-keyword">ROLLBACK TRANSACTION</span>;
+        <span class="sql-keyword">THROW</span>;
+    <span class="sql-keyword">END CATCH</span></code></pre>
+<h3>Implicit Transactions</h3>
+<pre><code><span class="sql-comment">-- Enable implicit transactions</span>
+<span class="sql-keyword">SET</span> IMPLICIT_TRANSACTIONS <span class="sql-keyword">ON</span>;
+
+<span class="sql-comment">-- This automatically starts a transaction</span>
+<span class="sql-keyword">UPDATE</span> Products <span class="sql-keyword">SET</span> Price = 100 <span class="sql-keyword">WHERE</span> ProductID = 1;
+
+<span class="sql-comment">-- Must explicitly commit or rollback</span>
+<span class="sql-keyword">COMMIT</span>;
+
+<span class="sql-comment">-- Turn off implicit transactions</span>
+<span class="sql-keyword">SET</span> IMPLICIT_TRANSACTIONS <span class="sql-keyword">OFF</span>;</code></pre>
+<h3>Autocommit Mode (Default)</h3>
+<pre><code><span class="sql-comment">-- Each statement is automatically a transaction</span>
+<span class="sql-keyword">UPDATE</span> Products <span class="sql-keyword">SET</span> Price = 100 <span class="sql-keyword">WHERE</span> ProductID = 1;
+<span class="sql-comment">-- Automatically committed if successful</span>
+
+<span class="sql-keyword">INSERT INTO</span> Orders (CustomerID, TotalAmount) <span class="sql-keyword">VALUES</span> (1, 500);
+<span class="sql-comment">-- Each statement is its own transaction</span></code></pre>
+<h3>Transaction Control Statements</h3>
+<table>
+<thead>
+<tr>
+<th>Statement</th>
+<th>Purpose</th>
+<th>Example</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>BEGIN TRANSACTION</code></td>
+<td>Start explicit transaction</td>
+<td><code>BEGIN TRANSACTION</code> or <code>BEGIN TRAN</code></td>
+</tr>
+<tr>
+<td><code>COMMIT</code></td>
+<td>Make changes permanent</td>
+<td><code>COMMIT TRANSACTION</code> or <code>COMMIT</code></td>
+</tr>
+<tr>
+<td><code>ROLLBACK</code></td>
+<td>Undo all changes</td>
+<td><code>ROLLBACK TRANSACTION</code> or <code>ROLLBACK</code></td>
+</tr>
+<tr>
+<td><code>SAVE TRANSACTION</code></td>
+<td>Create savepoint</td>
+<td><code>SAVE TRANSACTION SavePoint1</code></td>
+</tr>
+</tbody>
+</table>
+<h3>Savepoints</h3>
+<div class="example-box">
+<h4>Using Savepoints for Partial Rollback</h4>
+<pre><code><span class="sql-keyword">BEGIN TRANSACTION</span>;
+    
+    <span class="sql-keyword">INSERT INTO</span> Orders (CustomerID, TotalAmount) 
+    <span class="sql-keyword">VALUES</span> (1, 100);
+    
+    <span class="sql-keyword">SAVE TRANSACTION</span> AfterOrderInsert;
+    
+    <span class="sql-keyword">INSERT INTO</span> OrderItems (OrderID, ProductID, Quantity)
+    <span class="sql-keyword">VALUES</span> (<span class="sql-function">SCOPE_IDENTITY</span>(), 5, 2);
+    
+    <span class="sql-comment">-- Error occurs here</span>
+    <span class="sql-keyword">IF</span> @@ERROR &lt;&gt; 0
+    <span class="sql-keyword">BEGIN</span>
+        <span class="sql-comment">-- Rollback only to savepoint, keep order insert</span>
+        <span class="sql-keyword">ROLLBACK TRANSACTION</span> AfterOrderInsert;
+        <span class="sql-comment">-- Continue with alternative action</span>
+    <span class="sql-keyword">END</span>
+    
+<span class="sql-keyword">COMMIT TRANSACTION</span>;</code></pre>
+</div>
+<h3>Checking Transaction State</h3>
+<pre><code><span class="sql-comment">-- Check if in a transaction</span>
+<span class="sql-keyword">SELECT</span> @@TRANCOUNT <span class="sql-keyword">AS</span> ActiveTransactions;
+<span class="sql-comment">-- Returns 0 if no transaction, &gt;0 for nested transaction depth</span>
+
+<span class="sql-comment">-- Common pattern</span>
+<span class="sql-keyword">IF</span> @@TRANCOUNT &gt; 0
+    <span class="sql-keyword">ROLLBACK TRANSACTION</span>;
+
+<span class="sql-comment">-- Get transaction isolation level</span>
+<span class="sql-keyword">DBCC</span> USEROPTIONS;
+
+<span class="sql-comment">-- View active transactions</span>
+<span class="sql-keyword">SELECT</span> *
+<span class="sql-keyword">FROM</span> sys.dm_tran_active_transactions;
+
+<span class="sql-comment">-- View session transactions</span>
+<span class="sql-keyword">SELECT</span> *
+<span class="sql-keyword">FROM</span> sys.dm_tran_session_transactions;</code></pre>
+<div class="warning"><strong>⚠️ Important:</strong> Always check <code>@@TRANCOUNT</code> before executing ROLLBACK to avoid errors. Never assume you're in a transaction.</div>
+</section>
+<section id="isolation-levels">
+<h2>Transaction Isolation Levels</h2>
+<p>Isolation levels control how transactions interact with each other and what data they can see. Higher isolation provides more protection but reduces concurrency.</p>
+<h3>Isolation Level Comparison</h3>
+<table>
+<thead>
+<tr>
+<th>Isolation Level</th>
+<th>Dirty Read</th>
+<th>Non-Repeatable Read</th>
+<th>Phantom Read</th>
+<th>Concurrency</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>READ UNCOMMITTED</strong></td>
+<td>✅ Allowed</td>
+<td>✅ Allowed</td>
+<td>✅ Allowed</td>
+<td>⭐⭐⭐⭐⭐ Highest</td>
+</tr>
+<tr>
+<td><strong>READ COMMITTED</strong></td>
+<td>❌ Prevented</td>
+<td>✅ Allowed</td>
+<td>✅ Allowed</td>
+<td>⭐⭐⭐⭐ High</td>
+</tr>
+<tr>
+<td><strong>REPEATABLE READ</strong></td>
+<td>❌ Prevented</td>
+<td>❌ Prevented</td>
+<td>✅ Allowed</td>
+<td>⭐⭐⭐ Moderate</td>
+</tr>
+<tr>
+<td><strong>SERIALIZABLE</strong></td>
+<td>❌ Prevented</td>
+<td>❌ Prevented</td>
+<td>❌ Prevented</td>
+<td>⭐⭐ Low</td>
+</tr>
+<tr>
+<td><strong>SNAPSHOT</strong></td>
+<td>❌ Prevented</td>
+<td>❌ Prevented</td>
+<td>❌ Prevented</td>
+<td>⭐⭐⭐⭐⭐ Highest</td>
+</tr>
+</tbody>
+</table>
+<div class="isolation-level">
+<h4>READ UNCOMMITTED (Level 0)</h4>
+<p><strong>Description:</strong> Lowest isolation level. Can read uncommitted changes from other transactions (dirty reads).</p>
+<p><strong>Use Case:</strong> Reporting queries where approximate data is acceptable and performance is critical.</p>
+<p><strong>Advantages:</strong> No locks placed, no blocking, maximum concurrency.</p>
+<p><strong>Disadvantages:</strong> Can read data that gets rolled back, data accuracy not guaranteed.</p>
+<pre><code><span class="sql-keyword">SET TRANSACTION ISOLATION LEVEL</span> <span class="sql-keyword">READ UNCOMMITTED</span>;
+
+<span class="sql-keyword">SELECT</span> <span class="sql-function">COUNT</span>(*), <span class="sql-function">SUM</span>(TotalAmount)
+<span class="sql-keyword">FROM</span> Orders;
+<span class="sql-comment">-- Can see uncommitted changes from other transactions</span></code></pre>
+</div>
+<div class="isolation-level">
+<h4>READ COMMITTED (Level 1) - Default</h4>
+<p><strong>Description:</strong> Can only read committed data. Prevents dirty reads but allows non-repeatable reads.</p>
+<p><strong>Use Case:</strong> Default for most applications. Good balance of consistency and concurrency.</p>
+<p><strong>Advantages:</strong> Prevents reading uncommitted data, reasonable concurrency.</p>
+<p><strong>Disadvantages:</strong> Data can change between reads within same transaction.</p>
+<pre><code><span class="sql-keyword">SET TRANSACTION ISOLATION LEVEL</span> <span class="sql-keyword">READ COMMITTED</span>;
+
+<span class="sql-keyword">BEGIN TRANSACTION</span>;
+    <span class="sql-keyword">SELECT</span> Balance <span class="sql-keyword">FROM</span> Accounts <span class="sql-keyword">WHERE</span> AccountID = 1; <span class="sql-comment">-- Returns 1000</span>
+    <span class="sql-comment">-- Another transaction commits: UPDATE Accounts SET Balance = 1500</span>
+    <span class="sql-keyword">SELECT</span> Balance <span class="sql-keyword">FROM</span> Accounts <span class="sql-keyword">WHERE</span> AccountID = 1; <span class="sql-comment">-- Returns 1500!</span>
+<span class="sql-keyword">COMMIT TRANSACTION</span>;</code></pre>
+</div>
+<div class="isolation-level">
+<h4>REPEATABLE READ (Level 2)</h4>
+<p><strong>Description:</strong> Guarantees same data on repeated reads. Locks rows that are read, preventing changes.</p>
+<p><strong>Use Case:</strong> When you need consistent reads throughout a transaction.</p>
+<p><strong>Advantages:</strong> Data stability within transaction, prevents non-repeatable reads.</p>
+<p><strong>Disadvantages:</strong> More blocking, can still have phantom reads (new rows).</p>
+<pre><code><span class="sql-keyword">SET TRANSACTION ISOLATION LEVEL</span> <span class="sql-keyword">REPEATABLE READ</span>;
+
+<span class="sql-keyword">BEGIN TRANSACTION</span>;
+    <span class="sql-keyword">SELECT</span> * <span class="sql-keyword">FROM</span> Products <span class="sql-keyword">WHERE</span> CategoryID = 1;
+    <span class="sql-comment">-- Rows are locked, other transactions can't modify them</span>
+    <span class="sql-comment">-- But new rows can be inserted (phantom reads)</span>
+    <span class="sql-keyword">SELECT</span> * <span class="sql-keyword">FROM</span> Products <span class="sql-keyword">WHERE</span> CategoryID = 1;
+    <span class="sql-comment">-- Same rows, but count might differ if new rows inserted</span>
+<span class="sql-keyword">COMMIT TRANSACTION</span>;</code></pre>
+</div>
+<div class="isolation-level">
+<h4>SERIALIZABLE (Level 3)</h4>
+<p><strong>Description:</strong> Highest isolation level. Complete isolation from other transactions. Prevents phantom reads.</p>
+<p><strong>Use Case:</strong> Critical operations requiring absolute consistency (rare).</p>
+<p><strong>Advantages:</strong> Complete isolation, no anomalies possible.</p>
+<p><strong>Disadvantages:</strong> Significant blocking, lowest concurrency, potential deadlocks.</p>
+<pre><code><span class="sql-keyword">SET TRANSACTION ISOLATION LEVEL</span> <span class="sql-keyword">SERIALIZABLE</span>;
+
+<span class="sql-keyword">BEGIN TRANSACTION</span>;
+    <span class="sql-keyword">SELECT</span> <span class="sql-function">COUNT</span>(*) <span class="sql-keyword">FROM</span> Orders <span class="sql-keyword">WHERE</span> OrderDate = <span class="sql-string">'2024-02-09'</span>;
+    <span class="sql-comment">-- Range lock prevents inserts, updates, deletes</span>
+    <span class="sql-keyword">SELECT</span> <span class="sql-function">COUNT</span>(*) <span class="sql-keyword">FROM</span> Orders <span class="sql-keyword">WHERE</span> OrderDate = <span class="sql-string">'2024-02-09'</span>;
+    <span class="sql-comment">-- Guaranteed same count - no phantoms</span>
+<span class="sql-keyword">COMMIT TRANSACTION</span>;</code></pre>
+</div>
+<div class="isolation-level">
+<h4>SNAPSHOT Isolation</h4>
+<p><strong>Description:</strong> Uses row versioning (MVCC). Reads a consistent snapshot of data as it existed at transaction start.</p>
+<p><strong>Use Case:</strong> High concurrency scenarios with consistent reads needed.</p>
+<p><strong>Advantages:</strong> Readers don't block writers, writers don't block readers, high concurrency.</p>
+<p><strong>Disadvantages:</strong> Tempdb overhead for row versions, update conflicts possible.</p>
+<pre><code><span class="sql-comment">-- Enable snapshot isolation (database setting)</span>
+<span class="sql-keyword">ALTER DATABASE</span> MyDatabase 
+<span class="sql-keyword">SET</span> ALLOW_SNAPSHOT_ISOLATION <span class="sql-keyword">ON</span>;
+
+<span class="sql-keyword">SET TRANSACTION ISOLATION LEVEL</span> <span class="sql-keyword">SNAPSHOT</span>;
+
+<span class="sql-keyword">BEGIN TRANSACTION</span>;
+    <span class="sql-keyword">SELECT</span> * <span class="sql-keyword">FROM</span> Products <span class="sql-keyword">WHERE</span> CategoryID = 1;
+    <span class="sql-comment">-- Sees snapshot as of transaction start</span>
+    <span class="sql-comment">-- Other transactions can modify data without blocking</span>
+    <span class="sql-keyword">SELECT</span> * <span class="sql-keyword">FROM</span> Products <span class="sql-keyword">WHERE</span> CategoryID = 1;
+    <span class="sql-comment">-- Still sees original snapshot, not modifications</span>
+<span class="sql-keyword">COMMIT TRANSACTION</span>;</code></pre>
+</div>
+<h3>Setting Isolation Levels</h3>
+<pre><code><span class="sql-comment">-- Session-level setting</span>
+<span class="sql-keyword">SET TRANSACTION ISOLATION LEVEL</span> <span class="sql-keyword">READ COMMITTED</span>;
+
+<span class="sql-comment">-- Query-level hint</span>
+<span class="sql-keyword">SELECT</span> * <span class="sql-keyword">FROM</span> Orders <span class="sql-keyword">WITH</span> (<span class="sql-keyword">READUNCOMMITTED</span>);
+<span class="sql-keyword">SELECT</span> * <span class="sql-keyword">FROM</span> Orders <span class="sql-keyword">WITH</span> (<span class="sql-keyword">NOLOCK</span>); <span class="sql-comment">-- Same as READ UNCOMMITTED</span>
+
+<span class="sql-comment">-- Transaction-level (recommended)</span>
+<span class="sql-keyword">BEGIN TRANSACTION</span>;
+    <span class="sql-keyword">SET TRANSACTION ISOLATION LEVEL</span> <span class="sql-keyword">REPEATABLE READ</span>;
+    <span class="sql-comment">-- queries here use REPEATABLE READ</span>
+<span class="sql-keyword">COMMIT TRANSACTION</span>;</code></pre>
+<div class="tip"><strong>💡 Recommendation:</strong> Use READ COMMITTED (default) for most applications. Consider SNAPSHOT for high-concurrency read-heavy workloads. Avoid READ UNCOMMITTED unless data accuracy is not critical.</div>
+</section>
+<section id="locking">
+<h2>Locking &amp; Concurrency</h2>
+<p>SQL Server uses locks to ensure data integrity and isolation between concurrent transactions.</p>
+<h3>Lock Types</h3>
+<table>
+<thead>
+<tr>
+<th>Lock Type</th>
+<th>Symbol</th>
+<th>Purpose</th>
+<th>Typical Use</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Shared (S)</strong></td>
+<td>S</td>
+<td>Read locks, multiple allowed</td>
+<td>SELECT statements</td>
+</tr>
+<tr>
+<td><strong>Exclusive (X)</strong></td>
+<td>X</td>
+<td>Write locks, blocks all others</td>
+<td>INSERT, UPDATE, DELETE</td>
+</tr>
+<tr>
+<td><strong>Update (U)</strong></td>
+<td>U</td>
+<td>Intent to update, prevents deadlocks</td>
+<td>UPDATE operations</td>
+</tr>
+<tr>
+<td><strong>Intent (IS, IX, IU)</strong></td>
+<td>I*</td>
+<td>Lock hierarchy indicator</td>
+<td>Automatic by SQL Server</td>
+</tr>
+<tr>
+<td><strong>Schema (Sch-S, Sch-M)</strong></td>
+<td>Sch</td>
+<td>Prevent schema changes</td>
+<td>DDL operations</td>
+</tr>
+</tbody>
+</table>
+<h3>Lock Granularity</h3>
+<table>
+<thead>
+<tr>
+<th>Granularity</th>
+<th>What's Locked</th>
+<th>Concurrency</th>
+<th>Overhead</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Row (RID)</strong></td>
+<td>Single row</td>
+<td>⭐⭐⭐⭐⭐ Highest</td>
+<td>High memory</td>
+</tr>
+<tr>
+<td><strong>Key</strong></td>
+<td>Index key</td>
+<td>⭐⭐⭐⭐ High</td>
+<td>Moderate memory</td>
+</tr>
+<tr>
+<td><strong>Page</strong></td>
+<td>8KB page (rows)</td>
+<td>⭐⭐⭐ Moderate</td>
+<td>Low memory</td>
+</tr>
+<tr>
+<td><strong>Extent</strong></td>
+<td>8 pages (64KB)</td>
+<td>⭐⭐ Low</td>
+<td>Very low memory</td>
+</tr>
+<tr>
+<td><strong>Table</strong></td>
+<td>Entire table</td>
+<td>⭐ Very Low</td>
+<td>Minimal memory</td>
+</tr>
+<tr>
+<td><strong>Database</strong></td>
+<td>Entire database</td>
+<td>❌ None</td>
+<td>Minimal memory</td>
+</tr>
+</tbody>
+</table>
+<h3>Lock Compatibility Matrix</h3>
+<table>
+<thead>
+<tr>
+<th>Existing → Request ↓</th>
+<th>Shared (S)</th>
+<th>Exclusive (X)</th>
+<th>Update (U)</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Shared (S)</strong></td>
+<td>✅ Compatible</td>
+<td>❌ Blocks</td>
+<td>✅ Compatible</td>
+</tr>
+<tr>
+<td><strong>Exclusive (X)</strong></td>
+<td>❌ Blocks</td>
+<td>❌ Blocks</td>
+<td>❌ Blocks</td>
+</tr>
+<tr>
+<td><strong>Update (U)</strong></td>
+<td>✅ Compatible</td>
+<td>❌ Blocks</td>
+<td>❌ Blocks</td>
+</tr>
+</tbody>
+</table>
+<h3>Viewing Locks</h3>
+<pre><code><span class="sql-comment">-- View current locks</span>
+<span class="sql-keyword">SELECT</span> 
+    resource_type,
+    resource_description,
+    request_mode,
+    request_status
+<span class="sql-keyword">FROM</span> sys.dm_tran_locks
+<span class="sql-keyword">WHERE</span> request_session_id = @@SPID;
+
+<span class="sql-comment">-- Find blocked processes</span>
+<span class="sql-keyword">SELECT</span> 
+    blocking.session_id <span class="sql-keyword">AS</span> BlockingSessionID,
+    blocked.session_id <span class="sql-keyword">AS</span> BlockedSessionID,
+    blocked.wait_type,
+    blocked.wait_time / 1000.0 <span class="sql-keyword">AS</span> WaitTimeSeconds
+<span class="sql-keyword">FROM</span> sys.dm_exec_requests blocked
+<span class="sql-keyword">INNER JOIN</span> sys.dm_exec_requests blocking 
+    <span class="sql-keyword">ON</span> blocked.blocking_session_id = blocking.session_id;
+
+<span class="sql-comment">-- Kill blocking session (use with caution!)</span>
+<span class="sql-keyword">KILL</span> 52; <span class="sql-comment">-- session_id of blocker</span></code></pre>
+<h3>Lock Hints</h3>
+<pre><code><span class="sql-comment">-- Table-level lock hints</span>
+<span class="sql-keyword">SELECT</span> * <span class="sql-keyword">FROM</span> Orders <span class="sql-keyword">WITH</span> (<span class="sql-keyword">NOLOCK</span>); <span class="sql-comment">-- READ UNCOMMITTED</span>
+<span class="sql-keyword">SELECT</span> * <span class="sql-keyword">FROM</span> Orders <span class="sql-keyword">WITH</span> (<span class="sql-keyword">HOLDLOCK</span>); <span class="sql-comment">-- Hold locks until transaction ends</span>
+<span class="sql-keyword">SELECT</span> * <span class="sql-keyword">FROM</span> Orders <span class="sql-keyword">WITH</span> (<span class="sql-keyword">UPDLOCK</span>); <span class="sql-comment">-- Update lock instead of shared</span>
+<span class="sql-keyword">SELECT</span> * <span class="sql-keyword">FROM</span> Orders <span class="sql-keyword">WITH</span> (<span class="sql-keyword">XLOCK</span>); <span class="sql-comment">-- Exclusive lock</span>
+<span class="sql-keyword">SELECT</span> * <span class="sql-keyword">FROM</span> Orders <span class="sql-keyword">WITH</span> (<span class="sql-keyword">TABLOCK</span>); <span class="sql-comment">-- Table lock</span>
+<span class="sql-keyword">SELECT</span> * <span class="sql-keyword">FROM</span> Orders <span class="sql-keyword">WITH</span> (<span class="sql-keyword">ROWLOCK</span>); <span class="sql-comment">-- Force row-level locks</span></code></pre>
+<h3>Deadlocks</h3>
+<div class="example-box">
+<h4>Example: Deadlock Scenario</h4>
+<pre><code><span class="sql-comment">-- Transaction 1</span>
+<span class="sql-keyword">BEGIN TRANSACTION</span>;
+    <span class="sql-keyword">UPDATE</span> Accounts <span class="sql-keyword">SET</span> Balance = Balance - 100 <span class="sql-keyword">WHERE</span> AccountID = 1;
+    <span class="sql-keyword">WAITFOR DELAY</span> <span class="sql-string">'00:00:05'</span>;
+    <span class="sql-keyword">UPDATE</span> Accounts <span class="sql-keyword">SET</span> Balance = Balance + 100 <span class="sql-keyword">WHERE</span> AccountID = 2;
+<span class="sql-keyword">COMMIT TRANSACTION</span>;
+
+<span class="sql-comment">-- Transaction 2 (runs simultaneously)</span>
+<span class="sql-keyword">BEGIN TRANSACTION</span>;
+    <span class="sql-keyword">UPDATE</span> Accounts <span class="sql-keyword">SET</span> Balance = Balance - 50 <span class="sql-keyword">WHERE</span> AccountID = 2;
+    <span class="sql-keyword">WAITFOR DELAY</span> <span class="sql-string">'00:00:05'</span>;
+    <span class="sql-keyword">UPDATE</span> Accounts <span class="sql-keyword">SET</span> Balance = Balance + 50 <span class="sql-keyword">WHERE</span> AccountID = 1;
+<span class="sql-keyword">COMMIT TRANSACTION</span>;
+
+<span class="sql-comment">-- Result: One transaction becomes deadlock victim and rolls back</span></code></pre>
+</div>
+<h3>Preventing Deadlocks</h3>
+<div class="best-practice"><strong>✅ Deadlock Prevention Strategies:</strong>
+<ul>
+<li>Access tables in consistent order across all transactions</li>
+<li>Keep transactions short and fast</li>
+<li>Use lower isolation levels when appropriate</li>
+<li>Use ROWLOCK hints to reduce lock escalation</li>
+<li>Create appropriate indexes to reduce scan locks</li>
+<li>Consider using SNAPSHOT isolation</li>
+<li>Handle deadlock errors with retry logic</li>
+</ul>
+</div>
+<h3>Deadlock Detection</h3>
+<pre><code><span class="sql-comment">-- Enable deadlock trace flag</span>
+<span class="sql-keyword">DBCC</span> TRACEON(1222, -1); <span class="sql-comment">-- Log deadlocks to error log</span>
+
+<span class="sql-comment">-- View deadlock history</span>
+<span class="sql-keyword">SELECT</span> 
+    <span class="sql-function">CAST</span>(target_data <span class="sql-keyword">AS</span> <span class="sql-keyword">XML</span>) <span class="sql-keyword">AS</span> DeadlockGraph
+<span class="sql-keyword">FROM</span> sys.dm_xe_session_targets st
+<span class="sql-keyword">JOIN</span> sys.dm_xe_sessions s 
+    <span class="sql-keyword">ON</span> s.address = st.event_session_address
+<span class="sql-keyword">WHERE</span> s.name = <span class="sql-string">'system_health'</span>
+    <span class="sql-keyword">AND</span> st.target_name = <span class="sql-string">'ring_buffer'</span>;</code></pre>
+</section>
+<section id="stored-procedures">
+<h2>Transactions in Stored Procedures</h2>
+<p>Stored procedures are ideal for encapsulating transactional logic, providing consistency, reusability, and proper error handling.</p>
+<h3>Basic Transaction Pattern</h3>
+<div class="example-box">
+<h4>Example: Simple Transaction Procedure</h4>
+<pre><code><span class="sql-keyword">CREATE PROCEDURE</span> usp_TransferFunds
+    @FromAccount <span class="sql-keyword">INT</span>,
+    @ToAccount <span class="sql-keyword">INT</span>,
+    @Amount <span class="sql-keyword">DECIMAL</span>(10,2)
+<span class="sql-keyword">AS</span>
+<span class="sql-keyword">BEGIN</span>
+    <span class="sql-keyword">SET NOCOUNT ON</span>;
+    
+    <span class="sql-keyword">BEGIN TRY</span>
+        <span class="sql-keyword">BEGIN TRANSACTION</span>;
+        
+        <span class="sql-comment">-- Debit source account</span>
+        <span class="sql-keyword">UPDATE</span> Accounts
+        <span class="sql-keyword">SET</span> Balance = Balance - @Amount
+        <span class="sql-keyword">WHERE</span> AccountID = @FromAccount;
+        
+        <span class="sql-comment">-- Credit destination account</span>
+        <span class="sql-keyword">UPDATE</span> Accounts
+        <span class="sql-keyword">SET</span> Balance = Balance + @Amount
+        <span class="sql-keyword">WHERE</span> AccountID = @ToAccount;
+        
+        <span class="sql-comment">-- Log transaction</span>
+        <span class="sql-keyword">INSERT INTO</span> TransactionLog (FromAccount, ToAccount, Amount, TransDate)
+        <span class="sql-keyword">VALUES</span> (@FromAccount, @ToAccount, @Amount, <span class="sql-function">GETDATE</span>());
+        
+        <span class="sql-keyword">COMMIT TRANSACTION</span>;
+        <span class="sql-keyword">RETURN</span> 0;
+    <span class="sql-keyword">END TRY</span>
+    <span class="sql-keyword">BEGIN CATCH</span>
+        <span class="sql-keyword">IF</span> @@TRANCOUNT &gt; 0
+            <span class="sql-keyword">ROLLBACK TRANSACTION</span>;
+        
+        <span class="sql-keyword">THROW</span>;
+    <span class="sql-keyword">END CATCH</span>
+<span class="sql-keyword">END</span>;
+<span class="sql-keyword">GO</span></code></pre>
+</div>
+<h3>Validation Before Transaction</h3>
+<div class="example-box">
+<h4>Example: Validate Then Execute</h4>
+<pre><code><span class="sql-keyword">CREATE PROCEDURE</span> usp_CreateOrderWithValidation
+    @CustomerID <span class="sql-keyword">INT</span>,
+    @ProductID <span class="sql-keyword">INT</span>,
+    @Quantity <span class="sql-keyword">INT</span>,
+    @OrderID <span class="sql-keyword">INT</span> <span class="sql-keyword">OUTPUT</span>
+<span class="sql-keyword">AS</span>
+<span class="sql-keyword">BEGIN</span>
+    <span class="sql-keyword">SET NOCOUNT ON</span>;
+    
+    <span class="sql-comment">-- Validate BEFORE starting transaction</span>
+    <span class="sql-keyword">IF NOT EXISTS</span> (<span class="sql-keyword">SELECT</span> 1 <span class="sql-keyword">FROM</span> Customers <span class="sql-keyword">WHERE</span> CustomerID = @CustomerID)
+    <span class="sql-keyword">BEGIN</span>
+        <span class="sql-keyword">RAISERROR</span>(<span class="sql-string">'Customer does not exist'</span>, 16, 1);
+        <span class="sql-keyword">RETURN</span> -1;
+    <span class="sql-keyword">END</span>
+    
+    <span class="sql-keyword">IF NOT EXISTS</span> (<span class="sql-keyword">SELECT</span> 1 <span class="sql-keyword">FROM</span> Products <span class="sql-keyword">WHERE</span> ProductID = @ProductID)
+    <span class="sql-keyword">BEGIN</span>
+        <span class="sql-keyword">RAISERROR</span>(<span class="sql-string">'Product does not exist'</span>, 16, 1);
+        <span class="sql-keyword">RETURN</span> -1;
+    <span class="sql-keyword">END</span>
+    
+    <span class="sql-keyword">IF</span> @Quantity &lt;= 0
+    <span class="sql-keyword">BEGIN</span>
+        <span class="sql-keyword">RAISERROR</span>(<span class="sql-string">'Quantity must be positive'</span>, 16, 1);
+        <span class="sql-keyword">RETURN</span> -1;
+    <span class="sql-keyword">END</span>
+    
+    <span class="sql-comment">-- NOW start transaction after validation passes</span>
+    <span class="sql-keyword">BEGIN TRY</span>
+        <span class="sql-keyword">BEGIN TRANSACTION</span>;
+        
+        <span class="sql-keyword">DECLARE</span> @UnitPrice <span class="sql-keyword">DECIMAL</span>(10,2);
+        
+        <span class="sql-comment">-- Get price and check stock in one query</span>
+        <span class="sql-keyword">SELECT</span> @UnitPrice = UnitPrice
+        <span class="sql-keyword">FROM</span> Products
+        <span class="sql-keyword">WHERE</span> ProductID = @ProductID
+            <span class="sql-keyword">AND</span> StockQuantity &gt;= @Quantity;
+        
+        <span class="sql-keyword">IF</span> @UnitPrice <span class="sql-keyword">IS NULL</span>
+        <span class="sql-keyword">BEGIN</span>
+            <span class="sql-keyword">RAISERROR</span>(<span class="sql-string">'Insufficient stock'</span>, 16, 1);
+            <span class="sql-keyword">RETURN</span> -1;
+        <span class="sql-keyword">END</span>
+        
+        <span class="sql-comment">-- Create order</span>
+        <span class="sql-keyword">INSERT INTO</span> Orders (CustomerID, OrderDate, TotalAmount, Status)
+        <span class="sql-keyword">VALUES</span> (@CustomerID, <span class="sql-function">GETDATE</span>(), @UnitPrice * @Quantity, <span class="sql-string">'Pending'</span>);
+        
+        <span class="sql-keyword">SET</span> @OrderID = <span class="sql-function">SCOPE_IDENTITY</span>();
+        
+        <span class="sql-comment">-- Add order item</span>
+        <span class="sql-keyword">INSERT INTO</span> OrderItems (OrderID, ProductID, Quantity, UnitPrice)
+        <span class="sql-keyword">VALUES</span> (@OrderID, @ProductID, @Quantity, @UnitPrice);
+        
+        <span class="sql-comment">-- Update inventory</span>
+        <span class="sql-keyword">UPDATE</span> Products
+        <span class="sql-keyword">SET</span> StockQuantity = StockQuantity - @Quantity
+        <span class="sql-keyword">WHERE</span> ProductID = @ProductID;
+        
+        <span class="sql-keyword">COMMIT TRANSACTION</span>;
+        <span class="sql-keyword">RETURN</span> 0;
+        
+    <span class="sql-keyword">END TRY</span>
+    <span class="sql-keyword">BEGIN CATCH</span>
+        <span class="sql-keyword">IF</span> @@TRANCOUNT &gt; 0
+            <span class="sql-keyword">ROLLBACK TRANSACTION</span>;
+        
+        <span class="sql-keyword">THROW</span>;
+    <span class="sql-keyword">END CATCH</span>
+<span class="sql-keyword">END</span>;
+<span class="sql-keyword">GO</span></code></pre>
+</div>
+<h3>Using XACT_ABORT</h3>
+<div class="example-box">
+<h4>Example: Automatic Rollback with XACT_ABORT</h4>
+<pre><code><span class="sql-keyword">CREATE PROCEDURE</span> usp_ProcessOrderWithXactAbort
+    @CustomerID <span class="sql-keyword">INT</span>,
+    @OrderItems <span class="sql-keyword">XML</span>
+<span class="sql-keyword">AS</span>
+<span class="sql-keyword">BEGIN</span>
+    <span class="sql-keyword">SET NOCOUNT ON</span>;
+    <span class="sql-keyword">SET XACT_ABORT ON</span>; <span class="sql-comment">-- Auto-rollback on any error</span>
+    
+    <span class="sql-keyword">BEGIN TRANSACTION</span>;
+    
+    <span class="sql-comment">-- Create order</span>
+    <span class="sql-keyword">INSERT INTO</span> Orders (CustomerID, OrderDate, TotalAmount, Status)
+    <span class="sql-keyword">VALUES</span> (@CustomerID, <span class="sql-function">GETDATE</span>(), 0, <span class="sql-string">'Pending'</span>);
+    
+    <span class="sql-keyword">DECLARE</span> @OrderID <span class="sql-keyword">INT</span> = <span class="sql-function">SCOPE_IDENTITY</span>();
+    
+    <span class="sql-comment">-- Insert items from XML</span>
+    <span class="sql-keyword">INSERT INTO</span> OrderItems (OrderID, ProductID, Quantity, UnitPrice)
+    <span class="sql-keyword">SELECT</span> 
+        @OrderID,
+        item.value(<span class="sql-string">'ProductID[1]'</span>, <span class="sql-string">'INT'</span>),
+        item.value(<span class="sql-string">'Quantity[1]'</span>, <span class="sql-string">'INT'</span>),
+        p.UnitPrice
+    <span class="sql-keyword">FROM</span> @OrderItems.nodes(<span class="sql-string">'/Items/Item'</span>) <span class="sql-keyword">AS</span> Items(item)
+    <span class="sql-keyword">INNER JOIN</span> Products p <span class="sql-keyword">ON</span> p.ProductID = item.value(<span class="sql-string">'ProductID[1]'</span>, <span class="sql-string">'INT'</span>);
+    
+    <span class="sql-comment">-- Update order total</span>
+    <span class="sql-keyword">UPDATE</span> Orders
+    <span class="sql-keyword">SET</span> TotalAmount = (
+        <span class="sql-keyword">SELECT</span> <span class="sql-function">SUM</span>(LineTotal)
+        <span class="sql-keyword">FROM</span> OrderItems
+        <span class="sql-keyword">WHERE</span> OrderID = @OrderID
+    )
+    <span class="sql-keyword">WHERE</span> OrderID = @OrderID;
+    
+    <span class="sql-keyword">COMMIT TRANSACTION</span>;
+    <span class="sql-comment">-- With XACT_ABORT ON, any error automatically rolls back</span>
+    <span class="sql-comment">-- No need for TRY...CATCH for simple cases</span>
+<span class="sql-keyword">END</span>;
+<span class="sql-keyword">GO</span></code></pre>
+</div>
+<h3>Transaction with Multiple Calls</h3>
+<div class="example-box">
+<h4>Example: Coordinating Multiple Procedures</h4>
+<pre><code><span class="sql-keyword">CREATE PROCEDURE</span> usp_ProcessCompleteOrder
+    @CustomerID <span class="sql-keyword">INT</span>,
+    @ShippingAddress <span class="sql-keyword">NVARCHAR</span>(200)
+<span class="sql-keyword">AS</span>
+<span class="sql-keyword">BEGIN</span>
+    <span class="sql-keyword">SET NOCOUNT ON</span>;
+    
+    <span class="sql-keyword">DECLARE</span> @OrderID <span class="sql-keyword">INT</span>;
+    <span class="sql-keyword">DECLARE</span> @ShipmentID <span class="sql-keyword">INT</span>;
+    
+    <span class="sql-keyword">BEGIN TRY</span>
+        <span class="sql-keyword">BEGIN TRANSACTION</span>;
+        
+        <span class="sql-comment">-- Step 1: Create order</span>
+        <span class="sql-keyword">EXEC</span> usp_CreateOrder 
+            @CustomerID = @CustomerID,
+            @OrderID = @OrderID <span class="sql-keyword">OUTPUT</span>;
+        
+        <span class="sql-comment">-- Step 2: Add items</span>
+        <span class="sql-keyword">EXEC</span> usp_AddOrderItems @OrderID = @OrderID;
+        
+        <span class="sql-comment">-- Step 3: Calculate shipping</span>
+        <span class="sql-keyword">EXEC</span> usp_CalculateShipping 
+            @OrderID = @OrderID,
+            @ShippingAddress = @ShippingAddress;
+        
+        <span class="sql-comment">-- Step 4: Process payment</span>
+        <span class="sql-keyword">EXEC</span> usp_ProcessPayment @OrderID = @OrderID;
+        
+        <span class="sql-comment">-- Step 5: Create shipment</span>
+        <span class="sql-keyword">EXEC</span> usp_CreateShipment 
+            @OrderID = @OrderID,
+            @ShipmentID = @ShipmentID <span class="sql-keyword">OUTPUT</span>;
+        
+        <span class="sql-keyword">COMMIT TRANSACTION</span>;
+        
+        <span class="sql-comment">-- Return results</span>
+        <span class="sql-keyword">SELECT</span> @OrderID <span class="sql-keyword">AS</span> OrderID, @ShipmentID <span class="sql-keyword">AS</span> ShipmentID;
+        
+    <span class="sql-keyword">END TRY</span>
+    <span class="sql-keyword">BEGIN CATCH</span>
+        <span class="sql-keyword">IF</span> @@TRANCOUNT &gt; 0
+            <span class="sql-keyword">ROLLBACK TRANSACTION</span>;
+        
+        <span class="sql-keyword">DECLARE</span> @ErrorMsg <span class="sql-keyword">NVARCHAR</span>(4000) = <span class="sql-function">ERROR_MESSAGE</span>();
+        <span class="sql-keyword">RAISERROR</span>(@ErrorMsg, 16, 1);
+    <span class="sql-keyword">END CATCH</span>
+<span class="sql-keyword">END</span>;
+<span class="sql-keyword">GO</span></code></pre>
+</div>
+<div class="tip"><strong>💡 Best Practice:</strong> Perform all validation before starting the transaction to keep transaction duration short and reduce lock contention.</div>
+</section>
+<section id="nested-transactions">
+<h2>Nested Transactions</h2>
+<p>SQL Server supports nested BEGIN TRANSACTION statements, but they don't work as most developers expect.</p>
+<h3>How "Nested" Transactions Really Work</h3>
+<div class="warning"><strong>⚠️ Important Truth:</strong> SQL Server doesn't truly support nested transactions. Multiple BEGIN TRANSACTION statements only increment <code>@@TRANCOUNT</code>. Only the outermost COMMIT actually commits. A ROLLBACK at any level rolls back the entire transaction.</div>
+<pre><code><span class="sql-keyword">BEGIN TRANSACTION</span>; <span class="sql-comment">-- @@TRANCOUNT = 1</span>
+    <span class="sql-keyword">INSERT INTO</span> Table1 ...
+    
+    <span class="sql-keyword">BEGIN TRANSACTION</span>; <span class="sql-comment">-- @@TRANCOUNT = 2 (not a new transaction!)</span>
+        <span class="sql-keyword">INSERT INTO</span> Table2 ...
+    <span class="sql-keyword">COMMIT TRANSACTION</span>; <span class="sql-comment">-- @@TRANCOUNT = 1 (nothing actually committed)</span>
+    
+    <span class="sql-keyword">INSERT INTO</span> Table3 ...
+<span class="sql-keyword">COMMIT TRANSACTION</span>; <span class="sql-comment">-- @@TRANCOUNT = 0 (NOW everything commits)</span></code></pre>
+<h3>Proper Nested Transaction Pattern</h3>
+<div class="example-box">
+<h4>Example: Safe Nesting with @@TRANCOUNT Check</h4>
+<pre><code><span class="sql-keyword">CREATE PROCEDURE</span> usp_InnerProcedure
+<span class="sql-keyword">AS</span>
+<span class="sql-keyword">BEGIN</span>
+    <span class="sql-keyword">SET NOCOUNT ON</span>;
+    
+    <span class="sql-keyword">DECLARE</span> @TranStarted <span class="sql-keyword">BIT</span> = 0;
+    
+    <span class="sql-keyword">BEGIN TRY</span>
+        <span class="sql-comment">-- Only start transaction if not already in one</span>
+        <span class="sql-keyword">IF</span> @@TRANCOUNT = 0
+        <span class="sql-keyword">BEGIN</span>
+            <span class="sql-keyword">BEGIN TRANSACTION</span>;
+            <span class="sql-keyword">SET</span> @TranStarted = 1;
+        <span class="sql-keyword">END</span>
+        
+        <span class="sql-comment">-- Do work</span>
+        <span class="sql-keyword">INSERT INTO</span> LogTable (Message) <span class="sql-keyword">VALUES</span> (<span class="sql-string">'Inner procedure executed'</span>);
+        
+        <span class="sql-comment">-- Only commit if we started the transaction</span>
+        <span class="sql-keyword">IF</span> @TranStarted = 1
+            <span class="sql-keyword">COMMIT TRANSACTION</span>;
+            
+    <span class="sql-keyword">END TRY</span>
+    <span class="sql-keyword">BEGIN CATCH</span>
+        <span class="sql-comment">-- Only rollback if we started the transaction</span>
+        <span class="sql-keyword">IF</span> @TranStarted = 1 <span class="sql-keyword">AND</span> @@TRANCOUNT &gt; 0
+            <span class="sql-keyword">ROLLBACK TRANSACTION</span>;
+        
+        <span class="sql-keyword">THROW</span>; <span class="sql-comment">-- Re-throw to caller</span>
+    <span class="sql-keyword">END CATCH</span>
+<span class="sql-keyword">END</span>;
+<span class="sql-keyword">GO</span>
+
+<span class="sql-keyword">CREATE PROCEDURE</span> usp_OuterProcedure
+<span class="sql-keyword">AS</span>
+<span class="sql-keyword">BEGIN</span>
+    <span class="sql-keyword">SET NOCOUNT ON</span>;
+    
+    <span class="sql-keyword">BEGIN TRY</span>
+        <span class="sql-keyword">BEGIN TRANSACTION</span>;
+        
+        <span class="sql-keyword">INSERT INTO</span> LogTable (Message) <span class="sql-keyword">VALUES</span> (<span class="sql-string">'Outer procedure start'</span>);
+        
+        <span class="sql-comment">-- Call inner procedure (which checks @@TRANCOUNT)</span>
+        <span class="sql-keyword">EXEC</span> usp_InnerProcedure;
+        
+        <span class="sql-keyword">INSERT INTO</span> LogTable (Message) <span class="sql-keyword">VALUES</span> (<span class="sql-string">'Outer procedure end'</span>);
+        
+        <span class="sql-keyword">COMMIT TRANSACTION</span>;
+    <span class="sql-keyword">END TRY</span>
+    <span class="sql-keyword">BEGIN CATCH</span>
+        <span class="sql-keyword">IF</span> @@TRANCOUNT &gt; 0
+            <span class="sql-keyword">ROLLBACK TRANSACTION</span>;
+        <span class="sql-keyword">THROW</span>;
+    <span class="sql-keyword">END CATCH</span>
+<span class="sql-keyword">END</span>;
+<span class="sql-keyword">GO</span></code></pre>
+</div>
+<h3>Savepoints for Partial Rollback</h3>
+<div class="example-box">
+<h4>Example: Using Savepoints Instead of Nesting</h4>
+<pre><code><span class="sql-keyword">CREATE PROCEDURE</span> usp_ProcessOrderWithSavepoints
+    @CustomerID <span class="sql-keyword">INT</span>
+<span class="sql-keyword">AS</span>
+<span class="sql-keyword">BEGIN</span>
+    <span class="sql-keyword">SET NOCOUNT ON</span>;
+    
+    <span class="sql-keyword">BEGIN TRANSACTION</span>;
+    
+    <span class="sql-keyword">BEGIN TRY</span>
+        <span class="sql-comment">-- Step 1: Create order</span>
+        <span class="sql-keyword">INSERT INTO</span> Orders (CustomerID, OrderDate) 
+        <span class="sql-keyword">VALUES</span> (@CustomerID, <span class="sql-function">GETDATE</span>());
+        
+        <span class="sql-keyword">DECLARE</span> @OrderID <span class="sql-keyword">INT</span> = <span class="sql-function">SCOPE_IDENTITY</span>();
+        
+        <span class="sql-comment">-- Create savepoint before risky operation</span>
+        <span class="sql-keyword">SAVE TRANSACTION</span> BeforeInventoryUpdate;
+        
+        <span class="sql-keyword">BEGIN TRY</span>
+            <span class="sql-comment">-- Step 2: Update inventory (might fail)</span>
+            <span class="sql-keyword">UPDATE</span> Products 
+            <span class="sql-keyword">SET</span> StockQuantity = StockQuantity - 10
+            <span class="sql-keyword">WHERE</span> ProductID = 1;
+            
+            <span class="sql-keyword">IF</span> @@ROWCOUNT = 0
+                <span class="sql-keyword">RAISERROR</span>(<span class="sql-string">'Product not found'</span>, 16, 1);
+                
+        <span class="sql-keyword">END TRY</span>
+        <span class="sql-keyword">BEGIN CATCH</span>
+            <span class="sql-comment">-- Rollback only to savepoint</span>
+            <span class="sql-keyword">ROLLBACK TRANSACTION</span> BeforeInventoryUpdate;
+            
+            <span class="sql-comment">-- Log error but continue</span>
+            <span class="sql-keyword">INSERT INTO</span> ErrorLog (OrderID, ErrorMsg)
+            <span class="sql-keyword">VALUES</span> (@OrderID, <span class="sql-function">ERROR_MESSAGE</span>());
+            
+            <span class="sql-comment">-- Mark order as pending review</span>
+            <span class="sql-keyword">UPDATE</span> Orders 
+            <span class="sql-keyword">SET</span> Status = <span class="sql-string">'Pending Review'</span>
+            <span class="sql-keyword">WHERE</span> OrderID = @OrderID;
+        <span class="sql-keyword">END CATCH</span>
+        
+        <span class="sql-comment">-- Commit main transaction (order is saved)</span>
+        <span class="sql-keyword">COMMIT TRANSACTION</span>;
+        
+    <span class="sql-keyword">END TRY</span>
+    <span class="sql-keyword">BEGIN CATCH</span>
+        <span class="sql-keyword">IF</span> @@TRANCOUNT &gt; 0
+            <span class="sql-keyword">ROLLBACK TRANSACTION</span>;
+        <span class="sql-keyword">THROW</span>;
+    <span class="sql-keyword">END CATCH</span>
+<span class="sql-keyword">END</span>;
+<span class="sql-keyword">GO</span></code></pre>
+</div>
+<div class="best-practice"><strong>✅ Nested Transaction Best Practices:</strong>
+<ul>
+<li>Always check <code>@@TRANCOUNT</code> before BEGIN/COMMIT/ROLLBACK</li>
+<li>Use a flag to track if procedure started the transaction</li>
+<li>Only the procedure that started transaction should commit it</li>
+<li>Use savepoints for partial rollback scenarios</li>
+<li>Always re-throw errors to calling procedure</li>
+<li>Document transaction expectations in procedure header</li>
+</ul>
+</div>
+</section>
+<section id="distributed">
+<h2>Distributed Transactions</h2>
+<p>Distributed transactions span multiple databases or servers, requiring coordination between multiple resource managers.</p>
+<h3>Distributed Transaction Coordinators</h3>
+<table>
+<thead>
+<tr>
+<th>Technology</th>
+<th>Platform</th>
+<th>Use Case</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>MS-DTC</strong></td>
+<td>Windows, SQL Server</td>
+<td>Cross-database, cross-server transactions</td>
+</tr>
+<tr>
+<td><strong>Two-Phase Commit (2PC)</strong></td>
+<td>Most RDBMS</td>
+<td>Traditional distributed transactions</td>
+</tr>
+<tr>
+<td><strong>Saga Pattern</strong></td>
+<td>Microservices</td>
+<td>Long-running, compensating transactions</td>
+</tr>
+</tbody>
+</table>
+<h3>Using Distributed Transactions in T-SQL</h3>
+<pre><code><span class="sql-comment">-- Distributed transaction across linked servers</span>
+<span class="sql-keyword">BEGIN DISTRIBUTED TRANSACTION</span>;
+    
+    <span class="sql-comment">-- Update local database</span>
+    <span class="sql-keyword">UPDATE</span> LocalDB.dbo.Orders 
+    <span class="sql-keyword">SET</span> Status = <span class="sql-string">'Completed'</span>
+    <span class="sql-keyword">WHERE</span> OrderID = 1;
+    
+    <span class="sql-comment">-- Update remote database via linked server</span>
+    <span class="sql-keyword">UPDATE</span> RemoteServer.RemoteDB.dbo.Inventory
+    <span class="sql-keyword">SET</span> Quantity = Quantity - 1
+    <span class="sql-keyword">WHERE</span> ProductID = 5;
+    
+<span class="sql-keyword">COMMIT TRANSACTION</span>;
+<span class="sql-comment">-- MS-DTC coordinates commit across both servers</span></code></pre>
+<h3>Distributed Transaction Challenges</h3>
+<div class="warning"><strong>⚠️ Challenges with Distributed Transactions:</strong>
+<ul>
+<li><strong>Performance:</strong> Slower than local transactions</li>
+<li><strong>Complexity:</strong> More points of failure</li>
+<li><strong>Availability:</strong> All participants must be available</li>
+<li><strong>Network:</strong> Network latency and failures</li>
+<li><strong>Locking:</strong> Locks held across multiple systems</li>
+<li><strong>Configuration:</strong> Requires MS-DTC or similar setup</li>
+</ul>
+</div>
+<h3>Alternative: Saga Pattern</h3>
+<div class="example-box">
+<h4>Example: Saga with Compensating Transactions</h4>
+<pre><code><span class="sql-comment">-- Instead of distributed transaction, use saga pattern</span>
+<span class="sql-keyword">CREATE PROCEDURE</span> usp_ProcessOrderSaga
+    @CustomerID <span class="sql-keyword">INT</span>,
+    @ProductID <span class="sql-keyword">INT</span>,
+    @Quantity <span class="sql-keyword">INT</span>
+<span class="sql-keyword">AS</span>
+<span class="sql-keyword">BEGIN</span>
+    <span class="sql-keyword">DECLARE</span> @OrderID <span class="sql-keyword">INT</span>;
+    <span class="sql-keyword">DECLARE</span> @InventoryReserved <span class="sql-keyword">BIT</span> = 0;
+    <span class="sql-keyword">DECLARE</span> @PaymentProcessed <span class="sql-keyword">BIT</span> = 0;
+    
+    <span class="sql-keyword">BEGIN TRY</span>
+        <span class="sql-comment">-- Step 1: Create order (local transaction)</span>
+        <span class="sql-keyword">INSERT INTO</span> Orders (CustomerID, Status)
+        <span class="sql-keyword">VALUES</span> (@CustomerID, <span class="sql-string">'Pending'</span>);
+        <span class="sql-keyword">SET</span> @OrderID = <span class="sql-function">SCOPE_IDENTITY</span>();
+        
+        <span class="sql-comment">-- Step 2: Reserve inventory (could be remote call)</span>
+        <span class="sql-keyword">EXEC</span> usp_ReserveInventory @ProductID, @Quantity;
+        <span class="sql-keyword">SET</span> @InventoryReserved = 1;
+        
+        <span class="sql-comment">-- Step 3: Process payment (could be external API)</span>
+        <span class="sql-keyword">EXEC</span> usp_ProcessPayment @OrderID;
+        <span class="sql-keyword">SET</span> @PaymentProcessed = 1;
+        
+        <span class="sql-comment">-- Step 4: Confirm order</span>
+        <span class="sql-keyword">UPDATE</span> Orders <span class="sql-keyword">SET</span> Status = <span class="sql-string">'Confirmed'</span> 
+        <span class="sql-keyword">WHERE</span> OrderID = @OrderID;
+        
+    <span class="sql-keyword">END TRY</span>
+    <span class="sql-keyword">BEGIN CATCH</span>
+        <span class="sql-comment">-- Compensating transactions (undo what was done)</span>
+        <span class="sql-keyword">IF</span> @PaymentProcessed = 1
+            <span class="sql-keyword">EXEC</span> usp_RefundPayment @OrderID;
+            
+        <span class="sql-keyword">IF</span> @InventoryReserved = 1
+            <span class="sql-keyword">EXEC</span> usp_ReleaseInventory @ProductID, @Quantity;
+            
+        <span class="sql-keyword">IF</span> @OrderID <span class="sql-keyword">IS NOT NULL</span>
+            <span class="sql-keyword">UPDATE</span> Orders <span class="sql-keyword">SET</span> Status = <span class="sql-string">'Cancelled'</span> 
+            <span class="sql-keyword">WHERE</span> OrderID = @OrderID;
+        
+        <span class="sql-keyword">THROW</span>;
+    <span class="sql-keyword">END CATCH</span>
+<span class="sql-keyword">END</span>;
+<span class="sql-keyword">GO</span></code></pre>
+</div>
+<div class="tip"><strong>💡 Modern Approach:</strong> For microservices and distributed systems, the Saga pattern with compensating transactions is often preferred over traditional distributed transactions due to better scalability and fault tolerance.</div>
+</section>
+<section id="use-cases">
+<h2>Common Transaction Use Cases</h2>
+<p>Transactions are essential in many real-world scenarios where data integrity is critical.</p>
+<h3>1. Financial Transactions</h3>
+<div class="example-box">
+<h4>Banking: Account Transfer</h4>
+<pre><code><span class="sql-keyword">CREATE PROCEDURE</span> usp_BankTransfer
+    @FromAccount <span class="sql-keyword">VARCHAR</span>(20),
+    @ToAccount <span class="sql-keyword">VARCHAR</span>(20),
+    @Amount <span class="sql-keyword">DECIMAL</span>(18,2),
+    @Reference <span class="sql-keyword">VARCHAR</span>(100)
+<span class="sql-keyword">AS</span>
+<span class="sql-keyword">BEGIN</span>
+    <span class="sql-keyword">SET NOCOUNT ON</span>;
+    <span class="sql-keyword">SET XACT_ABORT ON</span>;
+    
+    <span class="sql-keyword">BEGIN TRANSACTION</span>;
+    
+    <span class="sql-comment">-- Lock accounts for update</span>
+    <span class="sql-keyword">DECLARE</span> @FromBalance <span class="sql-keyword">DECIMAL</span>(18,2);
+    <span class="sql-keyword">SELECT</span> @FromBalance = Balance 
+    <span class="sql-keyword">FROM</span> Accounts <span class="sql-keyword">WITH</span> (<span class="sql-keyword">UPDLOCK</span>, <span class="sql-keyword">ROWLOCK</span>)
+    <span class="sql-keyword">WHERE</span> AccountNumber = @FromAccount;
+    
+    <span class="sql-comment">-- Check sufficient funds</span>
+    <span class="sql-keyword">IF</span> @FromBalance &lt; @Amount
+    <span class="sql-keyword">BEGIN</span>
+        <span class="sql-keyword">ROLLBACK TRANSACTION</span>;
+        <span class="sql-keyword">RAISERROR</span>(<span class="sql-string">'Insufficient funds'</span>, 16, 1);
+        <span class="sql-keyword">RETURN</span>;
+    <span class="sql-keyword">END</span>
+    
+    <span class="sql-comment">-- Debit source</span>
+    <span class="sql-keyword">UPDATE</span> Accounts 
+    <span class="sql-keyword">SET</span> Balance = Balance - @Amount,
+        LastTransaction = <span class="sql-function">GETDATE</span>()
+    <span class="sql-keyword">WHERE</span> AccountNumber = @FromAccount;
+    
+    <span class="sql-comment">-- Credit destination</span>
+    <span class="sql-keyword">UPDATE</span> Accounts 
+    <span class="sql-keyword">SET</span> Balance = Balance + @Amount,
+        LastTransaction = <span class="sql-function">GETDATE</span>()
+    <span class="sql-keyword">WHERE</span> AccountNumber = @ToAccount;
+    
+    <span class="sql-comment">-- Record transaction</span>
+    <span class="sql-keyword">INSERT INTO</span> Transactions (FromAccount, ToAccount, Amount, Reference, TransDate)
+    <span class="sql-keyword">VALUES</span> (@FromAccount, @ToAccount, @Amount, @Reference, <span class="sql-function">GETDATE</span>());
+    
+    <span class="sql-keyword">COMMIT TRANSACTION</span>;
+<span class="sql-keyword">END</span>;
+<span class="sql-keyword">GO</span></code></pre>
+</div>
+<h3>2. E-Commerce: Order Processing</h3>
+<div class="example-box">
+<h4>Complete Order with Inventory and Payment</h4>
+<pre><code><span class="sql-keyword">CREATE PROCEDURE</span> usp_ProcessEcommerceOrder
+    @CustomerID <span class="sql-keyword">INT</span>,
+    @CartID <span class="sql-keyword">INT</span>,
+    @PaymentMethod <span class="sql-keyword">VARCHAR</span>(20),
+    @OrderID <span class="sql-keyword">INT</span> <span class="sql-keyword">OUTPUT</span>
+<span class="sql-keyword">AS</span>
+<span class="sql-keyword">BEGIN</span>
+    <span class="sql-keyword">SET NOCOUNT ON</span>;
+    
+    <span class="sql-keyword">BEGIN TRY</span>
+        <span class="sql-keyword">BEGIN TRANSACTION</span>;
+        
+        <span class="sql-comment">-- Create order header</span>
+        <span class="sql-keyword">INSERT INTO</span> Orders (CustomerID, OrderDate, Status)
+        <span class="sql-keyword">VALUES</span> (@CustomerID, <span class="sql-function">GETDATE</span>(), <span class="sql-string">'Processing'</span>);
+        
+        <span class="sql-keyword">SET</span> @OrderID = <span class="sql-function">SCOPE_IDENTITY</span>();
+        
+        <span class="sql-comment">-- Transfer cart items to order</span>
+        <span class="sql-keyword">INSERT INTO</span> OrderItems (OrderID, ProductID, Quantity, UnitPrice)
+        <span class="sql-keyword">SELECT</span> @OrderID, ProductID, Quantity, UnitPrice
+        <span class="sql-keyword">FROM</span> CartItems
+        <span class="sql-keyword">WHERE</span> CartID = @CartID;
+        
+        <span class="sql-comment">-- Check inventory and reserve stock</span>
+        <span class="sql-keyword">UPDATE</span> p
+        <span class="sql-keyword">SET</span> p.StockQuantity = p.StockQuantity - oi.Quantity,
+            p.ReservedQuantity = p.ReservedQuantity + oi.Quantity
+        <span class="sql-keyword">FROM</span> Products p
+        <span class="sql-keyword">INNER JOIN</span> OrderItems oi <span class="sql-keyword">ON</span> p.ProductID = oi.ProductID
+        <span class="sql-keyword">WHERE</span> oi.OrderID = @OrderID
+            <span class="sql-keyword">AND</span> p.StockQuantity &gt;= oi.Quantity;
+        
+        <span class="sql-comment">-- Verify all items were reserved</span>
+        <span class="sql-keyword">IF</span> @@ROWCOUNT &lt; (<span class="sql-keyword">SELECT</span> <span class="sql-function">COUNT</span>(*) <span class="sql-keyword">FROM</span> OrderItems <span class="sql-keyword">WHERE</span> OrderID = @OrderID)
+        <span class="sql-keyword">BEGIN</span>
+            <span class="sql-keyword">RAISERROR</span>(<span class="sql-string">'One or more items out of stock'</span>, 16, 1);
+        <span class="sql-keyword">END</span>
+        
+        <span class="sql-comment">-- Calculate totals</span>
+        <span class="sql-keyword">UPDATE</span> Orders
+        <span class="sql-keyword">SET</span> TotalAmount = (
+            <span class="sql-keyword">SELECT</span> <span class="sql-function">SUM</span>(Quantity * UnitPrice)
+            <span class="sql-keyword">FROM</span> OrderItems
+            <span class="sql-keyword">WHERE</span> OrderID = @OrderID
+        )
+        <span class="sql-keyword">WHERE</span> OrderID = @OrderID;
+        
+        <span class="sql-comment">-- Record payment</span>
+        <span class="sql-keyword">INSERT INTO</span> Payments (OrderID, PaymentMethod, Amount, Status)
+        <span class="sql-keyword">SELECT</span> @OrderID, @PaymentMethod, TotalAmount, <span class="sql-string">'Pending'</span>
+        <span class="sql-keyword">FROM</span> Orders
+        <span class="sql-keyword">WHERE</span> OrderID = @OrderID;
+        
+        <span class="sql-comment">-- Clear cart</span>
+        <span class="sql-keyword">DELETE FROM</span> CartItems <span class="sql-keyword">WHERE</span> CartID = @CartID;
+        
+        <span class="sql-comment">-- Update order status</span>
+        <span class="sql-keyword">UPDATE</span> Orders 
+        <span class="sql-keyword">SET</span> Status = <span class="sql-string">'Confirmed'</span>
+        <span class="sql-keyword">WHERE</span> OrderID = @OrderID;
+        
+        <span class="sql-keyword">COMMIT TRANSACTION</span>;
+        
+    <span class="sql-keyword">END TRY</span>
+    <span class="sql-keyword">BEGIN CATCH</span>
+        <span class="sql-keyword">IF</span> @@TRANCOUNT &gt; 0
+            <span class="sql-keyword">ROLLBACK TRANSACTION</span>;
+        <span class="sql-keyword">THROW</span>;
+    <span class="sql-keyword">END CATCH</span>
+<span class="sql-keyword">END</span>;
+<span class="sql-keyword">GO</span></code></pre>
+</div>
+<h3>3. Inventory Management</h3>
+<div class="example-box">
+<h4>Stock Adjustment with Audit Trail</h4>
+<pre><code><span class="sql-keyword">CREATE PROCEDURE</span> usp_AdjustInventory
+    @ProductID <span class="sql-keyword">INT</span>,
+    @AdjustmentQty <span class="sql-keyword">INT</span>,
+    @Reason <span class="sql-keyword">VARCHAR</span>(200),
+    @UserID <span class="sql-keyword">INT</span>
+<span class="sql-keyword">AS</span>
+<span class="sql-keyword">BEGIN</span>
+    <span class="sql-keyword">SET NOCOUNT ON</span>;
+    
+    <span class="sql-keyword">BEGIN TRY</span>
+        <span class="sql-keyword">BEGIN TRANSACTION</span>;
+        
+        <span class="sql-keyword">DECLARE</span> @OldQuantity <span class="sql-keyword">INT</span>;
+        <span class="sql-keyword">DECLARE</span> @NewQuantity <span class="sql-keyword">INT</span>;
+        
+        <span class="sql-comment">-- Get current quantity</span>
+        <span class="sql-keyword">SELECT</span> @OldQuantity = StockQuantity
+        <span class="sql-keyword">FROM</span> Products <span class="sql-keyword">WITH</span> (<span class="sql-keyword">UPDLOCK</span>)
+        <span class="sql-keyword">WHERE</span> ProductID = @ProductID;
+        
+        <span class="sql-keyword">IF</span> @OldQuantity <span class="sql-keyword">IS NULL</span>
+        <span class="sql-keyword">BEGIN</span>
+            <span class="sql-keyword">RAISERROR</span>(<span class="sql-string">'Product not found'</span>, 16, 1);
+        <span class="sql-keyword">END</span>
+        
+        <span class="sql-keyword">SET</span> @NewQuantity = @OldQuantity + @AdjustmentQty;
+        
+        <span class="sql-comment">-- Prevent negative inventory</span>
+        <span class="sql-keyword">IF</span> @NewQuantity &lt; 0
+        <span class="sql-keyword">BEGIN</span>
+            <span class="sql-keyword">RAISERROR</span>(<span class="sql-string">'Adjustment would result in negative inventory'</span>, 16, 1);
+        <span class="sql-keyword">END</span>
+        
+        <span class="sql-comment">-- Update inventory</span>
+        <span class="sql-keyword">UPDATE</span> Products
+        <span class="sql-keyword">SET</span> StockQuantity = @NewQuantity,
+            LastUpdated = <span class="sql-function">GETDATE</span>()
+        <span class="sql-keyword">WHERE</span> ProductID = @ProductID;
+        
+        <span class="sql-comment">-- Create audit record</span>
+        <span class="sql-keyword">INSERT INTO</span> InventoryAudit (
+            ProductID, 
+            OldQuantity, 
+            NewQuantity, 
+            AdjustmentQty,
+            Reason, 
+            UserID, 
+            AdjustmentDate
+        )
+        <span class="sql-keyword">VALUES</span> (
+            @ProductID,
+            @OldQuantity,
+            @NewQuantity,
+            @AdjustmentQty,
+            @Reason,
+            @UserID,
+            <span class="sql-function">GETDATE</span>()
+        );
+        
+        <span class="sql-keyword">COMMIT TRANSACTION</span>;
+        
+    <span class="sql-keyword">END TRY</span>
+    <span class="sql-keyword">BEGIN CATCH</span>
+        <span class="sql-keyword">IF</span> @@TRANCOUNT &gt; 0
+            <span class="sql-keyword">ROLLBACK TRANSACTION</span>;
+        <span class="sql-keyword">THROW</span>;
+    <span class="sql-keyword">END CATCH</span>
+<span class="sql-keyword">END</span>;
+<span class="sql-keyword">GO</span></code></pre>
+</div>
+<h3>4. User Registration with Related Data</h3>
+<div class="example-box">
+<h4>Create User with Profile and Preferences</h4>
+<pre><code><span class="sql-keyword">CREATE PROCEDURE</span> usp_RegisterUser
+    @Username <span class="sql-keyword">NVARCHAR</span>(50),
+    @Email <span class="sql-keyword">NVARCHAR</span>(100),
+    @PasswordHash <span class="sql-keyword">NVARCHAR</span>(256),
+    @FirstName <span class="sql-keyword">NVARCHAR</span>(50),
+    @LastName <span class="sql-keyword">NVARCHAR</span>(50),
+    @UserID <span class="sql-keyword">INT</span> <span class="sql-keyword">OUTPUT</span>
+<span class="sql-keyword">AS</span>
+<span class="sql-keyword">BEGIN</span>
+    <span class="sql-keyword">SET NOCOUNT ON</span>;
+    
+    <span class="sql-keyword">BEGIN TRY</span>
+        <span class="sql-keyword">BEGIN TRANSACTION</span>;
+        
+        <span class="sql-comment">-- Create user account</span>
+        <span class="sql-keyword">INSERT INTO</span> Users (Username, Email, PasswordHash, CreatedDate, IsActive)
+        <span class="sql-keyword">VALUES</span> (@Username, @Email, @PasswordHash, <span class="sql-function">GETDATE</span>(), 1);
+        
+        <span class="sql-keyword">SET</span> @UserID = <span class="sql-function">SCOPE_IDENTITY</span>();
+        
+        <span class="sql-comment">-- Create user profile</span>
+        <span class="sql-keyword">INSERT INTO</span> UserProfiles (UserID, FirstName, LastName)
+        <span class="sql-keyword">VALUES</span> (@UserID, @FirstName, @LastName);
+        
+        <span class="sql-comment">-- Create default preferences</span>
+        <span class="sql-keyword">INSERT INTO</span> UserPreferences (UserID, EmailNotifications, Theme, Language)
+        <span class="sql-keyword">VALUES</span> (@UserID, 1, <span class="sql-string">'Light'</span>, <span class="sql-string">'en-US'</span>);
+        
+        <span class="sql-comment">-- Assign default role</span>
+        <span class="sql-keyword">INSERT INTO</span> UserRoles (UserID, RoleID)
+        <span class="sql-keyword">SELECT</span> @UserID, RoleID 
+        <span class="sql-keyword">FROM</span> Roles 
+        <span class="sql-keyword">WHERE</span> RoleName = <span class="sql-string">'User'</span>;
+        
+        <span class="sql-comment">-- Create activity log entry</span>
+        <span class="sql-keyword">INSERT INTO</span> ActivityLog (UserID, Activity, ActivityDate)
+        <span class="sql-keyword">VALUES</span> (@UserID, <span class="sql-string">'User registered'</span>, <span class="sql-function">GETDATE</span>());
+        
+        <span class="sql-keyword">COMMIT TRANSACTION</span>;
+        
+    <span class="sql-keyword">END TRY</span>
+    <span class="sql-keyword">BEGIN CATCH</span>
+        <span class="sql-keyword">IF</span> @@TRANCOUNT &gt; 0
+            <span class="sql-keyword">ROLLBACK TRANSACTION</span>;
+        
+        <span class="sql-comment">-- Check for duplicate username/email</span>
+        <span class="sql-keyword">IF</span> <span class="sql-function">ERROR_NUMBER</span>() = 2627 <span class="sql-comment">-- Unique constraint violation</span>
+            <span class="sql-keyword">RAISERROR</span>(<span class="sql-string">'Username or email already exists'</span>, 16, 1);
+        <span class="sql-keyword">ELSE</span>
+            <span class="sql-keyword">THROW</span>;
+    <span class="sql-keyword">END CATCH</span>
+<span class="sql-keyword">END</span>;
+<span class="sql-keyword">GO</span></code></pre>
+</div>
+<h3>Other Common Use Cases</h3>
+<ul>
+<li><strong>Healthcare:</strong> Patient records, prescriptions, lab results (HIPAA compliance)</li>
+<li><strong>Airline Reservations:</strong> Seat booking, payment, ticket issuance</li>
+<li><strong>Manufacturing:</strong> Bill of materials, work orders, quality control</li>
+<li><strong>HR Systems:</strong> Employee records, payroll, benefits</li>
+<li><strong>Real Estate:</strong> Property transactions, escrow, title transfer</li>
+<li><strong>Gaming:</strong> Player stats, achievements, in-game purchases</li>
+<li><strong>Logistics:</strong> Shipment tracking, route optimization, delivery confirmation</li>
+<li><strong>Education:</strong> Student enrollment, grade recording, transcript generation</li>
+</ul>
+</section>
+<section id="error-handling">
+<h2>Error Handling in Transactions</h2>
+<p>Proper error handling is crucial for transaction management to ensure data integrity.</p>
+<h3>TRY...CATCH with Transactions</h3>
+<pre><code><span class="sql-keyword">BEGIN TRY</span>
+    <span class="sql-keyword">BEGIN TRANSACTION</span>;
+    
+    <span class="sql-comment">-- Your operations here</span>
+    <span class="sql-keyword">UPDATE</span> Table1 ...
+    <span class="sql-keyword">INSERT INTO</span> Table2 ...
+    
+    <span class="sql-keyword">COMMIT TRANSACTION</span>;
+<span class="sql-keyword">END TRY</span>
+<span class="sql-keyword">BEGIN CATCH</span>
+    <span class="sql-comment">-- ALWAYS check @@TRANCOUNT before ROLLBACK</span>
+    <span class="sql-keyword">IF</span> @@TRANCOUNT &gt; 0
+        <span class="sql-keyword">ROLLBACK TRANSACTION</span>;
+    
+    <span class="sql-comment">-- Log error details</span>
+    <span class="sql-keyword">DECLARE</span> @ErrorMessage <span class="sql-keyword">NVARCHAR</span>(4000) = <span class="sql-function">ERROR_MESSAGE</span>();
+    <span class="sql-keyword">DECLARE</span> @ErrorSeverity <span class="sql-keyword">INT</span> = <span class="sql-function">ERROR_SEVERITY</span>();
+    <span class="sql-keyword">DECLARE</span> @ErrorState <span class="sql-keyword">INT</span> = <span class="sql-function">ERROR_STATE</span>();
+    <span class="sql-keyword">DECLARE</span> @ErrorNumber <span class="sql-keyword">INT</span> = <span class="sql-function">ERROR_NUMBER</span>();
+    <span class="sql-keyword">DECLARE</span> @ErrorLine <span class="sql-keyword">INT</span> = <span class="sql-function">ERROR_LINE</span>();
+    
+    <span class="sql-comment">-- Re-throw the error</span>
+    <span class="sql-keyword">RAISERROR</span>(@ErrorMessage, @ErrorSeverity, @ErrorState);
+<span class="sql-keyword">END CATCH</span></code></pre>
+<h3>Using THROW (SQL Server 2012+)</h3>
+<pre><code><span class="sql-keyword">BEGIN TRY</span>
+    <span class="sql-keyword">BEGIN TRANSACTION</span>;
+    
+    <span class="sql-comment">-- Operations</span>
+    
+    <span class="sql-keyword">COMMIT TRANSACTION</span>;
+<span class="sql-keyword">END TRY</span>
+<span class="sql-keyword">BEGIN CATCH</span>
+    <span class="sql-keyword">IF</span> @@TRANCOUNT &gt; 0
+        <span class="sql-keyword">ROLLBACK TRANSACTION</span>;
+    
+    <span class="sql-keyword">THROW</span>; <span class="sql-comment">-- Re-throws original error with all details</span>
+<span class="sql-keyword">END CATCH</span></code></pre>
+<h3>Comprehensive Error Logging</h3>
+<div class="example-box">
+<h4>Example: Transaction with Complete Error Logging</h4>
+<pre><code><span class="sql-comment">-- Create error log table</span>
+<span class="sql-keyword">CREATE TABLE</span> ErrorLog (
+    ErrorLogID <span class="sql-keyword">INT</span> <span class="sql-keyword">IDENTITY</span>(1,1) <span class="sql-keyword">PRIMARY KEY</span>,
+    ErrorTime <span class="sql-keyword">DATETIME</span> <span class="sql-keyword">DEFAULT</span> <span class="sql-function">GETDATE</span>(),
+    UserName <span class="sql-keyword">NVARCHAR</span>(128),
+    ErrorNumber <span class="sql-keyword">INT</span>,
+    ErrorSeverity <span class="sql-keyword">INT</span>,
+    ErrorState <span class="sql-keyword">INT</span>,
+    ErrorProcedure <span class="sql-keyword">NVARCHAR</span>(128),
+    ErrorLine <span class="sql-keyword">INT</span>,
+    ErrorMessage <span class="sql-keyword">NVARCHAR</span>(4000)
+);
+
+<span class="sql-keyword">CREATE PROCEDURE</span> usp_TransactionWithErrorLogging
+    @Param1 <span class="sql-keyword">INT</span>
+<span class="sql-keyword">AS</span>
+<span class="sql-keyword">BEGIN</span>
+    <span class="sql-keyword">SET NOCOUNT ON</span>;
+    
+    <span class="sql-keyword">BEGIN TRY</span>
+        <span class="sql-keyword">BEGIN TRANSACTION</span>;
+        
+        <span class="sql-comment">-- Your operations</span>
+        <span class="sql-keyword">UPDATE</span> SomeTable <span class="sql-keyword">SET</span> Column1 = @Param1;
+        
+        <span class="sql-keyword">COMMIT TRANSACTION</span>;
+        <span class="sql-keyword">RETURN</span> 0;
+        
+    <span class="sql-keyword">END TRY</span>
+    <span class="sql-keyword">BEGIN CATCH</span>
+        <span class="sql-keyword">IF</span> @@TRANCOUNT &gt; 0
+            <span class="sql-keyword">ROLLBACK TRANSACTION</span>;
+        
+        <span class="sql-comment">-- Log error</span>
+        <span class="sql-keyword">INSERT INTO</span> ErrorLog (
+            UserName,
+            ErrorNumber,
+            ErrorSeverity,
+            ErrorState,
+            ErrorProcedure,
+            ErrorLine,
+            ErrorMessage
+        )
+        <span class="sql-keyword">VALUES</span> (
+            <span class="sql-function">SUSER_SNAME</span>(),
+            <span class="sql-function">ERROR_NUMBER</span>(),
+            <span class="sql-function">ERROR_SEVERITY</span>(),
+            <span class="sql-function">ERROR_STATE</span>(),
+            <span class="sql-function">ERROR_PROCEDURE</span>(),
+            <span class="sql-function">ERROR_LINE</span>(),
+            <span class="sql-function">ERROR_MESSAGE</span>()
+        );
+        
+        <span class="sql-comment">-- Return error to caller</span>
+        <span class="sql-keyword">THROW</span>;
+        
+    <span class="sql-keyword">END CATCH</span>
+<span class="sql-keyword">END</span>;
+<span class="sql-keyword">GO</span></code></pre>
+</div>
+<h3>Handling Specific Errors</h3>
+<pre><code><span class="sql-keyword">BEGIN TRY</span>
+    <span class="sql-keyword">BEGIN TRANSACTION</span>;
+    
+    <span class="sql-keyword">INSERT INTO</span> Users (Username, Email)
+    <span class="sql-keyword">VALUES</span> (<span class="sql-string">'john'</span>, <span class="sql-string">'john@email.com'</span>);
+    
+    <span class="sql-keyword">COMMIT TRANSACTION</span>;
+<span class="sql-keyword">END TRY</span>
+<span class="sql-keyword">BEGIN CATCH</span>
+    <span class="sql-keyword">IF</span> @@TRANCOUNT &gt; 0
+        <span class="sql-keyword">ROLLBACK TRANSACTION</span>;
+    
+    <span class="sql-comment">-- Handle specific error codes</span>
+    <span class="sql-keyword">IF</span> <span class="sql-function">ERROR_NUMBER</span>() = 2627 <span class="sql-comment">-- Unique constraint violation</span>
+    <span class="sql-keyword">BEGIN</span>
+        <span class="sql-keyword">RAISERROR</span>(<span class="sql-string">'Username or email already exists'</span>, 16, 1);
+    <span class="sql-keyword">END</span>
+    <span class="sql-keyword">ELSE IF</span> <span class="sql-function">ERROR_NUMBER</span>() = 547 <span class="sql-comment">-- FK constraint violation</span>
+    <span class="sql-keyword">BEGIN</span>
+        <span class="sql-keyword">RAISERROR</span>(<span class="sql-string">'Invalid reference to related table'</span>, 16, 1);
+    <span class="sql-keyword">END</span>
+    <span class="sql-keyword">ELSE IF</span> <span class="sql-function">ERROR_NUMBER</span>() = 1205 <span class="sql-comment">-- Deadlock victim</span>
+    <span class="sql-keyword">BEGIN</span>
+        <span class="sql-comment">-- Implement retry logic</span>
+        <span class="sql-keyword">RAISERROR</span>(<span class="sql-string">'Deadlock occurred, please retry'</span>, 16, 1);
+    <span class="sql-keyword">END</span>
+    <span class="sql-keyword">ELSE</span>
+    <span class="sql-keyword">BEGIN</span>
+        <span class="sql-keyword">THROW</span>; <span class="sql-comment">-- Unknown error</span>
+    <span class="sql-keyword">END</span>
+<span class="sql-keyword">END CATCH</span></code></pre>
+<div class="warning"><strong>⚠️ Critical:</strong> NEVER let a transaction remain open after an error. Always ensure transactions are either committed or rolled back in error handlers.</div>
+</section>
+<section id="performance">
+<h2>Performance Considerations</h2>
+<p>Transaction management has significant performance implications. Understanding these is crucial for building scalable systems.</p>
+<h3>Transaction Duration Impact</h3>
+<table>
+<thead>
+<tr>
+<th>Duration</th>
+<th>Impact</th>
+<th>Recommendation</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>&lt; 1 second</td>
+<td>✅ Good - Minimal blocking</td>
+<td>Ideal for most operations</td>
+</tr>
+<tr>
+<td>1-5 seconds</td>
+<td>⚠️ Acceptable - Some blocking</td>
+<td>Acceptable for complex operations</td>
+</tr>
+<tr>
+<td>5-10 seconds</td>
+<td>⚠️ Concerning - Significant blocking</td>
+<td>Optimize or break into smaller transactions</td>
+</tr>
+<tr>
+<td>&gt; 10 seconds</td>
+<td>❌ Poor - High blocking, deadlock risk</td>
+<td>Redesign required</td>
+</tr>
+</tbody>
+</table>
+<h3>Performance Best Practices</h3>
+<div class="best-practice"><strong>✅ Keep Transactions Short:</strong>
+<pre><code><span class="sql-comment">-- BAD: Long transaction with user interaction</span>
+<span class="sql-keyword">BEGIN TRANSACTION</span>;
+    <span class="sql-keyword">UPDATE</span> Orders <span class="sql-keyword">SET</span> Status = <span class="sql-string">'Processing'</span>;
+    <span class="sql-keyword">WAITFOR DELAY</span> <span class="sql-string">'00:00:30'</span>; <span class="sql-comment">-- Waiting for external API!</span>
+    <span class="sql-keyword">UPDATE</span> Orders <span class="sql-keyword">SET</span> Status = <span class="sql-string">'Completed'</span>;
+<span class="sql-keyword">COMMIT TRANSACTION</span>;
+
+<span class="sql-comment">-- GOOD: Short transaction</span>
+<span class="sql-comment">-- Do external work OUTSIDE transaction</span>
+<span class="sql-keyword">DECLARE</span> @Result <span class="sql-keyword">BIT</span> = dbo.fn_CallExternalAPI();
+
+<span class="sql-keyword">BEGIN TRANSACTION</span>;
+    <span class="sql-keyword">UPDATE</span> Orders 
+    <span class="sql-keyword">SET</span> Status = <span class="sql-keyword">CASE</span> <span class="sql-keyword">WHEN</span> @Result = 1 <span class="sql-keyword">THEN</span> <span class="sql-string">'Completed'</span> <span class="sql-keyword">ELSE</span> <span class="sql-string">'Failed'</span> <span class="sql-keyword">END</span>;
+<span class="sql-keyword">COMMIT TRANSACTION</span>;</code></pre>
+</div>
+<h3>Minimize Lock Contention</h3>
+<div class="best-practice"><strong>✅ Access Tables in Consistent Order:</strong>
+<pre><code><span class="sql-comment">-- Transaction 1 and Transaction 2 should access tables in SAME order</span>
+<span class="sql-comment">-- GOOD: Both transactions access Orders then OrderItems</span>
+<span class="sql-keyword">BEGIN TRANSACTION</span>;
+    <span class="sql-keyword">UPDATE</span> Orders ...
+    <span class="sql-keyword">UPDATE</span> OrderItems ...
+<span class="sql-keyword">COMMIT TRANSACTION</span>;
+
+<span class="sql-comment">-- BAD: Different order causes deadlocks</span>
+<span class="sql-comment">-- Transaction 1: Orders → OrderItems</span>
+<span class="sql-comment">-- Transaction 2: OrderItems → Orders</span></code></pre>
+</div>
+<h3>Use Appropriate Isolation Levels</h3>
+<pre><code><span class="sql-comment">-- For reports, use lower isolation</span>
+<span class="sql-keyword">SET TRANSACTION ISOLATION LEVEL</span> <span class="sql-keyword">READ UNCOMMITTED</span>;
+<span class="sql-keyword">SELECT</span> <span class="sql-function">COUNT</span>(*), <span class="sql-function">SUM</span>(TotalAmount)
+<span class="sql-keyword">FROM</span> Orders;
+
+<span class="sql-comment">-- For critical updates, use higher isolation</span>
+<span class="sql-keyword">SET TRANSACTION ISOLATION LEVEL</span> <span class="sql-keyword">SERIALIZABLE</span>;
+<span class="sql-keyword">BEGIN TRANSACTION</span>;
+    <span class="sql-keyword">UPDATE</span> CriticalData ...
+<span class="sql-keyword">COMMIT TRANSACTION</span>;</code></pre>
+<h3>Batch Large Operations</h3>
+<div class="example-box">
+<h4>Example: Process in Batches</h4>
+<pre><code><span class="sql-comment">-- Instead of one huge transaction</span>
+<span class="sql-keyword">DECLARE</span> @BatchSize <span class="sql-keyword">INT</span> = 1000;
+<span class="sql-keyword">DECLARE</span> @RowsAffected <span class="sql-keyword">INT</span> = 1;
+
+<span class="sql-keyword">WHILE</span> @RowsAffected &gt; 0
+<span class="sql-keyword">BEGIN</span>
+    <span class="sql-keyword">BEGIN TRANSACTION</span>;
+    
+    <span class="sql-comment">-- Process one batch</span>
+    <span class="sql-keyword">UPDATE TOP</span> (@BatchSize) Orders
+    <span class="sql-keyword">SET</span> Status = <span class="sql-string">'Archived'</span>
+    <span class="sql-keyword">WHERE</span> OrderDate &lt; <span class="sql-function">DATEADD</span>(<span class="sql-keyword">YEAR</span>, -5, <span class="sql-function">GETDATE</span>())
+        <span class="sql-keyword">AND</span> Status = <span class="sql-string">'Completed'</span>;
+    
+    <span class="sql-keyword">SET</span> @RowsAffected = @@ROWCOUNT;
+    
+    <span class="sql-keyword">COMMIT TRANSACTION</span>;
+    
+    <span class="sql-comment">-- Brief pause to allow other transactions</span>
+    <span class="sql-keyword">WAITFOR DELAY</span> <span class="sql-string">'00:00:00.100'</span>;
+<span class="sql-keyword">END</span></code></pre>
+</div>
+<h3>Monitor Transaction Performance</h3>
+<pre><code><span class="sql-comment">-- Find long-running transactions</span>
+<span class="sql-keyword">SELECT</span> 
+    s.session_id,
+    s.login_name,
+    t.transaction_id,
+    <span class="sql-function">DATEDIFF</span>(<span class="sql-keyword">SECOND</span>, t.transaction_begin_time, <span class="sql-function">GETDATE</span>()) <span class="sql-keyword">AS</span> DurationSeconds,
+    t.transaction_state,
+    s.last_request_start_time
+<span class="sql-keyword">FROM</span> sys.dm_tran_active_transactions t
+<span class="sql-keyword">INNER JOIN</span> sys.dm_tran_session_transactions st 
+    <span class="sql-keyword">ON</span> t.transaction_id = st.transaction_id
+<span class="sql-keyword">INNER JOIN</span> sys.dm_exec_sessions s 
+    <span class="sql-keyword">ON</span> st.session_id = s.session_id
+<span class="sql-keyword">WHERE</span> <span class="sql-function">DATEDIFF</span>(<span class="sql-keyword">SECOND</span>, t.transaction_begin_time, <span class="sql-function">GETDATE</span>()) &gt; 10
+<span class="sql-keyword">ORDER BY</span> DurationSeconds <span class="sql-keyword">DESC</span>;
+
+<span class="sql-comment">-- View transaction log usage</span>
+<span class="sql-keyword">DBCC</span> SQLPERF(LOGSPACE);</code></pre>
+</section>
+<section id="best-practices">
+<h2>Transaction Best Practices Summary</h2>
+<h3>Essential Guidelines</h3>
+<div class="best-practice"><strong>✅ Do:</strong>
+<ul>
+<li>Keep transactions as short as possible</li>
+<li>Validate data BEFORE starting transaction</li>
+<li>Always use TRY...CATCH for error handling</li>
+<li>Check @@TRANCOUNT before ROLLBACK</li>
+<li>Use explicit transactions for multi-step operations</li>
+<li>Access tables in consistent order to prevent deadlocks</li>
+<li>Use appropriate isolation levels for your scenario</li>
+<li>Log errors comprehensively</li>
+<li>Use XACT_ABORT ON for simple cases</li>
+<li>Monitor transaction performance regularly</li>
+<li>Test rollback scenarios thoroughly</li>
+<li>Document transaction expectations in procedures</li>
+</ul>
+</div>
+<div class="warning"><strong>❌ Don't:</strong>
+<ul>
+<li>Leave transactions open after errors</li>
+<li>Include user interaction within transactions</li>
+<li>Make external API calls inside transactions</li>
+<li>Use high isolation levels unless necessary</li>
+<li>Forget to commit or rollback</li>
+<li>Hold locks longer than necessary</li>
+<li>Ignore deadlock possibilities</li>
+<li>Use distributed transactions unless required</li>
+<li>Nest transactions without checking @@TRANCOUNT</li>
+<li>Skip validation to save time</li>
+<li>Assume transactions will always succeed</li>
+</ul>
+</div>
+<h3>Quick Reference Checklist</h3>
+<table>
+<thead>
+<tr>
+<th>Scenario</th>
+<th>Recommendation</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Single INSERT/UPDATE/DELETE</td>
+<td>Use autocommit (no explicit transaction)</td>
+</tr>
+<tr>
+<td>Multiple related operations</td>
+<td>Wrap in explicit transaction with TRY...CATCH</td>
+</tr>
+<tr>
+<td>Financial operations</td>
+<td>Always use explicit transactions with full validation</td>
+</tr>
+<tr>
+<td>Read-only reporting</td>
+<td>Consider READ UNCOMMITTED or SNAPSHOT isolation</td>
+</tr>
+<tr>
+<td>High-concurrency updates</td>
+<td>Use READ COMMITTED or SNAPSHOT, keep very short</td>
+</tr>
+<tr>
+<td>Calling nested procedures</td>
+<td>Check @@TRANCOUNT, use savepoints if needed</td>
+</tr>
+<tr>
+<td>Large batch operations</td>
+<td>Process in batches with separate transactions</td>
+</tr>
+<tr>
+<td>Cross-database operations</td>
+<td>Consider Saga pattern over distributed transactions</td>
+</tr>
+</tbody>
+</table>
+</section>
+<footer>
+<p>Complete Guide to Database Transactions in T-SQL and SQL Server</p>
+<p>ACID Properties, Isolation Levels, and Transaction Management Best Practices</p>
+<p>Last updated: February 2026</p>
+</footer></div></body></html>

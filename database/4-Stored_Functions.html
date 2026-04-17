@@ -1,0 +1,3563 @@
+<!DOCTYPE html>
+<html lang="en"><head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>T-SQL Stored Procedures for Foreign Key Management</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {<!DOCTYPE html>
+<html lang="en"><head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>T-SQL Stored Functions Complete Guide</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.6;
+            color: #2d2d2d;
+            background-color: #f5f5f5;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        header {
+            background: linear-gradient(135deg, #0078d4 0%, #00bcf2 100%);
+            color: white;
+            padding: 60px 20px;
+            text-align: center;
+            margin-bottom: 40px;
+            border-radius: 8px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+        }
+
+        header h1 {
+            font-size: 2.5em;
+            margin-bottom: 10px;
+            font-weight: 600;
+        }
+
+        header p {
+            font-size: 1.2em;
+            opacity: 0.95;
+        }
+
+        nav {
+            background: white;
+            padding: 24px;
+            margin-bottom: 30px;
+            border-radius: 8px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+            position: sticky;
+            top: 20px;
+            z-index: 100;
+        }
+
+        nav h3 {
+            margin-bottom: 16px;
+            color: #0078d4;
+            font-weight: 600;
+        }
+
+        nav ul {
+            list-style: none;
+        }
+
+        nav ul li {
+            margin-bottom: 10px;
+        }
+
+        nav ul li a {
+            color: #2d2d2d;
+            text-decoration: none;
+            transition: color 0.2s;
+            display: block;
+            padding: 4px 0;
+        }
+
+        nav ul li a:hover {
+            color: #0078d4;
+        }
+
+        section {
+            background: white;
+            padding: 32px;
+            margin-bottom: 24px;
+            border-radius: 8px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        }
+
+        h2 {
+            color: #0078d4;
+            margin-bottom: 24px;
+            padding-bottom: 12px;
+            border-bottom: 3px solid #0078d4;
+            font-size: 2em;
+            font-weight: 600;
+        }
+
+        h3 {
+            color: #00bcf2;
+            margin-top: 28px;
+            margin-bottom: 16px;
+            font-size: 1.5em;
+            font-weight: 600;
+        }
+
+        h4 {
+            color: #5a5a5a;
+            margin-top: 20px;
+            margin-bottom: 12px;
+            font-size: 1.2em;
+            font-weight: 600;
+        }
+
+        p {
+            margin-bottom: 16px;
+            color: #5a5a5a;
+        }
+
+        ul, ol {
+            margin-left: 28px;
+            margin-bottom: 16px;
+            color: #5a5a5a;
+        }
+
+        li {
+            margin-bottom: 8px;
+            line-height: 1.6;
+        }
+
+        code {
+            background: #f0f0f0;
+            padding: 2px 6px;
+            border-radius: 3px;
+            font-family: 'Consolas', 'Courier New', monospace;
+            color: #c7254e;
+            font-size: 0.9em;
+        }
+
+        pre {
+            background: #1e1e1e;
+            color: #d4d4d4;
+            padding: 20px;
+            border-radius: 6px;
+            overflow-x: auto;
+            margin-bottom: 24px;
+            border-left: 4px solid #0078d4;
+            font-family: 'Consolas', 'Courier New', monospace;
+            font-size: 0.9em;
+            line-height: 1.5;
+        }
+
+        pre code {
+            background: none;
+            color: inherit;
+            padding: 0;
+            font-size: 1em;
+        }
+
+        .sql-keyword {
+            color: #569cd6;
+        }
+
+        .sql-string {
+            color: #ce9178;
+        }
+
+        .sql-comment {
+            color: #6a9955;
+        }
+
+        .sql-function {
+            color: #dcdcaa;
+        }
+
+        .tip {
+            background: #e6f4ff;
+            border-left: 4px solid #0078d4;
+            padding: 16px 20px;
+            margin-bottom: 24px;
+            border-radius: 4px;
+        }
+
+        .tip strong {
+            color: #0050a0;
+        }
+
+        .warning {
+            background: #fff4e6;
+            border-left: 4px solid #ff8c00;
+            padding: 16px 20px;
+            margin-bottom: 24px;
+            border-radius: 4px;
+        }
+
+        .warning strong {
+            color: #cc7000;
+        }
+
+        .best-practice {
+            background: #e6f7e6;
+            border-left: 4px solid #28a745;
+            padding: 16px 20px;
+            margin-bottom: 24px;
+            border-radius: 4px;
+        }
+
+        .best-practice strong {
+            color: #1e7e34;
+        }
+
+        .example-box {
+            background: #f8f9fa;
+            border: 2px solid #dee2e6;
+            border-radius: 6px;
+            padding: 20px;
+            margin-bottom: 24px;
+        }
+
+        .example-box h4 {
+            color: #0078d4;
+            margin-top: 0;
+            padding-bottom: 8px;
+            border-bottom: 1px solid #dee2e6;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 24px;
+            background: white;
+        }
+
+        table th, table td {
+            padding: 12px 16px;
+            text-align: left;
+            border: 1px solid #dee2e6;
+        }
+
+        table th {
+            background: #f8f9fa;
+            color: #2d2d2d;
+            font-weight: 600;
+        }
+
+        table tr:hover {
+            background: #f8f9fa;
+        }
+
+        .comparison-table td:first-child {
+            font-weight: 600;
+            background: #f8f9fa;
+        }
+
+        .pros-cons {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+            margin-bottom: 24px;
+        }
+
+        .pros, .cons {
+            padding: 20px;
+            border-radius: 6px;
+        }
+
+        .pros {
+            background: #e6f7e6;
+            border: 2px solid #28a745;
+        }
+
+        .cons {
+            background: #ffe6e6;
+            border: 2px solid #dc3545;
+        }
+
+        .pros h4, .cons h4 {
+            margin-top: 0;
+        }
+
+        .pros h4 {
+            color: #28a745;
+        }
+
+        .cons h4 {
+            color: #dc3545;
+        }
+
+        .function-type-box {
+            background: #f8f9fa;
+            border: 2px solid #0078d4;
+            border-radius: 6px;
+            padding: 20px;
+            margin-bottom: 24px;
+        }
+
+        .function-type-box h4 {
+            color: #0078d4;
+            margin-top: 0;
+        }
+
+        footer {
+            text-align: center;
+            padding: 32px;
+            color: #5a5a5a;
+            margin-top: 40px;
+        }
+
+        @media (max-width: 768px) {
+            header h1 {
+                font-size: 1.8em;
+            }
+
+            section {
+                padding: 20px;
+            }
+
+            nav {
+                position: static;
+            }
+
+            .pros-cons {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+<link rel="stylesheet" href="https://templates.lcs.brightspace.com/lib/assets/css/styles.min.css"><link rel="stylesheet" href="/d2l/le/contentstyler/34091/files/View" data-override="override"></head><body><div class="container"><header>
+<h1>⚙️ T-SQL Stored Functions Guide</h1>
+<p>Comprehensive Guide to Creating and Using User-Defined Functions</p>
+</header><nav>
+<h3>📑 Table of Contents</h3>
+<ul>
+<li><a href="#introduction">Introduction</a></li>
+<li><a href="#types">Types of Functions</a></li>
+<li><a href="#scalar-functions">Scalar Functions</a></li>
+<li><a href="#inline-tvf">Inline Table-Valued Functions</a></li>
+<li><a href="#multi-statement-tvf">Multi-Statement Table-Valued Functions</a></li>
+<li><a href="#functions-vs-procedures">Functions vs Procedures</a></li>
+<li><a href="#limitations">Function Limitations</a></li>
+<li><a href="#using-functions">Using Functions</a></li>
+<li><a href="#performance">Performance Considerations</a></li>
+<li><a href="#advantages">Advantages of Functions</a></li>
+<li><a href="#disadvantages">Disadvantages &amp; When Not to Use</a></li>
+<li><a href="#best-practices">Best Practices</a></li>
+<li><a href="#alternatives">Alternative Approaches</a></li>
+</ul>
+</nav>
+<section id="introduction">
+<h2>Introduction</h2>
+<p>User-defined functions (UDFs) in T-SQL are reusable code modules that accept parameters, perform calculations or operations, and return a value or table. Unlike stored procedures, functions can be used directly in SQL queries, making them powerful tools for encapsulating business logic.</p>
+<h3>What Are Stored Functions?</h3>
+<p>Stored functions are database objects that:</p>
+<ul>
+<li><strong>Accept Input Parameters:</strong> Can receive zero or more input parameters</li>
+<li><strong>Return Values:</strong> Must return a single value (scalar) or a table</li>
+<li><strong>Are Deterministic or Non-Deterministic:</strong> Can produce consistent or varying results</li>
+<li><strong>Can Be Used in Queries:</strong> Can be called from SELECT, WHERE, JOIN clauses</li>
+<li><strong>Are Read-Only:</strong> Cannot modify database state (with rare exceptions)</li>
+</ul>
+<h3>When to Use Functions</h3>
+<ul>
+<li>Calculations that need to be reused across queries</li>
+<li>Data transformations within SELECT statements</li>
+<li>Complex filtering logic in WHERE clauses</li>
+<li>Encapsulating business rules for data retrieval</li>
+<li>Creating computed columns or indexed views</li>
+</ul>
+<div class="tip"><strong>💡 Key Concept:</strong> Functions are designed for queries and calculations, while procedures are designed for actions and transactions. Functions return data, procedures perform operations.</div>
+</section>
+<section id="types">
+<h2>Types of Functions</h2>
+<p>T-SQL provides three types of user-defined functions, each with distinct characteristics and use cases.</p>
+<div class="function-type-box">
+<h4>1. Scalar Functions</h4>
+<p><strong>Returns:</strong> A single scalar value (INT, VARCHAR, DECIMAL, etc.)</p>
+<p><strong>Use Case:</strong> Calculations, conversions, single value lookups</p>
+<p><strong>Example:</strong> Calculate age from birthdate, format phone numbers, compute discounts</p>
+</div>
+<div class="function-type-box">
+<h4>2. Inline Table-Valued Functions (TVFs)</h4>
+<p><strong>Returns:</strong> A table (result of a single SELECT statement)</p>
+<p><strong>Use Case:</strong> Parameterized views, filtered result sets</p>
+<p><strong>Example:</strong> Get customer orders by date range, filter products by category</p>
+</div>
+<div class="function-type-box">
+<h4>3. Multi-Statement Table-Valued Functions (MSTVFs)</h4>
+<p><strong>Returns:</strong> A table (defined structure with multiple operations)</p>
+<p><strong>Use Case:</strong> Complex data processing requiring multiple steps</p>
+<p><strong>Example:</strong> Calculate hierarchical data, build summary tables</p>
+</div>
+<h3>Comparison of Function Types</h3>
+<table>
+<thead>
+<tr>
+<th>Feature</th>
+<th>Scalar</th>
+<th>Inline TVF</th>
+<th>Multi-Statement TVF</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Return Type</strong></td>
+<td>Single value</td>
+<td>Table</td>
+<td>Table</td>
+</tr>
+<tr>
+<td><strong>Performance</strong></td>
+<td>Good</td>
+<td>Excellent</td>
+<td>Can be slow</td>
+</tr>
+<tr>
+<td><strong>Complexity</strong></td>
+<td>Simple logic</td>
+<td>Single query</td>
+<td>Multiple steps</td>
+</tr>
+<tr>
+<td><strong>Use in WHERE</strong></td>
+<td>✅ Yes</td>
+<td>❌ No (use JOIN)</td>
+<td>❌ No (use JOIN)</td>
+</tr>
+<tr>
+<td><strong>Query Optimization</strong></td>
+<td>Moderate</td>
+<td>Excellent</td>
+<td>Limited</td>
+</tr>
+<tr>
+<td><strong>Indexing Support</strong></td>
+<td>N/A</td>
+<td>Can use base table indexes</td>
+<td>Cannot use base table indexes</td>
+</tr>
+</tbody>
+</table>
+<div class="tip"><strong>💡 Performance Tip:</strong> Inline table-valued functions perform best because SQL Server treats them like views and can optimize them with the outer query. Avoid multi-statement TVFs unless necessary.</div>
+</section>
+<section id="scalar-functions">
+<h2>Scalar Functions</h2>
+<p>Scalar functions return a single value and can be used anywhere a scalar expression is valid.</p>
+<h3>Basic Scalar Function Syntax</h3>
+<pre><code><span class="sql-keyword">CREATE FUNCTION</span> dbo.FunctionName
+(
+    @Parameter1 <span class="sql-keyword">DataType</span>,
+    @Parameter2 <span class="sql-keyword">DataType</span>
+)
+<span class="sql-keyword">RETURNS</span> ReturnDataType
+<span class="sql-keyword">AS</span>
+<span class="sql-keyword">BEGIN</span>
+    <span class="sql-keyword">DECLARE</span> @Result ReturnDataType;
+    
+    <span class="sql-comment">-- Function logic here</span>
+    <span class="sql-keyword">SET</span> @Result = <span class="sql-comment">/* calculation */</span>;
+    
+    <span class="sql-keyword">RETURN</span> @Result;
+<span class="sql-keyword">END</span>;
+<span class="sql-keyword">GO</span></code></pre>
+<h3>Example 1: Simple Calculation</h3>
+<div class="example-box">
+<h4>Calculate Age from Birthdate</h4>
+<pre><code><span class="sql-keyword">CREATE FUNCTION</span> dbo.fn_CalculateAge
+(
+    @BirthDate <span class="sql-keyword">DATE</span>
+)
+<span class="sql-keyword">RETURNS</span> <span class="sql-keyword">INT</span>
+<span class="sql-keyword">AS</span>
+<span class="sql-keyword">BEGIN</span>
+    <span class="sql-keyword">DECLARE</span> @Age <span class="sql-keyword">INT</span>;
+    
+    <span class="sql-keyword">SET</span> @Age = <span class="sql-function">DATEDIFF</span>(<span class="sql-keyword">YEAR</span>, @BirthDate, <span class="sql-function">GETDATE</span>()) -
+        <span class="sql-keyword">CASE</span> 
+            <span class="sql-keyword">WHEN</span> <span class="sql-function">MONTH</span>(@BirthDate) &gt; <span class="sql-function">MONTH</span>(<span class="sql-function">GETDATE</span>()) <span class="sql-keyword">THEN</span> 1
+            <span class="sql-keyword">WHEN</span> <span class="sql-function">MONTH</span>(@BirthDate) = <span class="sql-function">MONTH</span>(<span class="sql-function">GETDATE</span>()) 
+                <span class="sql-keyword">AND</span> <span class="sql-function">DAY</span>(@BirthDate) &gt; <span class="sql-function">DAY</span>(<span class="sql-function">GETDATE</span>()) <span class="sql-keyword">THEN</span> 1
+            <span class="sql-keyword">ELSE</span> 0
+        <span class="sql-keyword">END</span>;
+    
+    <span class="sql-keyword">RETURN</span> @Age;
+<span class="sql-keyword">END</span>;
+<span class="sql-keyword">GO</span>
+
+<span class="sql-comment">-- Usage</span>
+<span class="sql-keyword">SELECT</span> 
+    FirstName,
+    LastName,
+    dbo.fn_CalculateAge(BirthDate) <span class="sql-keyword">AS</span> Age
+<span class="sql-keyword">FROM</span> Customers;</code></pre>
+</div>
+<h3>Example 2: Business Logic Calculation</h3>
+<div class="example-box">
+<h4>Calculate Order Discount Based on Customer Tier</h4>
+<pre><code><span class="sql-keyword">CREATE FUNCTION</span> dbo.fn_GetCustomerDiscount
+(
+    @CustomerID <span class="sql-keyword">INT</span>,
+    @OrderAmount <span class="sql-keyword">DECIMAL</span>(10,2)
+)
+<span class="sql-keyword">RETURNS</span> <span class="sql-keyword">DECIMAL</span>(10,2)
+<span class="sql-keyword">AS</span>
+<span class="sql-keyword">BEGIN</span>
+    <span class="sql-keyword">DECLARE</span> @DiscountPercent <span class="sql-keyword">DECIMAL</span>(5,2) = 0;
+    <span class="sql-keyword">DECLARE</span> @TotalOrders <span class="sql-keyword">INT</span>;
+    <span class="sql-keyword">DECLARE</span> @Discount <span class="sql-keyword">DECIMAL</span>(10,2);
+    
+    <span class="sql-comment">-- Get customer order count</span>
+    <span class="sql-keyword">SELECT</span> @TotalOrders = <span class="sql-function">COUNT</span>(*)
+    <span class="sql-keyword">FROM</span> Orders
+    <span class="sql-keyword">WHERE</span> CustomerID = @CustomerID;
+    
+    <span class="sql-comment">-- Determine discount tier</span>
+    <span class="sql-keyword">SET</span> @DiscountPercent = <span class="sql-keyword">CASE</span>
+        <span class="sql-keyword">WHEN</span> @TotalOrders &gt;= 50 <span class="sql-keyword">THEN</span> 15.00  <span class="sql-comment">-- VIP: 15%</span>
+        <span class="sql-keyword">WHEN</span> @TotalOrders &gt;= 20 <span class="sql-keyword">THEN</span> 10.00  <span class="sql-comment">-- Gold: 10%</span>
+        <span class="sql-keyword">WHEN</span> @TotalOrders &gt;= 10 <span class="sql-keyword">THEN</span> 5.00   <span class="sql-comment">-- Silver: 5%</span>
+        <span class="sql-keyword">ELSE</span> 0.00                          <span class="sql-comment">-- Regular: 0%</span>
+    <span class="sql-keyword">END</span>;
+    
+    <span class="sql-comment">-- Calculate discount amount</span>
+    <span class="sql-keyword">SET</span> @Discount = @OrderAmount * (@DiscountPercent / 100);
+    
+    <span class="sql-keyword">RETURN</span> @Discount;
+<span class="sql-keyword">END</span>;
+<span class="sql-keyword">GO</span>
+
+<span class="sql-comment">-- Usage in query</span>
+<span class="sql-keyword">SELECT</span> 
+    o.OrderID,
+    o.CustomerID,
+    o.TotalAmount,
+    dbo.fn_GetCustomerDiscount(o.CustomerID, o.TotalAmount) <span class="sql-keyword">AS</span> Discount,
+    o.TotalAmount - dbo.fn_GetCustomerDiscount(o.CustomerID, o.TotalAmount) <span class="sql-keyword">AS</span> FinalAmount
+<span class="sql-keyword">FROM</span> Orders o
+<span class="sql-keyword">WHERE</span> o.OrderDate &gt;= <span class="sql-function">DATEADD</span>(<span class="sql-keyword">MONTH</span>, -1, <span class="sql-function">GETDATE</span>());</code></pre>
+</div>
+<h3>Example 3: Data Lookup Function</h3>
+<div class="example-box">
+<h4>Get Product Category Name by ID</h4>
+<pre><code><span class="sql-keyword">CREATE FUNCTION</span> dbo.fn_GetCategoryName
+(
+    @CategoryID <span class="sql-keyword">INT</span>
+)
+<span class="sql-keyword">RETURNS</span> <span class="sql-keyword">NVARCHAR</span>(100)
+<span class="sql-keyword">AS</span>
+<span class="sql-keyword">BEGIN</span>
+    <span class="sql-keyword">DECLARE</span> @CategoryName <span class="sql-keyword">NVARCHAR</span>(100);
+    
+    <span class="sql-keyword">SELECT</span> @CategoryName = CategoryName
+    <span class="sql-keyword">FROM</span> Categories
+    <span class="sql-keyword">WHERE</span> CategoryID = @CategoryID;
+    
+    <span class="sql-keyword">RETURN</span> <span class="sql-function">ISNULL</span>(@CategoryName, <span class="sql-string">'Unknown'</span>);
+<span class="sql-keyword">END</span>;
+<span class="sql-keyword">GO</span>
+
+<span class="sql-comment">-- Usage</span>
+<span class="sql-keyword">SELECT</span> 
+    ProductID,
+    ProductName,
+    CategoryID,
+    dbo.fn_GetCategoryName(CategoryID) <span class="sql-keyword">AS</span> CategoryName
+<span class="sql-keyword">FROM</span> Products;</code></pre>
+</div>
+<h3>Example 4: String Formatting Function</h3>
+<div class="example-box">
+<h4>Format Phone Number</h4>
+<pre><code><span class="sql-keyword">CREATE FUNCTION</span> dbo.fn_FormatPhoneNumber
+(
+    @PhoneNumber <span class="sql-keyword">VARCHAR</span>(20)
+)
+<span class="sql-keyword">RETURNS</span> <span class="sql-keyword">VARCHAR</span>(20)
+<span class="sql-keyword">AS</span>
+<span class="sql-keyword">BEGIN</span>
+    <span class="sql-keyword">DECLARE</span> @Formatted <span class="sql-keyword">VARCHAR</span>(20);
+    <span class="sql-keyword">DECLARE</span> @CleanNumber <span class="sql-keyword">VARCHAR</span>(20);
+    
+    <span class="sql-comment">-- Remove non-numeric characters</span>
+    <span class="sql-keyword">SET</span> @CleanNumber = @PhoneNumber;
+    <span class="sql-keyword">SET</span> @CleanNumber = <span class="sql-function">REPLACE</span>(<span class="sql-function">REPLACE</span>(<span class="sql-function">REPLACE</span>(@CleanNumber, <span class="sql-string">'('</span>, <span class="sql-string">''</span>), <span class="sql-string">')'</span>, <span class="sql-string">''</span>), <span class="sql-string">'-'</span>, <span class="sql-string">''</span>);
+    <span class="sql-keyword">SET</span> @CleanNumber = <span class="sql-function">REPLACE</span>(<span class="sql-function">REPLACE</span>(@CleanNumber, <span class="sql-string">' '</span>, <span class="sql-string">''</span>), <span class="sql-string">'.'</span>, <span class="sql-string">''</span>);
+    
+    <span class="sql-comment">-- Format as (XXX) XXX-XXXX</span>
+    <span class="sql-keyword">IF</span> <span class="sql-function">LEN</span>(@CleanNumber) = 10
+        <span class="sql-keyword">SET</span> @Formatted = <span class="sql-string">'('</span> + <span class="sql-function">SUBSTRING</span>(@CleanNumber, 1, 3) + <span class="sql-string">') '</span> + 
+                          <span class="sql-function">SUBSTRING</span>(@CleanNumber, 4, 3) + <span class="sql-string">'-'</span> + 
+                          <span class="sql-function">SUBSTRING</span>(@CleanNumber, 7, 4);
+    <span class="sql-keyword">ELSE</span>
+        <span class="sql-keyword">SET</span> @Formatted = @PhoneNumber; <span class="sql-comment">-- Return original if not 10 digits</span>
+    
+    <span class="sql-keyword">RETURN</span> @Formatted;
+<span class="sql-keyword">END</span>;
+<span class="sql-keyword">GO</span>
+
+<span class="sql-comment">-- Usage</span>
+<span class="sql-keyword">SELECT</span> 
+    CustomerID,
+    FirstName,
+    LastName,
+    dbo.fn_FormatPhoneNumber(PhoneNumber) <span class="sql-keyword">AS</span> FormattedPhone
+<span class="sql-keyword">FROM</span> Customers;</code></pre>
+</div>
+<div class="warning"><strong>⚠️ Performance Warning:</strong> Scalar functions can cause performance issues when used in WHERE clauses or on large tables, as they execute once per row and prevent index usage. Consider inline table-valued functions or computed columns for better performance.</div>
+</section>
+<section id="inline-tvf">
+<h2>Inline Table-Valued Functions</h2>
+<p>Inline table-valued functions (iTVFs) are the most efficient type of user-defined function. They act like parameterized views and are optimized by the query processor.</p>
+<h3>Inline TVF Syntax</h3>
+<pre><code><span class="sql-keyword">CREATE FUNCTION</span> dbo.FunctionName
+(
+    @Parameter1 <span class="sql-keyword">DataType</span>,
+    @Parameter2 <span class="sql-keyword">DataType</span>
+)
+<span class="sql-keyword">RETURNS TABLE</span>
+<span class="sql-keyword">AS</span>
+<span class="sql-keyword">RETURN</span>
+(
+    <span class="sql-comment">-- Single SELECT statement</span>
+    <span class="sql-keyword">SELECT</span> Column1, Column2, ...
+    <span class="sql-keyword">FROM</span> TableName
+    <span class="sql-keyword">WHERE</span> <span class="sql-comment">/* conditions using parameters */</span>
+);
+<span class="sql-keyword">GO</span></code></pre>
+<h3>Example 1: Parameterized View</h3>
+<div class="example-box">
+<h4>Get Customer Orders by Date Range</h4>
+<pre><code><span class="sql-keyword">CREATE FUNCTION</span> dbo.fn_GetCustomerOrdersByDate
+(
+    @CustomerID <span class="sql-keyword">INT</span>,
+    @StartDate <span class="sql-keyword">DATE</span>,
+    @EndDate <span class="sql-keyword">DATE</span>
+)
+<span class="sql-keyword">RETURNS TABLE</span>
+<span class="sql-keyword">AS</span>
+<span class="sql-keyword">RETURN</span>
+(
+    <span class="sql-keyword">SELECT</span> 
+        o.OrderID,
+        o.OrderDate,
+        o.TotalAmount,
+        o.Status,
+        <span class="sql-function">COUNT</span>(oi.OrderItemID) <span class="sql-keyword">AS</span> ItemCount
+    <span class="sql-keyword">FROM</span> Orders o
+    <span class="sql-keyword">INNER JOIN</span> OrderItems oi <span class="sql-keyword">ON</span> o.OrderID = oi.OrderID
+    <span class="sql-keyword">WHERE</span> o.CustomerID = @CustomerID
+        <span class="sql-keyword">AND</span> o.OrderDate &gt;= @StartDate
+        <span class="sql-keyword">AND</span> o.OrderDate &lt; <span class="sql-function">DATEADD</span>(<span class="sql-keyword">DAY</span>, 1, @EndDate)
+    <span class="sql-keyword">GROUP BY</span> o.OrderID, o.OrderDate, o.TotalAmount, o.Status
+);
+<span class="sql-keyword">GO</span>
+
+<span class="sql-comment">-- Usage</span>
+<span class="sql-keyword">SELECT</span> *
+<span class="sql-keyword">FROM</span> dbo.fn_GetCustomerOrdersByDate(1, <span class="sql-string">'2024-01-01'</span>, <span class="sql-string">'2024-12-31'</span>);
+
+<span class="sql-comment">-- Can join with other tables</span>
+<span class="sql-keyword">SELECT</span> 
+    c.FirstName,
+    c.LastName,
+    o.OrderID,
+    o.OrderDate,
+    o.TotalAmount
+<span class="sql-keyword">FROM</span> Customers c
+<span class="sql-keyword">CROSS APPLY</span> dbo.fn_GetCustomerOrdersByDate(c.CustomerID, <span class="sql-string">'2024-01-01'</span>, <span class="sql-string">'2024-12-31'</span>) o
+<span class="sql-keyword">WHERE</span> c.CustomerID <span class="sql-keyword">IN</span> (1, 2, 3);</code></pre>
+</div>
+<h3>Example 2: Complex Filtering Logic</h3>
+<div class="example-box">
+<h4>Get Products by Category with Stock Filter</h4>
+<pre><code><span class="sql-keyword">CREATE FUNCTION</span> dbo.fn_GetProductsByCategory
+(
+    @CategoryID <span class="sql-keyword">INT</span>,
+    @MinStock <span class="sql-keyword">INT</span> = 0,
+    @InStockOnly <span class="sql-keyword">BIT</span> = 0
+)
+<span class="sql-keyword">RETURNS TABLE</span>
+<span class="sql-keyword">AS</span>
+<span class="sql-keyword">RETURN</span>
+(
+    <span class="sql-keyword">SELECT</span> 
+        p.ProductID,
+        p.ProductName,
+        p.UnitPrice,
+        p.StockQuantity,
+        p.CategoryID,
+        <span class="sql-keyword">CASE</span> 
+            <span class="sql-keyword">WHEN</span> p.StockQuantity &gt; 0 <span class="sql-keyword">THEN</span> <span class="sql-string">'In Stock'</span>
+            <span class="sql-keyword">ELSE</span> <span class="sql-string">'Out of Stock'</span>
+        <span class="sql-keyword">END</span> <span class="sql-keyword">AS</span> StockStatus
+    <span class="sql-keyword">FROM</span> Products p
+    <span class="sql-keyword">WHERE</span> p.CategoryID = @CategoryID
+        <span class="sql-keyword">AND</span> p.StockQuantity &gt;= @MinStock
+        <span class="sql-keyword">AND</span> (@InStockOnly = 0 <span class="sql-keyword">OR</span> p.StockQuantity &gt; 0)
+);
+<span class="sql-keyword">GO</span>
+
+<span class="sql-comment">-- Usage examples</span>
+<span class="sql-comment">-- All products in category 1</span>
+<span class="sql-keyword">SELECT</span> * <span class="sql-keyword">FROM</span> dbo.fn_GetProductsByCategory(1, 0, 0);
+
+<span class="sql-comment">-- Only in-stock products in category 1</span>
+<span class="sql-keyword">SELECT</span> * <span class="sql-keyword">FROM</span> dbo.fn_GetProductsByCategory(1, 0, 1);
+
+<span class="sql-comment">-- Products with at least 10 units in stock</span>
+<span class="sql-keyword">SELECT</span> * <span class="sql-keyword">FROM</span> dbo.fn_GetProductsByCategory(1, 10, 0);</code></pre>
+</div>
+<h3>Example 3: Using Foreign Key Relationships</h3>
+<div class="example-box">
+<h4>Get Order Details with Related Data</h4>
+<pre><code><span class="sql-keyword">CREATE FUNCTION</span> dbo.fn_GetOrderDetails
+(
+    @OrderID <span class="sql-keyword">INT</span>
+)
+<span class="sql-keyword">RETURNS TABLE</span>
+<span class="sql-keyword">AS</span>
+<span class="sql-keyword">RETURN</span>
+(
+    <span class="sql-keyword">SELECT</span> 
+        o.OrderID,
+        o.OrderDate,
+        o.Status,
+        c.CustomerID,
+        c.FirstName + <span class="sql-string">' '</span> + c.LastName <span class="sql-keyword">AS</span> CustomerName,
+        c.Email,
+        oi.OrderItemID,
+        p.ProductID,
+        p.ProductName,
+        oi.Quantity,
+        oi.UnitPrice,
+        oi.LineTotal
+    <span class="sql-keyword">FROM</span> Orders o
+    <span class="sql-keyword">INNER JOIN</span> Customers c <span class="sql-keyword">ON</span> o.CustomerID = c.CustomerID
+    <span class="sql-keyword">INNER JOIN</span> OrderItems oi <span class="sql-keyword">ON</span> o.OrderID = oi.OrderID
+    <span class="sql-keyword">INNER JOIN</span> Products p <span class="sql-keyword">ON</span> oi.ProductID = p.ProductID
+    <span class="sql-keyword">WHERE</span> o.OrderID = @OrderID
+);
+<span class="sql-keyword">GO</span>
+
+<span class="sql-comment">-- Usage</span>
+<span class="sql-keyword">SELECT</span> * <span class="sql-keyword">FROM</span> dbo.fn_GetOrderDetails(1);
+
+<span class="sql-comment">-- Can filter further</span>
+<span class="sql-keyword">SELECT</span> ProductName, Quantity, LineTotal
+<span class="sql-keyword">FROM</span> dbo.fn_GetOrderDetails(1)
+<span class="sql-keyword">WHERE</span> Quantity &gt; 1;</code></pre>
+</div>
+<div class="best-practice"><strong>✅ Best Practice:</strong> Prefer inline table-valued functions over multi-statement TVFs. They offer excellent performance because SQL Server can optimize them with the outer query, similar to how it handles views.</div>
+</section>
+<section id="multi-statement-tvf">
+<h2>Multi-Statement Table-Valued Functions</h2>
+<p>Multi-statement table-valued functions (MSTVFs) allow complex logic with multiple statements, but sacrifice performance optimization.</p>
+<h3>Multi-Statement TVF Syntax</h3>
+<pre><code><span class="sql-keyword">CREATE FUNCTION</span> dbo.FunctionName
+(
+    @Parameter1 <span class="sql-keyword">DataType</span>
+)
+<span class="sql-keyword">RETURNS</span> @ResultTable <span class="sql-keyword">TABLE</span>
+(
+    Column1 <span class="sql-keyword">DataType</span>,
+    Column2 <span class="sql-keyword">DataType</span>,
+    ...
+)
+<span class="sql-keyword">AS</span>
+<span class="sql-keyword">BEGIN</span>
+    <span class="sql-comment">-- Multiple statements allowed</span>
+    <span class="sql-keyword">INSERT INTO</span> @ResultTable (Column1, Column2)
+    <span class="sql-keyword">SELECT</span> ...
+    
+    <span class="sql-comment">-- More logic</span>
+    <span class="sql-keyword">UPDATE</span> @ResultTable ...
+    
+    <span class="sql-keyword">RETURN</span>;
+<span class="sql-keyword">END</span>;
+<span class="sql-keyword">GO</span></code></pre>
+<h3>Example 1: Hierarchical Data Processing</h3>
+<div class="example-box">
+<h4>Get Employee Hierarchy</h4>
+<pre><code><span class="sql-comment">-- Sample Employees table structure</span>
+<span class="sql-keyword">CREATE TABLE</span> Employees (
+    EmployeeID <span class="sql-keyword">INT</span> <span class="sql-keyword">PRIMARY KEY</span>,
+    FirstName <span class="sql-keyword">NVARCHAR</span>(50),
+    LastName <span class="sql-keyword">NVARCHAR</span>(50),
+    ManagerID <span class="sql-keyword">INT</span>,
+    JobTitle <span class="sql-keyword">NVARCHAR</span>(100)
+);
+
+<span class="sql-keyword">CREATE FUNCTION</span> dbo.fn_GetEmployeeHierarchy
+(
+    @ManagerID <span class="sql-keyword">INT</span>
+)
+<span class="sql-keyword">RETURNS</span> @Hierarchy <span class="sql-keyword">TABLE</span>
+(
+    EmployeeID <span class="sql-keyword">INT</span>,
+    FullName <span class="sql-keyword">NVARCHAR</span>(101),
+    JobTitle <span class="sql-keyword">NVARCHAR</span>(100),
+    Level <span class="sql-keyword">INT</span>,
+    Path <span class="sql-keyword">NVARCHAR</span>(500)
+)
+<span class="sql-keyword">AS</span>
+<span class="sql-keyword">BEGIN</span>
+    <span class="sql-comment">-- Insert the manager</span>
+    <span class="sql-keyword">INSERT INTO</span> @Hierarchy
+    <span class="sql-keyword">SELECT</span> 
+        EmployeeID,
+        FirstName + <span class="sql-string">' '</span> + LastName,
+        JobTitle,
+        0 <span class="sql-keyword">AS</span> Level,
+        <span class="sql-function">CAST</span>(EmployeeID <span class="sql-keyword">AS</span> <span class="sql-keyword">NVARCHAR</span>(500))
+    <span class="sql-keyword">FROM</span> Employees
+    <span class="sql-keyword">WHERE</span> EmployeeID = @ManagerID;
+    
+    <span class="sql-comment">-- Recursively get subordinates</span>
+    <span class="sql-keyword">DECLARE</span> @CurrentLevel <span class="sql-keyword">INT</span> = 0;
+    
+    <span class="sql-keyword">WHILE</span> <span class="sql-keyword">EXISTS</span> (<span class="sql-keyword">SELECT</span> 1 <span class="sql-keyword">FROM</span> @Hierarchy <span class="sql-keyword">WHERE</span> Level = @CurrentLevel)
+    <span class="sql-keyword">BEGIN</span>
+        <span class="sql-keyword">INSERT INTO</span> @Hierarchy
+        <span class="sql-keyword">SELECT</span> 
+            e.EmployeeID,
+            e.FirstName + <span class="sql-string">' '</span> + e.LastName,
+            e.JobTitle,
+            @CurrentLevel + 1,
+            h.Path + <span class="sql-string">' &gt; '</span> + <span class="sql-function">CAST</span>(e.EmployeeID <span class="sql-keyword">AS</span> <span class="sql-keyword">NVARCHAR</span>(500))
+        <span class="sql-keyword">FROM</span> Employees e
+        <span class="sql-keyword">INNER JOIN</span> @Hierarchy h <span class="sql-keyword">ON</span> e.ManagerID = h.EmployeeID
+        <span class="sql-keyword">WHERE</span> h.Level = @CurrentLevel;
+        
+        <span class="sql-keyword">SET</span> @CurrentLevel = @CurrentLevel + 1;
+    <span class="sql-keyword">END</span>
+    
+    <span class="sql-keyword">RETURN</span>;
+<span class="sql-keyword">END</span>;
+<span class="sql-keyword">GO</span>
+
+<span class="sql-comment">-- Usage</span>
+<span class="sql-keyword">SELECT</span> 
+    <span class="sql-function">REPLICATE</span>(<span class="sql-string">'  '</span>, Level) + FullName <span class="sql-keyword">AS</span> EmployeeName,
+    JobTitle,
+    Level
+<span class="sql-keyword">FROM</span> dbo.fn_GetEmployeeHierarchy(1)
+<span class="sql-keyword">ORDER BY</span> Path;</code></pre>
+</div>
+<h3>Example 2: Summary Table Generation</h3>
+<div class="example-box">
+<h4>Calculate Customer Statistics</h4>
+<pre><code><span class="sql-keyword">CREATE FUNCTION</span> dbo.fn_GetCustomerStatistics
+(
+    @Year <span class="sql-keyword">INT</span>
+)
+<span class="sql-keyword">RETURNS</span> @Stats <span class="sql-keyword">TABLE</span>
+(
+    CustomerID <span class="sql-keyword">INT</span>,
+    CustomerName <span class="sql-keyword">NVARCHAR</span>(101),
+    TotalOrders <span class="sql-keyword">INT</span>,
+    TotalSpent <span class="sql-keyword">DECIMAL</span>(10,2),
+    AverageOrderValue <span class="sql-keyword">DECIMAL</span>(10,2),
+    LastOrderDate <span class="sql-keyword">DATE</span>,
+    CustomerTier <span class="sql-keyword">NVARCHAR</span>(20)
+)
+<span class="sql-keyword">AS</span>
+<span class="sql-keyword">BEGIN</span>
+    <span class="sql-comment">-- Insert basic statistics</span>
+    <span class="sql-keyword">INSERT INTO</span> @Stats
+    <span class="sql-keyword">SELECT</span> 
+        c.CustomerID,
+        c.FirstName + <span class="sql-string">' '</span> + c.LastName,
+        <span class="sql-function">COUNT</span>(o.OrderID),
+        <span class="sql-function">SUM</span>(o.TotalAmount),
+        <span class="sql-function">AVG</span>(o.TotalAmount),
+        <span class="sql-function">MAX</span>(o.OrderDate),
+        <span class="sql-keyword">NULL</span> <span class="sql-comment">-- CustomerTier filled in next step</span>
+    <span class="sql-keyword">FROM</span> Customers c
+    <span class="sql-keyword">LEFT JOIN</span> Orders o <span class="sql-keyword">ON</span> c.CustomerID = o.CustomerID 
+        <span class="sql-keyword">AND</span> <span class="sql-function">YEAR</span>(o.OrderDate) = @Year
+    <span class="sql-keyword">GROUP BY</span> c.CustomerID, c.FirstName, c.LastName;
+    
+    <span class="sql-comment">-- Update customer tier based on spending</span>
+    <span class="sql-keyword">UPDATE</span> @Stats
+    <span class="sql-keyword">SET</span> CustomerTier = <span class="sql-keyword">CASE</span>
+        <span class="sql-keyword">WHEN</span> TotalSpent &gt;= 10000 <span class="sql-keyword">THEN</span> <span class="sql-string">'VIP'</span>
+        <span class="sql-keyword">WHEN</span> TotalSpent &gt;= 5000 <span class="sql-keyword">THEN</span> <span class="sql-string">'Gold'</span>
+        <span class="sql-keyword">WHEN</span> TotalSpent &gt;= 1000 <span class="sql-keyword">THEN</span> <span class="sql-string">'Silver'</span>
+        <span class="sql-keyword">WHEN</span> TotalSpent &gt; 0 <span class="sql-keyword">THEN</span> <span class="sql-string">'Bronze'</span>
+        <span class="sql-keyword">ELSE</span> <span class="sql-string">'No Orders'</span>
+    <span class="sql-keyword">END</span>;
+    
+    <span class="sql-keyword">RETURN</span>;
+<span class="sql-keyword">END</span>;
+<span class="sql-keyword">GO</span>
+
+<span class="sql-comment">-- Usage</span>
+<span class="sql-keyword">SELECT</span> *
+<span class="sql-keyword">FROM</span> dbo.fn_GetCustomerStatistics(2024)
+<span class="sql-keyword">WHERE</span> CustomerTier <span class="sql-keyword">IN</span> (<span class="sql-string">'VIP'</span>, <span class="sql-string">'Gold'</span>)
+<span class="sql-keyword">ORDER BY</span> TotalSpent <span class="sql-keyword">DESC</span>;</code></pre>
+</div>
+<h3>Example 3: Complex Data Transformation</h3>
+<div class="example-box">
+<h4>Generate Sales Report with Running Totals</h4>
+<pre><code><span class="sql-keyword">CREATE FUNCTION</span> dbo.fn_GetSalesReport
+(
+    @StartDate <span class="sql-keyword">DATE</span>,
+    @EndDate <span class="sql-keyword">DATE</span>
+)
+<span class="sql-keyword">RETURNS</span> @Report <span class="sql-keyword">TABLE</span>
+(
+    OrderDate <span class="sql-keyword">DATE</span>,
+    DailyOrders <span class="sql-keyword">INT</span>,
+    DailySales <span class="sql-keyword">DECIMAL</span>(10,2),
+    RunningTotal <span class="sql-keyword">DECIMAL</span>(10,2),
+    MovingAverage <span class="sql-keyword">DECIMAL</span>(10,2)
+)
+<span class="sql-keyword">AS</span>
+<span class="sql-keyword">BEGIN</span>
+    <span class="sql-comment">-- Get daily sales</span>
+    <span class="sql-keyword">INSERT INTO</span> @Report (OrderDate, DailyOrders, DailySales)
+    <span class="sql-keyword">SELECT</span> 
+        <span class="sql-function">CAST</span>(OrderDate <span class="sql-keyword">AS</span> <span class="sql-keyword">DATE</span>),
+        <span class="sql-function">COUNT</span>(*),
+        <span class="sql-function">SUM</span>(TotalAmount)
+    <span class="sql-keyword">FROM</span> Orders
+    <span class="sql-keyword">WHERE</span> OrderDate &gt;= @StartDate 
+        <span class="sql-keyword">AND</span> OrderDate &lt; <span class="sql-function">DATEADD</span>(<span class="sql-keyword">DAY</span>, 1, @EndDate)
+    <span class="sql-keyword">GROUP BY</span> <span class="sql-function">CAST</span>(OrderDate <span class="sql-keyword">AS</span> <span class="sql-keyword">DATE</span>);
+    
+    <span class="sql-comment">-- Calculate running total</span>
+    <span class="sql-keyword">DECLARE</span> @CurrentTotal <span class="sql-keyword">DECIMAL</span>(10,2) = 0;
+    <span class="sql-keyword">DECLARE</span> @CurrentDate <span class="sql-keyword">DATE</span>;
+    
+    <span class="sql-keyword">DECLARE</span> date_cursor <span class="sql-keyword">CURSOR FOR</span>
+        <span class="sql-keyword">SELECT</span> OrderDate <span class="sql-keyword">FROM</span> @Report <span class="sql-keyword">ORDER BY</span> OrderDate;
+    
+    <span class="sql-keyword">OPEN</span> date_cursor;
+    <span class="sql-keyword">FETCH NEXT FROM</span> date_cursor <span class="sql-keyword">INTO</span> @CurrentDate;
+    
+    <span class="sql-keyword">WHILE</span> @@FETCH_STATUS = 0
+    <span class="sql-keyword">BEGIN</span>
+        <span class="sql-keyword">UPDATE</span> @Report
+        <span class="sql-keyword">SET</span> @CurrentTotal = RunningTotal = @CurrentTotal + DailySales
+        <span class="sql-keyword">WHERE</span> OrderDate = @CurrentDate;
+        
+        <span class="sql-keyword">FETCH NEXT FROM</span> date_cursor <span class="sql-keyword">INTO</span> @CurrentDate;
+    <span class="sql-keyword">END</span>
+    
+    <span class="sql-keyword">CLOSE</span> date_cursor;
+    <span class="sql-keyword">DEALLOCATE</span> date_cursor;
+    
+    <span class="sql-comment">-- Calculate 7-day moving average</span>
+    <span class="sql-keyword">UPDATE</span> r1
+    <span class="sql-keyword">SET</span> MovingAverage = (
+        <span class="sql-keyword">SELECT</span> <span class="sql-function">AVG</span>(r2.DailySales)
+        <span class="sql-keyword">FROM</span> @Report r2
+        <span class="sql-keyword">WHERE</span> r2.OrderDate &lt;= r1.OrderDate
+            <span class="sql-keyword">AND</span> r2.OrderDate &gt;= <span class="sql-function">DATEADD</span>(<span class="sql-keyword">DAY</span>, -6, r1.OrderDate)
+    )
+    <span class="sql-keyword">FROM</span> @Report r1;
+    
+    <span class="sql-keyword">RETURN</span>;
+<span class="sql-keyword">END</span>;
+<span class="sql-keyword">GO</span>
+
+<span class="sql-comment">-- Usage</span>
+<span class="sql-keyword">SELECT</span> *
+<span class="sql-keyword">FROM</span> dbo.fn_GetSalesReport(<span class="sql-string">'2024-01-01'</span>, <span class="sql-string">'2024-01-31'</span>)
+<span class="sql-keyword">ORDER BY</span> OrderDate;</code></pre>
+</div>
+<div class="warning"><strong>⚠️ Performance Warning:</strong> Multi-statement TVFs often perform poorly because SQL Server cannot optimize them with the outer query. The table variable used internally can't use statistics. Consider rewriting as inline TVFs or stored procedures when possible.</div>
+</section>
+<section id="functions-vs-procedures">
+<h2>Functions vs Stored Procedures</h2>
+<p>Understanding the differences between functions and procedures is crucial for choosing the right tool for each task.</p>
+<h3>Key Differences</h3>
+<table>
+<thead>
+<tr>
+<th>Feature</th>
+<th>Functions</th>
+<th>Stored Procedures</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Return Type</strong></td>
+<td>Must return a value (scalar or table)</td>
+<td>Optional return status (integer only)</td>
+</tr>
+<tr>
+<td><strong>Use in Queries</strong></td>
+<td>✅ Can use in SELECT, WHERE, JOIN</td>
+<td>❌ Cannot use in queries</td>
+</tr>
+<tr>
+<td><strong>DML Operations</strong></td>
+<td>❌ Cannot modify database state</td>
+<td>✅ Can INSERT, UPDATE, DELETE</td>
+</tr>
+<tr>
+<td><strong>Transactions</strong></td>
+<td>❌ Cannot use BEGIN TRAN</td>
+<td>✅ Full transaction support</td>
+</tr>
+<tr>
+<td><strong>Error Handling</strong></td>
+<td>❌ No TRY...CATCH support</td>
+<td>✅ Full TRY...CATCH support</td>
+</tr>
+<tr>
+<td><strong>OUTPUT Parameters</strong></td>
+<td>❌ Not supported</td>
+<td>✅ Multiple OUTPUT parameters</td>
+</tr>
+<tr>
+<td><strong>Temp Tables</strong></td>
+<td>❌ Cannot create temp tables</td>
+<td>✅ Can create and use temp tables</td>
+</tr>
+<tr>
+<td><strong>EXEC Calls</strong></td>
+<td>❌ Cannot call procedures</td>
+<td>✅ Can call other procedures</td>
+</tr>
+<tr>
+<td><strong>Side Effects</strong></td>
+<td>Should be side-effect free</td>
+<td>Can have side effects</td>
+</tr>
+<tr>
+<td><strong>Purpose</strong></td>
+<td>Calculations and data retrieval</td>
+<td>Actions and data modification</td>
+</tr>
+</tbody>
+</table>
+<h3>When to Use Functions</h3>
+<div class="best-practice"><strong>✅ Use Functions When:</strong>
+<ul>
+<li>You need to use the result in a SELECT statement</li>
+<li>Performing calculations that don't modify data</li>
+<li>Creating reusable filtering or transformation logic</li>
+<li>Need to use results in WHERE or JOIN clauses</li>
+<li>Creating computed columns or indexed views</li>
+<li>Logic is purely read-only</li>
+<li>Need to return a table that can be joined</li>
+</ul>
+</div>
+<h3>When to Use Stored Procedures</h3>
+<div class="best-practice"><strong>✅ Use Stored Procedures When:</strong>
+<ul>
+<li>Performing INSERT, UPDATE, DELETE operations</li>
+<li>Need transaction management</li>
+<li>Require complex error handling</li>
+<li>Need to call other procedures</li>
+<li>Working with temp tables</li>
+<li>Need multiple OUTPUT parameters</li>
+<li>Performing administrative tasks</li>
+<li>Logic modifies database state</li>
+</ul>
+</div>
+<h3>Practical Example: Function vs Procedure</h3>
+<div class="example-box">
+<h4>Same Task - Different Approaches</h4>
+<pre><code><span class="sql-comment">-- FUNCTION: Get total order amount (read-only)</span>
+<span class="sql-keyword">CREATE FUNCTION</span> dbo.fn_GetOrderTotal
+(
+    @OrderID <span class="sql-keyword">INT</span>
+)
+<span class="sql-keyword">RETURNS</span> <span class="sql-keyword">DECIMAL</span>(10,2)
+<span class="sql-keyword">AS</span>
+<span class="sql-keyword">BEGIN</span>
+    <span class="sql-keyword">DECLARE</span> @Total <span class="sql-keyword">DECIMAL</span>(10,2);
+    
+    <span class="sql-keyword">SELECT</span> @Total = <span class="sql-function">SUM</span>(LineTotal)
+    <span class="sql-keyword">FROM</span> OrderItems
+    <span class="sql-keyword">WHERE</span> OrderID = @OrderID;
+    
+    <span class="sql-keyword">RETURN</span> <span class="sql-function">ISNULL</span>(@Total, 0);
+<span class="sql-keyword">END</span>;
+<span class="sql-keyword">GO</span>
+
+<span class="sql-comment">-- Usage in query</span>
+<span class="sql-keyword">SELECT</span> 
+    OrderID,
+    CustomerID,
+    dbo.fn_GetOrderTotal(OrderID) <span class="sql-keyword">AS</span> CalculatedTotal,
+    TotalAmount <span class="sql-keyword">AS</span> StoredTotal
+<span class="sql-keyword">FROM</span> Orders
+<span class="sql-keyword">WHERE</span> dbo.fn_GetOrderTotal(OrderID) &gt; 1000;
+
+<span class="sql-comment">-- PROCEDURE: Update order total (modifies data)</span>
+<span class="sql-keyword">CREATE PROCEDURE</span> usp_RecalculateOrderTotal
+    @OrderID <span class="sql-keyword">INT</span>,
+    @NewTotal <span class="sql-keyword">DECIMAL</span>(10,2) <span class="sql-keyword">OUTPUT</span>
+<span class="sql-keyword">AS</span>
+<span class="sql-keyword">BEGIN</span>
+    <span class="sql-keyword">SET NOCOUNT ON</span>;
+    
+    <span class="sql-keyword">BEGIN TRY</span>
+        <span class="sql-keyword">BEGIN TRANSACTION</span>;
+        
+        <span class="sql-comment">-- Calculate new total</span>
+        <span class="sql-keyword">SELECT</span> @NewTotal = <span class="sql-function">SUM</span>(LineTotal)
+        <span class="sql-keyword">FROM</span> OrderItems
+        <span class="sql-keyword">WHERE</span> OrderID = @OrderID;
+        
+        <span class="sql-keyword">SET</span> @NewTotal = <span class="sql-function">ISNULL</span>(@NewTotal, 0);
+        
+        <span class="sql-comment">-- Update order</span>
+        <span class="sql-keyword">UPDATE</span> Orders
+        <span class="sql-keyword">SET</span> TotalAmount = @NewTotal
+        <span class="sql-keyword">WHERE</span> OrderID = @OrderID;
+        
+        <span class="sql-keyword">COMMIT TRANSACTION</span>;
+        <span class="sql-keyword">RETURN</span> 0;
+    <span class="sql-keyword">END TRY</span>
+    <span class="sql-keyword">BEGIN CATCH</span>
+        <span class="sql-keyword">IF</span> @@TRANCOUNT &gt; 0
+            <span class="sql-keyword">ROLLBACK TRANSACTION</span>;
+        <span class="sql-keyword">THROW</span>;
+    <span class="sql-keyword">END CATCH</span>
+<span class="sql-keyword">END</span>;
+<span class="sql-keyword">GO</span>
+
+<span class="sql-comment">-- Usage</span>
+<span class="sql-keyword">DECLARE</span> @Total <span class="sql-keyword">DECIMAL</span>(10,2);
+<span class="sql-keyword">EXEC</span> usp_RecalculateOrderTotal @OrderID = 1, @NewTotal = @Total <span class="sql-keyword">OUTPUT</span>;
+<span class="sql-keyword">SELECT</span> @Total <span class="sql-keyword">AS</span> NewTotal;</code></pre>
+</div>
+</section>
+<section id="limitations">
+<h2>Function Limitations</h2>
+<p>Functions have important restrictions that developers must understand to use them effectively.</p>
+<h3>Cannot Modify Database State</h3>
+<div class="warning"><strong>⚠️ Prohibited Operations in Functions:</strong>
+<ul>
+<li>INSERT, UPDATE, DELETE on permanent tables</li>
+<li>Cannot call stored procedures</li>
+<li>Cannot create or modify database objects (tables, views, etc.)</li>
+<li>Cannot use EXEC to execute dynamic SQL (exception: with SCHEMABINDING)</li>
+<li>Cannot use RAISERROR or THROW</li>
+<li>Cannot use BEGIN TRANSACTION</li>
+<li>Cannot create temp tables (#temp)</li>
+<li>Cannot use cursors that UPDATE or DELETE</li>
+</ul>
+</div>
+<h3>What Functions CAN Do</h3>
+<div class="best-practice"><strong>✅ Allowed Operations:</strong>
+<ul>
+<li>SELECT statements (read data)</li>
+<li>Declare and use table variables (@table)</li>
+<li>Use cursors for read-only operations</li>
+<li>Call other functions</li>
+<li>Perform calculations and transformations</li>
+<li>Return scalar values or tables</li>
+<li>Use all built-in functions</li>
+</ul>
+</div>
+<h3>Error Handling Limitations</h3>
+<pre><code><span class="sql-comment">-- Functions cannot use TRY...CATCH</span>
+<span class="sql-keyword">CREATE FUNCTION</span> dbo.fn_SafeDivide
+(
+    @Numerator <span class="sql-keyword">DECIMAL</span>(10,2),
+    @Denominator <span class="sql-keyword">DECIMAL</span>(10,2)
+)
+<span class="sql-keyword">RETURNS</span> <span class="sql-keyword">DECIMAL</span>(10,2)
+<span class="sql-keyword">AS</span>
+<span class="sql-keyword">BEGIN</span>
+    <span class="sql-keyword">DECLARE</span> @Result <span class="sql-keyword">DECIMAL</span>(10,2);
+    
+    <span class="sql-comment">-- Must handle errors with conditional logic</span>
+    <span class="sql-keyword">IF</span> @Denominator = 0
+        <span class="sql-keyword">SET</span> @Result = <span class="sql-keyword">NULL</span>; <span class="sql-comment">-- or 0, or some default</span>
+    <span class="sql-keyword">ELSE</span>
+        <span class="sql-keyword">SET</span> @Result = @Numerator / @Denominator;
+    
+    <span class="sql-keyword">RETURN</span> @Result;
+<span class="sql-keyword">END</span>;
+<span class="sql-keyword">GO</span>
+
+<span class="sql-comment">-- Usage</span>
+<span class="sql-keyword">SELECT</span> 
+    ProductID,
+    TotalSales,
+    UnitsSold,
+    dbo.fn_SafeDivide(TotalSales, UnitsSold) <span class="sql-keyword">AS</span> AveragePrice
+<span class="sql-keyword">FROM</span> ProductSummary;</code></pre>
+<h3>Deterministic vs Non-Deterministic</h3>
+<table>
+<thead>
+<tr>
+<th>Type</th>
+<th>Description</th>
+<th>Examples</th>
+<th>Can Use in Indexes</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Deterministic</strong></td>
+<td>Always returns same result for same inputs</td>
+<td>Mathematical calculations, string operations</td>
+<td>✅ Yes</td>
+</tr>
+<tr>
+<td><strong>Non-Deterministic</strong></td>
+<td>May return different results for same inputs</td>
+<td>GETDATE(), NEWID(), RAND()</td>
+<td>❌ No</td>
+</tr>
+</tbody>
+</table>
+<h3>Schema Binding</h3>
+<pre><code><span class="sql-comment">-- SCHEMABINDING prevents changes to underlying objects</span>
+<span class="sql-keyword">CREATE FUNCTION</span> dbo.fn_GetProductPrice
+(
+    @ProductID <span class="sql-keyword">INT</span>
+)
+<span class="sql-keyword">RETURNS</span> <span class="sql-keyword">DECIMAL</span>(10,2)
+<span class="sql-keyword">WITH SCHEMABINDING</span>  <span class="sql-comment">-- Locks schema of referenced objects</span>
+<span class="sql-keyword">AS</span>
+<span class="sql-keyword">BEGIN</span>
+    <span class="sql-keyword">DECLARE</span> @Price <span class="sql-keyword">DECIMAL</span>(10,2);
+    
+    <span class="sql-comment">-- Must use two-part names with SCHEMABINDING</span>
+    <span class="sql-keyword">SELECT</span> @Price = UnitPrice
+    <span class="sql-keyword">FROM</span> dbo.Products  <span class="sql-comment">-- Must include schema</span>
+    <span class="sql-keyword">WHERE</span> ProductID = @ProductID;
+    
+    <span class="sql-keyword">RETURN</span> @Price;
+<span class="sql-keyword">END</span>;
+<span class="sql-keyword">GO</span>
+
+<span class="sql-comment">-- Now Products table cannot be dropped or altered</span>
+<span class="sql-comment">-- without first dropping the function</span></code></pre>
+<div class="tip"><strong>💡 Schema Binding Benefits:</strong>
+<ul>
+<li>Makes functions deterministic (if they otherwise would be)</li>
+<li>Required for indexed views and persisted computed columns</li>
+<li>Prevents accidental schema changes</li>
+<li>Can improve performance</li>
+</ul>
+</div>
+</section>
+<section id="using-functions">
+<h2>Using Functions in Queries</h2>
+<p>Functions can be integrated into SQL queries in various ways, offering flexibility in how you work with data.</p>
+<h3>Scalar Functions in SELECT</h3>
+<pre><code><span class="sql-comment">-- Use in column list</span>
+<span class="sql-keyword">SELECT</span> 
+    CustomerID,
+    FirstName,
+    LastName,
+    BirthDate,
+    dbo.fn_CalculateAge(BirthDate) <span class="sql-keyword">AS</span> Age
+<span class="sql-keyword">FROM</span> Customers;
+
+<span class="sql-comment">-- Use in calculations</span>
+<span class="sql-keyword">SELECT</span> 
+    OrderID,
+    TotalAmount,
+    dbo.fn_GetCustomerDiscount(CustomerID, TotalAmount) <span class="sql-keyword">AS</span> Discount,
+    TotalAmount - dbo.fn_GetCustomerDiscount(CustomerID, TotalAmount) <span class="sql-keyword">AS</span> FinalAmount
+<span class="sql-keyword">FROM</span> Orders;</code></pre>
+<h3>Scalar Functions in WHERE</h3>
+<pre><code><span class="sql-comment">-- Filter using function results</span>
+<span class="sql-keyword">SELECT</span> CustomerID, FirstName, LastName, BirthDate
+<span class="sql-keyword">FROM</span> Customers
+<span class="sql-keyword">WHERE</span> dbo.fn_CalculateAge(BirthDate) &gt;= 18
+    <span class="sql-keyword">AND</span> dbo.fn_CalculateAge(BirthDate) &lt; 65;
+
+<span class="sql-comment">-- Complex filtering</span>
+<span class="sql-keyword">SELECT</span> *
+<span class="sql-keyword">FROM</span> Orders
+<span class="sql-keyword">WHERE</span> dbo.fn_GetCustomerDiscount(CustomerID, TotalAmount) &gt; 50.00;</code></pre>
+<h3>Table-Valued Functions with CROSS APPLY</h3>
+<pre><code><span class="sql-comment">-- CROSS APPLY: Returns results only when function returns rows</span>
+<span class="sql-keyword">SELECT</span> 
+    c.CustomerID,
+    c.FirstName,
+    c.LastName,
+    o.OrderID,
+    o.OrderDate,
+    o.TotalAmount
+<span class="sql-keyword">FROM</span> Customers c
+<span class="sql-keyword">CROSS APPLY</span> dbo.fn_GetCustomerOrdersByDate(
+    c.CustomerID, 
+    <span class="sql-string">'2024-01-01'</span>, 
+    <span class="sql-string">'2024-12-31'</span>
+) o
+<span class="sql-keyword">WHERE</span> c.CustomerID &lt;= 10;</code></pre>
+<h3>Table-Valued Functions with OUTER APPLY</h3>
+<pre><code><span class="sql-comment">-- OUTER APPLY: Returns all left rows even if function returns no rows</span>
+<span class="sql-keyword">SELECT</span> 
+    c.CustomerID,
+    c.FirstName,
+    c.LastName,
+    o.OrderID,
+    o.OrderDate,
+    o.TotalAmount
+<span class="sql-keyword">FROM</span> Customers c
+<span class="sql-keyword">OUTER APPLY</span> dbo.fn_GetCustomerOrdersByDate(
+    c.CustomerID, 
+    <span class="sql-string">'2024-01-01'</span>, 
+    <span class="sql-string">'2024-12-31'</span>
+) o
+<span class="sql-keyword">WHERE</span> c.CustomerID &lt;= 10;
+
+<span class="sql-comment">-- Shows customers with no orders as NULL values</span></code></pre>
+<h3>Table-Valued Functions in JOIN</h3>
+<pre><code><span class="sql-comment">-- JOIN with table-valued function</span>
+<span class="sql-keyword">SELECT</span> 
+    p.ProductID,
+    p.ProductName,
+    prod.StockStatus
+<span class="sql-keyword">FROM</span> Products p
+<span class="sql-keyword">INNER JOIN</span> dbo.fn_GetProductsByCategory(1, 0, 1) prod
+    <span class="sql-keyword">ON</span> p.ProductID = prod.ProductID;</code></pre>
+<h3>Functions in Computed Columns</h3>
+<pre><code><span class="sql-comment">-- Add computed column using function</span>
+<span class="sql-keyword">ALTER TABLE</span> Customers
+<span class="sql-keyword">ADD</span> Age <span class="sql-keyword">AS</span> dbo.fn_CalculateAge(BirthDate);
+
+<span class="sql-comment">-- Persisted computed column (stored physically)</span>
+<span class="sql-keyword">ALTER TABLE</span> Customers
+<span class="sql-keyword">ADD</span> AgeGroup <span class="sql-keyword">AS</span> (
+    <span class="sql-keyword">CASE</span> 
+        <span class="sql-keyword">WHEN</span> dbo.fn_CalculateAge(BirthDate) &lt; 18 <span class="sql-keyword">THEN</span> <span class="sql-string">'Minor'</span>
+        <span class="sql-keyword">WHEN</span> dbo.fn_CalculateAge(BirthDate) &lt; 65 <span class="sql-keyword">THEN</span> <span class="sql-string">'Adult'</span>
+        <span class="sql-keyword">ELSE</span> <span class="sql-string">'Senior'</span>
+    <span class="sql-keyword">END</span>
+) <span class="sql-keyword">PERSISTED</span>;</code></pre>
+<h3>Functions in ORDER BY and GROUP BY</h3>
+<pre><code><span class="sql-comment">-- ORDER BY using function</span>
+<span class="sql-keyword">SELECT</span> FirstName, LastName, BirthDate
+<span class="sql-keyword">FROM</span> Customers
+<span class="sql-keyword">ORDER BY</span> dbo.fn_CalculateAge(BirthDate) <span class="sql-keyword">DESC</span>;
+
+<span class="sql-comment">-- GROUP BY using function</span>
+<span class="sql-keyword">SELECT</span> 
+    dbo.fn_CalculateAge(BirthDate) <span class="sql-keyword">AS</span> Age,
+    <span class="sql-function">COUNT</span>(*) <span class="sql-keyword">AS</span> CustomerCount
+<span class="sql-keyword">FROM</span> Customers
+<span class="sql-keyword">GROUP BY</span> dbo.fn_CalculateAge(BirthDate)
+<span class="sql-keyword">ORDER BY</span> Age;</code></pre>
+</section>
+<section id="performance">
+<h2>Performance Considerations</h2>
+<p>Understanding function performance characteristics is critical for building efficient database applications.</p>
+<h3>Performance by Function Type</h3>
+<table>
+<thead>
+<tr>
+<th>Function Type</th>
+<th>Performance</th>
+<th>Why</th>
+<th>Recommendation</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Inline TVF</strong></td>
+<td>⭐⭐⭐⭐⭐ Excellent</td>
+<td>Query optimizer treats like a view</td>
+<td>Preferred for table returns</td>
+</tr>
+<tr>
+<td><strong>Scalar UDF (simple)</strong></td>
+<td>⭐⭐⭐ Moderate</td>
+<td>Executes once per row</td>
+<td>OK for small datasets</td>
+</tr>
+<tr>
+<td><strong>Scalar UDF (complex)</strong></td>
+<td>⭐⭐ Poor</td>
+<td>Prevents parallelism, no optimization</td>
+<td>Avoid in WHERE/large datasets</td>
+</tr>
+<tr>
+<td><strong>Multi-Statement TVF</strong></td>
+<td>⭐⭐ Poor</td>
+<td>Table variable, no statistics</td>
+<td>Use only when necessary</td>
+</tr>
+</tbody>
+</table>
+<h3>Scalar Function Performance Issues</h3>
+<div class="warning"><strong>⚠️ Common Performance Problems:</strong>
+<ul>
+<li><strong>Row-by-Row Execution:</strong> Function executes once for each row</li>
+<li><strong>Prevents Parallelism:</strong> Queries using UDFs can't use parallel execution</li>
+<li><strong>No Index Usage:</strong> Functions in WHERE clause prevent index seeks</li>
+<li><strong>Statistics Ignored:</strong> Optimizer can't estimate cardinality accurately</li>
+<li><strong>No Inlining:</strong> Function body not merged with outer query (pre-SQL 2019)</li>
+</ul>
+</div>
+<h3>Performance Example: Scalar Function Problem</h3>
+<div class="example-box">
+<h4>Slow Query with Scalar Function</h4>
+<pre><code><span class="sql-comment">-- SLOW: Function executes for EVERY row</span>
+<span class="sql-keyword">SELECT</span> 
+    OrderID,
+    CustomerID,
+    TotalAmount,
+    dbo.fn_GetCustomerDiscount(CustomerID, TotalAmount) <span class="sql-keyword">AS</span> Discount
+<span class="sql-keyword">FROM</span> Orders  <span class="sql-comment">-- 1 million rows</span>
+<span class="sql-keyword">WHERE</span> dbo.fn_GetCustomerDiscount(CustomerID, TotalAmount) &gt; 100;
+
+<span class="sql-comment">-- Function executes 1 million times in SELECT</span>
+<span class="sql-comment">-- Function executes 1 million times in WHERE</span>
+<span class="sql-comment">-- Total: 2 million function calls!</span>
+
+<span class="sql-comment">-- BETTER: Calculate once using CROSS APPLY or CTE</span>
+<span class="sql-keyword">WITH</span> OrdersWithDiscount <span class="sql-keyword">AS</span> (
+    <span class="sql-keyword">SELECT</span> 
+        OrderID,
+        CustomerID,
+        TotalAmount,
+        dbo.fn_GetCustomerDiscount(CustomerID, TotalAmount) <span class="sql-keyword">AS</span> Discount
+    <span class="sql-keyword">FROM</span> Orders
+)
+<span class="sql-keyword">SELECT</span> *
+<span class="sql-keyword">FROM</span> OrdersWithDiscount
+<span class="sql-keyword">WHERE</span> Discount &gt; 100;
+
+<span class="sql-comment">-- Function executes 1 million times total (not 2 million)</span></code></pre>
+</div>
+<h3>Optimization Techniques</h3>
+<h4>1. Convert Scalar to Inline TVF</h4>
+<pre><code><span class="sql-comment">-- BEFORE: Scalar function</span>
+<span class="sql-keyword">CREATE FUNCTION</span> dbo.fn_GetProductPrice_Scalar(@ProductID <span class="sql-keyword">INT</span>)
+<span class="sql-keyword">RETURNS</span> <span class="sql-keyword">DECIMAL</span>(10,2)
+<span class="sql-keyword">AS</span>
+<span class="sql-keyword">BEGIN</span>
+    <span class="sql-keyword">RETURN</span> (<span class="sql-keyword">SELECT</span> UnitPrice <span class="sql-keyword">FROM</span> Products <span class="sql-keyword">WHERE</span> ProductID = @ProductID);
+<span class="sql-keyword">END</span>;
+
+<span class="sql-comment">-- AFTER: Inline TVF (much faster)</span>
+<span class="sql-keyword">CREATE FUNCTION</span> dbo.fn_GetProductPrice_Inline(@ProductID <span class="sql-keyword">INT</span>)
+<span class="sql-keyword">RETURNS TABLE</span>
+<span class="sql-keyword">AS</span>
+<span class="sql-keyword">RETURN</span>
+(
+    <span class="sql-keyword">SELECT</span> UnitPrice
+    <span class="sql-keyword">FROM</span> Products
+    <span class="sql-keyword">WHERE</span> ProductID = @ProductID
+);
+
+<span class="sql-comment">-- Usage with CROSS APPLY</span>
+<span class="sql-keyword">SELECT</span> oi.OrderItemID, oi.ProductID, p.UnitPrice
+<span class="sql-keyword">FROM</span> OrderItems oi
+<span class="sql-keyword">CROSS APPLY</span> dbo.fn_GetProductPrice_Inline(oi.ProductID) p;</code></pre>
+<h4>2. Use CROSS APPLY for Better Performance</h4>
+<pre><code><span class="sql-comment">-- Inline TVF with CROSS APPLY allows optimization</span>
+<span class="sql-keyword">SELECT</span> 
+    c.CustomerID,
+    c.FirstName,
+    stats.TotalOrders,
+    stats.TotalSpent
+<span class="sql-keyword">FROM</span> Customers c
+<span class="sql-keyword">CROSS APPLY</span> (
+    <span class="sql-keyword">SELECT</span> 
+        <span class="sql-function">COUNT</span>(*) <span class="sql-keyword">AS</span> TotalOrders,
+        <span class="sql-function">SUM</span>(TotalAmount) <span class="sql-keyword">AS</span> TotalSpent
+    <span class="sql-keyword">FROM</span> Orders o
+    <span class="sql-keyword">WHERE</span> o.CustomerID = c.CustomerID
+) stats;</code></pre>
+<h4>3. SQL Server 2019+ Scalar UDF Inlining</h4>
+<pre><code><span class="sql-comment">-- SQL Server 2019 and later can inline simple scalar functions</span>
+<span class="sql-comment">-- Requirements for inlining:</span>
+<span class="sql-comment">-- 1. Function is schema-bound</span>
+<span class="sql-comment">-- 2. No recursive calls</span>
+<span class="sql-comment">-- 3. No table variables</span>
+<span class="sql-comment">-- 4. Simple logic (assignments, RETURN)</span>
+
+<span class="sql-keyword">CREATE FUNCTION</span> dbo.fn_CalculateTax
+(
+    @Amount <span class="sql-keyword">DECIMAL</span>(10,2),
+    @TaxRate <span class="sql-keyword">DECIMAL</span>(5,2)
+)
+<span class="sql-keyword">RETURNS</span> <span class="sql-keyword">DECIMAL</span>(10,2)
+<span class="sql-keyword">WITH SCHEMABINDING</span>, <span class="sql-keyword">INLINE</span> = <span class="sql-keyword">ON</span>  <span class="sql-comment">-- Hint for inlining</span>
+<span class="sql-keyword">AS</span>
+<span class="sql-keyword">BEGIN</span>
+    <span class="sql-keyword">RETURN</span> @Amount * @TaxRate;
+<span class="sql-keyword">END</span>;
+
+<span class="sql-comment">-- Check if function can be inlined</span>
+<span class="sql-keyword">SELECT</span> 
+    name,
+    is_inlineable
+<span class="sql-keyword">FROM</span> sys.sql_modules
+<span class="sql-keyword">WHERE</span> object_id = <span class="sql-function">OBJECT_ID</span>(<span class="sql-string">'dbo.fn_CalculateTax'</span>);</code></pre>
+<div class="tip"><strong>💡 Performance Tips:</strong>
+<ul>
+<li>Always prefer inline TVFs over multi-statement TVFs</li>
+<li>Avoid scalar functions in WHERE clauses on large tables</li>
+<li>Use SCHEMABINDING when possible</li>
+<li>Test with actual execution plans to identify bottlenecks</li>
+<li>Consider computed columns for frequently accessed calculations</li>
+<li>In SQL Server 2019+, enable scalar UDF inlining</li>
+</ul>
+</div>
+</section>
+<section id="advantages">
+<h2>Advantages of Functions</h2>
+<div class="pros">
+<h4>✅ Key Advantages</h4>
+<ul>
+<li><strong>Reusability:</strong> Write once, use in multiple queries and applications</li>
+<li><strong>Query Integration:</strong> Use directly in SELECT, WHERE, JOIN clauses</li>
+<li><strong>Code Encapsulation:</strong> Hide complex logic behind simple interfaces</li>
+<li><strong>Maintainability:</strong> Change logic in one place, affects all uses</li>
+<li><strong>Readability:</strong> Makes queries more readable with descriptive names</li>
+<li><strong>Parameterization:</strong> Create flexible, parameterized views</li>
+<li><strong>Business Logic:</strong> Encode business rules in database layer</li>
+<li><strong>Security:</strong> Grant EXECUTE without exposing table structure</li>
+<li><strong>Computed Columns:</strong> Can use in persisted computed columns</li>
+<li><strong>Indexed Views:</strong> Schema-bound deterministic functions work in indexed views</li>
+<li><strong>Consistency:</strong> Ensures same calculation logic everywhere</li>
+</ul>
+</div>
+<h3>Specific Benefits by Type</h3>
+<table>
+<thead>
+<tr>
+<th>Function Type</th>
+<th>Primary Benefits</th>
+<th>Best Use Cases</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Scalar</strong></td>
+<td>Simple calculations, data transformations</td>
+<td>Age calculations, formatting, conversions</td>
+</tr>
+<tr>
+<td><strong>Inline TVF</strong></td>
+<td>Excellent performance, parameterized views</td>
+<td>Complex filtering, joining with parameters</td>
+</tr>
+<tr>
+<td><strong>Multi-Statement TVF</strong></td>
+<td>Complex multi-step logic, hierarchies</td>
+<td>Hierarchical data, complex transformations</td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="disadvantages">
+<h2>Disadvantages &amp; When Not to Use</h2>
+<div class="cons">
+<h4>❌ Key Disadvantages</h4>
+<ul>
+<li><strong>Performance:</strong> Scalar functions can severely degrade query performance</li>
+<li><strong>Cannot Modify Data:</strong> Read-only, can't INSERT/UPDATE/DELETE</li>
+<li><strong>No Error Handling:</strong> Can't use TRY...CATCH</li>
+<li><strong>No Transactions:</strong> Can't use BEGIN TRAN</li>
+<li><strong>Limited Debugging:</strong> Harder to debug than procedures</li>
+<li><strong>Table Variable Limitations:</strong> MSTVFs suffer from lack of statistics</li>
+<li><strong>Optimization Barriers:</strong> Prevent parallelism and optimization</li>
+<li><strong>Context Switches:</strong> Row-by-row execution causes overhead</li>
+<li><strong>No Temp Tables:</strong> Can't use #temp tables</li>
+<li><strong>Network Overhead:</strong> Complex functions increase execution time</li>
+</ul>
+</div>
+<h3>When NOT to Use Functions</h3>
+<div class="warning"><strong>❌ Avoid Functions When:</strong>
+<ul>
+<li>You need to modify data (INSERT, UPDATE, DELETE)</li>
+<li>You need transaction management</li>
+<li>You need complex error handling with TRY...CATCH</li>
+<li>Performance is critical and dataset is large</li>
+<li>You need to call stored procedures</li>
+<li>You need temp tables for intermediate results</li>
+<li>You need multiple output values (use procedure with OUTPUT params)</li>
+<li>Logic requires side effects or state changes</li>
+<li>You need to execute dynamic SQL</li>
+<li>Debugging and testing complex logic is important</li>
+</ul>
+</div>
+<h3>Common Anti-Patterns</h3>
+<div class="example-box">
+<h4>❌ Anti-Pattern: Scalar Function in WHERE on Large Table</h4>
+<pre><code><span class="sql-comment">-- BAD: Executes function for every row</span>
+<span class="sql-keyword">SELECT</span> * 
+<span class="sql-keyword">FROM</span> Orders <span class="sql-comment">-- 10 million rows</span>
+<span class="sql-keyword">WHERE</span> dbo.fn_ComplexCalculation(OrderID, CustomerID) &gt; 100;
+
+<span class="sql-comment">-- BETTER: Use inline logic or indexed computed column</span>
+<span class="sql-keyword">SELECT</span> *
+<span class="sql-keyword">FROM</span> Orders
+<span class="sql-keyword">WHERE</span> ComplexCalculationColumn &gt; 100; <span class="sql-comment">-- Persisted computed column</span></code></pre>
+</div>
+<div class="example-box">
+<h4>❌ Anti-Pattern: Using Function for Data Modification</h4>
+<pre><code><span class="sql-comment">-- BAD: Can't modify data in function</span>
+<span class="sql-keyword">CREATE FUNCTION</span> dbo.fn_UpdateInventory(@ProductID <span class="sql-keyword">INT</span>, @Qty <span class="sql-keyword">INT</span>)
+<span class="sql-keyword">RETURNS</span> <span class="sql-keyword">INT</span>
+<span class="sql-keyword">AS</span>
+<span class="sql-keyword">BEGIN</span>
+    <span class="sql-comment">-- This will fail - functions can't UPDATE</span>
+    <span class="sql-keyword">UPDATE</span> Products 
+    <span class="sql-keyword">SET</span> StockQuantity = StockQuantity - @Qty
+    <span class="sql-keyword">WHERE</span> ProductID = @ProductID;
+    
+    <span class="sql-keyword">RETURN</span> 0;
+<span class="sql-keyword">END</span>;
+
+<span class="sql-comment">-- CORRECT: Use stored procedure</span>
+<span class="sql-keyword">CREATE PROCEDURE</span> usp_UpdateInventory
+    @ProductID <span class="sql-keyword">INT</span>,
+    @Qty <span class="sql-keyword">INT</span>
+<span class="sql-keyword">AS</span>
+<span class="sql-keyword">BEGIN</span>
+    <span class="sql-keyword">UPDATE</span> Products 
+    <span class="sql-keyword">SET</span> StockQuantity = StockQuantity - @Qty
+    <span class="sql-keyword">WHERE</span> ProductID = @ProductID;
+<span class="sql-keyword">END</span>;</code></pre>
+</div>
+</section>
+<section id="best-practices">
+<h2>Best Practices</h2>
+<h3>1. Naming Conventions</h3>
+<div class="best-practice"><strong>✅ Recommended Naming:</strong>
+<ul>
+<li><strong>Scalar Functions:</strong> <code>fn_VerbNoun</code> (e.g., <code>fn_CalculateAge</code>, <code>fn_FormatPhone</code>)</li>
+<li><strong>Table-Valued Functions:</strong> <code>fn_GetNounByCondition</code> (e.g., <code>fn_GetOrdersByDate</code>)</li>
+<li><strong>Prefix:</strong> Use <code>fn_</code> to distinguish from procedures (<code>usp_</code>)</li>
+<li><strong>Descriptive Names:</strong> Name should describe what it returns, not what it does</li>
+</ul>
+</div>
+<h3>2. Design Guidelines</h3>
+<div class="best-practice"><strong>✅ Function Design:</strong>
+<ul>
+<li>Keep functions simple and focused on single purpose</li>
+<li>Prefer inline TVFs over multi-statement TVFs</li>
+<li>Use SCHEMABINDING for deterministic functions</li>
+<li>Document parameters and return values</li>
+<li>Handle NULL inputs appropriately</li>
+<li>Consider default parameter values</li>
+<li>Return NULL for error conditions (can't raise errors)</li>
+<li>Test with various input combinations</li>
+</ul>
+</div>
+<h3>3. Performance Best Practices</h3>
+<div class="best-practice"><strong>✅ Performance Guidelines:</strong>
+<ul>
+<li>Avoid scalar functions in WHERE clauses on large tables</li>
+<li>Use inline TVFs instead of scalar functions when possible</li>
+<li>Create persisted computed columns for frequently used calculations</li>
+<li>Test with actual execution plans</li>
+<li>Monitor function execution time</li>
+<li>Use SCHEMABINDING to enable optimizations</li>
+<li>Consider rewriting complex functions as views or procedures</li>
+<li>Enable scalar UDF inlining in SQL Server 2019+</li>
+</ul>
+</div>
+<h3>4. Documentation Standards</h3>
+<pre><code><span class="sql-comment">/*
+    Function: fn_CalculateOrderTotal
+    Type: Scalar Function
+    Description: Calculates the total amount for an order including all items
+    
+    Parameters:
+        @OrderID INT - The order to calculate total for
+    
+    Returns: 
+        DECIMAL(10,2) - Total order amount, or 0 if order has no items
+    
+    Example:
+        SELECT dbo.fn_CalculateOrderTotal(1) AS OrderTotal;
+    
+    Notes:
+        - Returns 0 for non-existent orders
+        - Includes all order items in calculation
+        - Does not include tax or shipping
+    
+    History:
+        2024-02-09 - Created initial version
+        2024-02-10 - Added NULL handling
+*/</span>
+<span class="sql-keyword">CREATE FUNCTION</span> dbo.fn_CalculateOrderTotal
+(
+    @OrderID <span class="sql-keyword">INT</span>
+)
+<span class="sql-keyword">RETURNS</span> <span class="sql-keyword">DECIMAL</span>(10,2)
+<span class="sql-keyword">AS</span>
+<span class="sql-keyword">BEGIN</span>
+    <span class="sql-comment">-- Function implementation</span>
+<span class="sql-keyword">END</span>;</code></pre>
+<h3>5. Testing Recommendations</h3>
+<div class="best-practice"><strong>✅ Testing Best Practices:</strong>
+<ul>
+<li>Test with NULL inputs</li>
+<li>Test with edge cases (empty strings, zero, negative numbers)</li>
+<li>Test with valid and invalid foreign key values</li>
+<li>Test performance with realistic data volumes</li>
+<li>Verify deterministic behavior</li>
+<li>Test in queries (SELECT, WHERE, JOIN)</li>
+<li>Compare results with manual calculations</li>
+</ul>
+</div>
+<h3>6. Security Best Practices</h3>
+<div class="best-practice"><strong>✅ Security Guidelines:</strong>
+<ul>
+<li>Grant EXECUTE permission, not direct table access</li>
+<li>Use SCHEMABINDING to prevent unauthorized schema changes</li>
+<li>Validate all input parameters</li>
+<li>Don't expose sensitive data in function names or return values</li>
+<li>Use schema-qualified names (dbo.Function)</li>
+<li>Limit function complexity to reduce attack surface</li>
+</ul>
+</div>
+<h3>7. Maintenance Guidelines</h3>
+<div class="best-practice"><strong>✅ Maintenance Best Practices:</strong>
+<ul>
+<li>Track all objects that depend on the function</li>
+<li>Test thoroughly before modifying functions</li>
+<li>Use version control for function definitions</li>
+<li>Document changes in function header comments</li>
+<li>Consider impact on computed columns and indexed views</li>
+<li>Create rollback scripts before deployment</li>
+<li>Monitor function performance over time</li>
+</ul>
+</div>
+</section>
+<section id="alternatives">
+<h2>Alternative Approaches</h2>
+<h3>1. Views</h3>
+<pre><code><span class="sql-comment">-- Instead of inline TVF without parameters, use a view</span>
+<span class="sql-keyword">CREATE VIEW</span> vw_OrderSummary
+<span class="sql-keyword">AS</span>
+<span class="sql-keyword">SELECT</span> 
+    o.OrderID,
+    o.OrderDate,
+    c.CustomerID,
+    c.FirstName + <span class="sql-string">' '</span> + c.LastName <span class="sql-keyword">AS</span> CustomerName,
+    <span class="sql-function">COUNT</span>(oi.OrderItemID) <span class="sql-keyword">AS</span> ItemCount,
+    <span class="sql-function">SUM</span>(oi.LineTotal) <span class="sql-keyword">AS</span> TotalAmount
+<span class="sql-keyword">FROM</span> Orders o
+<span class="sql-keyword">INNER JOIN</span> Customers c <span class="sql-keyword">ON</span> o.CustomerID = c.CustomerID
+<span class="sql-keyword">INNER JOIN</span> OrderItems oi <span class="sql-keyword">ON</span> o.OrderID = oi.OrderID
+<span class="sql-keyword">GROUP BY</span> o.OrderID, o.OrderDate, c.CustomerID, c.FirstName, c.LastName;
+
+<span class="sql-comment">-- Usage</span>
+<span class="sql-keyword">SELECT</span> * <span class="sql-keyword">FROM</span> vw_OrderSummary
+<span class="sql-keyword">WHERE</span> OrderDate &gt;= <span class="sql-string">'2024-01-01'</span>;</code></pre>
+<h3>2. Computed Columns</h3>
+<pre><code><span class="sql-comment">-- Instead of calling function in SELECT, use computed column</span>
+<span class="sql-keyword">ALTER TABLE</span> Customers
+<span class="sql-keyword">ADD</span> Age <span class="sql-keyword">AS</span> (
+    <span class="sql-function">DATEDIFF</span>(<span class="sql-keyword">YEAR</span>, BirthDate, <span class="sql-function">GETDATE</span>()) -
+    <span class="sql-keyword">CASE</span> 
+        <span class="sql-keyword">WHEN</span> <span class="sql-function">MONTH</span>(BirthDate) &gt; <span class="sql-function">MONTH</span>(<span class="sql-function">GETDATE</span>()) <span class="sql-keyword">THEN</span> 1
+        <span class="sql-keyword">WHEN</span> <span class="sql-function">MONTH</span>(BirthDate) = <span class="sql-function">MONTH</span>(<span class="sql-function">GETDATE</span>()) 
+            <span class="sql-keyword">AND</span> <span class="sql-function">DAY</span>(BirthDate) &gt; <span class="sql-function">DAY</span>(<span class="sql-function">GETDATE</span>()) <span class="sql-keyword">THEN</span> 1
+        <span class="sql-keyword">ELSE</span> 0
+    <span class="sql-keyword">END</span>
+) <span class="sql-keyword">PERSISTED</span>;
+
+<span class="sql-comment">-- Now can query and index efficiently</span>
+<span class="sql-keyword">CREATE INDEX</span> IX_Customers_Age <span class="sql-keyword">ON</span> Customers(Age);
+
+<span class="sql-keyword">SELECT</span> * <span class="sql-keyword">FROM</span> Customers <span class="sql-keyword">WHERE</span> Age &gt;= 18; <span class="sql-comment">-- Uses index!</span></code></pre>
+<h3>3. Common Table Expressions (CTEs)</h3>
+<pre><code><span class="sql-comment">-- Instead of function, use CTE for one-time calculation</span>
+<span class="sql-keyword">WITH</span> CustomerDiscounts <span class="sql-keyword">AS</span> (
+    <span class="sql-keyword">SELECT</span> 
+        CustomerID,
+        <span class="sql-keyword">CASE</span>
+            <span class="sql-keyword">WHEN</span> TotalOrders &gt;= 50 <span class="sql-keyword">THEN</span> 15.00
+            <span class="sql-keyword">WHEN</span> TotalOrders &gt;= 20 <span class="sql-keyword">THEN</span> 10.00
+            <span class="sql-keyword">WHEN</span> TotalOrders &gt;= 10 <span class="sql-keyword">THEN</span> 5.00
+            <span class="sql-keyword">ELSE</span> 0.00
+        <span class="sql-keyword">END</span> <span class="sql-keyword">AS</span> DiscountPercent
+    <span class="sql-keyword">FROM</span> (
+        <span class="sql-keyword">SELECT</span> 
+            CustomerID,
+            <span class="sql-function">COUNT</span>(*) <span class="sql-keyword">AS</span> TotalOrders
+        <span class="sql-keyword">FROM</span> Orders
+        <span class="sql-keyword">GROUP BY</span> CustomerID
+    ) <span class="sql-keyword">AS</span> OrderCounts
+)
+<span class="sql-keyword">SELECT</span> 
+    o.OrderID,
+    o.TotalAmount,
+    cd.DiscountPercent,
+    o.TotalAmount * (cd.DiscountPercent / 100) <span class="sql-keyword">AS</span> Discount
+<span class="sql-keyword">FROM</span> Orders o
+<span class="sql-keyword">INNER JOIN</span> CustomerDiscounts cd <span class="sql-keyword">ON</span> o.CustomerID = cd.CustomerID;</code></pre>
+<h3>4. Stored Procedures with Result Sets</h3>
+<pre><code><span class="sql-comment">-- Instead of table-valued function, use procedure with result set</span>
+<span class="sql-keyword">CREATE PROCEDURE</span> usp_GetCustomerOrders
+    @CustomerID <span class="sql-keyword">INT</span>,
+    @StartDate <span class="sql-keyword">DATE</span>,
+    @EndDate <span class="sql-keyword">DATE</span>
+<span class="sql-keyword">AS</span>
+<span class="sql-keyword">BEGIN</span>
+    <span class="sql-keyword">SET NOCOUNT ON</span>;
+    
+    <span class="sql-keyword">SELECT</span> 
+        o.OrderID,
+        o.OrderDate,
+        o.TotalAmount,
+        o.Status
+    <span class="sql-keyword">FROM</span> Orders o
+    <span class="sql-keyword">WHERE</span> o.CustomerID = @CustomerID
+        <span class="sql-keyword">AND</span> o.OrderDate &gt;= @StartDate
+        <span class="sql-keyword">AND</span> o.OrderDate &lt; <span class="sql-function">DATEADD</span>(<span class="sql-keyword">DAY</span>, 1, @EndDate);
+<span class="sql-keyword">END</span>;
+
+<span class="sql-comment">-- Usage (but can't JOIN with other tables easily)</span>
+<span class="sql-keyword">EXEC</span> usp_GetCustomerOrders @CustomerID = 1, 
+    @StartDate = <span class="sql-string">'2024-01-01'</span>, @EndDate = <span class="sql-string">'2024-12-31'</span>;</code></pre>
+<h3>Comparison of Approaches</h3>
+<table>
+<thead>
+<tr>
+<th>Approach</th>
+<th>Parameters</th>
+<th>Use in Queries</th>
+<th>Performance</th>
+<th>Best For</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Inline TVF</strong></td>
+<td>✅ Yes</td>
+<td>✅ Yes</td>
+<td>⭐⭐⭐⭐⭐</td>
+<td>Parameterized queries</td>
+</tr>
+<tr>
+<td><strong>View</strong></td>
+<td>❌ No</td>
+<td>✅ Yes</td>
+<td>⭐⭐⭐⭐⭐</td>
+<td>Fixed filtering/aggregation</td>
+</tr>
+<tr>
+<td><strong>Computed Column</strong></td>
+<td>❌ No</td>
+<td>✅ Yes</td>
+<td>⭐⭐⭐⭐⭐</td>
+<td>Row-level calculations</td>
+</tr>
+<tr>
+<td><strong>CTE</strong></td>
+<td>✅ Variables</td>
+<td>✅ Yes</td>
+<td>⭐⭐⭐⭐</td>
+<td>One-time complex logic</td>
+</tr>
+<tr>
+<td><strong>Stored Procedure</strong></td>
+<td>✅ Yes</td>
+<td>❌ No</td>
+<td>⭐⭐⭐⭐</td>
+<td>Data modification, transactions</td>
+</tr>
+</tbody>
+</table>
+</section>
+<footer>
+<p>T-SQL Stored Functions Complete Guide</p>
+<p>Best Practices for Scalar and Table-Valued Functions</p>
+<p>Last updated: February 2026</p>
+</footer></div></body></html>
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.6;
+            color: #2d2d2d;
+            background-color: #f5f5f5;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        header {
+            background: linear-gradient(135deg, #0078d4 0%, #00bcf2 100%);
+            color: white;
+            padding: 60px 20px;
+            text-align: center;
+            margin-bottom: 40px;
+            border-radius: 8px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+        }
+
+        header h1 {
+            font-size: 2.5em;
+            margin-bottom: 10px;
+            font-weight: 600;
+        }
+
+        header p {
+            font-size: 1.2em;
+            opacity: 0.95;
+        }
+
+        nav {
+            background: white;
+            padding: 24px;
+            margin-bottom: 30px;
+            border-radius: 8px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+            position: sticky;
+            top: 20px;
+            z-index: 100;
+        }
+
+        nav h3 {
+            margin-bottom: 16px;
+            color: #0078d4;
+            font-weight: 600;
+        }
+
+        nav ul {
+            list-style: none;
+        }
+
+        nav ul li {
+            margin-bottom: 10px;
+        }
+
+        nav ul li a {
+            color: #2d2d2d;
+            text-decoration: none;
+            transition: color 0.2s;
+            display: block;
+            padding: 4px 0;
+        }
+
+        nav ul li a:hover {
+            color: #0078d4;
+        }
+
+        section {
+            background: white;
+            padding: 32px;
+            margin-bottom: 24px;
+            border-radius: 8px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        }
+
+        h2 {
+            color: #0078d4;
+            margin-bottom: 24px;
+            padding-bottom: 12px;
+            border-bottom: 3px solid #0078d4;
+            font-size: 2em;
+            font-weight: 600;
+        }
+
+        h3 {
+            color: #00bcf2;
+            margin-top: 28px;
+            margin-bottom: 16px;
+            font-size: 1.5em;
+            font-weight: 600;
+        }
+
+        h4 {
+            color: #5a5a5a;
+            margin-top: 20px;
+            margin-bottom: 12px;
+            font-size: 1.2em;
+            font-weight: 600;
+        }
+
+        p {
+            margin-bottom: 16px;
+            color: #5a5a5a;
+        }
+
+        ul, ol {
+            margin-left: 28px;
+            margin-bottom: 16px;
+            color: #5a5a5a;
+        }
+
+        li {
+            margin-bottom: 8px;
+            line-height: 1.6;
+        }
+
+        code {
+            background: #f0f0f0;
+            padding: 2px 6px;
+            border-radius: 3px;
+            font-family: 'Consolas', 'Courier New', monospace;
+            color: #c7254e;
+            font-size: 0.9em;
+        }
+
+        pre {
+            background: #1e1e1e;
+            color: #d4d4d4;
+            padding: 20px;
+            border-radius: 6px;
+            overflow-x: auto;
+            margin-bottom: 24px;
+            border-left: 4px solid #0078d4;
+            font-family: 'Consolas', 'Courier New', monospace;
+            font-size: 0.9em;
+            line-height: 1.5;
+        }
+
+        pre code {
+            background: none;
+            color: inherit;
+            padding: 0;
+            font-size: 1em;
+        }
+
+        .sql-keyword {
+            color: #569cd6;
+        }
+
+        .sql-string {
+            color: #ce9178;
+        }
+
+        .sql-comment {
+            color: #6a9955;
+        }
+
+        .sql-function {
+            color: #dcdcaa;
+        }
+
+        .tip {
+            background: #e6f4ff;
+            border-left: 4px solid #0078d4;
+            padding: 16px 20px;
+            margin-bottom: 24px;
+            border-radius: 4px;
+        }
+
+        .tip strong {
+            color: #0050a0;
+        }
+
+        .warning {
+            background: #fff4e6;
+            border-left: 4px solid #ff8c00;
+            padding: 16px 20px;
+            margin-bottom: 24px;
+            border-radius: 4px;
+        }
+
+        .warning strong {
+            color: #cc7000;
+        }
+
+        .best-practice {
+            background: #e6f7e6;
+            border-left: 4px solid #28a745;
+            padding: 16px 20px;
+            margin-bottom: 24px;
+            border-radius: 4px;
+        }
+
+        .best-practice strong {
+            color: #1e7e34;
+        }
+
+        .example-box {
+            background: #f8f9fa;
+            border: 2px solid #dee2e6;
+            border-radius: 6px;
+            padding: 20px;
+            margin-bottom: 24px;
+        }
+
+        .example-box h4 {
+            color: #0078d4;
+            margin-top: 0;
+            padding-bottom: 8px;
+            border-bottom: 1px solid #dee2e6;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 24px;
+            background: white;
+        }
+
+        table th, table td {
+            padding: 12px 16px;
+            text-align: left;
+            border: 1px solid #dee2e6;
+        }
+
+        table th {
+            background: #f8f9fa;
+            color: #2d2d2d;
+            font-weight: 600;
+        }
+
+        table tr:hover {
+            background: #f8f9fa;
+        }
+
+        .comparison-table {
+            margin: 20px 0;
+        }
+
+        .comparison-table td:first-child {
+            font-weight: 600;
+            background: #f8f9fa;
+        }
+
+        .pros-cons {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+            margin-bottom: 24px;
+        }
+
+        .pros, .cons {
+            padding: 20px;
+            border-radius: 6px;
+        }
+
+        .pros {
+            background: #e6f7e6;
+            border: 2px solid #28a745;
+        }
+
+        .cons {
+            background: #ffe6e6;
+            border: 2px solid #dc3545;
+        }
+
+        .pros h4, .cons h4 {
+            margin-top: 0;
+        }
+
+        .pros h4 {
+            color: #28a745;
+        }
+
+        .cons h4 {
+            color: #dc3545;
+        }
+
+        .code-flow {
+            background: #f8f9fa;
+            padding: 20px;
+            border-radius: 6px;
+            border: 2px solid #0078d4;
+            margin-bottom: 24px;
+        }
+
+        .code-flow h4 {
+            color: #0078d4;
+            margin-top: 0;
+        }
+
+        footer {
+            text-align: center;
+            padding: 32px;
+            color: #5a5a5a;
+            margin-top: 40px;
+        }
+
+        @media (max-width: 768px) {
+            header h1 {
+                font-size: 1.8em;
+            }
+
+            section {
+                padding: 20px;
+            }
+
+            nav {
+                position: static;
+            }
+
+            .pros-cons {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+<link rel="stylesheet" href="https://templates.lcs.brightspace.com/lib/assets/css/styles.min.css"><link rel="stylesheet" href="/d2l/le/contentstyler/34091/files/View" data-override="override"></head><body><div class="container"><header>
+<h1>🗄️ T-SQL Stored Procedures Guide</h1>
+<p>Managing Insertions with Foreign Key Dependencies &amp; Identity Columns</p>
+</header><nav>
+<h3>📑 Table of Contents</h3>
+<ul>
+<li><a href="#introduction">Introduction</a></li>
+<li><a href="#identity-columns">Identity Columns Overview</a></li>
+<li><a href="#retrieving-identity">Retrieving Identity Values</a></li>
+<li><a href="#example-schema">Example Schema</a></li>
+<li><a href="#basic-procedures">Basic Stored Procedures</a></li>
+<li><a href="#advanced-techniques">Advanced Techniques</a></li>
+<li><a href="#transactions">Transaction Management</a></li>
+<li><a href="#error-handling">Error Handling</a></li>
+<li><a href="#output-parameters">OUTPUT Parameters</a></li>
+<li><a href="#table-valued">Table-Valued Parameters</a></li>
+<li><a href="#advantages">Advantages of Stored Procedures</a></li>
+<li><a href="#alternatives">Alternative Approaches</a></li>
+<li><a href="#best-practices">Best Practices</a></li>
+</ul>
+</nav>
+<section id="introduction">
+<h2>Introduction</h2>
+<p>When working with relational databases, managing data insertion across tables with foreign key relationships is a common challenge. SQL Server's stored procedures provide a powerful way to encapsulate this logic, ensuring data integrity and simplifying application code.</p>
+<h3>The Foreign Key Challenge</h3>
+<p>Consider a typical scenario: inserting an order and its line items. The order must be inserted first to generate its primary key (OrderID), which is then used as a foreign key in the order line items table. Stored procedures can handle this entire workflow atomically and efficiently.</p>
+<h3>Why Identity Columns?</h3>
+<ul>
+<li><strong>Automatic Generation:</strong> SQL Server automatically generates unique values</li>
+<li><strong>Performance:</strong> Optimized for high-volume inserts</li>
+<li><strong>Simplicity:</strong> No need for application-level ID generation</li>
+<li><strong>Consistency:</strong> Guaranteed uniqueness within the table</li>
+<li><strong>Concurrency:</strong> Handles multiple simultaneous inserts safely</li>
+</ul>
+<div class="tip"><strong>💡 Key Concept:</strong> Identity columns automatically generate sequential numeric values, but you need special functions to retrieve the generated value after an INSERT statement.</div>
+</section>
+<section id="identity-columns">
+<h2>Identity Columns Overview</h2>
+<h3>Defining Identity Columns</h3>
+<pre><code><span class="sql-comment">-- Basic identity column definition</span>
+<span class="sql-keyword">CREATE TABLE</span> Orders (
+    OrderID <span class="sql-keyword">INT</span> <span class="sql-keyword">IDENTITY</span>(1,1) <span class="sql-keyword">PRIMARY KEY</span>,
+    OrderDate <span class="sql-keyword">DATETIME</span> <span class="sql-keyword">NOT NULL</span>,
+    CustomerID <span class="sql-keyword">INT</span> <span class="sql-keyword">NOT NULL</span>
+);
+
+<span class="sql-comment">-- Identity with custom seed and increment</span>
+<span class="sql-keyword">CREATE TABLE</span> Products (
+    ProductID <span class="sql-keyword">INT</span> <span class="sql-keyword">IDENTITY</span>(1000,1) <span class="sql-keyword">PRIMARY KEY</span>,  <span class="sql-comment">-- Starts at 1000</span>
+    ProductName <span class="sql-keyword">NVARCHAR</span>(100) <span class="sql-keyword">NOT NULL</span>
+);
+
+<span class="sql-comment">-- Identity with increment by 10</span>
+<span class="sql-keyword">CREATE TABLE</span> BatchJobs (
+    BatchID <span class="sql-keyword">INT</span> <span class="sql-keyword">IDENTITY</span>(1,10) <span class="sql-keyword">PRIMARY KEY</span>,  <span class="sql-comment">-- 1, 11, 21, 31...</span>
+    BatchName <span class="sql-keyword">NVARCHAR</span>(100) <span class="sql-keyword">NOT NULL</span>
+);</code></pre>
+<h3>Identity Syntax</h3>
+<table>
+<thead>
+<tr>
+<th>Syntax</th>
+<th>Description</th>
+<th>Example</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>IDENTITY(seed, increment)</code></td>
+<td>Seed is starting value, increment is step size</td>
+<td><code>IDENTITY(1,1)</code> = 1,2,3,4...</td>
+</tr>
+<tr>
+<td><code>IDENTITY(1000,1)</code></td>
+<td>Start at 1000, increment by 1</td>
+<td>1000,1001,1002...</td>
+</tr>
+<tr>
+<td><code>IDENTITY(1,10)</code></td>
+<td>Start at 1, increment by 10</td>
+<td>1,11,21,31...</td>
+</tr>
+</tbody>
+</table>
+<div class="warning"><strong>⚠️ Important:</strong> Identity values are not reused even if a transaction is rolled back. Gaps in identity sequences are normal and expected.</div>
+</section>
+<section id="retrieving-identity">
+<h2>Retrieving Identity Values</h2>
+<p>SQL Server provides several methods to retrieve the most recently generated identity value. Choosing the right method is crucial for correctness in concurrent environments.</p>
+<h3>1. SCOPE_IDENTITY() - Recommended</h3>
+<pre><code><span class="sql-comment">-- Returns the last identity value inserted in the CURRENT scope</span>
+<span class="sql-keyword">INSERT INTO</span> Orders (OrderDate, CustomerID)
+<span class="sql-keyword">VALUES</span> (<span class="sql-function">GETDATE</span>(), 100);
+
+<span class="sql-keyword">DECLARE</span> @NewOrderID <span class="sql-keyword">INT</span> = <span class="sql-function">SCOPE_IDENTITY</span>();
+<span class="sql-keyword">SELECT</span> @NewOrderID <span class="sql-keyword">AS</span> NewOrderID;</code></pre>
+<h3>2. @@IDENTITY - Use with Caution</h3>
+<pre><code><span class="sql-comment">-- Returns the last identity value in the SESSION (any scope)</span>
+<span class="sql-comment">-- Can return incorrect value if triggers insert into other tables</span>
+<span class="sql-keyword">INSERT INTO</span> Orders (OrderDate, CustomerID)
+<span class="sql-keyword">VALUES</span> (<span class="sql-function">GETDATE</span>(), 100);
+
+<span class="sql-keyword">DECLARE</span> @NewOrderID <span class="sql-keyword">INT</span> = @@IDENTITY;
+<span class="sql-keyword">SELECT</span> @NewOrderID <span class="sql-keyword">AS</span> NewOrderID;</code></pre>
+<h3>3. IDENT_CURRENT() - Table-Specific</h3>
+<pre><code><span class="sql-comment">-- Returns the last identity value for a specific table across all sessions</span>
+<span class="sql-comment">-- NOT safe for concurrent inserts</span>
+<span class="sql-keyword">SELECT</span> <span class="sql-function">IDENT_CURRENT</span>(<span class="sql-string">'Orders'</span>) <span class="sql-keyword">AS</span> LastOrderID;</code></pre>
+<h3>4. OUTPUT Clause - Most Flexible</h3>
+<pre><code><span class="sql-comment">-- Returns the inserted values directly</span>
+<span class="sql-keyword">DECLARE</span> @InsertedOrders <span class="sql-keyword">TABLE</span> (OrderID <span class="sql-keyword">INT</span>);
+
+<span class="sql-keyword">INSERT INTO</span> Orders (OrderDate, CustomerID)
+<span class="sql-keyword">OUTPUT</span> inserted.OrderID <span class="sql-keyword">INTO</span> @InsertedOrders
+<span class="sql-keyword">VALUES</span> (<span class="sql-function">GETDATE</span>(), 100);
+
+<span class="sql-keyword">SELECT</span> OrderID <span class="sql-keyword">FROM</span> @InsertedOrders;</code></pre>
+<h3>Comparison of Methods</h3>
+<table class="comparison-table">
+<thead>
+<tr>
+<th>Method</th>
+<th>Scope</th>
+<th>Trigger-Safe</th>
+<th>Concurrent-Safe</th>
+<th>Best Use Case</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>SCOPE_IDENTITY()</strong></td>
+<td>Current scope</td>
+<td>✅ Yes</td>
+<td>✅ Yes</td>
+<td>Single row inserts in stored procedures</td>
+</tr>
+<tr>
+<td><strong>@@IDENTITY</strong></td>
+<td>Session (all scopes)</td>
+<td>❌ No</td>
+<td>✅ Yes</td>
+<td>Legacy code (not recommended)</td>
+</tr>
+<tr>
+<td><strong>IDENT_CURRENT()</strong></td>
+<td>Table (all sessions)</td>
+<td>N/A</td>
+<td>❌ No</td>
+<td>Monitoring/reporting only</td>
+</tr>
+<tr>
+<td><strong>OUTPUT Clause</strong></td>
+<td>Statement</td>
+<td>✅ Yes</td>
+<td>✅ Yes</td>
+<td>Multiple row inserts, returning multiple columns</td>
+</tr>
+</tbody>
+</table>
+<div class="best-practice"><strong>✅ Best Practice:</strong> Use <code>SCOPE_IDENTITY()</code> for single-row inserts and the <code>OUTPUT</code> clause for multiple-row inserts. Avoid <code>@@IDENTITY</code> and never use <code>IDENT_CURRENT()</code> for retrieving just-inserted IDs.</div>
+</section>
+<section id="example-schema">
+<h2>Example Schema</h2>
+<p>Let's create a realistic schema to demonstrate foreign key management. We'll use an e-commerce example with customers, orders, and order items.</p>
+<h3>Complete Schema Definition</h3>
+<pre><code><span class="sql-comment">-- 1. Customers table (no dependencies)</span>
+<span class="sql-keyword">CREATE TABLE</span> Customers (
+    CustomerID <span class="sql-keyword">INT</span> <span class="sql-keyword">IDENTITY</span>(1,1) <span class="sql-keyword">PRIMARY KEY</span>,
+    FirstName <span class="sql-keyword">NVARCHAR</span>(50) <span class="sql-keyword">NOT NULL</span>,
+    LastName <span class="sql-keyword">NVARCHAR</span>(50) <span class="sql-keyword">NOT NULL</span>,
+    Email <span class="sql-keyword">NVARCHAR</span>(100) <span class="sql-keyword">NOT NULL</span>,
+    CreatedDate <span class="sql-keyword">DATETIME</span> <span class="sql-keyword">DEFAULT</span> <span class="sql-function">GETDATE</span>()
+);
+
+<span class="sql-comment">-- 2. Products table (no dependencies)</span>
+<span class="sql-keyword">CREATE TABLE</span> Products (
+    ProductID <span class="sql-keyword">INT</span> <span class="sql-keyword">IDENTITY</span>(1,1) <span class="sql-keyword">PRIMARY KEY</span>,
+    ProductName <span class="sql-keyword">NVARCHAR</span>(100) <span class="sql-keyword">NOT NULL</span>,
+    Description <span class="sql-keyword">NVARCHAR</span>(500),
+    UnitPrice <span class="sql-keyword">DECIMAL</span>(10,2) <span class="sql-keyword">NOT NULL</span>,
+    StockQuantity <span class="sql-keyword">INT</span> <span class="sql-keyword">NOT NULL</span>
+);
+
+<span class="sql-comment">-- 3. Orders table (depends on Customers)</span>
+<span class="sql-keyword">CREATE TABLE</span> Orders (
+    OrderID <span class="sql-keyword">INT</span> <span class="sql-keyword">IDENTITY</span>(1,1) <span class="sql-keyword">PRIMARY KEY</span>,
+    CustomerID <span class="sql-keyword">INT</span> <span class="sql-keyword">NOT NULL</span>,
+    OrderDate <span class="sql-keyword">DATETIME</span> <span class="sql-keyword">NOT NULL</span> <span class="sql-keyword">DEFAULT</span> <span class="sql-function">GETDATE</span>(),
+    TotalAmount <span class="sql-keyword">DECIMAL</span>(10,2) <span class="sql-keyword">NOT NULL</span>,
+    Status <span class="sql-keyword">NVARCHAR</span>(20) <span class="sql-keyword">NOT NULL</span>,
+    <span class="sql-keyword">CONSTRAINT</span> FK_Orders_Customers <span class="sql-keyword">FOREIGN KEY</span> (CustomerID) 
+        <span class="sql-keyword">REFERENCES</span> Customers(CustomerID)
+);
+
+<span class="sql-comment">-- 4. OrderItems table (depends on Orders and Products)</span>
+<span class="sql-keyword">CREATE TABLE</span> OrderItems (
+    OrderItemID <span class="sql-keyword">INT</span> <span class="sql-keyword">IDENTITY</span>(1,1) <span class="sql-keyword">PRIMARY KEY</span>,
+    OrderID <span class="sql-keyword">INT</span> <span class="sql-keyword">NOT NULL</span>,
+    ProductID <span class="sql-keyword">INT</span> <span class="sql-keyword">NOT NULL</span>,
+    Quantity <span class="sql-keyword">INT</span> <span class="sql-keyword">NOT NULL</span>,
+    UnitPrice <span class="sql-keyword">DECIMAL</span>(10,2) <span class="sql-keyword">NOT NULL</span>,
+    LineTotal <span class="sql-keyword">AS</span> (Quantity * UnitPrice) <span class="sql-keyword">PERSISTED</span>,
+    <span class="sql-keyword">CONSTRAINT</span> FK_OrderItems_Orders <span class="sql-keyword">FOREIGN KEY</span> (OrderID) 
+        <span class="sql-keyword">REFERENCES</span> Orders(OrderID),
+    <span class="sql-keyword">CONSTRAINT</span> FK_OrderItems_Products <span class="sql-keyword">FOREIGN KEY</span> (ProductID) 
+        <span class="sql-keyword">REFERENCES</span> Products(ProductID)
+);
+
+<span class="sql-comment">-- 5. Addresses table (depends on Customers)</span>
+<span class="sql-keyword">CREATE TABLE</span> Addresses (
+    AddressID <span class="sql-keyword">INT</span> <span class="sql-keyword">IDENTITY</span>(1,1) <span class="sql-keyword">PRIMARY KEY</span>,
+    CustomerID <span class="sql-keyword">INT</span> <span class="sql-keyword">NOT NULL</span>,
+    AddressType <span class="sql-keyword">NVARCHAR</span>(20) <span class="sql-keyword">NOT NULL</span>, <span class="sql-comment">-- 'Billing', 'Shipping'</span>
+    StreetAddress <span class="sql-keyword">NVARCHAR</span>(200) <span class="sql-keyword">NOT NULL</span>,
+    City <span class="sql-keyword">NVARCHAR</span>(100) <span class="sql-keyword">NOT NULL</span>,
+    State <span class="sql-keyword">NVARCHAR</span>(50) <span class="sql-keyword">NOT NULL</span>,
+    ZipCode <span class="sql-keyword">NVARCHAR</span>(20) <span class="sql-keyword">NOT NULL</span>,
+    <span class="sql-keyword">CONSTRAINT</span> FK_Addresses_Customers <span class="sql-keyword">FOREIGN KEY</span> (CustomerID) 
+        <span class="sql-keyword">REFERENCES</span> Customers(CustomerID)
+);</code></pre>
+<h3>Dependency Visualization</h3>
+<div class="code-flow">
+<h4>Table Dependency Hierarchy</h4>
+<pre style="background: white; color: #2d2d2d;">Level 0 (No Dependencies):
+    ├─ Customers
+    └─ Products
+
+Level 1 (Depends on Level 0):
+    ├─ Orders (FK → Customers)
+    └─ Addresses (FK → Customers)
+
+Level 2 (Depends on Level 1):
+    └─ OrderItems (FK → Orders, FK → Products)
+                </pre>
+</div>
+</section>
+<section id="basic-procedures">
+<h2>Basic Stored Procedures</h2>
+<h3>1. Simple Insert with Identity Return</h3>
+<div class="example-box">
+<h4>Example: Insert Customer</h4>
+<pre><code><span class="sql-keyword">CREATE PROCEDURE</span> usp_InsertCustomer
+    @FirstName <span class="sql-keyword">NVARCHAR</span>(50),
+    @LastName <span class="sql-keyword">NVARCHAR</span>(50),
+    @Email <span class="sql-keyword">NVARCHAR</span>(100),
+    @CustomerID <span class="sql-keyword">INT</span> <span class="sql-keyword">OUTPUT</span>
+<span class="sql-keyword">AS</span>
+<span class="sql-keyword">BEGIN</span>
+    <span class="sql-keyword">SET NOCOUNT ON</span>;
+    
+    <span class="sql-comment">-- Insert customer</span>
+    <span class="sql-keyword">INSERT INTO</span> Customers (FirstName, LastName, Email)
+    <span class="sql-keyword">VALUES</span> (@FirstName, @LastName, @Email);
+    
+    <span class="sql-comment">-- Get the generated identity value</span>
+    <span class="sql-keyword">SET</span> @CustomerID = <span class="sql-function">SCOPE_IDENTITY</span>();
+    
+    <span class="sql-comment">-- Return success indicator</span>
+    <span class="sql-keyword">RETURN</span> 0;
+<span class="sql-keyword">END</span>;
+<span class="sql-keyword">GO</span>
+
+<span class="sql-comment">-- Usage example</span>
+<span class="sql-keyword">DECLARE</span> @NewCustomerID <span class="sql-keyword">INT</span>;
+<span class="sql-keyword">EXEC</span> usp_InsertCustomer 
+    @FirstName = <span class="sql-string">'John'</span>,
+    @LastName = <span class="sql-string">'Smith'</span>,
+    @Email = <span class="sql-string">'john.smith@email.com'</span>,
+    @CustomerID = @NewCustomerID <span class="sql-keyword">OUTPUT</span>;
+    
+<span class="sql-keyword">SELECT</span> @NewCustomerID <span class="sql-keyword">AS</span> NewCustomerID;</code></pre>
+</div>
+<h3>2. Insert with One-Level Foreign Key</h3>
+<div class="example-box">
+<h4>Example: Insert Order for Existing Customer</h4>
+<pre><code><span class="sql-keyword">CREATE PROCEDURE</span> usp_InsertOrder
+    @CustomerID <span class="sql-keyword">INT</span>,
+    @TotalAmount <span class="sql-keyword">DECIMAL</span>(10,2),
+    @Status <span class="sql-keyword">NVARCHAR</span>(20),
+    @OrderID <span class="sql-keyword">INT</span> <span class="sql-keyword">OUTPUT</span>
+<span class="sql-keyword">AS</span>
+<span class="sql-keyword">BEGIN</span>
+    <span class="sql-keyword">SET NOCOUNT ON</span>;
+    
+    <span class="sql-comment">-- Validate customer exists</span>
+    <span class="sql-keyword">IF NOT EXISTS</span> (<span class="sql-keyword">SELECT</span> 1 <span class="sql-keyword">FROM</span> Customers <span class="sql-keyword">WHERE</span> CustomerID = @CustomerID)
+    <span class="sql-keyword">BEGIN</span>
+        <span class="sql-keyword">RAISERROR</span>(<span class="sql-string">'Customer does not exist'</span>, 16, 1);
+        <span class="sql-keyword">RETURN</span> -1;
+    <span class="sql-keyword">END</span>
+    
+    <span class="sql-comment">-- Insert order</span>
+    <span class="sql-keyword">INSERT INTO</span> Orders (CustomerID, OrderDate, TotalAmount, Status)
+    <span class="sql-keyword">VALUES</span> (@CustomerID, <span class="sql-function">GETDATE</span>(), @TotalAmount, @Status);
+    
+    <span class="sql-comment">-- Get the generated OrderID</span>
+    <span class="sql-keyword">SET</span> @OrderID = <span class="sql-function">SCOPE_IDENTITY</span>();
+    
+    <span class="sql-keyword">RETURN</span> 0;
+<span class="sql-keyword">END</span>;
+<span class="sql-keyword">GO</span>
+
+<span class="sql-comment">-- Usage example</span>
+<span class="sql-keyword">DECLARE</span> @NewOrderID <span class="sql-keyword">INT</span>;
+<span class="sql-keyword">EXEC</span> usp_InsertOrder 
+    @CustomerID = 1,
+    @TotalAmount = 299.99,
+    @Status = <span class="sql-string">'Pending'</span>,
+    @OrderID = @NewOrderID <span class="sql-keyword">OUTPUT</span>;
+    
+<span class="sql-keyword">SELECT</span> @NewOrderID <span class="sql-keyword">AS</span> NewOrderID;</code></pre>
+</div>
+<h3>3. Insert with Multi-Level Foreign Keys</h3>
+<div class="example-box">
+<h4>Example: Insert Order Item</h4>
+<pre><code><span class="sql-keyword">CREATE PROCEDURE</span> usp_InsertOrderItem
+    @OrderID <span class="sql-keyword">INT</span>,
+    @ProductID <span class="sql-keyword">INT</span>,
+    @Quantity <span class="sql-keyword">INT</span>,
+    @OrderItemID <span class="sql-keyword">INT</span> <span class="sql-keyword">OUTPUT</span>
+<span class="sql-keyword">AS</span>
+<span class="sql-keyword">BEGIN</span>
+    <span class="sql-keyword">SET NOCOUNT ON</span>;
+    
+    <span class="sql-keyword">DECLARE</span> @UnitPrice <span class="sql-keyword">DECIMAL</span>(10,2);
+    
+    <span class="sql-comment">-- Validate order exists</span>
+    <span class="sql-keyword">IF NOT EXISTS</span> (<span class="sql-keyword">SELECT</span> 1 <span class="sql-keyword">FROM</span> Orders <span class="sql-keyword">WHERE</span> OrderID = @OrderID)
+    <span class="sql-keyword">BEGIN</span>
+        <span class="sql-keyword">RAISERROR</span>(<span class="sql-string">'Order does not exist'</span>, 16, 1);
+        <span class="sql-keyword">RETURN</span> -1;
+    <span class="sql-keyword">END</span>
+    
+    <span class="sql-comment">-- Get product price and validate product exists</span>
+    <span class="sql-keyword">SELECT</span> @UnitPrice = UnitPrice
+    <span class="sql-keyword">FROM</span> Products
+    <span class="sql-keyword">WHERE</span> ProductID = @ProductID;
+    
+    <span class="sql-keyword">IF</span> @UnitPrice <span class="sql-keyword">IS NULL</span>
+    <span class="sql-keyword">BEGIN</span>
+        <span class="sql-keyword">RAISERROR</span>(<span class="sql-string">'Product does not exist'</span>, 16, 1);
+        <span class="sql-keyword">RETURN</span> -1;
+    <span class="sql-keyword">END</span>
+    
+    <span class="sql-comment">-- Insert order item</span>
+    <span class="sql-keyword">INSERT INTO</span> OrderItems (OrderID, ProductID, Quantity, UnitPrice)
+    <span class="sql-keyword">VALUES</span> (@OrderID, @ProductID, @Quantity, @UnitPrice);
+    
+    <span class="sql-comment">-- Get the generated OrderItemID</span>
+    <span class="sql-keyword">SET</span> @OrderItemID = <span class="sql-function">SCOPE_IDENTITY</span>();
+    
+    <span class="sql-keyword">RETURN</span> 0;
+<span class="sql-keyword">END</span>;
+<span class="sql-keyword">GO</span>
+
+<span class="sql-comment">-- Usage example</span>
+<span class="sql-keyword">DECLARE</span> @NewOrderItemID <span class="sql-keyword">INT</span>;
+<span class="sql-keyword">EXEC</span> usp_InsertOrderItem 
+    @OrderID = 1,
+    @ProductID = 5,
+    @Quantity = 2,
+    @OrderItemID = @NewOrderItemID <span class="sql-keyword">OUTPUT</span>;
+    
+<span class="sql-keyword">SELECT</span> @NewOrderItemID <span class="sql-keyword">AS</span> NewOrderItemID;</code></pre>
+</div>
+</section>
+<section id="advanced-techniques">
+<h2>Advanced Techniques</h2>
+<h3>Complete Order Creation in One Procedure</h3>
+<p>This procedure demonstrates creating a complete order with customer and addresses in a single transaction.</p>
+<div class="example-box">
+<h4>Example: Create Complete Customer Order</h4>
+<pre><code><span class="sql-keyword">CREATE PROCEDURE</span> usp_CreateCompleteOrder
+    <span class="sql-comment">-- Customer info</span>
+    @FirstName <span class="sql-keyword">NVARCHAR</span>(50),
+    @LastName <span class="sql-keyword">NVARCHAR</span>(50),
+    @Email <span class="sql-keyword">NVARCHAR</span>(100),
+    <span class="sql-comment">-- Address info</span>
+    @BillingAddress <span class="sql-keyword">NVARCHAR</span>(200),
+    @BillingCity <span class="sql-keyword">NVARCHAR</span>(100),
+    @BillingState <span class="sql-keyword">NVARCHAR</span>(50),
+    @BillingZip <span class="sql-keyword">NVARCHAR</span>(20),
+    <span class="sql-comment">-- Order info</span>
+    @TotalAmount <span class="sql-keyword">DECIMAL</span>(10,2),
+    @Status <span class="sql-keyword">NVARCHAR</span>(20),
+    <span class="sql-comment">-- Output parameters</span>
+    @CustomerID <span class="sql-keyword">INT</span> <span class="sql-keyword">OUTPUT</span>,
+    @OrderID <span class="sql-keyword">INT</span> <span class="sql-keyword">OUTPUT</span>,
+    @AddressID <span class="sql-keyword">INT</span> <span class="sql-keyword">OUTPUT</span>
+<span class="sql-keyword">AS</span>
+<span class="sql-keyword">BEGIN</span>
+    <span class="sql-keyword">SET NOCOUNT ON</span>;
+    
+    <span class="sql-keyword">BEGIN TRY</span>
+        <span class="sql-keyword">BEGIN TRANSACTION</span>;
+        
+        <span class="sql-comment">-- 1. Insert Customer</span>
+        <span class="sql-keyword">INSERT INTO</span> Customers (FirstName, LastName, Email)
+        <span class="sql-keyword">VALUES</span> (@FirstName, @LastName, @Email);
+        
+        <span class="sql-keyword">SET</span> @CustomerID = <span class="sql-function">SCOPE_IDENTITY</span>();
+        
+        <span class="sql-comment">-- 2. Insert Address (uses CustomerID from step 1)</span>
+        <span class="sql-keyword">INSERT INTO</span> Addresses (
+            CustomerID, AddressType, StreetAddress, 
+            City, State, ZipCode
+        )
+        <span class="sql-keyword">VALUES</span> (
+            @CustomerID, <span class="sql-string">'Billing'</span>, @BillingAddress,
+            @BillingCity, @BillingState, @BillingZip
+        );
+        
+        <span class="sql-keyword">SET</span> @AddressID = <span class="sql-function">SCOPE_IDENTITY</span>();
+        
+        <span class="sql-comment">-- 3. Insert Order (uses CustomerID from step 1)</span>
+        <span class="sql-keyword">INSERT INTO</span> Orders (CustomerID, OrderDate, TotalAmount, Status)
+        <span class="sql-keyword">VALUES</span> (@CustomerID, <span class="sql-function">GETDATE</span>(), @TotalAmount, @Status);
+        
+        <span class="sql-keyword">SET</span> @OrderID = <span class="sql-function">SCOPE_IDENTITY</span>();
+        
+        <span class="sql-keyword">COMMIT TRANSACTION</span>;
+        <span class="sql-keyword">RETURN</span> 0;
+        
+    <span class="sql-keyword">END TRY</span>
+    <span class="sql-keyword">BEGIN CATCH</span>
+        <span class="sql-keyword">IF</span> @@TRANCOUNT &gt; 0
+            <span class="sql-keyword">ROLLBACK TRANSACTION</span>;
+        
+        <span class="sql-comment">-- Return error information</span>
+        <span class="sql-keyword">DECLARE</span> @ErrorMessage <span class="sql-keyword">NVARCHAR</span>(4000) = <span class="sql-function">ERROR_MESSAGE</span>();
+        <span class="sql-keyword">RAISERROR</span>(@ErrorMessage, 16, 1);
+        <span class="sql-keyword">RETURN</span> -1;
+    <span class="sql-keyword">END CATCH</span>
+<span class="sql-keyword">END</span>;
+<span class="sql-keyword">GO</span>
+
+<span class="sql-comment">-- Usage example</span>
+<span class="sql-keyword">DECLARE</span> @CustID <span class="sql-keyword">INT</span>, @OrdID <span class="sql-keyword">INT</span>, @AddrID <span class="sql-keyword">INT</span>;
+
+<span class="sql-keyword">EXEC</span> usp_CreateCompleteOrder
+    @FirstName = <span class="sql-string">'Jane'</span>,
+    @LastName = <span class="sql-string">'Doe'</span>,
+    @Email = <span class="sql-string">'jane.doe@email.com'</span>,
+    @BillingAddress = <span class="sql-string">'123 Main St'</span>,
+    @BillingCity = <span class="sql-string">'Seattle'</span>,
+    @BillingState = <span class="sql-string">'WA'</span>,
+    @BillingZip = <span class="sql-string">'98101'</span>,
+    @TotalAmount = 449.99,
+    @Status = <span class="sql-string">'Pending'</span>,
+    @CustomerID = @CustID <span class="sql-keyword">OUTPUT</span>,
+    @OrderID = @OrdID <span class="sql-keyword">OUTPUT</span>,
+    @AddressID = @AddrID <span class="sql-keyword">OUTPUT</span>;
+
+<span class="sql-keyword">SELECT</span> 
+    @CustID <span class="sql-keyword">AS</span> CustomerID,
+    @OrdID <span class="sql-keyword">AS</span> OrderID,
+    @AddrID <span class="sql-keyword">AS</span> AddressID;</code></pre>
+</div>
+<h3>Using OUTPUT Clause for Multiple Inserts</h3>
+<div class="example-box">
+<h4>Example: Insert Multiple Order Items at Once</h4>
+<pre><code><span class="sql-keyword">CREATE PROCEDURE</span> usp_InsertMultipleOrderItems
+    @OrderID <span class="sql-keyword">INT</span>
+<span class="sql-keyword">AS</span>
+<span class="sql-keyword">BEGIN</span>
+    <span class="sql-keyword">SET NOCOUNT ON</span>;
+    
+    <span class="sql-comment">-- Table variable to hold inserted IDs</span>
+    <span class="sql-keyword">DECLARE</span> @InsertedItems <span class="sql-keyword">TABLE</span> (
+        OrderItemID <span class="sql-keyword">INT</span>,
+        ProductID <span class="sql-keyword">INT</span>,
+        Quantity <span class="sql-keyword">INT</span>,
+        LineTotal <span class="sql-keyword">DECIMAL</span>(10,2)
+    );
+    
+    <span class="sql-comment">-- Insert multiple items using OUTPUT clause</span>
+    <span class="sql-keyword">INSERT INTO</span> OrderItems (OrderID, ProductID, Quantity, UnitPrice)
+    <span class="sql-keyword">OUTPUT</span> 
+        inserted.OrderItemID,
+        inserted.ProductID,
+        inserted.Quantity,
+        inserted.LineTotal
+    <span class="sql-keyword">INTO</span> @InsertedItems
+    <span class="sql-keyword">SELECT</span> 
+        @OrderID,
+        ProductID,
+        2 <span class="sql-keyword">AS</span> Quantity, <span class="sql-comment">-- Example: 2 of each product</span>
+        UnitPrice
+    <span class="sql-keyword">FROM</span> Products
+    <span class="sql-keyword">WHERE</span> ProductID <span class="sql-keyword">IN</span> (1, 2, 3);
+    
+    <span class="sql-comment">-- Return the inserted items</span>
+    <span class="sql-keyword">SELECT</span> * <span class="sql-keyword">FROM</span> @InsertedItems;
+<span class="sql-keyword">END</span>;
+<span class="sql-keyword">GO</span></code></pre>
+</div>
+</section>
+<section id="transactions">
+<h2>Transaction Management</h2>
+<p>Transactions ensure that all related inserts succeed or fail together, maintaining data integrity across foreign key relationships.</p>
+<h3>Transaction Best Practices</h3>
+<div class="best-practice"><strong>✅ Transaction Guidelines:</strong>
+<ul>
+<li>Always use explicit transactions when inserting related data</li>
+<li>Keep transactions as short as possible</li>
+<li>Handle errors with TRY...CATCH blocks</li>
+<li>Always check @@TRANCOUNT before ROLLBACK</li>
+<li>Use appropriate isolation levels</li>
+<li>Set XACT_ABORT ON for automatic rollback on errors</li>
+</ul>
+</div>
+<h3>Comprehensive Transaction Example</h3>
+<div class="example-box">
+<h4>Example: Order with Line Items (Full Transaction)</h4>
+<pre><code><span class="sql-keyword">CREATE PROCEDURE</span> usp_CreateOrderWithItems
+    @CustomerID <span class="sql-keyword">INT</span>,
+    @Status <span class="sql-keyword">NVARCHAR</span>(20),
+    @OrderID <span class="sql-keyword">INT</span> <span class="sql-keyword">OUTPUT</span>
+<span class="sql-keyword">AS</span>
+<span class="sql-keyword">BEGIN</span>
+    <span class="sql-keyword">SET NOCOUNT ON</span>;
+    <span class="sql-keyword">SET XACT_ABORT ON</span>; <span class="sql-comment">-- Auto-rollback on errors</span>
+    
+    <span class="sql-keyword">DECLARE</span> @TotalAmount <span class="sql-keyword">DECIMAL</span>(10,2) = 0;
+    
+    <span class="sql-keyword">BEGIN TRY</span>
+        <span class="sql-keyword">BEGIN TRANSACTION</span>;
+        
+        <span class="sql-comment">-- Validate customer</span>
+        <span class="sql-keyword">IF NOT EXISTS</span> (<span class="sql-keyword">SELECT</span> 1 <span class="sql-keyword">FROM</span> Customers <span class="sql-keyword">WHERE</span> CustomerID = @CustomerID)
+        <span class="sql-keyword">BEGIN</span>
+            <span class="sql-keyword">RAISERROR</span>(<span class="sql-string">'Customer ID %d does not exist'</span>, 16, 1, @CustomerID);
+            <span class="sql-keyword">RETURN</span> -1;
+        <span class="sql-keyword">END</span>
+        
+        <span class="sql-comment">-- Step 1: Create order (with temporary total)</span>
+        <span class="sql-keyword">INSERT INTO</span> Orders (CustomerID, OrderDate, TotalAmount, Status)
+        <span class="sql-keyword">VALUES</span> (@CustomerID, <span class="sql-function">GETDATE</span>(), 0, @Status);
+        
+        <span class="sql-keyword">SET</span> @OrderID = <span class="sql-function">SCOPE_IDENTITY</span>();
+        
+        <span class="sql-comment">-- Step 2: Add order items (example: products 1, 2, 3)</span>
+        <span class="sql-keyword">INSERT INTO</span> OrderItems (OrderID, ProductID, Quantity, UnitPrice)
+        <span class="sql-keyword">SELECT</span> 
+            @OrderID,
+            p.ProductID,
+            <span class="sql-keyword">CASE</span> p.ProductID 
+                <span class="sql-keyword">WHEN</span> 1 <span class="sql-keyword">THEN</span> 2
+                <span class="sql-keyword">WHEN</span> 2 <span class="sql-keyword">THEN</span> 1
+                <span class="sql-keyword">WHEN</span> 3 <span class="sql-keyword">THEN</span> 3
+            <span class="sql-keyword">END</span> <span class="sql-keyword">AS</span> Quantity,
+            p.UnitPrice
+        <span class="sql-keyword">FROM</span> Products p
+        <span class="sql-keyword">WHERE</span> p.ProductID <span class="sql-keyword">IN</span> (1, 2, 3);
+        
+        <span class="sql-comment">-- Step 3: Calculate and update order total</span>
+        <span class="sql-keyword">SELECT</span> @TotalAmount = <span class="sql-function">SUM</span>(LineTotal)
+        <span class="sql-keyword">FROM</span> OrderItems
+        <span class="sql-keyword">WHERE</span> OrderID = @OrderID;
+        
+        <span class="sql-keyword">UPDATE</span> Orders
+        <span class="sql-keyword">SET</span> TotalAmount = @TotalAmount
+        <span class="sql-keyword">WHERE</span> OrderID = @OrderID;
+        
+        <span class="sql-keyword">COMMIT TRANSACTION</span>;
+        
+        <span class="sql-keyword">RETURN</span> 0;
+        
+    <span class="sql-keyword">END TRY</span>
+    <span class="sql-keyword">BEGIN CATCH</span>
+        <span class="sql-comment">-- Rollback if transaction is active</span>
+        <span class="sql-keyword">IF</span> @@TRANCOUNT &gt; 0
+            <span class="sql-keyword">ROLLBACK TRANSACTION</span>;
+        
+        <span class="sql-comment">-- Log error details</span>
+        <span class="sql-keyword">DECLARE</span> @ErrorMessage <span class="sql-keyword">NVARCHAR</span>(4000);
+        <span class="sql-keyword">DECLARE</span> @ErrorSeverity <span class="sql-keyword">INT</span>;
+        <span class="sql-keyword">DECLARE</span> @ErrorState <span class="sql-keyword">INT</span>;
+        
+        <span class="sql-keyword">SELECT</span> 
+            @ErrorMessage = <span class="sql-function">ERROR_MESSAGE</span>(),
+            @ErrorSeverity = <span class="sql-function">ERROR_SEVERITY</span>(),
+            @ErrorState = <span class="sql-function">ERROR_STATE</span>();
+        
+        <span class="sql-comment">-- Re-throw the error</span>
+        <span class="sql-keyword">RAISERROR</span>(@ErrorMessage, @ErrorSeverity, @ErrorState);
+        
+        <span class="sql-keyword">RETURN</span> -1;
+    <span class="sql-keyword">END CATCH</span>
+<span class="sql-keyword">END</span>;
+<span class="sql-keyword">GO</span></code></pre>
+</div>
+<h3>Nested Transaction Handling</h3>
+<pre><code><span class="sql-keyword">CREATE PROCEDURE</span> usp_NestedTransactionExample
+    @CustomerID <span class="sql-keyword">INT</span>
+<span class="sql-keyword">AS</span>
+<span class="sql-keyword">BEGIN</span>
+    <span class="sql-keyword">SET NOCOUNT ON</span>;
+    
+    <span class="sql-keyword">DECLARE</span> @TransactionStarted <span class="sql-keyword">BIT</span> = 0;
+    
+    <span class="sql-keyword">BEGIN TRY</span>
+        <span class="sql-comment">-- Start transaction only if not already in one</span>
+        <span class="sql-keyword">IF</span> @@TRANCOUNT = 0
+        <span class="sql-keyword">BEGIN</span>
+            <span class="sql-keyword">BEGIN TRANSACTION</span>;
+            <span class="sql-keyword">SET</span> @TransactionStarted = 1;
+        <span class="sql-keyword">END</span>
+        
+        <span class="sql-comment">-- Your insert logic here</span>
+        <span class="sql-keyword">INSERT INTO</span> Customers (FirstName, LastName, Email)
+        <span class="sql-keyword">VALUES</span> (<span class="sql-string">'Test'</span>, <span class="sql-string">'User'</span>, <span class="sql-string">'test@email.com'</span>);
+        
+        <span class="sql-comment">-- Commit only if this procedure started the transaction</span>
+        <span class="sql-keyword">IF</span> @TransactionStarted = 1
+            <span class="sql-keyword">COMMIT TRANSACTION</span>;
+            
+    <span class="sql-keyword">END TRY</span>
+    <span class="sql-keyword">BEGIN CATCH</span>
+        <span class="sql-comment">-- Rollback only if this procedure started the transaction</span>
+        <span class="sql-keyword">IF</span> @TransactionStarted = 1 <span class="sql-keyword">AND</span> @@TRANCOUNT &gt; 0
+            <span class="sql-keyword">ROLLBACK TRANSACTION</span>;
+            
+        <span class="sql-keyword">THROW</span>; <span class="sql-comment">-- Re-throw error to caller</span>
+    <span class="sql-keyword">END CATCH</span>
+<span class="sql-keyword">END</span>;
+<span class="sql-keyword">GO</span></code></pre>
+</section>
+<section id="error-handling">
+<h2>Error Handling</h2>
+<p>Robust error handling is crucial for stored procedures that manage complex foreign key relationships.</p>
+<h3>Comprehensive Error Handling Pattern</h3>
+<div class="example-box">
+<h4>Example: Complete Error Handling</h4>
+<pre><code><span class="sql-keyword">CREATE PROCEDURE</span> usp_InsertOrderWithErrorHandling
+    @CustomerID <span class="sql-keyword">INT</span>,
+    @ProductID <span class="sql-keyword">INT</span>,
+    @Quantity <span class="sql-keyword">INT</span>,
+    @OrderID <span class="sql-keyword">INT</span> <span class="sql-keyword">OUTPUT</span>,
+    @ErrorMessage <span class="sql-keyword">NVARCHAR</span>(4000) <span class="sql-keyword">OUTPUT</span>
+<span class="sql-keyword">AS</span>
+<span class="sql-keyword">BEGIN</span>
+    <span class="sql-keyword">SET NOCOUNT ON</span>;
+    <span class="sql-keyword">SET XACT_ABORT OFF</span>; <span class="sql-comment">-- We'll handle errors explicitly</span>
+    
+    <span class="sql-keyword">DECLARE</span> @UnitPrice <span class="sql-keyword">DECIMAL</span>(10,2);
+    <span class="sql-keyword">DECLARE</span> @TotalAmount <span class="sql-keyword">DECIMAL</span>(10,2);
+    
+    <span class="sql-keyword">BEGIN TRY</span>
+        <span class="sql-keyword">BEGIN TRANSACTION</span>;
+        
+        <span class="sql-comment">-- Validation 1: Customer exists</span>
+        <span class="sql-keyword">IF NOT EXISTS</span> (<span class="sql-keyword">SELECT</span> 1 <span class="sql-keyword">FROM</span> Customers <span class="sql-keyword">WHERE</span> CustomerID = @CustomerID)
+        <span class="sql-keyword">BEGIN</span>
+            <span class="sql-keyword">SET</span> @ErrorMessage = <span class="sql-string">'Customer ID '</span> + <span class="sql-function">CAST</span>(@CustomerID <span class="sql-keyword">AS</span> <span class="sql-keyword">NVARCHAR</span>) + <span class="sql-string">' not found'</span>;
+            <span class="sql-keyword">RAISERROR</span>(@ErrorMessage, 16, 1);
+        <span class="sql-keyword">END</span>
+        
+        <span class="sql-comment">-- Validation 2: Product exists and get price</span>
+        <span class="sql-keyword">SELECT</span> @UnitPrice = UnitPrice
+        <span class="sql-keyword">FROM</span> Products
+        <span class="sql-keyword">WHERE</span> ProductID = @ProductID;
+        
+        <span class="sql-keyword">IF</span> @UnitPrice <span class="sql-keyword">IS NULL</span>
+        <span class="sql-keyword">BEGIN</span>
+            <span class="sql-keyword">SET</span> @ErrorMessage = <span class="sql-string">'Product ID '</span> + <span class="sql-function">CAST</span>(@ProductID <span class="sql-keyword">AS</span> <span class="sql-keyword">NVARCHAR</span>) + <span class="sql-string">' not found'</span>;
+            <span class="sql-keyword">RAISERROR</span>(@ErrorMessage, 16, 1);
+        <span class="sql-keyword">END</span>
+        
+        <span class="sql-comment">-- Validation 3: Quantity is positive</span>
+        <span class="sql-keyword">IF</span> @Quantity &lt;= 0
+        <span class="sql-keyword">BEGIN</span>
+            <span class="sql-keyword">SET</span> @ErrorMessage = <span class="sql-string">'Quantity must be greater than zero'</span>;
+            <span class="sql-keyword">RAISERROR</span>(@ErrorMessage, 16, 1);
+        <span class="sql-keyword">END</span>
+        
+        <span class="sql-comment">-- Validation 4: Check stock availability</span>
+        <span class="sql-keyword">IF EXISTS</span> (
+            <span class="sql-keyword">SELECT</span> 1 <span class="sql-keyword">FROM</span> Products 
+            <span class="sql-keyword">WHERE</span> ProductID = @ProductID 
+            <span class="sql-keyword">AND</span> StockQuantity &lt; @Quantity
+        )
+        <span class="sql-keyword">BEGIN</span>
+            <span class="sql-keyword">SET</span> @ErrorMessage = <span class="sql-string">'Insufficient stock for Product ID '</span> + 
+                              <span class="sql-function">CAST</span>(@ProductID <span class="sql-keyword">AS</span> <span class="sql-keyword">NVARCHAR</span>);
+            <span class="sql-keyword">RAISERROR</span>(@ErrorMessage, 16, 1);
+        <span class="sql-keyword">END</span>
+        
+        <span class="sql-comment">-- Calculate total</span>
+        <span class="sql-keyword">SET</span> @TotalAmount = @UnitPrice * @Quantity;
+        
+        <span class="sql-comment">-- Insert order</span>
+        <span class="sql-keyword">INSERT INTO</span> Orders (CustomerID, OrderDate, TotalAmount, Status)
+        <span class="sql-keyword">VALUES</span> (@CustomerID, <span class="sql-function">GETDATE</span>(), @TotalAmount, <span class="sql-string">'Pending'</span>);
+        
+        <span class="sql-keyword">SET</span> @OrderID = <span class="sql-function">SCOPE_IDENTITY</span>();
+        
+        <span class="sql-comment">-- Insert order item</span>
+        <span class="sql-keyword">INSERT INTO</span> OrderItems (OrderID, ProductID, Quantity, UnitPrice)
+        <span class="sql-keyword">VALUES</span> (@OrderID, @ProductID, @Quantity, @UnitPrice);
+        
+        <span class="sql-comment">-- Update stock</span>
+        <span class="sql-keyword">UPDATE</span> Products
+        <span class="sql-keyword">SET</span> StockQuantity = StockQuantity - @Quantity
+        <span class="sql-keyword">WHERE</span> ProductID = @ProductID;
+        
+        <span class="sql-keyword">COMMIT TRANSACTION</span>;
+        
+        <span class="sql-keyword">SET</span> @ErrorMessage = <span class="sql-keyword">NULL</span>; <span class="sql-comment">-- Success</span>
+        <span class="sql-keyword">RETURN</span> 0;
+        
+    <span class="sql-keyword">END TRY</span>
+    <span class="sql-keyword">BEGIN CATCH</span>
+        <span class="sql-keyword">IF</span> @@TRANCOUNT &gt; 0
+            <span class="sql-keyword">ROLLBACK TRANSACTION</span>;
+        
+        <span class="sql-comment">-- Capture comprehensive error information</span>
+        <span class="sql-keyword">SET</span> @ErrorMessage = 
+            <span class="sql-string">'Error '</span> + <span class="sql-function">CAST</span>(<span class="sql-function">ERROR_NUMBER</span>() <span class="sql-keyword">AS</span> <span class="sql-keyword">NVARCHAR</span>) + <span class="sql-string">': '</span> +
+            <span class="sql-function">ERROR_MESSAGE</span>() + 
+            <span class="sql-string">' (Line '</span> + <span class="sql-function">CAST</span>(<span class="sql-function">ERROR_LINE</span>() <span class="sql-keyword">AS</span> <span class="sql-keyword">NVARCHAR</span>) + <span class="sql-string">')'</span>;
+        
+        <span class="sql-keyword">SET</span> @OrderID = <span class="sql-keyword">NULL</span>;
+        <span class="sql-keyword">RETURN</span> -1;
+    <span class="sql-keyword">END CATCH</span>
+<span class="sql-keyword">END</span>;
+<span class="sql-keyword">GO</span>
+
+<span class="sql-comment">-- Usage with error handling</span>
+<span class="sql-keyword">DECLARE</span> @NewOrderID <span class="sql-keyword">INT</span>;
+<span class="sql-keyword">DECLARE</span> @Error <span class="sql-keyword">NVARCHAR</span>(4000);
+<span class="sql-keyword">DECLARE</span> @ReturnCode <span class="sql-keyword">INT</span>;
+
+<span class="sql-keyword">EXEC</span> @ReturnCode = usp_InsertOrderWithErrorHandling
+    @CustomerID = 999, <span class="sql-comment">-- Non-existent customer</span>
+    @ProductID = 1,
+    @Quantity = 2,
+    @OrderID = @NewOrderID <span class="sql-keyword">OUTPUT</span>,
+    @ErrorMessage = @Error <span class="sql-keyword">OUTPUT</span>;
+
+<span class="sql-keyword">IF</span> @ReturnCode = 0
+    <span class="sql-keyword">SELECT</span> <span class="sql-string">'Success'</span> <span class="sql-keyword">AS</span> Result, @NewOrderID <span class="sql-keyword">AS</span> OrderID;
+<span class="sql-keyword">ELSE</span>
+    <span class="sql-keyword">SELECT</span> <span class="sql-string">'Error'</span> <span class="sql-keyword">AS</span> Result, @Error <span class="sql-keyword">AS</span> ErrorMessage;</code></pre>
+</div>
+<h3>Error Logging Pattern</h3>
+<pre><code><span class="sql-comment">-- Create error log table</span>
+<span class="sql-keyword">CREATE TABLE</span> ErrorLog (
+    ErrorLogID <span class="sql-keyword">INT</span> <span class="sql-keyword">IDENTITY</span>(1,1) <span class="sql-keyword">PRIMARY KEY</span>,
+    ErrorNumber <span class="sql-keyword">INT</span>,
+    ErrorSeverity <span class="sql-keyword">INT</span>,
+    ErrorState <span class="sql-keyword">INT</span>,
+    ErrorProcedure <span class="sql-keyword">NVARCHAR</span>(128),
+    ErrorLine <span class="sql-keyword">INT</span>,
+    ErrorMessage <span class="sql-keyword">NVARCHAR</span>(4000),
+    ErrorDate <span class="sql-keyword">DATETIME</span> <span class="sql-keyword">DEFAULT</span> <span class="sql-function">GETDATE</span>()
+);
+
+<span class="sql-comment">-- Error logging procedure</span>
+<span class="sql-keyword">CREATE PROCEDURE</span> usp_LogError
+<span class="sql-keyword">AS</span>
+<span class="sql-keyword">BEGIN</span>
+    <span class="sql-keyword">SET NOCOUNT ON</span>;
+    
+    <span class="sql-keyword">INSERT INTO</span> ErrorLog (
+        ErrorNumber, ErrorSeverity, ErrorState,
+        ErrorProcedure, ErrorLine, ErrorMessage
+    )
+    <span class="sql-keyword">VALUES</span> (
+        <span class="sql-function">ERROR_NUMBER</span>(),
+        <span class="sql-function">ERROR_SEVERITY</span>(),
+        <span class="sql-function">ERROR_STATE</span>(),
+        <span class="sql-function">ERROR_PROCEDURE</span>(),
+        <span class="sql-function">ERROR_LINE</span>(),
+        <span class="sql-function">ERROR_MESSAGE</span>()
+    );
+<span class="sql-keyword">END</span>;
+<span class="sql-keyword">GO</span>
+
+<span class="sql-comment">-- Use in stored procedure</span>
+<span class="sql-keyword">BEGIN CATCH</span>
+    <span class="sql-keyword">EXEC</span> usp_LogError; <span class="sql-comment">-- Log the error</span>
+    <span class="sql-keyword">THROW</span>; <span class="sql-comment">-- Re-throw to caller</span>
+<span class="sql-keyword">END CATCH</span></code></pre>
+</section>
+<section id="output-parameters">
+<h2>OUTPUT Parameters</h2>
+<p>OUTPUT parameters provide a clean way to return identity values and status information from stored procedures.</p>
+<h3>Multiple OUTPUT Parameters</h3>
+<div class="example-box">
+<h4>Example: Return Multiple Generated IDs</h4>
+<pre><code><span class="sql-keyword">CREATE PROCEDURE</span> usp_CreateCustomerWithAddresses
+    <span class="sql-comment">-- Input parameters</span>
+    @FirstName <span class="sql-keyword">NVARCHAR</span>(50),
+    @LastName <span class="sql-keyword">NVARCHAR</span>(50),
+    @Email <span class="sql-keyword">NVARCHAR</span>(100),
+    @BillingAddress <span class="sql-keyword">NVARCHAR</span>(200),
+    @BillingCity <span class="sql-keyword">NVARCHAR</span>(100),
+    @BillingState <span class="sql-keyword">NVARCHAR</span>(50),
+    @BillingZip <span class="sql-keyword">NVARCHAR</span>(20),
+    @ShippingAddress <span class="sql-keyword">NVARCHAR</span>(200),
+    @ShippingCity <span class="sql-keyword">NVARCHAR</span>(100),
+    @ShippingState <span class="sql-keyword">NVARCHAR</span>(50),
+    @ShippingZip <span class="sql-keyword">NVARCHAR</span>(20),
+    <span class="sql-comment">-- Output parameters</span>
+    @CustomerID <span class="sql-keyword">INT</span> <span class="sql-keyword">OUTPUT</span>,
+    @BillingAddressID <span class="sql-keyword">INT</span> <span class="sql-keyword">OUTPUT</span>,
+    @ShippingAddressID <span class="sql-keyword">INT</span> <span class="sql-keyword">OUTPUT</span>,
+    @RecordsCreated <span class="sql-keyword">INT</span> <span class="sql-keyword">OUTPUT</span>
+<span class="sql-keyword">AS</span>
+<span class="sql-keyword">BEGIN</span>
+    <span class="sql-keyword">SET NOCOUNT ON</span>;
+    <span class="sql-keyword">SET</span> @RecordsCreated = 0;
+    
+    <span class="sql-keyword">BEGIN TRY</span>
+        <span class="sql-keyword">BEGIN TRANSACTION</span>;
+        
+        <span class="sql-comment">-- Insert customer</span>
+        <span class="sql-keyword">INSERT INTO</span> Customers (FirstName, LastName, Email)
+        <span class="sql-keyword">VALUES</span> (@FirstName, @LastName, @Email);
+        
+        <span class="sql-keyword">SET</span> @CustomerID = <span class="sql-function">SCOPE_IDENTITY</span>();
+        <span class="sql-keyword">SET</span> @RecordsCreated = @RecordsCreated + 1;
+        
+        <span class="sql-comment">-- Insert billing address</span>
+        <span class="sql-keyword">INSERT INTO</span> Addresses (
+            CustomerID, AddressType, StreetAddress, City, State, ZipCode
+        )
+        <span class="sql-keyword">VALUES</span> (
+            @CustomerID, <span class="sql-string">'Billing'</span>, @BillingAddress, 
+            @BillingCity, @BillingState, @BillingZip
+        );
+        
+        <span class="sql-keyword">SET</span> @BillingAddressID = <span class="sql-function">SCOPE_IDENTITY</span>();
+        <span class="sql-keyword">SET</span> @RecordsCreated = @RecordsCreated + 1;
+        
+        <span class="sql-comment">-- Insert shipping address</span>
+        <span class="sql-keyword">INSERT INTO</span> Addresses (
+            CustomerID, AddressType, StreetAddress, City, State, ZipCode
+        )
+        <span class="sql-keyword">VALUES</span> (
+            @CustomerID, <span class="sql-string">'Shipping'</span>, @ShippingAddress,
+            @ShippingCity, @ShippingState, @ShippingZip
+        );
+        
+        <span class="sql-keyword">SET</span> @ShippingAddressID = <span class="sql-function">SCOPE_IDENTITY</span>();
+        <span class="sql-keyword">SET</span> @RecordsCreated = @RecordsCreated + 1;
+        
+        <span class="sql-keyword">COMMIT TRANSACTION</span>;
+        <span class="sql-keyword">RETURN</span> 0;
+        
+    <span class="sql-keyword">END TRY</span>
+    <span class="sql-keyword">BEGIN CATCH</span>
+        <span class="sql-keyword">IF</span> @@TRANCOUNT &gt; 0
+            <span class="sql-keyword">ROLLBACK TRANSACTION</span>;
+        
+        <span class="sql-comment">-- Set outputs to NULL on error</span>
+        <span class="sql-keyword">SET</span> @CustomerID = <span class="sql-keyword">NULL</span>;
+        <span class="sql-keyword">SET</span> @BillingAddressID = <span class="sql-keyword">NULL</span>;
+        <span class="sql-keyword">SET</span> @ShippingAddressID = <span class="sql-keyword">NULL</span>;
+        <span class="sql-keyword">SET</span> @RecordsCreated = 0;
+        
+        <span class="sql-keyword">THROW</span>;
+    <span class="sql-keyword">END CATCH</span>
+<span class="sql-keyword">END</span>;
+<span class="sql-keyword">GO</span>
+
+<span class="sql-comment">-- Usage example</span>
+<span class="sql-keyword">DECLARE</span> @CustID <span class="sql-keyword">INT</span>, @BillAddrID <span class="sql-keyword">INT</span>, @ShipAddrID <span class="sql-keyword">INT</span>, @RecCount <span class="sql-keyword">INT</span>;
+
+<span class="sql-keyword">EXEC</span> usp_CreateCustomerWithAddresses
+    @FirstName = <span class="sql-string">'Alice'</span>,
+    @LastName = <span class="sql-string">'Johnson'</span>,
+    @Email = <span class="sql-string">'alice.j@email.com'</span>,
+    @BillingAddress = <span class="sql-string">'456 Oak Ave'</span>,
+    @BillingCity = <span class="sql-string">'Portland'</span>,
+    @BillingState = <span class="sql-string">'OR'</span>,
+    @BillingZip = <span class="sql-string">'97201'</span>,
+    @ShippingAddress = <span class="sql-string">'789 Pine St'</span>,
+    @ShippingCity = <span class="sql-string">'Portland'</span>,
+    @ShippingState = <span class="sql-string">'OR'</span>,
+    @ShippingZip = <span class="sql-string">'97202'</span>,
+    @CustomerID = @CustID <span class="sql-keyword">OUTPUT</span>,
+    @BillingAddressID = @BillAddrID <span class="sql-keyword">OUTPUT</span>,
+    @ShippingAddressID = @ShipAddrID <span class="sql-keyword">OUTPUT</span>,
+    @RecordsCreated = @RecCount <span class="sql-keyword">OUTPUT</span>;
+
+<span class="sql-keyword">SELECT</span> 
+    @CustID <span class="sql-keyword">AS</span> CustomerID,
+    @BillAddrID <span class="sql-keyword">AS</span> BillingAddressID,
+    @ShipAddrID <span class="sql-keyword">AS</span> ShippingAddressID,
+    @RecCount <span class="sql-keyword">AS</span> RecordsCreated;</code></pre>
+</div>
+</section>
+<section id="table-valued">
+<h2>Table-Valued Parameters</h2>
+<p>Table-valued parameters (TVPs) allow you to pass multiple rows of data to a stored procedure in a single call, perfect for batch inserts with foreign key relationships.</p>
+<h3>Creating User-Defined Table Types</h3>
+<pre><code><span class="sql-comment">-- Define table type for order items</span>
+<span class="sql-keyword">CREATE TYPE</span> OrderItemType <span class="sql-keyword">AS TABLE</span> (
+    ProductID <span class="sql-keyword">INT</span> <span class="sql-keyword">NOT NULL</span>,
+    Quantity <span class="sql-keyword">INT</span> <span class="sql-keyword">NOT NULL</span>
+);
+<span class="sql-keyword">GO</span>
+
+<span class="sql-comment">-- Define table type for addresses</span>
+<span class="sql-keyword">CREATE TYPE</span> AddressType <span class="sql-keyword">AS TABLE</span> (
+    AddressType <span class="sql-keyword">NVARCHAR</span>(20) <span class="sql-keyword">NOT NULL</span>,
+    StreetAddress <span class="sql-keyword">NVARCHAR</span>(200) <span class="sql-keyword">NOT NULL</span>,
+    City <span class="sql-keyword">NVARCHAR</span>(100) <span class="sql-keyword">NOT NULL</span>,
+    State <span class="sql-keyword">NVARCHAR</span>(50) <span class="sql-keyword">NOT NULL</span>,
+    ZipCode <span class="sql-keyword">NVARCHAR</span>(20) <span class="sql-keyword">NOT NULL</span>
+);
+<span class="sql-keyword">GO</span></code></pre>
+<h3>Using TVPs in Stored Procedures</h3>
+<div class="example-box">
+<h4>Example: Create Order with Multiple Items</h4>
+<pre><code><span class="sql-keyword">CREATE PROCEDURE</span> usp_CreateOrderWithItemsTVP
+    @CustomerID <span class="sql-keyword">INT</span>,
+    @Status <span class="sql-keyword">NVARCHAR</span>(20),
+    @OrderItems OrderItemType <span class="sql-keyword">READONLY</span>, <span class="sql-comment">-- TVP parameter</span>
+    @OrderID <span class="sql-keyword">INT</span> <span class="sql-keyword">OUTPUT</span>
+<span class="sql-keyword">AS</span>
+<span class="sql-keyword">BEGIN</span>
+    <span class="sql-keyword">SET NOCOUNT ON</span>;
+    
+    <span class="sql-keyword">DECLARE</span> @TotalAmount <span class="sql-keyword">DECIMAL</span>(10,2);
+    
+    <span class="sql-keyword">BEGIN TRY</span>
+        <span class="sql-keyword">BEGIN TRANSACTION</span>;
+        
+        <span class="sql-comment">-- Validate customer exists</span>
+        <span class="sql-keyword">IF NOT EXISTS</span> (<span class="sql-keyword">SELECT</span> 1 <span class="sql-keyword">FROM</span> Customers <span class="sql-keyword">WHERE</span> CustomerID = @CustomerID)
+        <span class="sql-keyword">BEGIN</span>
+            <span class="sql-keyword">RAISERROR</span>(<span class="sql-string">'Customer does not exist'</span>, 16, 1);
+        <span class="sql-keyword">END</span>
+        
+        <span class="sql-comment">-- Validate all products exist</span>
+        <span class="sql-keyword">IF EXISTS</span> (
+            <span class="sql-keyword">SELECT</span> 1
+            <span class="sql-keyword">FROM</span> @OrderItems oi
+            <span class="sql-keyword">LEFT JOIN</span> Products p <span class="sql-keyword">ON</span> oi.ProductID = p.ProductID
+            <span class="sql-keyword">WHERE</span> p.ProductID <span class="sql-keyword">IS NULL</span>
+        )
+        <span class="sql-keyword">BEGIN</span>
+            <span class="sql-keyword">RAISERROR</span>(<span class="sql-string">'One or more products do not exist'</span>, 16, 1);
+        <span class="sql-keyword">END</span>
+        
+        <span class="sql-comment">-- Calculate total amount</span>
+        <span class="sql-keyword">SELECT</span> @TotalAmount = <span class="sql-function">SUM</span>(oi.Quantity * p.UnitPrice)
+        <span class="sql-keyword">FROM</span> @OrderItems oi
+        <span class="sql-keyword">INNER JOIN</span> Products p <span class="sql-keyword">ON</span> oi.ProductID = p.ProductID;
+        
+        <span class="sql-comment">-- Create order</span>
+        <span class="sql-keyword">INSERT INTO</span> Orders (CustomerID, OrderDate, TotalAmount, Status)
+        <span class="sql-keyword">VALUES</span> (@CustomerID, <span class="sql-function">GETDATE</span>(), @TotalAmount, @Status);
+        
+        <span class="sql-keyword">SET</span> @OrderID = <span class="sql-function">SCOPE_IDENTITY</span>();
+        
+        <span class="sql-comment">-- Insert all order items</span>
+        <span class="sql-keyword">INSERT INTO</span> OrderItems (OrderID, ProductID, Quantity, UnitPrice)
+        <span class="sql-keyword">SELECT</span> 
+            @OrderID,
+            oi.ProductID,
+            oi.Quantity,
+            p.UnitPrice
+        <span class="sql-keyword">FROM</span> @OrderItems oi
+        <span class="sql-keyword">INNER JOIN</span> Products p <span class="sql-keyword">ON</span> oi.ProductID = p.ProductID;
+        
+        <span class="sql-keyword">COMMIT TRANSACTION</span>;
+        <span class="sql-keyword">RETURN</span> 0;
+        
+    <span class="sql-keyword">END TRY</span>
+    <span class="sql-keyword">BEGIN CATCH</span>
+        <span class="sql-keyword">IF</span> @@TRANCOUNT &gt; 0
+            <span class="sql-keyword">ROLLBACK TRANSACTION</span>;
+        <span class="sql-keyword">THROW</span>;
+    <span class="sql-keyword">END CATCH</span>
+<span class="sql-keyword">END</span>;
+<span class="sql-keyword">GO</span>
+
+<span class="sql-comment">-- Usage example</span>
+<span class="sql-keyword">DECLARE</span> @Items OrderItemType;
+<span class="sql-keyword">DECLARE</span> @NewOrderID <span class="sql-keyword">INT</span>;
+
+<span class="sql-comment">-- Populate the table variable</span>
+<span class="sql-keyword">INSERT INTO</span> @Items (ProductID, Quantity)
+<span class="sql-keyword">VALUES</span> 
+    (1, 2),
+    (3, 1),
+    (5, 3);
+
+<span class="sql-comment">-- Execute procedure with TVP</span>
+<span class="sql-keyword">EXEC</span> usp_CreateOrderWithItemsTVP
+    @CustomerID = 1,
+    @Status = <span class="sql-string">'Pending'</span>,
+    @OrderItems = @Items,
+    @OrderID = @NewOrderID <span class="sql-keyword">OUTPUT</span>;
+
+<span class="sql-keyword">SELECT</span> @NewOrderID <span class="sql-keyword">AS</span> NewOrderID;</code></pre>
+</div>
+<div class="tip"><strong>💡 TVP Benefits:</strong> Table-valued parameters reduce network round-trips, improve performance, and make code more maintainable compared to passing delimited strings or making multiple procedure calls.</div>
+</section>
+<section id="advantages">
+<h2>Advantages of Stored Procedures</h2>
+<div class="pros-cons">
+<div class="pros">
+<h4>✅ Advantages</h4>
+<ul>
+<li><strong>Data Integrity:</strong> Encapsulate complex foreign key logic, ensuring consistency</li>
+<li><strong>Performance:</strong> Compiled execution plans, reduced network traffic</li>
+<li><strong>Security:</strong> Parameterized queries prevent SQL injection</li>
+<li><strong>Maintainability:</strong> Centralized business logic, easier to update</li>
+<li><strong>Reusability:</strong> Call from multiple applications</li>
+<li><strong>Atomicity:</strong> Built-in transaction support</li>
+<li><strong>Abstraction:</strong> Hide database complexity from application</li>
+<li><strong>Version Control:</strong> Database changes through migrations</li>
+<li><strong>Testing:</strong> Can unit test database logic</li>
+</ul>
+</div>
+<div class="cons">
+<h4>❌ Considerations</h4>
+<ul>
+<li><strong>Vendor Lock-in:</strong> T-SQL is SQL Server specific</li>
+<li><strong>Version Control:</strong> Requires database migration tools</li>
+<li><strong>Development:</strong> Requires SQL expertise</li>
+<li><strong>Testing:</strong> Need database for integration tests</li>
+<li><strong>Debugging:</strong> Limited debugging tools compared to application code</li>
+<li><strong>Deployment:</strong> Database deployments can be complex</li>
+<li><strong>Flexibility:</strong> Less flexible than ORM dynamic queries</li>
+</ul>
+</div>
+</div>
+<h3>When to Use Stored Procedures</h3>
+<table>
+<thead>
+<tr>
+<th>Scenario</th>
+<th>Use Stored Procedure?</th>
+<th>Reason</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Complex multi-table inserts</td>
+<td>✅ Yes</td>
+<td>Ensures atomicity and referential integrity</td>
+</tr>
+<tr>
+<td>Bulk data operations</td>
+<td>✅ Yes</td>
+<td>Better performance, reduced network traffic</td>
+</tr>
+<tr>
+<td>Business logic validation</td>
+<td>✅ Yes</td>
+<td>Centralized, consistent enforcement</td>
+</tr>
+<tr>
+<td>Simple CRUD on single table</td>
+<td>⚠️ Maybe</td>
+<td>ORM might be simpler for basic operations</td>
+</tr>
+<tr>
+<td>Dynamic filtering/searching</td>
+<td>⚠️ Maybe</td>
+<td>ORM dynamic queries can be more flexible</td>
+</tr>
+<tr>
+<td>Frequently changing business rules</td>
+<td>❌ Consider alternatives</td>
+<td>Application code may be easier to modify</td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="alternatives">
+<h2>Alternative Approaches</h2>
+<h3>1. ORM-Based Approach (Entity Framework)</h3>
+<pre><code><span class="sql-comment">// C# with Entity Framework</span>
+<span class="sql-keyword">using</span> (var transaction = context.Database.BeginTransaction())
+{
+    <span class="sql-keyword">try</span>
+    {
+        <span class="sql-comment">// Create customer</span>
+        <span class="sql-keyword">var</span> customer = <span class="sql-keyword">new</span> Customer
+        {
+            FirstName = <span class="sql-string">"John"</span>,
+            LastName = <span class="sql-string">"Doe"</span>,
+            Email = <span class="sql-string">"john@email.com"</span>
+        };
+        context.Customers.Add(customer);
+        context.SaveChanges(); <span class="sql-comment">// Identity generated here</span>
+        
+        <span class="sql-comment">// Create order using generated CustomerID</span>
+        <span class="sql-keyword">var</span> order = <span class="sql-keyword">new</span> Order
+        {
+            CustomerID = customer.CustomerID,
+            OrderDate = DateTime.Now,
+            TotalAmount = 299.99m,
+            Status = <span class="sql-string">"Pending"</span>
+        };
+        context.Orders.Add(order);
+        context.SaveChanges(); <span class="sql-comment">// Identity generated here</span>
+        
+        <span class="sql-comment">// Create order items using generated OrderID</span>
+        <span class="sql-keyword">var</span> items = <span class="sql-keyword">new</span> List&lt;OrderItem&gt;
+        {
+            <span class="sql-keyword">new</span> OrderItem { OrderID = order.OrderID, ProductID = 1, Quantity = 2, UnitPrice = 149.99m },
+            <span class="sql-keyword">new</span> OrderItem { OrderID = order.OrderID, ProductID = 2, Quantity = 1, UnitPrice = 49.99m }
+        };
+        context.OrderItems.AddRange(items);
+        context.SaveChanges();
+        
+        transaction.Commit();
+    }
+    <span class="sql-keyword">catch</span>
+    {
+        transaction.Rollback();
+        <span class="sql-keyword">throw</span>;
+    }
+}</code></pre>
+<h3>2. Application-Level Logic</h3>
+<pre><code><span class="sql-comment">// ADO.NET approach</span>
+<span class="sql-keyword">int</span> customerID, orderID;
+
+<span class="sql-keyword">using</span> (var connection = <span class="sql-keyword">new</span> SqlConnection(connectionString))
+<span class="sql-keyword">using</span> (var transaction = connection.BeginTransaction())
+{
+    <span class="sql-keyword">try</span>
+    {
+        connection.Open();
+        
+        <span class="sql-comment">// Insert customer and get ID</span>
+        <span class="sql-keyword">using</span> (var cmd = <span class="sql-keyword">new</span> SqlCommand(
+            <span class="sql-string">"INSERT INTO Customers (FirstName, LastName, Email) "</span> +
+            <span class="sql-string">"OUTPUT INSERTED.CustomerID "</span> +
+            <span class="sql-string">"VALUES (@FirstName, @LastName, @Email)"</span>,
+            connection, transaction))
+        {
+            cmd.Parameters.AddWithValue(<span class="sql-string">"@FirstName"</span>, <span class="sql-string">"John"</span>);
+            cmd.Parameters.AddWithValue(<span class="sql-string">"@LastName"</span>, <span class="sql-string">"Doe"</span>);
+            cmd.Parameters.AddWithValue(<span class="sql-string">"@Email"</span>, <span class="sql-string">"john@email.com"</span>);
+            customerID = (<span class="sql-keyword">int</span>)cmd.ExecuteScalar();
+        }
+        
+        <span class="sql-comment">// Insert order using customerID</span>
+        <span class="sql-keyword">using</span> (var cmd = <span class="sql-keyword">new</span> SqlCommand(
+            <span class="sql-string">"INSERT INTO Orders (CustomerID, OrderDate, TotalAmount, Status) "</span> +
+            <span class="sql-string">"OUTPUT INSERTED.OrderID "</span> +
+            <span class="sql-string">"VALUES (@CustomerID, @OrderDate, @TotalAmount, @Status)"</span>,
+            connection, transaction))
+        {
+            cmd.Parameters.AddWithValue(<span class="sql-string">"@CustomerID"</span>, customerID);
+            cmd.Parameters.AddWithValue(<span class="sql-string">"@OrderDate"</span>, DateTime.Now);
+            cmd.Parameters.AddWithValue(<span class="sql-string">"@TotalAmount"</span>, 299.99);
+            cmd.Parameters.AddWithValue(<span class="sql-string">"@Status"</span>, <span class="sql-string">"Pending"</span>);
+            orderID = (<span class="sql-keyword">int</span>)cmd.ExecuteScalar();
+        }
+        
+        transaction.Commit();
+    }
+    <span class="sql-keyword">catch</span>
+    {
+        transaction.Rollback();
+        <span class="sql-keyword">throw</span>;
+    }
+}</code></pre>
+<h3>3. Hybrid Approach</h3>
+<p>Use stored procedures for complex operations and ORM for simple CRUD:</p>
+<pre><code><span class="sql-comment">// Entity Framework calling stored procedure</span>
+<span class="sql-keyword">var</span> customerIdParam = <span class="sql-keyword">new</span> SqlParameter(<span class="sql-string">"@CustomerID"</span>, SqlDbType.Int) 
+    { Direction = ParameterDirection.Output };
+<span class="sql-keyword">var</span> orderIdParam = <span class="sql-keyword">new</span> SqlParameter(<span class="sql-string">"@OrderID"</span>, SqlDbType.Int) 
+    { Direction = ParameterDirection.Output };
+
+context.Database.ExecuteSqlCommand(
+    <span class="sql-string">"EXEC usp_CreateCompleteOrder @FirstName, @LastName, @Email, "</span> +
+    <span class="sql-string">"@BillingAddress, @BillingCity, @BillingState, @BillingZip, "</span> +
+    <span class="sql-string">"@TotalAmount, @Status, @CustomerID OUTPUT, @OrderID OUTPUT"</span>,
+    <span class="sql-keyword">new</span> SqlParameter(<span class="sql-string">"@FirstName"</span>, <span class="sql-string">"John"</span>),
+    <span class="sql-keyword">new</span> SqlParameter(<span class="sql-string">"@LastName"</span>, <span class="sql-string">"Doe"</span>),
+    <span class="sql-comment">// ... other parameters ...</span>
+    customerIdParam,
+    orderIdParam
+);
+
+<span class="sql-keyword">int</span> customerID = (<span class="sql-keyword">int</span>)customerIdParam.Value;
+<span class="sql-keyword">int</span> orderID = (<span class="sql-keyword">int</span>)orderIdParam.Value;</code></pre>
+<h3>Comparison of Approaches</h3>
+<table>
+<thead>
+<tr>
+<th>Aspect</th>
+<th>Stored Procedures</th>
+<th>ORM (EF)</th>
+<th>Application Logic</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Performance</strong></td>
+<td>⭐⭐⭐⭐⭐ Excellent</td>
+<td>⭐⭐⭐ Good</td>
+<td>⭐⭐⭐⭐ Very Good</td>
+</tr>
+<tr>
+<td><strong>Maintainability</strong></td>
+<td>⭐⭐⭐ Good</td>
+<td>⭐⭐⭐⭐⭐ Excellent</td>
+<td>⭐⭐⭐ Good</td>
+</tr>
+<tr>
+<td><strong>Testability</strong></td>
+<td>⭐⭐⭐ Good</td>
+<td>⭐⭐⭐⭐⭐ Excellent</td>
+<td>⭐⭐⭐⭐ Very Good</td>
+</tr>
+<tr>
+<td><strong>Learning Curve</strong></td>
+<td>⭐⭐ Moderate</td>
+<td>⭐⭐⭐⭐ Easy</td>
+<td>⭐⭐⭐ Moderate</td>
+</tr>
+<tr>
+<td><strong>Flexibility</strong></td>
+<td>⭐⭐⭐ Good</td>
+<td>⭐⭐⭐⭐⭐ Excellent</td>
+<td>⭐⭐⭐⭐ Very Good</td>
+</tr>
+<tr>
+<td><strong>Security</strong></td>
+<td>⭐⭐⭐⭐⭐ Excellent</td>
+<td>⭐⭐⭐⭐⭐ Excellent</td>
+<td>⭐⭐⭐⭐ Very Good</td>
+</tr>
+<tr>
+<td><strong>Portability</strong></td>
+<td>⭐⭐ Low</td>
+<td>⭐⭐⭐⭐ High</td>
+<td>⭐⭐⭐ Moderate</td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="best-practices">
+<h2>Best Practices</h2>
+<h3>1. Naming Conventions</h3>
+<div class="best-practice"><strong>✅ Recommended Naming:</strong>
+<ul>
+<li><strong>Stored Procedures:</strong> <code>usp_VerbNoun</code> (e.g., <code>usp_InsertOrder</code>, <code>usp_GetCustomerOrders</code>)</li>
+<li><strong>Parameters:</strong> <code>@PascalCase</code> (e.g., <code>@CustomerID</code>, <code>@OrderDate</code>)</li>
+<li><strong>Table Types:</strong> <code>NounType</code> (e.g., <code>OrderItemType</code>, <code>AddressType</code>)</li>
+<li><strong>Local Variables:</strong> <code>@PascalCase</code> with descriptive names</li>
+</ul>
+</div>
+<h3>2. Performance Optimization</h3>
+<div class="best-practice"><strong>✅ Performance Tips:</strong>
+<ul>
+<li>Always use <code>SET NOCOUNT ON</code> at procedure start</li>
+<li>Use <code>SCOPE_IDENTITY()</code> instead of <code>@@IDENTITY</code></li>
+<li>Minimize transaction scope - only wrap necessary operations</li>
+<li>Use table-valued parameters for batch inserts</li>
+<li>Consider using OUTPUT clause instead of separate SELECT statements</li>
+<li>Index foreign key columns for better join performance</li>
+<li>Use appropriate isolation levels (READ COMMITTED is usually sufficient)</li>
+</ul>
+</div>
+<h3>3. Error Handling Standards</h3>
+<div class="best-practice"><strong>✅ Error Handling Guidelines:</strong>
+<ul>
+<li>Always use TRY...CATCH blocks for error handling</li>
+<li>Check @@TRANCOUNT before ROLLBACK</li>
+<li>Use meaningful error messages with RAISERROR or THROW</li>
+<li>Return status codes (0 for success, negative for errors)</li>
+<li>Consider OUTPUT parameters for error messages</li>
+<li>Log errors to an error table for diagnostics</li>
+<li>Validate inputs before beginning transactions</li>
+</ul>
+</div>
+<h3>4. Security Best Practices</h3>
+<div class="best-practice"><strong>✅ Security Recommendations:</strong>
+<ul>
+<li>Grant EXECUTE permissions on procedures, not direct table access</li>
+<li>Use parameterized procedures to prevent SQL injection</li>
+<li>Validate all input parameters</li>
+<li>Use separate service accounts with minimal permissions</li>
+<li>Avoid dynamic SQL when possible; if needed, use sp_executesql</li>
+<li>Don't expose sensitive data in error messages</li>
+<li>Audit procedure executions for sensitive operations</li>
+</ul>
+</div>
+<h3>5. Documentation Standards</h3>
+<pre><code><span class="sql-comment">/*
+    Procedure: usp_CreateOrderWithItems
+    Description: Creates a new order with multiple order items in a single transaction
+    
+    Parameters:
+        @CustomerID INT - The customer placing the order
+        @Status NVARCHAR(20) - Order status (Pending, Processing, Completed)
+        @OrderItems OrderItemType - Table of products and quantities
+        @OrderID INT OUTPUT - Returns the generated OrderID
+    
+    Returns: 
+        0 if successful, -1 if error
+    
+    Example:
+        DECLARE @Items OrderItemType;
+        INSERT INTO @Items VALUES (1, 2), (3, 1);
+        
+        DECLARE @NewOrderID INT;
+        EXEC usp_CreateOrderWithItems 
+            @CustomerID = 1,
+            @Status = 'Pending',
+            @OrderItems = @Items,
+            @OrderID = @NewOrderID OUTPUT;
+    
+    History:
+        2024-02-09 - Created initial version
+        2024-02-10 - Added stock validation
+*/</span>
+<span class="sql-keyword">CREATE PROCEDURE</span> usp_CreateOrderWithItems
+    <span class="sql-comment">-- procedure code here</span>
+<span class="sql-keyword">AS</span>
+<span class="sql-keyword">BEGIN</span>
+    <span class="sql-comment">-- implementation</span>
+<span class="sql-keyword">END</span>;</code></pre>
+<h3>6. Testing Recommendations</h3>
+<div class="best-practice"><strong>✅ Testing Best Practices:</strong>
+<ul>
+<li>Test with valid data to verify successful operations</li>
+<li>Test with invalid data to verify error handling</li>
+<li>Test transaction rollback scenarios</li>
+<li>Test concurrent execution scenarios</li>
+<li>Verify foreign key constraints are enforced</li>
+<li>Test with NULL values where applicable</li>
+<li>Verify identity values are returned correctly</li>
+<li>Performance test with realistic data volumes</li>
+</ul>
+</div>
+<h3>7. Common Pitfalls to Avoid</h3>
+<div class="warning"><strong>⚠️ Avoid These Mistakes:</strong>
+<ul>
+<li>Using <code>@@IDENTITY</code> instead of <code>SCOPE_IDENTITY()</code></li>
+<li>Not checking @@TRANCOUNT before ROLLBACK</li>
+<li>Leaving transactions open too long</li>
+<li>Not validating foreign key relationships before INSERT</li>
+<li>Forgetting SET NOCOUNT ON (causes extra result sets)</li>
+<li>Not using OUTPUT parameters to return generated IDs</li>
+<li>Inadequate error handling and logging</li>
+<li>Not considering concurrency scenarios</li>
+<li>Hardcoding values that should be parameters</li>
+</ul>
+</div>
+</section>
+<footer>
+<p>T-SQL Stored Procedures Guide for Foreign Key Management</p>
+<p>Best Practices for Identity Columns and Complex Insertions</p>
+<p>Last updated: February 2026</p>
+</footer></div></body></html>

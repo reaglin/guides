@@ -1,0 +1,1239 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Module 8: Runoff Loadings — BMPFast Stormwater Training</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400&family=Source+Serif+4:ital,opsz,wght@0,8..60,300;0,8..60,400;0,8..60,600;1,8..60,300;1,8..60,400&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+  <style>
+    /* ── Design Tokens ─────────────────────────────────────── */
+    :root {
+      --forest:       #2d5016;
+      --forest-mid:   #3d6b1f;
+      --forest-light: #5a8a32;
+      --forest-pale:  #e8f0dd;
+      --forest-tint:  #f3f7ee;
+      --warm-white:   #faf8f3;
+      --warm-off:     #f0ece3;
+      --warm-border:  #d8ceb8;
+      --ink:          #1a1a14;
+      --ink-mid:      #3a3a2e;
+      --ink-light:    #6b6b55;
+      --rule:         #c8be9e;
+      --accent-gold:  #b8960c;
+      --sidebar-w:    260px;
+    }
+
+    /* ── Reset & Base ───────────────────────────────────────── */
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      background: var(--warm-white);
+      color: var(--ink);
+      font-family: 'Source Serif 4', Georgia, serif;
+      font-size: 17px;
+      line-height: 1.72;
+      display: flex;
+    }
+
+    /* ── Sidebar Navigation ─────────────────────────────────── */
+    .sidebar {
+      position: sticky;
+      top: 0;
+      height: 100vh;
+      width: var(--sidebar-w);
+      flex-shrink: 0;
+      background: var(--forest);
+      overflow-y: auto;
+      padding: 2rem 0 3rem;
+      border-right: 3px solid var(--forest-light);
+    }
+
+    .sidebar-brand {
+      padding: 0 1.5rem 1.5rem;
+      border-bottom: 1px solid rgba(255,255,255,0.15);
+      margin-bottom: 1.5rem;
+    }
+
+    .sidebar-brand .module-label {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.68rem;
+      letter-spacing: 0.12em;
+      color: rgba(255,255,255,0.55);
+      text-transform: uppercase;
+      display: block;
+      margin-bottom: 0.4rem;
+    }
+
+    .sidebar-brand .module-title {
+      font-family: 'Playfair Display', serif;
+      font-size: 1.05rem;
+      font-weight: 600;
+      color: #fff;
+      line-height: 1.3;
+    }
+
+    .sidebar nav ul {
+      list-style: none;
+      padding: 0 0.75rem;
+    }
+
+    .sidebar nav ul li a {
+      display: block;
+      padding: 0.45rem 0.85rem;
+      border-radius: 4px;
+      font-family: 'Source Serif 4', serif;
+      font-size: 0.82rem;
+      color: rgba(255,255,255,0.75);
+      text-decoration: none;
+      line-height: 1.4;
+      transition: background 0.2s, color 0.2s;
+    }
+
+    .sidebar nav ul li a:hover,
+    .sidebar nav ul li a.active {
+      background: rgba(255,255,255,0.12);
+      color: #fff;
+    }
+
+    .sidebar nav ul li a .nav-num {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.7rem;
+      color: var(--forest-light);
+      margin-right: 0.5rem;
+      display: inline-block;
+      min-width: 1.5rem;
+    }
+
+    .sidebar-footer {
+      padding: 1.5rem 1.5rem 0;
+      margin-top: 2rem;
+      border-top: 1px solid rgba(255,255,255,0.12);
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.65rem;
+      color: rgba(255,255,255,0.35);
+      line-height: 1.6;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+    }
+
+    /* ── Main Content ───────────────────────────────────────── */
+    .main {
+      flex: 1;
+      min-width: 0;
+      padding: 0;
+    }
+
+    /* ── Hero Header ────────────────────────────────────────── */
+    .hero {
+      background: var(--forest);
+      color: #fff;
+      padding: 4rem 4rem 3.5rem;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .hero::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: repeating-linear-gradient(
+        -45deg,
+        transparent,
+        transparent 40px,
+        rgba(255,255,255,0.025) 40px,
+        rgba(255,255,255,0.025) 41px
+      );
+    }
+
+    .hero-eyebrow {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.72rem;
+      letter-spacing: 0.16em;
+      text-transform: uppercase;
+      color: rgba(255,255,255,0.5);
+      margin-bottom: 1rem;
+      position: relative;
+    }
+
+    .hero-eyebrow::before {
+      content: '▸ ';
+      color: var(--forest-light);
+    }
+
+    .hero h1 {
+      font-family: 'Playfair Display', serif;
+      font-size: 3.2rem;
+      font-weight: 700;
+      line-height: 1.1;
+      color: #fff;
+      position: relative;
+      margin-bottom: 1.25rem;
+      max-width: 700px;
+    }
+
+    .hero-meta {
+      display: flex;
+      gap: 2.5rem;
+      flex-wrap: wrap;
+      position: relative;
+    }
+
+    .hero-meta-item {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.75rem;
+      color: rgba(255,255,255,0.55);
+      letter-spacing: 0.06em;
+    }
+
+    .hero-meta-item span {
+      color: rgba(255,255,255,0.85);
+      display: block;
+      font-size: 0.85rem;
+      margin-top: 0.2rem;
+    }
+
+    /* ── Content Container ──────────────────────────────────── */
+    .content-wrap {
+      max-width: 920px;
+      margin: 0 auto;
+      padding: 3.5rem 4rem 6rem;
+    }
+
+    /* ── Section Headings ───────────────────────────────────── */
+    .section-block {
+      margin-bottom: 4rem;
+      scroll-margin-top: 2rem;
+    }
+
+    .section-number {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.72rem;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      color: var(--forest-light);
+      display: block;
+      margin-bottom: 0.5rem;
+    }
+
+    h2 {
+      font-family: 'Playfair Display', serif;
+      font-size: 1.9rem;
+      font-weight: 700;
+      color: var(--forest);
+      line-height: 1.2;
+      margin-bottom: 1.5rem;
+      padding-bottom: 0.75rem;
+      border-bottom: 2px solid var(--forest-pale);
+    }
+
+    h3 {
+      font-family: 'Playfair Display', serif;
+      font-size: 1.3rem;
+      font-weight: 600;
+      color: var(--forest-mid);
+      margin: 2rem 0 0.85rem;
+      line-height: 1.3;
+    }
+
+    h4 {
+      font-family: 'Source Serif 4', serif;
+      font-size: 1rem;
+      font-weight: 600;
+      color: var(--ink-mid);
+      margin: 1.5rem 0 0.5rem;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      font-size: 0.88rem;
+    }
+
+    p {
+      margin-bottom: 1rem;
+      color: var(--ink-mid);
+    }
+
+    /* ── Callout / Key Formula ──────────────────────────────── */
+    .key-formula {
+      background: var(--forest);
+      color: #fff;
+      border-radius: 6px;
+      padding: 1.75rem 2rem;
+      margin: 1.75rem 0;
+      text-align: center;
+    }
+
+    .key-formula .formula-label {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.7rem;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      color: rgba(255,255,255,0.5);
+      margin-bottom: 0.75rem;
+      display: block;
+    }
+
+    .key-formula .formula-text {
+      font-family: 'Playfair Display', serif;
+      font-size: 1.4rem;
+      font-weight: 600;
+      color: #fff;
+      line-height: 1.5;
+    }
+
+    .key-formula .formula-text em {
+      color: #c8e67a;
+      font-style: normal;
+    }
+
+    /* ── Formula Block ──────────────────────────────────────── */
+    .formula-block {
+      background: var(--forest-tint);
+      border: 1px solid var(--forest-pale);
+      border-left: 4px solid var(--forest-light);
+      border-radius: 4px;
+      padding: 1.5rem 2rem;
+      margin: 1.5rem 0;
+      font-family: 'JetBrains Mono', monospace;
+    }
+
+    .formula-block .formula-title {
+      font-family: 'Source Serif 4', serif;
+      font-size: 0.85rem;
+      font-weight: 600;
+      color: var(--forest);
+      text-transform: uppercase;
+      letter-spacing: 0.07em;
+      margin-bottom: 1rem;
+      display: block;
+    }
+
+    .formula-equation {
+      font-size: 0.82rem;
+      color: var(--ink);
+      line-height: 2.2;
+      overflow-x: auto;
+    }
+
+    .formula-fraction {
+      display: inline-flex;
+      flex-direction: column;
+      align-items: center;
+      vertical-align: middle;
+      margin: 0 0.1em;
+      font-size: 0.78rem;
+    }
+
+    .formula-fraction .num,
+    .formula-fraction .den {
+      padding: 0 0.2em;
+      line-height: 1.3;
+    }
+
+    .formula-fraction .num {
+      border-bottom: 1px solid var(--ink);
+    }
+
+    .formula-vars {
+      margin-top: 1.25rem;
+      border-top: 1px solid var(--forest-pale);
+      padding-top: 1rem;
+    }
+
+    .formula-vars table {
+      border-collapse: collapse;
+      width: 100%;
+      font-size: 0.82rem;
+    }
+
+    .formula-vars td {
+      padding: 0.3rem 0.6rem;
+      vertical-align: top;
+      color: var(--ink-mid);
+    }
+
+    .formula-vars td:first-child {
+      font-weight: 600;
+      color: var(--forest);
+      white-space: nowrap;
+      width: 5rem;
+    }
+
+    /* ── Tables ─────────────────────────────────────────────── */
+    .table-wrap {
+      overflow-x: auto;
+      margin: 1.5rem 0;
+      border-radius: 4px;
+      border: 1px solid var(--warm-border);
+    }
+
+    table.data-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-family: 'Source Serif 4', serif;
+      font-size: 0.88rem;
+    }
+
+    table.data-table thead tr {
+      background: var(--forest);
+      color: #fff;
+    }
+
+    table.data-table thead th {
+      padding: 0.75rem 1rem;
+      text-align: center;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.72rem;
+      font-weight: 500;
+      letter-spacing: 0.05em;
+      text-transform: uppercase;
+      border-right: 1px solid rgba(255,255,255,0.15);
+      line-height: 1.4;
+    }
+
+    table.data-table thead th:last-child { border-right: none; }
+
+    table.data-table thead tr.subhead {
+      background: var(--forest-mid);
+    }
+
+    table.data-table thead tr.subhead th {
+      font-size: 0.68rem;
+      padding: 0.5rem 0.75rem;
+    }
+
+    table.data-table tbody tr:nth-child(even) {
+      background: var(--forest-tint);
+    }
+
+    table.data-table tbody tr:nth-child(odd) {
+      background: #fff;
+    }
+
+    table.data-table tbody tr:hover {
+      background: var(--forest-pale);
+    }
+
+    table.data-table tbody td {
+      padding: 0.65rem 1rem;
+      text-align: center;
+      border-right: 1px solid var(--warm-border);
+      border-bottom: 1px solid var(--warm-border);
+      color: var(--ink-mid);
+    }
+
+    table.data-table tbody td:first-child {
+      text-align: left;
+      font-weight: 600;
+      color: var(--ink);
+    }
+
+    table.data-table tbody td:last-child { border-right: none; }
+
+    table.data-table tfoot tr {
+      background: var(--forest-pale);
+      font-weight: 700;
+    }
+
+    table.data-table tfoot td {
+      padding: 0.65rem 1rem;
+      border-right: 1px solid var(--warm-border);
+      text-align: center;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.82rem;
+      color: var(--forest);
+    }
+
+    table.data-table tfoot td:first-child { text-align: left; }
+
+    /* ── Calculation Steps ──────────────────────────────────── */
+    .calc-step {
+      background: #fff;
+      border: 1px solid var(--warm-border);
+      border-radius: 6px;
+      padding: 1.5rem 1.75rem;
+      margin: 1.25rem 0;
+      position: relative;
+    }
+
+    .calc-step-title {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.72rem;
+      text-transform: uppercase;
+      letter-spacing: 0.12em;
+      color: var(--forest-light);
+      margin-bottom: 0.75rem;
+      display: block;
+    }
+
+    .calc-step .calc-equation {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.83rem;
+      color: var(--ink);
+      line-height: 2.0;
+      background: var(--forest-tint);
+      border-radius: 4px;
+      padding: 0.85rem 1.25rem;
+      overflow-x: auto;
+      white-space: nowrap;
+    }
+
+    .calc-step .calc-result {
+      margin-top: 0.75rem;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 1rem;
+      font-weight: 600;
+      color: var(--forest);
+      text-align: right;
+    }
+
+    /* ── Example Scenario Block ─────────────────────────────── */
+    .scenario-block {
+      background: var(--warm-off);
+      border: 1px solid var(--warm-border);
+      border-radius: 6px;
+      padding: 1.75rem 2rem;
+      margin: 1.5rem 0;
+    }
+
+    .scenario-block .scenario-label {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.7rem;
+      text-transform: uppercase;
+      letter-spacing: 0.14em;
+      color: var(--forest-light);
+      margin-bottom: 1rem;
+      display: block;
+    }
+
+    .scenario-list {
+      list-style: none;
+      padding: 0;
+    }
+
+    .scenario-list li {
+      padding: 0.3rem 0 0.3rem 1.5rem;
+      position: relative;
+      color: var(--ink-mid);
+      font-size: 0.92rem;
+    }
+
+    .scenario-list li::before {
+      content: '—';
+      position: absolute;
+      left: 0;
+      color: var(--forest-light);
+      font-weight: 700;
+    }
+
+    .scenario-list li strong {
+      color: var(--forest);
+    }
+
+    /* ── Image Placeholder ──────────────────────────────────── */
+    .img-placeholder {
+      width: 100%;
+      background: var(--forest-tint);
+      border: 2px dashed var(--forest-light);
+      border-radius: 4px;
+      padding: 2.5rem 2rem;
+      text-align: center;
+      margin: 1.75rem 0;
+      color: var(--forest-mid);
+    }
+
+    .img-placeholder .ph-icon {
+      font-size: 2rem;
+      display: block;
+      margin-bottom: 0.5rem;
+      opacity: 0.5;
+    }
+
+    .img-placeholder .ph-label {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.72rem;
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      color: var(--forest-light);
+      display: block;
+      margin-bottom: 0.35rem;
+    }
+
+    .img-placeholder .ph-desc {
+      font-size: 0.88rem;
+      color: var(--ink-light);
+    }
+
+    /* ── Info Callout ───────────────────────────────────────── */
+    .callout {
+      border-left: 4px solid var(--forest-light);
+      background: var(--forest-tint);
+      padding: 1rem 1.25rem;
+      border-radius: 0 4px 4px 0;
+      margin: 1.25rem 0;
+    }
+
+    .callout p {
+      margin: 0;
+      font-size: 0.92rem;
+      color: var(--ink-mid);
+    }
+
+    .callout p strong { color: var(--forest); }
+
+    /* ── EMC Values Display ─────────────────────────────────── */
+    .emc-display {
+      display: flex;
+      gap: 2rem;
+      background: var(--forest);
+      color: #fff;
+      border-radius: 6px;
+      padding: 1.5rem 2rem;
+      margin: 1.25rem 0;
+      justify-content: center;
+      flex-wrap: wrap;
+    }
+
+    .emc-item {
+      text-align: center;
+    }
+
+    .emc-item .emc-param {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.72rem;
+      text-transform: uppercase;
+      letter-spacing: 0.12em;
+      color: rgba(255,255,255,0.55);
+      display: block;
+      margin-bottom: 0.3rem;
+    }
+
+    .emc-item .emc-value {
+      font-family: 'Playfair Display', serif;
+      font-size: 1.8rem;
+      font-weight: 700;
+      color: #c8e67a;
+    }
+
+    .emc-item .emc-unit {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.75rem;
+      color: rgba(255,255,255,0.6);
+      display: block;
+    }
+
+    /* ── Section Divider ────────────────────────────────────── */
+    .section-divider {
+      border: none;
+      border-top: 1px solid var(--rule);
+      margin: 3rem 0;
+    }
+
+    /* ── Responsive ─────────────────────────────────────────── */
+    @media (max-width: 900px) {
+      .sidebar { display: none; }
+      .content-wrap { padding: 2rem 1.5rem 4rem; }
+      .hero { padding: 2.5rem 1.5rem 2rem; }
+      .hero h1 { font-size: 2.2rem; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- ── Sidebar ────────────────────────────────────────────── -->
+<aside class="sidebar">
+  <div class="sidebar-brand">
+    <span class="module-label">BMPFast Training Series</span>
+    <div class="module-title">Module 8: Runoff Loadings</div>
+  </div>
+  <nav>
+    <ul>
+      <li><a href="#method"><span class="nav-num">01</span>Concentration-Based Method</a></li>
+      <li><a href="#formula"><span class="nav-num">02</span>Loading Calculation Formula</a></li>
+      <li><a href="#example"><span class="nav-num">03</span>Example Calculation</a></li>
+      <li><a href="#post-dev"><span class="nav-num">04</span>Post-Development Runoff</a></li>
+      <li><a href="#loading-pond"><span class="nav-num">05</span>Loading to Stormwater Pond</a></li>
+      <li><a href="#pre-dev"><span class="nav-num">06</span>Pre-Development Loadings</a></li>
+      <li><a href="#removal"><span class="nav-num">07</span>Required Removal Efficiencies</a></li>
+    </ul>
+  </nav>
+  <div class="sidebar-footer">
+    BMPFast Stormwater Toolbox<br>
+    Environmental Research &amp; Design, Inc.<br>
+    January 2026
+  </div>
+</aside>
+
+<!-- ── Main ───────────────────────────────────────────────── -->
+<main class="main">
+
+  <!-- Hero -->
+  <header class="hero">
+    <div class="hero-eyebrow">BMPFast Stormwater Training Series · Module 8</div>
+    <h1>Runoff Loadings</h1>
+    <div class="hero-meta">
+      <div class="hero-meta-item">Author<span>Harvey H. Harper</span></div>
+      <div class="hero-meta-item">Series<span>BMPFast Learning System</span></div>
+      <div class="hero-meta-item">Date<span>January 2026</span></div>
+      <div class="hero-meta-item">Topic<span>Catchment Characteristics</span></div>
+    </div>
+  </header>
+
+  <div class="content-wrap">
+
+    <!-- ── Section 1: Concentration-Based Method ── -->
+    <section class="section-block" id="method">
+      <span class="section-number">Section 01</span>
+      <h2>Concentration-Based Method</h2>
+
+      <div class="key-formula">
+        <span class="formula-label">Fundamental Relationship</span>
+        <div class="formula-text">
+          Annual Loading = <em>Runoff Concentration</em> × <em>Annual Runoff Volume</em><br>
+          <span style="font-size:0.9rem; color:rgba(255,255,255,0.6);">evaluated for each land use category</span>
+        </div>
+      </div>
+
+      <p>The concentration-based method calculates pollutant mass loadings by multiplying the event mean concentration (EMC) of a constituent in runoff by the total annual runoff volume generated from each land use category. Summing across all land uses in the watershed yields the total annual pollutant load entering the stormwater management system.</p>
+
+      <p>The following example illustrates the method for a mixed-use catchment with three land use types and Total Phosphorus as the constituent of interest:</p>
+
+      <div class="table-wrap">
+        <table class="data-table">
+          <thead>
+            <tr>
+              <th>Land Use</th>
+              <th>Total P Conc.<br>(mg/L)</th>
+              <th>×</th>
+              <th>Runoff Volume<br>(ac-ft/yr)</th>
+              <th>=</th>
+              <th>Total P Mass<br>(kg/yr)</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>Single Family Residential</td>
+              <td>0.30</td>
+              <td>×</td>
+              <td>120</td>
+              <td>=</td>
+              <td>44.4</td>
+            </tr>
+            <tr>
+              <td>Low Intensity Commercial</td>
+              <td>0.15</td>
+              <td>×</td>
+              <td>160</td>
+              <td>=</td>
+              <td>29.6</td>
+            </tr>
+            <tr>
+              <td>Industrial</td>
+              <td>0.31</td>
+              <td>×</td>
+              <td>64</td>
+              <td>=</td>
+              <td>24.5</td>
+            </tr>
+          </tbody>
+          <tfoot>
+            <tr>
+              <td>Totals</td>
+              <td></td>
+              <td></td>
+              <td>344</td>
+              <td></td>
+              <td>98.5</td>
+            </tr>
+          </tfoot>
+        </table>
+      </div>
+    </section>
+
+    <hr class="section-divider">
+
+    <!-- ── Section 2: Loading Calculation Formula ── -->
+    <section class="section-block" id="formula">
+      <span class="section-number">Section 02</span>
+      <h2>Calculation of Pollutant Loadings</h2>
+
+      <p>The general form of the annual pollutant loading equation, incorporating unit conversion factors to yield results in kg/yr, is presented below. This formula accounts for area, annual rainfall depth, the runoff coefficient (ROC), and the event mean concentration for each land use category.</p>
+
+      <div class="formula-block">
+        <span class="formula-title">Annual Load Formula — Unit-Dimensional Form</span>
+        <div class="formula-equation">
+          <p style="font-size:0.85rem; font-family:'Source Serif 4',serif; color:var(--ink-mid); margin-bottom:1rem;">Load (kg/yr) = Σ from i=1 to n of:</p>
+          <code>
+            (A<sub>i</sub>) &times; 43,560 ft²/acre &times; R &times; CV<sub>i</sub> &times; 1 ft/12 inches &times; 7.48 gal/ft³ &times; 3.785 liter/gal &times; C<sub>i</sub> &times; 1 kg/10⁶ mg
+          </code>
+        </div>
+        <div class="formula-vars">
+          <table>
+            <tr><td>A<sub>i</sub></td><td>= area of land use category <em>i</em> (acres)</td></tr>
+            <tr><td>n</td><td>= number of different land use categories</td></tr>
+            <tr><td>C<sub>i</sub></td><td>= concentration of runoff constituent in land use category <em>i</em> (mg/L)</td></tr>
+            <tr><td>R</td><td>= annual rainfall at site (inches/yr)</td></tr>
+            <tr><td>CV<sub>i</sub></td><td>= ROC (runoff coefficient) value for land use category <em>i</em> (dimensionless)</td></tr>
+          </table>
+        </div>
+      </div>
+
+      <div class="callout">
+        <p><strong>Key Principle:</strong> Annual Loading = EMC concentration × Annual Runoff Volume. The unit conversion chain in the formula above converts from mixed English/SI units (acres, inches, gallons) to a final mass result in kilograms per year.</p>
+      </div>
+    </section>
+
+    <hr class="section-divider">
+
+    <!-- ── Section 3: Example Calculation ── -->
+    <section class="section-block" id="example">
+      <span class="section-number">Section 03</span>
+      <h2>Example Calculation — Site Characterization</h2>
+
+      <p>The following worked example demonstrates the complete runoff loading calculation process for a 100-acre single-family residential development evaluated at three Florida locations representing different rainfall zones.</p>
+
+      <h3>Step 1 — Land Use</h3>
+      <div class="scenario-block">
+        <span class="scenario-label">Site Composition</span>
+        <ul class="scenario-list">
+          <li><strong>90 acres</strong> of single-family residential development</li>
+          <li><strong>5 acres</strong> of stormwater management systems</li>
+          <li><strong>5 acres</strong> of preserved wetlands</li>
+        </ul>
+      </div>
+
+      <h3>Step 2 — Ground Cover and Soil Types</h3>
+      <div class="scenario-block">
+        <span class="scenario-label">Hydrologic Parameters</span>
+        <ul class="scenario-list">
+          <li>Residential areas will be covered with <strong>lawns in good condition</strong></li>
+          <li>Soil types in <strong>Hydrologic Soil Group (HSG) D</strong></li>
+        </ul>
+      </div>
+
+      <h3>Step 3 — Impervious and DCIA Areas</h3>
+      <p>Residential areas will be 25% impervious, with 75% of the impervious area classified as Directly Connected Impervious Area (DCIA).</p>
+
+      <div class="calc-step">
+        <span class="calc-step-title">Impervious Area Calculation</span>
+        <div class="calc-equation">Impervious Area = 25% × 90 ac = 22.50 acres</div>
+      </div>
+
+      <div class="calc-step">
+        <span class="calc-step-title">DCIA Area Calculation</span>
+        <div class="calc-equation">DCIA Area = 22.50 acres × 0.75 = 16.88 acres</div>
+      </div>
+
+      <div class="calc-step">
+        <span class="calc-step-title">% DCIA of Developed Area</span>
+        <div class="calc-equation">% DCIA = (16.88 ac / 90.0 ac) × 100 = 18.7% of developed area</div>
+        <div class="calc-result">= 18.7% DCIA</div>
+      </div>
+    </section>
+
+    <hr class="section-divider">
+
+    <!-- ── Section 4: Post-Development Runoff ── -->
+    <section class="section-block" id="post-dev">
+      <span class="section-number">Section 04</span>
+      <h2>Post-Development Annual Runoff Generation</h2>
+
+      <div class="callout">
+        <p><strong>Note on Area Deductions:</strong> The post-development loading reflects the loading discharging to the stormwater management system from the watershed. The area of the treatment system itself is not included, and the preserved wetland area is excluded since it is the same under both pre- and post-development conditions.</p>
+      </div>
+
+      <h3>Step 4 — Post-Development Runoff Volumes by Location</h3>
+      <p>The 90-acre residential development area is evaluated at three Florida project locations representing distinct rainfall zones. The Curve Number (CN) value for the post-development condition is 81.4, derived from the impervious fraction and HSG D lawn areas using TR-55 methodology.</p>
+
+      <div class="table-wrap">
+        <table class="data-table">
+          <thead>
+            <tr>
+              <th rowspan="2">Project Location</th>
+              <th rowspan="2">Area (acres)</th>
+              <th colspan="2">Impervious Areas</th>
+              <th colspan="2">DCIA</th>
+              <th rowspan="2">Non-DCIA CN Value</th>
+              <th rowspan="2">Annual Rainfall (in)</th>
+              <th rowspan="2">Annual ROC Value</th>
+              <th rowspan="2">Runoff (ac-ft/yr)</th>
+            </tr>
+            <tr class="subhead">
+              <th>%</th>
+              <th>acres</th>
+              <th>acres</th>
+              <th>%</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>Pensacola</td>
+              <td>90</td>
+              <td>25</td>
+              <td>22.5</td>
+              <td>16.68</td>
+              <td>18.75</td>
+              <td>81.4</td>
+              <td>65.5</td>
+              <td>0.304</td>
+              <td>149.3</td>
+            </tr>
+            <tr>
+              <td>Orlando</td>
+              <td>90</td>
+              <td>25</td>
+              <td>22.5</td>
+              <td>16.68</td>
+              <td>18.75</td>
+              <td>81.4</td>
+              <td>50.0</td>
+              <td>0.253</td>
+              <td>94.8</td>
+            </tr>
+            <tr>
+              <td>Key West</td>
+              <td>90</td>
+              <td>25</td>
+              <td>22.5</td>
+              <td>16.68</td>
+              <td>18.75</td>
+              <td>81.4</td>
+              <td>40.0</td>
+              <td>0.266</td>
+              <td>79.8</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <p>The results demonstrate that despite identical site characteristics, annual runoff volumes vary significantly across Florida's rainfall zones — from 79.8 ac-ft/yr in Key West to 149.3 ac-ft/yr in Pensacola — reflecting the strong influence of geographic rainfall distribution on stormwater loading.</p>
+    </section>
+
+    <hr class="section-divider">
+
+    <!-- ── Section 5: Loading to Stormwater Pond ── -->
+    <section class="section-block" id="loading-pond">
+      <span class="section-number">Section 05</span>
+      <h2>Generated Loading to Stormwater Pond</h2>
+
+      <h3>Step 5 — Event Mean Concentration Values</h3>
+      <p>Mean EMC values for total nitrogen (TN) and total phosphorus (TP) in single-family residential runoff are applied to the post-development runoff volumes to calculate mass loadings entering the stormwater pond.</p>
+
+      <div class="emc-display">
+        <div class="emc-item">
+          <span class="emc-param">Total Nitrogen — EMC</span>
+          <span class="emc-value">1.87</span>
+          <span class="emc-unit">mg/L</span>
+        </div>
+        <div class="emc-item">
+          <span class="emc-param">Total Phosphorus — EMC</span>
+          <span class="emc-value">0.301</span>
+          <span class="emc-unit">mg/L</span>
+        </div>
+      </div>
+
+      <h3>Step 5a — Pensacola (Zone 1) Worked Calculations</h3>
+      <p>The following unit-dimensional calculations use the Pensacola runoff volume of 149.3 ac-ft/yr:</p>
+
+      <div class="calc-step">
+        <span class="calc-step-title">TN Load from Single-Family Area — Pensacola</span>
+        <div class="calc-equation">(149.3 ac-ft/yr) × (43,560 ft²/ac) × (7.48 gal/ft³) × (3.785 L/gal) × (1.87 mg/L) × (1 kg/10⁶ mg)</div>
+        <div class="calc-result">= 344 kg TN/yr</div>
+      </div>
+
+      <div class="calc-step">
+        <span class="calc-step-title">TP Load from Single-Family Area — Pensacola</span>
+        <div class="calc-equation">(149.3 ac-ft/yr) × (43,560 ft²/ac) × (7.48 gal/ft³) × (3.785 L/gal) × (0.301 mg/L) × (1 kg/10⁶ mg)</div>
+        <div class="calc-result">= 55.4 kg TP/yr</div>
+      </div>
+
+      <h3>Post-Development Loading Summary by Location</h3>
+
+      <div class="table-wrap">
+        <table class="data-table">
+          <thead>
+            <tr>
+              <th>Location</th>
+              <th>TN Loading (kg/yr)</th>
+              <th>TP Loading (kg/yr)</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>Pensacola (Zone 1)</td>
+              <td>344</td>
+              <td>55.4</td>
+            </tr>
+            <tr>
+              <td>Orlando (Zone 2)</td>
+              <td>219</td>
+              <td>35.2</td>
+            </tr>
+            <tr>
+              <td>Key West (Zone 3)</td>
+              <td>184</td>
+              <td>29.6</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <hr class="section-divider">
+
+    <!-- ── Section 6: Pre-Development Loadings ── -->
+    <section class="section-block" id="pre-dev">
+      <span class="section-number">Section 06</span>
+      <h2>Pre-Development Runoff and Mass Loadings</h2>
+
+      <h3>Step 6 — Pre-Development Area and Vegetation</h3>
+
+      <div class="callout">
+        <p><strong>Area for Pre-Development Loadings:</strong> The pre-development calculation area is 95 acres (100 acres total minus 5 acres of preserved wetlands, which are excluded as conditions are unchanged). The area of the treatment system is not included.</p>
+      </div>
+
+      <div class="scenario-block">
+        <span class="scenario-label">Pre-Development Conditions</span>
+        <ul class="scenario-list">
+          <li>Natural vegetation: <strong>60% mesic flatwoods</strong> and <strong>40% wet flatwoods</strong> in fair condition on HSG D soils</li>
+          <li>From TR-55: CN value for wooded areas in fair condition on HSG D soils = <strong>79</strong></li>
+          <li>No impervious area — 0% impervious, 0 DCIA</li>
+        </ul>
+      </div>
+
+      <h3>Pre-Development Runoff Volumes by Location</h3>
+
+      <div class="table-wrap">
+        <table class="data-table">
+          <thead>
+            <tr>
+              <th rowspan="2">Project Location</th>
+              <th rowspan="2">Area (acres)</th>
+              <th colspan="2">Impervious Areas</th>
+              <th colspan="2">DCIA</th>
+              <th rowspan="2">Non-DCIA CN Value</th>
+              <th rowspan="2">Annual Rainfall (in)</th>
+              <th rowspan="2">Annual C Value</th>
+              <th rowspan="2">Runoff (ac-ft/yr)</th>
+            </tr>
+            <tr class="subhead">
+              <th>acres</th>
+              <th>%</th>
+              <th>acres</th>
+              <th>%</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>Pensacola</td>
+              <td>95</td>
+              <td>0</td>
+              <td>0</td>
+              <td>0</td>
+              <td>0</td>
+              <td>79</td>
+              <td>65.5</td>
+              <td>0.154</td>
+              <td>79.9</td>
+            </tr>
+            <tr>
+              <td>Orlando</td>
+              <td>95</td>
+              <td>0</td>
+              <td>0</td>
+              <td>0</td>
+              <td>0</td>
+              <td>79</td>
+              <td>50.0</td>
+              <td>0.105</td>
+              <td>41.6</td>
+            </tr>
+            <tr>
+              <td>Key West</td>
+              <td>95</td>
+              <td>0</td>
+              <td>0</td>
+              <td>0</td>
+              <td>0</td>
+              <td>79</td>
+              <td>40.0</td>
+              <td>0.125</td>
+              <td>39.6</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <h3>Pre-Development EMC Values — Weighted Composite</h3>
+      <p>Since the CN values for both land cover types are identical, annual runoff volumes are proportional to cover percentage. Composite runoff concentrations are calculated on a weighted basis using cover fractions as weights. The weighted EMC values for Total Nitrogen and Total Phosphorus are derived as follows:</p>
+
+      <div class="table-wrap">
+        <table class="data-table">
+          <thead>
+            <tr>
+              <th rowspan="2">Land Cover</th>
+              <th rowspan="2">Percent Cover (%)</th>
+              <th colspan="2">Runoff EMC Values (mg/L)</th>
+              <th colspan="2">Weighted EMC Values (mg/L)</th>
+            </tr>
+            <tr class="subhead">
+              <th>Total N</th>
+              <th>Total P</th>
+              <th>Total N</th>
+              <th>Total P</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>Mesic flatwoods</td>
+              <td>60</td>
+              <td>1.000</td>
+              <td>0.034</td>
+              <td rowspan="2" style="font-weight:700; color:var(--forest); font-size:1.05rem;">1.070</td>
+              <td rowspan="2" style="font-weight:700; color:var(--forest); font-size:1.05rem;">0.026</td>
+            </tr>
+            <tr>
+              <td>Wet flatwoods</td>
+              <td>40</td>
+              <td>1.175</td>
+              <td>0.015</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <h3>Step 6a — Pre-Development Worked Calculations (Pensacola)</h3>
+      <p>Using the Pensacola pre-development runoff volume of 79.9 ac-ft/yr and weighted composite EMC values:</p>
+
+      <div class="calc-step">
+        <span class="calc-step-title">TN Load from Pre-Developed Areas — Pensacola</span>
+        <div class="calc-equation">(79.9 ac-ft/yr) × (43,560 ft²/ac) × (7.48 gal/ft³) × (3.785 L/gal) × (1.07 mg/L) × (1 kg/10⁶ mg)</div>
+        <div class="calc-result">= 105.4 kg TN/yr</div>
+      </div>
+
+      <div class="calc-step">
+        <span class="calc-step-title">TP Load from Pre-Developed Areas — Pensacola</span>
+        <div class="calc-equation">(79.9 ac-ft/yr) × (43,560 ft²/ac) × (7.48 gal/ft³) × (3.785 L/gal) × (0.026 mg/L) × (1 kg/10⁶ mg)</div>
+        <div class="calc-result">= 2.56 kg TP/yr</div>
+      </div>
+
+      <h3>Pre-Development Loading Summary by Location</h3>
+
+      <div class="table-wrap">
+        <table class="data-table">
+          <thead>
+            <tr>
+              <th>Location</th>
+              <th>TN Loading (kg/yr)</th>
+              <th>TP Loading (kg/yr)</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>Pensacola (Zone 1)</td>
+              <td>105.4</td>
+              <td>2.56</td>
+            </tr>
+            <tr>
+              <td>Orlando (Zone 2)</td>
+              <td>54.9</td>
+              <td>1.33</td>
+            </tr>
+            <tr>
+              <td>Key West (Zone 3)</td>
+              <td>52.3</td>
+              <td>1.27</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <hr class="section-divider">
+
+    <!-- ── Section 7: Required Removal Efficiencies ── -->
+    <section class="section-block" id="removal">
+      <span class="section-number">Section 07</span>
+      <h2>Required Removal Efficiencies</h2>
+
+      <h3>Step 7 — Calculate Required Removal to Achieve Post ≤ Pre-Development Loadings</h3>
+
+      <p>The final step calculates the pollutant removal efficiency that must be achieved by the stormwater management system so that post-development mass loadings do not exceed pre-development levels. Required removal efficiency is calculated as:</p>
+
+      <div class="formula-block">
+        <span class="formula-title">Required Removal Efficiency</span>
+        <div class="formula-equation">
+          Required Removal (%) = [(Post-Load − Pre-Load) / Post-Load] × 100
+        </div>
+      </div>
+
+      <p>The table below summarizes pre- and post-development loadings and required removal efficiencies for both Total Nitrogen and Total Phosphorus across all three project locations.</p>
+
+      <div class="table-wrap">
+        <table class="data-table">
+          <thead>
+            <tr>
+              <th rowspan="2">Project Location</th>
+              <th colspan="3">Total Nitrogen</th>
+              <th colspan="3">Total Phosphorus</th>
+            </tr>
+            <tr class="subhead">
+              <th>Pre-Load (kg/yr)</th>
+              <th>Post-Load (kg/yr)</th>
+              <th>Required Removal (%)</th>
+              <th>Pre-Load (kg/yr)</th>
+              <th>Post-Load (kg/yr)</th>
+              <th>Required Removal (%)</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>Pensacola (Zone 1)</td>
+              <td>105.4</td>
+              <td>344</td>
+              <td>69.3</td>
+              <td>2.56</td>
+              <td>55.4</td>
+              <td>95.4</td>
+            </tr>
+            <tr>
+              <td>Orlando (Zone 2)</td>
+              <td>54.9</td>
+              <td>219</td>
+              <td>74.9</td>
+              <td>1.33</td>
+              <td>35.2</td>
+              <td>96.2</td>
+            </tr>
+            <tr>
+              <td>Key West (Zone 3)</td>
+              <td>52.3</td>
+              <td>184</td>
+              <td>71.6</td>
+              <td>1.27</td>
+              <td>29.6</td>
+              <td>95.7</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="callout">
+        <p><strong>Key Observation:</strong> Total phosphorus removal requirements exceed 95% at all three locations. This reflects both the low TP concentrations in pre-development natural vegetation runoff (0.026 mg/L weighted composite) and the relatively higher TP concentrations from developed residential areas (0.301 mg/L). Total nitrogen requirements range from approximately 69–75%, driven by similar dynamics. These high removal requirements underscore the importance of properly designed and maintained stormwater BMPs.</p>
+      </div>
+
+      <div class="img-placeholder">
+        <span class="ph-icon">📊</span>
+        <span class="ph-label">Figure Reference</span>
+        <span class="ph-desc">Bar chart comparing pre- and post-development TN and TP loadings by location (Pensacola, Orlando, Key West), with required removal efficiency annotations</span>
+      </div>
+    </section>
+
+  </div><!-- /content-wrap -->
+</main>
+
+</body>
+</html>

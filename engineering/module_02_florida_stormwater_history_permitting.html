@@ -1,0 +1,1056 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Module 2: Florida Stormwater History and Permitting</title>
+
+  <!-- Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400&family=Source+Serif+4:ital,opsz,wght@0,8..60,300;0,8..60,400;0,8..60,600;1,8..60,300;1,8..60,400&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
+
+  <style>
+    /* ─── Tokens ─────────────────────────────────────────── */
+    :root {
+      --green-deep:    #1a3d2b;
+      --green-mid:     #2e6b47;
+      --green-light:   #4a9b68;
+      --green-subtle:  #d4e8da;
+      --green-rule:    #3d7a52;
+      --white-warm:    #f8f5ef;
+      --white-page:    #fdfaf5;
+      --tan:           #e8e0d0;
+      --tan-dark:      #c8bca8;
+      --text-primary:  #1c1c1a;
+      --text-secondary:#4a4a44;
+      --text-muted:    #7a7a72;
+      --accent-gold:   #b8860b;
+      --border:        #d0c8b8;
+
+      --font-body:     'Source Serif 4', Georgia, serif;
+      --font-head:     'Playfair Display', Georgia, serif;
+      --font-mono:     'JetBrains Mono', 'Courier New', monospace;
+    }
+
+    /* ─── Reset & Base ───────────────────────────────────── */
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    html { font-size: 16px; scroll-behavior: smooth; }
+
+    body {
+      background: var(--white-warm);
+      color: var(--text-primary);
+      font-family: var(--font-body);
+      font-size: 1.0625rem;
+      line-height: 1.75;
+      font-weight: 300;
+    }
+
+    /* ─── Page chrome ────────────────────────────────────── */
+    .page-header {
+      background: var(--green-deep);
+      color: var(--white-warm);
+      padding: 0.55rem 2.5rem;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      border-bottom: 3px solid var(--green-light);
+    }
+    .page-header .module-label {
+      font-family: var(--font-mono);
+      font-size: 0.72rem;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--green-subtle);
+    }
+    .page-header .series-title {
+      font-family: var(--font-mono);
+      font-size: 0.72rem;
+      letter-spacing: 0.06em;
+      color: var(--tan-dark);
+    }
+
+    /* ─── Hero / Title Block ─────────────────────────────── */
+    .hero {
+      background: var(--green-deep);
+      color: var(--white-warm);
+      padding: 5rem 2.5rem 4rem;
+      border-bottom: 6px solid var(--green-light);
+      position: relative;
+      overflow: hidden;
+    }
+    .hero::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background:
+        repeating-linear-gradient(
+          90deg,
+          transparent,
+          transparent 59px,
+          rgba(255,255,255,0.025) 60px
+        ),
+        repeating-linear-gradient(
+          0deg,
+          transparent,
+          transparent 59px,
+          rgba(255,255,255,0.025) 60px
+        );
+      pointer-events: none;
+    }
+    .hero-inner {
+      max-width: 860px;
+      position: relative;
+    }
+    .hero .eyebrow {
+      font-family: var(--font-mono);
+      font-size: 0.72rem;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      color: var(--green-light);
+      margin-bottom: 1.2rem;
+    }
+    .hero h1 {
+      font-family: var(--font-head);
+      font-size: clamp(2rem, 4vw, 3rem);
+      font-weight: 700;
+      line-height: 1.18;
+      color: var(--white-warm);
+      margin-bottom: 1.5rem;
+    }
+    .hero-meta {
+      display: flex;
+      gap: 2.5rem;
+      flex-wrap: wrap;
+      margin-top: 2rem;
+      padding-top: 1.5rem;
+      border-top: 1px solid rgba(255,255,255,0.15);
+    }
+    .hero-meta-item {
+      display: flex;
+      flex-direction: column;
+      gap: 0.2rem;
+    }
+    .hero-meta-item .label {
+      font-family: var(--font-mono);
+      font-size: 0.65rem;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--green-light);
+    }
+    .hero-meta-item .value {
+      font-family: var(--font-body);
+      font-size: 0.95rem;
+      color: var(--tan);
+    }
+
+    /* ─── Main layout ────────────────────────────────────── */
+    .layout {
+      display: grid;
+      grid-template-columns: 220px 1fr;
+      max-width: 1180px;
+      margin: 0 auto;
+      gap: 0;
+    }
+
+    /* ─── Sidebar / TOC ──────────────────────────────────── */
+    .sidebar {
+      background: var(--white-page);
+      border-right: 1px solid var(--border);
+      padding: 2.5rem 1.5rem;
+      position: sticky;
+      top: 43px;
+      height: calc(100vh - 43px);
+      overflow-y: auto;
+    }
+    .sidebar-label {
+      font-family: var(--font-mono);
+      font-size: 0.62rem;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      color: var(--text-muted);
+      margin-bottom: 1rem;
+    }
+    .toc-list {
+      list-style: none;
+      display: flex;
+      flex-direction: column;
+      gap: 0.2rem;
+    }
+    .toc-list a {
+      display: block;
+      font-family: var(--font-body);
+      font-size: 0.825rem;
+      color: var(--text-secondary);
+      text-decoration: none;
+      padding: 0.35rem 0.6rem;
+      border-left: 2px solid transparent;
+      line-height: 1.35;
+      transition: border-color 0.15s, color 0.15s, background 0.15s;
+    }
+    .toc-list a:hover {
+      color: var(--green-mid);
+      border-left-color: var(--green-mid);
+      background: var(--green-subtle);
+    }
+
+    /* ─── Content Area ───────────────────────────────────── */
+    .content {
+      padding: 3.5rem 3rem 5rem;
+      max-width: 860px;
+    }
+
+    /* ─── Sections ───────────────────────────────────────── */
+    .section {
+      margin-bottom: 4rem;
+      padding-top: 1rem;
+    }
+    .section + .section {
+      border-top: 1px solid var(--border);
+      padding-top: 3.5rem;
+    }
+
+    .section-label {
+      font-family: var(--font-mono);
+      font-size: 0.65rem;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      color: var(--green-mid);
+      margin-bottom: 0.6rem;
+    }
+
+    h2 {
+      font-family: var(--font-head);
+      font-size: 1.75rem;
+      font-weight: 700;
+      color: var(--green-deep);
+      line-height: 1.25;
+      margin-bottom: 0.35rem;
+    }
+    h2 .subtitle {
+      display: block;
+      font-size: 1rem;
+      font-weight: 400;
+      font-style: italic;
+      color: var(--text-secondary);
+      margin-top: 0.2rem;
+    }
+
+    h3 {
+      font-family: var(--font-head);
+      font-size: 1.2rem;
+      font-weight: 600;
+      color: var(--green-deep);
+      margin-top: 2rem;
+      margin-bottom: 0.5rem;
+    }
+
+    p {
+      margin-bottom: 1rem;
+      color: var(--text-primary);
+    }
+
+    /* ─── Ruled intro line ───────────────────────────────── */
+    .section-rule {
+      width: 3rem;
+      height: 3px;
+      background: var(--green-light);
+      margin-bottom: 1.5rem;
+      margin-top: 0.4rem;
+    }
+
+    /* ─── Callout / statute box ──────────────────────────── */
+    .callout {
+      background: var(--green-subtle);
+      border-left: 4px solid var(--green-mid);
+      padding: 1.1rem 1.4rem;
+      margin: 1.5rem 0;
+      border-radius: 0 4px 4px 0;
+    }
+    .callout .callout-label {
+      font-family: var(--font-mono);
+      font-size: 0.65rem;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--green-mid);
+      margin-bottom: 0.4rem;
+    }
+    .callout p {
+      font-size: 0.95rem;
+      color: var(--text-primary);
+      margin-bottom: 0;
+    }
+
+    /* ─── Numbered provision block ───────────────────────── */
+    .provision {
+      background: var(--white-page);
+      border: 1px solid var(--border);
+      border-radius: 4px;
+      padding: 1rem 1.25rem 1rem 1.5rem;
+      margin: 0.75rem 0;
+    }
+    .provision-num {
+      font-family: var(--font-mono);
+      font-size: 0.72rem;
+      color: var(--green-mid);
+      font-weight: 500;
+      margin-bottom: 0.3rem;
+    }
+    .provision p { margin-bottom: 0; font-size: 0.95rem; }
+
+    /* ─── Key points list ────────────────────────────────── */
+    ul.key-points {
+      list-style: none;
+      padding: 0;
+      margin: 1rem 0 1.2rem;
+      display: flex;
+      flex-direction: column;
+      gap: 0.55rem;
+    }
+    ul.key-points li {
+      padding-left: 1.4rem;
+      position: relative;
+      font-size: 0.975rem;
+      color: var(--text-primary);
+    }
+    ul.key-points li::before {
+      content: '▸';
+      position: absolute;
+      left: 0;
+      color: var(--green-mid);
+      font-size: 0.75rem;
+      top: 0.2rem;
+    }
+    ul.key-points li.sub {
+      padding-left: 2.6rem;
+      font-size: 0.93rem;
+      color: var(--text-secondary);
+    }
+    ul.key-points li.sub::before {
+      left: 1.3rem;
+      content: '–';
+      color: var(--text-muted);
+    }
+
+    /* ─── Timeline items ─────────────────────────────────── */
+    .timeline {
+      margin: 1.2rem 0;
+      display: flex;
+      flex-direction: column;
+      gap: 1.4rem;
+    }
+    .timeline-item {
+      display: grid;
+      grid-template-columns: 80px 1fr;
+      gap: 1rem;
+      align-items: start;
+    }
+    .timeline-year {
+      font-family: var(--font-mono);
+      font-size: 0.85rem;
+      font-weight: 500;
+      color: var(--white-warm);
+      background: var(--green-mid);
+      text-align: center;
+      padding: 0.25rem 0.5rem;
+      border-radius: 3px;
+      white-space: nowrap;
+      margin-top: 0.2rem;
+    }
+    .timeline-body { font-size: 0.96rem; }
+    .timeline-body strong {
+      display: block;
+      font-family: var(--font-head);
+      font-size: 1.05rem;
+      color: var(--green-deep);
+      margin-bottom: 0.3rem;
+    }
+
+    /* ─── Comparison table ───────────────────────────────── */
+    .table-wrapper {
+      overflow-x: auto;
+      margin: 1.5rem 0;
+      border: 1px solid var(--border);
+      border-radius: 4px;
+    }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 0.875rem;
+      font-family: var(--font-body);
+    }
+    table caption {
+      font-family: var(--font-mono);
+      font-size: 0.65rem;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--text-muted);
+      text-align: left;
+      padding: 0.5rem 0;
+      caption-side: top;
+    }
+    thead th {
+      background: var(--green-deep);
+      color: var(--white-warm);
+      font-family: var(--font-body);
+      font-weight: 400;
+      font-size: 0.83rem;
+      padding: 0.7rem 0.85rem;
+      text-align: center;
+      line-height: 1.3;
+      border-right: 1px solid rgba(255,255,255,0.15);
+    }
+    thead th:first-child { text-align: left; min-width: 110px; }
+    .row-header {
+      background: var(--green-mid);
+      color: var(--white-warm);
+      font-family: var(--font-mono);
+      font-size: 0.72rem;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      padding: 0.6rem 0.85rem;
+      vertical-align: middle;
+      min-width: 110px;
+    }
+    td {
+      padding: 0.65rem 0.85rem;
+      border: 1px solid var(--border);
+      text-align: center;
+      vertical-align: top;
+      line-height: 1.4;
+    }
+    tbody tr:nth-child(even) td { background: var(--white-page); }
+    tbody tr:nth-child(odd) td { background: var(--white-warm); }
+    .criteria-previous td { background: #fdf4e3 !important; }
+    .criteria-revised td { background: var(--green-subtle) !important; }
+    td strong { color: var(--green-deep); }
+    td em { font-style: normal; color: var(--text-muted); font-size: 0.82rem; }
+
+    /* ─── Image placeholder ──────────────────────────────── */
+    .img-placeholder {
+      width: 100%;
+      background: var(--tan);
+      border: 1px dashed var(--tan-dark);
+      border-radius: 4px;
+      padding: 2.5rem 1.5rem;
+      text-align: center;
+      margin: 1.5rem 0;
+    }
+    .img-placeholder .ph-icon {
+      font-size: 2rem;
+      color: var(--tan-dark);
+      display: block;
+      margin-bottom: 0.5rem;
+    }
+    .img-placeholder .ph-title {
+      font-family: var(--font-mono);
+      font-size: 0.72rem;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--text-muted);
+      display: block;
+      margin-bottom: 0.25rem;
+    }
+    .img-placeholder .ph-desc {
+      font-size: 0.88rem;
+      color: var(--text-secondary);
+    }
+
+    /* ─── Stat / Highlight boxes ─────────────────────────── */
+    .stat-row {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+      gap: 1rem;
+      margin: 1.5rem 0;
+    }
+    .stat-box {
+      background: var(--white-page);
+      border: 1px solid var(--border);
+      border-top: 3px solid var(--green-mid);
+      padding: 1rem 1.1rem;
+      border-radius: 0 0 4px 4px;
+    }
+    .stat-box .stat-value {
+      font-family: var(--font-head);
+      font-size: 1.6rem;
+      font-weight: 700;
+      color: var(--green-mid);
+      display: block;
+    }
+    .stat-box .stat-label {
+      font-family: var(--font-mono);
+      font-size: 0.65rem;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--text-muted);
+      display: block;
+      margin-top: 0.2rem;
+    }
+
+    /* ─── Footer ─────────────────────────────────────────── */
+    .page-footer {
+      background: var(--green-deep);
+      color: var(--tan-dark);
+      padding: 2rem 2.5rem;
+      margin-top: 4rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 1rem;
+      font-family: var(--font-mono);
+      font-size: 0.68rem;
+      letter-spacing: 0.08em;
+    }
+    .page-footer a { color: var(--green-subtle); text-decoration: none; }
+
+    /* ─── Reference appendix ──────────────────────────────── */
+    .appendix {
+      background: var(--white-page);
+      border-top: 3px solid var(--green-deep);
+      padding: 3rem 3rem 4rem;
+      max-width: 1180px;
+      margin: 0 auto;
+    }
+    .appendix h2 {
+      font-size: 1.3rem;
+      margin-bottom: 2rem;
+    }
+    .ref-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+      gap: 1.5rem;
+    }
+    .ref-card {
+      background: var(--white-warm);
+      border: 1px solid var(--border);
+      border-radius: 4px;
+      padding: 1rem 1.25rem;
+    }
+    .ref-card .ref-tag {
+      font-family: var(--font-mono);
+      font-size: 0.62rem;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--green-mid);
+      display: block;
+      margin-bottom: 0.4rem;
+    }
+    .ref-card .ref-title {
+      font-family: var(--font-head);
+      font-size: 1rem;
+      color: var(--green-deep);
+      margin-bottom: 0.3rem;
+    }
+    .ref-card .ref-caption {
+      font-size: 0.82rem;
+      color: var(--text-secondary);
+    }
+
+    /* ─── Responsive ─────────────────────────────────────── */
+    @media (max-width: 768px) {
+      .layout { grid-template-columns: 1fr; }
+      .sidebar { display: none; }
+      .content { padding: 2rem 1.25rem 4rem; }
+      .hero { padding: 3rem 1.25rem 2.5rem; }
+      .page-header { padding: 0.55rem 1.25rem; }
+      .appendix { padding: 2rem 1.25rem 3rem; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- ══════════════════════════════════════════════════════════
+     PAGE HEADER
+═══════════════════════════════════════════════════════════ -->
+<header class="page-header">
+  <span class="module-label">Module 02 &nbsp;/&nbsp; Florida Stormwater History &amp; Permitting</span>
+  <span class="series-title">BMPFast Stormwater Training Series · January 2026</span>
+</header>
+
+
+<!-- ══════════════════════════════════════════════════════════
+     HERO
+═══════════════════════════════════════════════════════════ -->
+<section class="hero">
+  <div class="hero-inner">
+    <p class="eyebrow">Training Module 02 — Regulatory Framework</p>
+    <h1>Florida Stormwater<br>History and Permitting</h1>
+    <div class="hero-meta">
+      <div class="hero-meta-item">
+        <span class="label">Author</span>
+        <span class="value">Harvey H. Harper, Ph.D., P.E.</span>
+      </div>
+      <div class="hero-meta-item">
+        <span class="label">Date</span>
+        <span class="value">January 2026</span>
+      </div>
+      <div class="hero-meta-item">
+        <span class="label">Organization</span>
+        <span class="value">Environmental Research &amp; Design, Inc.</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+
+<!-- ══════════════════════════════════════════════════════════
+     MAIN LAYOUT
+═══════════════════════════════════════════════════════════ -->
+<div class="layout">
+
+  <!-- ── Sidebar ── -->
+  <aside class="sidebar">
+    <p class="sidebar-label">Contents</p>
+    <ul class="toc-list">
+      <li><a href="#ch6225">Chapter 62-25 (1981)</a></li>
+      <li><a href="#ch6240">Chapter 62-40 FAC</a></li>
+      <li><a href="#district-impl">District Implementation</a></li>
+      <li><a href="#erd-study">ERD Effectiveness Study</a></li>
+      <li><a href="#study-objectives">Study Objectives</a></li>
+      <li><a href="#statewide-rule">Statewide Rule Efforts</a></li>
+      <li><a href="#sb7040">Senate Bill 7040 (2024)</a></li>
+      <li><a href="#treatment-standards">Treatment Standards</a></li>
+      <li><a href="#huc12">HUC-12 Boundaries</a></li>
+      <li><a href="#erp-handbook">ERP Applicant's Handbook</a></li>
+      <li><a href="#appendix">Reference Graphics</a></li>
+    </ul>
+  </aside>
+
+
+  <!-- ── Content ── -->
+  <main class="content">
+
+    <!-- ─────────────────────────────────────────────────────
+         §1  CHAPTER 62-25
+    ──────────────────────────────────────────────────────── -->
+    <section class="section" id="ch6225">
+      <p class="section-label">Section 01 — Foundation</p>
+      <h2>Florida Stormwater Rule History
+        <span class="subtitle">Chapter 62-25 — Regulations of Stormwater Discharge</span>
+      </h2>
+      <div class="section-rule"></div>
+
+      <p>Florida's first stormwater regulation — <strong>Chapter 62-25, Regulations of Stormwater Discharge</strong> — was adopted in 1981, making Florida the first state in the United States to enact such a rule. It became effective in February 1982 and remained the primary regulatory framework until its repeal in 2017.</p>
+
+      <p>Chapter 62-25 was a technology-based rule built around four key components:</p>
+
+      <h3>Performance Standard — Minimum Level of Treatment</h3>
+      <p>The rule established a performance standard requiring a reduction in the average annual post-development stormwater pollutant loading of Total Suspended Solids (TSS). Discharges from standard stormwater systems were required to reduce TSS loading by <strong>80%</strong>. For stormwater discharges directed to Outstanding Florida Waters (OFWs), the required reduction was raised to <strong>95%</strong>.</p>
+
+      <h3>Design Criteria</h3>
+      <p>Specific design criteria were established to enable practitioners to achieve the required levels of treatment. These criteria defined the physical parameters that treatment systems must meet.</p>
+
+      <h3>Rebuttable Presumption</h3>
+      <p>The rule established a rebuttable presumption: stormwater systems designed in accordance with the specified criteria were presumed not to cause harm to water resources. This presumption could be rebutted if evidence demonstrated otherwise.</p>
+
+      <h3>Periodic Review and Updating of BMPs</h3>
+      <p>Recognizing the evolving nature of stormwater science, the rule included a provision for the periodic review and updating of Best Management Practices (BMPs) based on ongoing research.</p>
+
+      <div class="stat-row">
+        <div class="stat-box">
+          <span class="stat-value">1981</span>
+          <span class="stat-label">Rule Adopted</span>
+        </div>
+        <div class="stat-box">
+          <span class="stat-value">1st</span>
+          <span class="stat-label">In the United States</span>
+        </div>
+        <div class="stat-box">
+          <span class="stat-value">80%</span>
+          <span class="stat-label">Standard TSS Reduction</span>
+        </div>
+        <div class="stat-box">
+          <span class="stat-value">95%</span>
+          <span class="stat-label">OFW TSS Reduction</span>
+        </div>
+        <div class="stat-box">
+          <span class="stat-value">2017</span>
+          <span class="stat-label">Rule Repealed</span>
+        </div>
+      </div>
+    </section>
+
+
+    <!-- ─────────────────────────────────────────────────────
+         §2  CHAPTER 62-40 FAC
+    ──────────────────────────────────────────────────────── -->
+    <section class="section" id="ch6240">
+      <p class="section-label">Section 02 — Water Resource Implementation</p>
+      <h2>Florida Water Resource Implementation Rule
+        <span class="subtitle">Chapter 62-40 Florida Administrative Code</span>
+      </h2>
+      <div class="section-rule"></div>
+
+      <p>Chapter 62-40 of the Florida Administrative Code (FAC) contains the Water Resource Implementation Rule, with key provisions governing stormwater management becoming effective on <strong>May 7, 2005</strong>.</p>
+
+      <h3>Section 62-40.431 — Stormwater Management Program</h3>
+
+      <div class="callout">
+        <p class="callout-label">Section 3(a) — FDEP Role</p>
+        <p>The Florida Department of Environmental Protection (FDEP) is responsible for coordinating the statewide stormwater management program by establishing goals, objectives, and guidance for the development and implementation of stormwater management programs by the Water Management Districts and local governments.</p>
+      </div>
+
+      <div class="callout">
+        <p class="callout-label">Section 3(b) — District Role</p>
+        <p>The Water Management Districts (WMDs) shall be the chief administrators of the state stormwater management program. FDEP shall implement the state's stormwater management program in Districts that do not have the economic and technical resources to implement a comprehensive surface water management program.</p>
+      </div>
+
+      <h3>Section 62-40.432 — Surface Water Management Regulation (2005)</h3>
+
+      <p>Section 62-40.432 directed FDEP and the Districts, pursuant to Section 373.418, F.S., to specify design and performance criteria for new stormwater management systems when adopting rules. The required performance criteria are:</p>
+
+      <div class="provision">
+        <p class="provision-num">Criterion (1)</p>
+        <p>Achieve at least <strong>80 percent reduction</strong> of the average annual load of pollutants that would cause or contribute to violations of state water quality standards.</p>
+      </div>
+
+      <div class="provision">
+        <p class="provision-num">Criterion (2)</p>
+        <p>Achieve at least <strong>95 percent reduction</strong> of the average annual load of pollutants that would cause or contribute to violations of state water quality standards in Outstanding Florida Waters.</p>
+      </div>
+    </section>
+
+
+    <!-- ─────────────────────────────────────────────────────
+         §3  DISTRICT IMPLEMENTATION
+    ──────────────────────────────────────────────────────── -->
+    <section class="section" id="district-impl">
+      <p class="section-label">Section 03 — District-Level Implementation</p>
+      <h2>District Implementation and Observed Shortcomings</h2>
+      <div class="section-rule"></div>
+
+      <p>While FDEP provides overarching guidance to the Water Management Districts for treatment systems intended to meet the state performance objectives, each individual District is responsible for developing its own specific design criteria for stormwater BMPs. This decentralized framework produced significant variation across the state:</p>
+
+      <ul class="key-points">
+        <li>Every District developed a different set of design standards.</li>
+        <li>Design criteria vary widely throughout Florida.</li>
+        <li>Performance efficiencies achieved by implemented systems also vary widely.</li>
+      </ul>
+
+      <p>In keeping with the rebuttable presumption established under Chapter 62-25, discharges from systems meeting the District-specific design criteria were presumed to comply with state water quality standards. However, research conducted by Environmental Research &amp; Design, Inc. (ERD) and other investigators indicated that current designs were, in many cases, <strong>not achieving the required pollutant load reductions</strong> mandated by state rules.</p>
+    </section>
+
+
+    <!-- ─────────────────────────────────────────────────────
+         §4  ERD EFFECTIVENESS STUDY
+    ──────────────────────────────────────────────────────── -->
+    <section class="section" id="erd-study">
+      <p class="section-label">Section 04 — Regulatory Research</p>
+      <h2>Evaluation of Stormwater Effectiveness
+        <span class="subtitle">FDEP Agreement S0108 — 2006</span>
+      </h2>
+      <div class="section-rule"></div>
+
+      <p>In response to evidence that existing design criteria were failing to achieve required performance, <strong>FDEP issued a contract to ERD in 2006</strong> to evaluate current stormwater design criteria across the state. The work was performed under <em>FDEP Agreement S0108</em>, formally titled "Evaluation of Current Stormwater Design Criteria within the State of Florida."</p>
+
+      <h3>Scope of Work</h3>
+
+      <p>The study scope addressed the following objectives:</p>
+
+      <ul class="key-points">
+        <li>Determine whether current stormwater design criteria meet the performance standards outlined in Chapter 62-40.432 FAC — Surface Water Management Regulation.</li>
+        <li>If design criteria are found to be deficient, recommend changes to meet the required performance criteria.</li>
+        <li>Evaluate design criteria sufficient to achieve no net increase in post-development pollutant loadings relative to pre-development conditions.</li>
+        <li>Conduct analysis for <strong>nitrogen and phosphorus</strong> as primary indicator pollutants.
+          <ul class="key-points" style="margin-top:0.4rem;">
+            <li class="sub">If performance criteria are met for nitrogen and phosphorus, they will be met for other significant pollutants including BOD, TSS, and heavy metals.</li>
+          </ul>
+        </li>
+      </ul>
+    </section>
+
+
+    <!-- ─────────────────────────────────────────────────────
+         §5  STUDY OBJECTIVES
+    ──────────────────────────────────────────────────────── -->
+    <section class="section" id="study-objectives">
+      <p class="section-label">Section 05 — Methodology and Outcomes</p>
+      <h2>Study Objectives and Outcomes
+        <span class="subtitle">June 2007 Final Report</span>
+      </h2>
+      <div class="section-rule"></div>
+
+      <p>A key objective of the study was to <strong>develop scientifically defensible and reproducible design methodologies</strong> using proven approaches already familiar to practicing design engineers.</p>
+
+      <h3>Scope Exclusions</h3>
+      <p>The following alternative stormwater management techniques were explicitly outside the scope of this study:</p>
+
+      <ul class="key-points">
+        <li>Low Impact Design (LID)</li>
+        <li>Stormwater Reuse</li>
+        <li>Street Sweeping</li>
+        <li>Pervious Pavement</li>
+        <li>Gross Pollutant Separators</li>
+        <li>Evaluation of wetland loadings</li>
+      </ul>
+
+      <h3>Study Results — June 2007 Report</h3>
+
+      <p>The final results were delivered in a June 2007 report. The report provided a comprehensive series of tables, figures, calculation methods, and design examples for achieving the following performance levels:</p>
+
+      <ul class="key-points">
+        <li>80% pollutant removal</li>
+        <li>95% pollutant removal</li>
+        <li>No net increase — pre-development vs. post-development loading parity</li>
+      </ul>
+
+      <p>The methodology was vetted through a series of <strong>Public Workshops</strong> attended by the Water Management Districts and other interested parties. The Districts subsequently adopted the report as the standard method for calculating pollutant load reductions for use in pre- versus post-development analyses.</p>
+
+      <p>The 2007 report forms the technical foundation for the loading calculations and removal efficiency values that underpin both the new Statewide Stormwater Rule and the <strong>BMPTrains</strong> design tool.</p>
+
+      <div class="img-placeholder">
+        <span class="ph-icon">📄</span>
+        <span class="ph-title">Referenced Document</span>
+        <span class="ph-desc"><em>Evaluation of Current Stormwater Design Criteria within the State of Florida</em> — Final Report, FDEP Contract No. SO108, June 2007. Prepared by Harvey H. Harper, Ph.D., P.E. and David M. Baker, P.E., Environmental Research &amp; Design, Inc.</span>
+      </div>
+    </section>
+
+
+    <!-- ─────────────────────────────────────────────────────
+         §6  STATEWIDE RULE EFFORTS
+    ──────────────────────────────────────────────────────── -->
+    <section class="section" id="statewide-rule">
+      <p class="section-label">Section 06 — Legislative History</p>
+      <h2>Statewide Stormwater Rule Efforts</h2>
+      <div class="section-rule"></div>
+
+      <div class="timeline">
+
+        <div class="timeline-item">
+          <span class="timeline-year">2010</span>
+          <div class="timeline-body">
+            <strong>Initial Rulemaking Effort</strong>
+            A Technical Advisory Committee (TAC) was established and convened for 8 meetings. The TAC developed a Draft Applicant's Handbook based largely on the 2007 ERD report. However, the rule development effort and FDEP-funded supporting research were subsequently eliminated under Governor Scott's administration.
+          </div>
+        </div>
+
+        <div class="timeline-item">
+          <span class="timeline-year">2020</span>
+          <div class="timeline-body">
+            <strong>Clean Waterways Act</strong>
+            Approved during the 2020 Legislative session and signed by the Governor on June 30, 2020. The Act directed FDEP to initiate rulemaking by January 1, 2021. Key mandates included:
+            <ul class="key-points" style="margin-top:0.6rem;">
+              <li>Update the Environmental Resource Permit Applicant's Handbook using the most recent scientific information available.</li>
+              <li>Consider and address low-impact BMPs.</li>
+              <li>Develop measures for consistent application of the net improvement performance standard.</li>
+            </ul>
+          </div>
+        </div>
+
+        <div class="timeline-item">
+          <span class="timeline-year">2020–21</span>
+          <div class="timeline-body">
+            <strong>TAC Rule Development Workshops</strong>
+            A new TAC was convened for 13 meetings between December 2020 and November 2021. Topics addressed included BMP efficiencies, maintenance requirements, and desired levels of treatment.
+          </div>
+        </div>
+
+        <div class="timeline-item">
+          <span class="timeline-year">Mar 2022</span>
+          <div class="timeline-body">
+            <strong>FDEP Final Report</strong>
+            FDEP issued a Final Report including specific recommendations for rule revisions. The Applicant's Handbook was revised from the 2010 draft version.
+          </div>
+        </div>
+
+        <div class="timeline-item">
+          <span class="timeline-year">Jun 2024</span>
+          <div class="timeline-body" id="sb7040">
+            <strong>Senate Bill 7040 — Signed into Law</strong>
+            On June 28, 2024, Governor Ron DeSantis signed Senate Bill 7040 into law, formally updating Florida's stormwater rules and design criteria. The bill represents the most significant update to Florida's stormwater regulatory framework since Chapter 62-25 was adopted in 1981.
+          </div>
+        </div>
+
+      </div>
+    </section>
+
+
+    <!-- ─────────────────────────────────────────────────────
+         §7  STATEWIDE RULE — KEY PROVISIONS
+    ──────────────────────────────────────────────────────── -->
+    <section class="section" id="treatment-standards">
+      <p class="section-label">Section 07 — New Rule Requirements</p>
+      <h2>Statewide Stormwater Rule — Key Provisions</h2>
+      <div class="section-rule"></div>
+
+      <h3>Implementation Timeline</h3>
+      <p>Applications for individual and general Environmental Resource Permits (ERPs) that are deemed complete after <strong>December 28, 2025</strong> (18 months from the rule effective date) are required to meet the revised Stormwater Quality Nutrient Permitting Requirements.</p>
+
+      <h3>Maintenance Requirements</h3>
+      <ul class="key-points">
+        <li>Establishment of routine maintenance cost estimate requirements.</li>
+        <li>Certification of financial capability for ongoing system maintenance.</li>
+        <li>Establishment of consistent inspection requirements for the permittee based on the design of the stormwater treatment system.</li>
+      </ul>
+
+      <h3>Design Flexibility</h3>
+      <ul class="key-points">
+        <li>Flexibility to use existing, or apply new, site- or regional-specific Event Mean Concentrations (EMC).</li>
+        <li>Permittees may choose from a range of innovative BMPs.</li>
+        <li>Off-site compensation may be used to meet treatment performance standards.</li>
+        <li>Performance criteria are applied at the project outfall.</li>
+      </ul>
+
+      <h3>Comparison: Previous and New Treatment Standards</h3>
+
+      <p>The new rule introduced differentiated treatment standards based on the relationship between a project and receiving water body classifications. The following table summarizes the previous and revised criteria across six project condition categories.</p>
+
+      <div class="table-wrapper">
+        <table>
+          <caption>Table 1 — Stormwater Treatment Performance Standards: Previous Criteria vs. Revised Criteria</caption>
+          <thead>
+            <tr>
+              <th></th>
+              <th>Project Not in<br>Impaired Watershed</th>
+              <th>Project in OFW<br>Watershed</th>
+              <th>Impaired Waters<br>(w/o TMDL or BMAP)</th>
+              <th>Project in Impaired<br>OFW Watershed</th>
+              <th>In TMDL/BMAP<br>Adopted Waters</th>
+              <th>Redevelopment<br>Projects</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr class="criteria-previous">
+              <td class="row-header">Previous<br>Criteria</td>
+              <td><strong>80%</strong> reduction in average annual load</td>
+              <td><strong>95%</strong> reduction of average annual load</td>
+              <td><em>Not addressed</em></td>
+              <td><strong>95%</strong> reduction of average annual load</td>
+              <td>TMDL/BMAP standards</td>
+              <td><em>Not addressed</em></td>
+            </tr>
+            <tr class="criteria-revised">
+              <td class="row-header">Revised<br>Criteria</td>
+              <td>Post ≤ Pre, <em>or</em><br>TP: <strong>80%</strong> &amp; TN: <strong>55%</strong>,<br>whichever is greater</td>
+              <td>Post ≤ Pre, <em>or</em><br>TP: <strong>90%</strong> &amp; TN: <strong>80%</strong>,<br>whichever is greater</td>
+              <td>Post ≤ Pre, <em>or</em><br>TP: <strong>80%</strong> &amp; TN: <strong>80%</strong>,<br>whichever is greater<br><em>AND</em> Post &lt; Pre for Impaired Parameters</td>
+              <td>Post ≤ Pre, <em>or</em><br>TP: <strong>95%</strong> &amp; TN: <strong>95%</strong>,<br>whichever is greater<br><em>AND</em> Post &lt; Pre for Impaired Parameters</td>
+              <td>TMDL/BMAP standards</td>
+              <td>TP: <strong>80%</strong> &amp; TN: <strong>45%</strong><br><em>and</em><br>TP: <strong>90%</strong> &amp; TN: <strong>60%</strong> for OFWs</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <p style="font-size:0.85rem; color:var(--text-muted); margin-top:-0.5rem;"><em>Abbreviations: TP — Total Phosphorus; TN — Total Nitrogen; OFW — Outstanding Florida Waters; TMDL — Total Maximum Daily Load; BMAP — Basin Management Action Plan.</em></p>
+    </section>
+
+
+    <!-- ─────────────────────────────────────────────────────
+         §8  HUC-12
+    ──────────────────────────────────────────────────────── -->
+    <section class="section" id="huc12">
+      <p class="section-label">Section 08 — Geographic Framework</p>
+      <h2>Florida HUC-12 Boundary Map</h2>
+      <div class="section-rule"></div>
+
+      <p>The new performance standards under Senate Bill 7040 are applied based on project location within a <strong>Hydrologic Unit Code (HUC) 12</strong> watershed boundary. The applicable standard is determined by the downstream correlation of that watershed to designated Impaired Waters or Outstanding Florida Waters (OFWs).</p>
+
+      <p>The HUC-12 system divides Florida's landscape into discrete drainage subbasins. Practitioners must:</p>
+
+      <ul class="key-points">
+        <li>Locate the project site on the HUC-12 boundary map with Impaired Waters and OFW overlays.</li>
+        <li>Determine whether the project's HUC-12 watershed has a downstream connection to Impaired Waters and/or OFWs.</li>
+        <li>Select the appropriate performance standard from Table 1 based on this determination.</li>
+      </ul>
+
+      <div class="img-placeholder">
+        <span class="ph-icon">🗺️</span>
+        <span class="ph-title">Figure 1 — Florida HUC-12 Watershed Boundary Map</span>
+        <span class="ph-desc">Map depicting Florida HUC-12 subwatershed boundaries with overlay of Impaired Waters (highlighted) and Outstanding Florida Waters (OFW) designations. Project designers use this map to determine which treatment standard applies.</span>
+      </div>
+    </section>
+
+
+    <!-- ─────────────────────────────────────────────────────
+         §9  ERP APPLICANT'S HANDBOOK
+    ──────────────────────────────────────────────────────── -->
+    <section class="section" id="erp-handbook">
+      <p class="section-label">Section 09 — Permitting Documents</p>
+      <h2>Environmental Resource Permit Applicant's Handbook
+        <span class="subtitle">Volume I — General and Environmental</span>
+      </h2>
+      <div class="section-rule"></div>
+
+      <p>FDEP developed <strong>Volume I</strong> of the Environmental Resource Permit (ERP) Applicant's Handbook, effective June 28, 2024. This volume applies across all five Water Management Districts (WMDs) and is incorporated by reference into subsection 62-330.010(4), F.A.C.</p>
+
+      <h3>Volume I — Key Attributes</h3>
+      <ul class="key-points">
+        <li>Applies uniformly to each of the 5 Water Management Districts.</li>
+        <li>Based largely on the methodology established in the 2007 ERD report.</li>
+        <li>Part II, Sections 8 and 9 contain the basic evaluation and design criteria for stormwater treatment.</li>
+        <li>Allows <strong>"compensating treatment"</strong> approaches:
+          <ul class="key-points" style="margin-top:0.4rem;">
+            <li class="sub">Overtreatment — designing a system to exceed the required performance standard, providing a buffer.</li>
+            <li class="sub">Off-site treatment — achieving a portion of the required load reduction at a location other than the project site.</li>
+          </ul>
+        </li>
+      </ul>
+
+      <h3>Volume II — District-Specific Supplements</h3>
+      <p>Each Water Management District developed its own Volume II supplement to address unique regional characteristics, including:</p>
+      <ul class="key-points">
+        <li>District-specific hydrology</li>
+        <li>Regional land use patterns</li>
+      </ul>
+
+      <p>The five participating Water Management Districts are: Northwest Florida WMD, Suwannee River WMD, St. Johns River WMD, Southwest Florida WMD, and South Florida WMD.</p>
+
+      <div class="img-placeholder">
+        <span class="ph-icon">📋</span>
+        <span class="ph-title">Referenced Document — ERP Applicant's Handbook, Volume I</span>
+        <span class="ph-desc">Cover page of the <em>Environmental Resource Permit Applicant's Handbook, Volume I (General and Environmental)</em>. Effective June 28, 2024. Issued jointly for FDEP and all five Water Management Districts.</span>
+      </div>
+    </section>
+
+  </main>
+</div><!-- /layout -->
+
+
+<!-- ══════════════════════════════════════════════════════════
+     APPENDIX — REFERENCE GRAPHICS
+═══════════════════════════════════════════════════════════ -->
+<section class="appendix" id="appendix">
+  <p class="section-label">Appendix — Reference Materials</p>
+  <h2>Reference Graphics and Documents</h2>
+  <div class="section-rule"></div>
+
+  <div class="ref-grid">
+
+    <div class="ref-card">
+      <span class="ref-tag">Figure 1</span>
+      <p class="ref-title">Florida HUC-12 Watershed Boundary Map</p>
+      <p class="ref-caption">Map of Florida HUC-12 subwatershed boundaries with Impaired Waters and Outstanding Florida Waters (OFW) overlays. Used to determine applicable stormwater treatment performance standard.</p>
+    </div>
+
+    <div class="ref-card">
+      <span class="ref-tag">Referenced Document A</span>
+      <p class="ref-title">Evaluation of Current Stormwater Design Criteria within the State of Florida</p>
+      <p class="ref-caption">Final Report, FDEP Contract No. SO108, June 2007. Prepared by Harvey H. Harper, Ph.D., P.E. and David M. Baker, P.E., Environmental Research &amp; Design, Inc., Orlando, FL 32812. Funded by Florida Department of Environmental Protection.</p>
+    </div>
+
+    <div class="ref-card">
+      <span class="ref-tag">Referenced Document B</span>
+      <p class="ref-title">ERP Applicant's Handbook, Volume I (General and Environmental)</p>
+      <p class="ref-caption">Effective June 28, 2024. Incorporated by reference in subsection 62-330.010(4), F.A.C. Applies to FDEP and all five Florida Water Management Districts.</p>
+    </div>
+
+  </div>
+</section>
+
+
+<!-- ══════════════════════════════════════════════════════════
+     PAGE FOOTER
+═══════════════════════════════════════════════════════════ -->
+<footer class="page-footer">
+  <span>BMPFast Stormwater Training Series · Module 02 · Florida Stormwater History &amp; Permitting</span>
+  <span>Author: Harvey H. Harper, Ph.D., P.E. · Environmental Research &amp; Design, Inc. · January 2026</span>
+</footer>
+
+</body>
+</html>

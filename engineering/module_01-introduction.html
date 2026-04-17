@@ -1,0 +1,1162 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Module 1 – Introduction | BMPFast Learning System</title>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700&family=Source+Serif+4:ital,wght@0,300;0,400;0,600;1,300&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
+  <style>
+    /* ── Design Tokens ── */
+    :root {
+      --bg:          #f4f6f3;
+      --surface:     #ffffff;
+      --surface-alt: #eef1ed;
+      --border:      #c9d4c5;
+      --ink:         #1e2a1a;
+      --ink-muted:   #4a5c44;
+      --accent:      #2e6b4f;       /* forest green */
+      --accent-lt:   #4d9970;
+      --accent-pale: #d4ece0;
+      --gold:        #8a6c2a;
+      --gold-pale:   #f5edda;
+      --rule:        #b5c8af;
+      --code-bg:     #e8f0e6;
+      --shadow:      0 2px 12px rgba(46,107,79,.10);
+      --shadow-md:   0 4px 24px rgba(46,107,79,.13);
+      --r:           6px;
+    }
+
+    /* ── Reset & Base ── */
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      font-family: 'Source Serif 4', Georgia, serif;
+      font-size: 17px;
+      line-height: 1.75;
+      background: var(--bg);
+      color: var(--ink);
+      min-height: 100vh;
+    }
+
+    /* ── Page Layout ── */
+    .page-wrap {
+      max-width: 900px;
+      margin: 0 auto;
+      padding: 0 2rem 4rem;
+    }
+
+    /* ── Cover Banner ── */
+    .cover {
+      background: var(--accent);
+      background-image:
+        repeating-linear-gradient(
+          135deg,
+          rgba(255,255,255,.03) 0px,
+          rgba(255,255,255,.03) 1px,
+          transparent 1px,
+          transparent 40px
+        );
+      color: #fff;
+      padding: 3.5rem 2.5rem 3rem;
+      margin: 0 -2rem 3rem;
+      border-bottom: 4px solid var(--gold);
+      position: relative;
+    }
+
+    .cover-label {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: .75rem;
+      letter-spacing: .16em;
+      text-transform: uppercase;
+      opacity: .75;
+      margin-bottom: .75rem;
+    }
+
+    .cover h1 {
+      font-family: 'Playfair Display', serif;
+      font-size: clamp(1.6rem, 4vw, 2.6rem);
+      line-height: 1.2;
+      font-weight: 700;
+      margin-bottom: .75rem;
+    }
+
+    .cover-sub {
+      font-size: 1.05rem;
+      font-weight: 300;
+      opacity: .88;
+      max-width: 620px;
+      font-style: italic;
+    }
+
+    .cover-meta {
+      margin-top: 1.5rem;
+      display: flex;
+      gap: 2rem;
+      flex-wrap: wrap;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: .78rem;
+      opacity: .72;
+      letter-spacing: .06em;
+    }
+
+    /* ── Navigation Sidebar strip ── */
+    .toc-strip {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--r);
+      padding: 1.25rem 1.5rem;
+      margin-bottom: 2.5rem;
+      box-shadow: var(--shadow);
+    }
+
+    .toc-strip h2 {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: .7rem;
+      letter-spacing: .18em;
+      text-transform: uppercase;
+      color: var(--accent);
+      margin-bottom: .75rem;
+    }
+
+    .toc-strip ol {
+      list-style: none;
+      display: flex;
+      flex-wrap: wrap;
+      gap: .35rem .1rem;
+      counter-reset: toc;
+    }
+
+    .toc-strip li {
+      counter-increment: toc;
+    }
+
+    .toc-strip a {
+      display: inline-block;
+      font-size: .85rem;
+      color: var(--ink-muted);
+      text-decoration: none;
+      padding: .15rem .5rem;
+      border-radius: 3px;
+      transition: background .15s, color .15s;
+    }
+
+    .toc-strip a::before {
+      content: counter(toc) ". ";
+      color: var(--accent-lt);
+      font-family: 'JetBrains Mono', monospace;
+      font-size: .75rem;
+    }
+
+    .toc-strip a:hover {
+      background: var(--accent-pale);
+      color: var(--accent);
+    }
+
+    /* ── Sections ── */
+    section {
+      margin-bottom: 3rem;
+    }
+
+    section:target {
+      scroll-margin-top: 1.5rem;
+    }
+
+    /* ── Section Header ── */
+    .section-header {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+      margin-bottom: 1.25rem;
+    }
+
+    .section-num {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: .7rem;
+      letter-spacing: .18em;
+      text-transform: uppercase;
+      color: var(--accent-lt);
+      white-space: nowrap;
+      flex-shrink: 0;
+    }
+
+    .section-rule {
+      flex: 1;
+      height: 1px;
+      background: var(--rule);
+    }
+
+    h2 {
+      font-family: 'Playfair Display', serif;
+      font-size: 1.55rem;
+      font-weight: 700;
+      color: var(--ink);
+      margin-bottom: .2rem;
+    }
+
+    h3 {
+      font-family: 'Playfair Display', serif;
+      font-size: 1.15rem;
+      font-weight: 600;
+      color: var(--accent);
+      margin: 1.5rem 0 .4rem;
+    }
+
+    p {
+      margin-bottom: 1rem;
+      color: var(--ink);
+    }
+
+    /* ── Faculty Cards ── */
+    .faculty-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(370px, 1fr));
+      gap: 1.25rem;
+      margin-top: 1rem;
+    }
+
+    .faculty-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-left: 4px solid var(--accent);
+      border-radius: var(--r);
+      padding: 1.25rem 1.25rem 1.25rem 1.35rem;
+      box-shadow: var(--shadow);
+    }
+
+    .faculty-card h3 {
+      margin-top: 0;
+      margin-bottom: .2rem;
+      font-size: 1.05rem;
+    }
+
+    .faculty-title {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: .72rem;
+      color: var(--ink-muted);
+      letter-spacing: .06em;
+      margin-bottom: .75rem;
+    }
+
+    .faculty-tags {
+      display: flex;
+      flex-wrap: wrap;
+      gap: .35rem;
+      margin-top: .75rem;
+    }
+
+    .tag {
+      font-size: .72rem;
+      background: var(--accent-pale);
+      color: var(--accent);
+      border-radius: 3px;
+      padding: .15rem .5rem;
+      font-family: 'JetBrains Mono', monospace;
+    }
+
+    .years-badge {
+      display: inline-block;
+      background: var(--gold-pale);
+      color: var(--gold);
+      border: 1px solid #d4b870;
+      border-radius: 4px;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: .78rem;
+      padding: .2rem .65rem;
+      margin-bottom: .5rem;
+    }
+
+    /* ── Numbered Objective Cards ── */
+    .obj-list {
+      display: flex;
+      flex-direction: column;
+      gap: .85rem;
+      margin-top: 1rem;
+    }
+
+    .obj-card {
+      display: grid;
+      grid-template-columns: 3rem 1fr;
+      gap: 0 1rem;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--r);
+      padding: 1rem 1.25rem 1rem 0;
+      box-shadow: var(--shadow);
+      align-items: start;
+    }
+
+    .obj-num {
+      display: flex;
+      align-items: flex-start;
+      justify-content: center;
+      padding-top: .05rem;
+      font-family: 'Playfair Display', serif;
+      font-size: 1.6rem;
+      font-weight: 700;
+      color: var(--accent-pale);
+      line-height: 1;
+      border-right: 2px solid var(--accent-pale);
+      margin-left: 1rem;
+      padding-right: .75rem;
+    }
+
+    .obj-body h3 {
+      margin-top: 0;
+      font-size: 1rem;
+      margin-bottom: .25rem;
+    }
+
+    .obj-body p {
+      font-size: .92rem;
+      margin-bottom: 0;
+      color: var(--ink-muted);
+    }
+
+    /* ── Audience Cards ── */
+    .audience-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(360px, 1fr));
+      gap: 1rem;
+      margin-top: 1rem;
+    }
+
+    .audience-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--r);
+      padding: 1.1rem 1.25rem;
+      box-shadow: var(--shadow);
+    }
+
+    .audience-card h3 {
+      margin-top: 0;
+      font-size: 1rem;
+      margin-bottom: .35rem;
+    }
+
+    .audience-card p {
+      font-size: .9rem;
+      color: var(--ink-muted);
+      margin-bottom: 0;
+    }
+
+    /* ── Module Tables / Lists ── */
+    .module-block {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--r);
+      margin-bottom: 1.25rem;
+      overflow: hidden;
+      box-shadow: var(--shadow);
+    }
+
+    .module-block-header {
+      background: var(--surface-alt);
+      border-bottom: 1px solid var(--border);
+      padding: .65rem 1.25rem;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: .78rem;
+      letter-spacing: .1em;
+      color: var(--accent);
+      text-transform: uppercase;
+    }
+
+    .module-block ul {
+      list-style: none;
+      padding: .75rem 1.25rem 1rem;
+      display: flex;
+      flex-wrap: wrap;
+      gap: .35rem;
+    }
+
+    .module-block li {
+      background: var(--code-bg);
+      border-radius: 3px;
+      padding: .2rem .65rem;
+      font-size: .85rem;
+      color: var(--ink);
+    }
+
+    .module-block li::before {
+      content: "→ ";
+      color: var(--accent-lt);
+      font-weight: 600;
+    }
+
+    .feature-row {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 1rem;
+      margin-top: 1rem;
+    }
+
+    .feature-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-top: 3px solid var(--accent);
+      border-radius: var(--r);
+      padding: 1.1rem;
+      text-align: center;
+      box-shadow: var(--shadow);
+    }
+
+    .feature-card .feat-icon {
+      font-size: 1.6rem;
+      margin-bottom: .5rem;
+    }
+
+    .feature-card h3 {
+      margin-top: 0;
+      font-size: .95rem;
+      text-align: center;
+    }
+
+    .feature-card p {
+      font-size: .85rem;
+      color: var(--ink-muted);
+      margin-bottom: 0;
+      text-align: center;
+    }
+
+    /* ── System Components ── */
+    .system-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+      gap: 1rem;
+      margin-top: 1rem;
+    }
+
+    .system-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--r);
+      padding: 1.25rem;
+      box-shadow: var(--shadow);
+    }
+
+    .system-card .sys-icon {
+      font-size: 1.4rem;
+      margin-bottom: .6rem;
+    }
+
+    .system-card h3 {
+      margin-top: 0;
+      font-size: 1rem;
+      margin-bottom: .35rem;
+    }
+
+    .system-card p {
+      font-size: .87rem;
+      color: var(--ink-muted);
+      margin-bottom: 0;
+    }
+
+    /* ── Pricing Table ── */
+    .pricing-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--r);
+      overflow: hidden;
+      box-shadow: var(--shadow-md);
+      max-width: 520px;
+    }
+
+    .pricing-header {
+      background: var(--accent);
+      color: #fff;
+      padding: 1.25rem 1.5rem;
+    }
+
+    .pricing-header h3 {
+      color: #fff;
+      margin-top: 0;
+      font-size: 1.1rem;
+      margin-bottom: .25rem;
+    }
+
+    .pricing-header p {
+      color: rgba(255,255,255,.8);
+      font-size: .88rem;
+      margin-bottom: 0;
+    }
+
+    .pricing-rows {
+      padding: 0;
+    }
+
+    .pricing-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: .8rem 1.5rem;
+      border-bottom: 1px solid var(--border);
+      font-size: .93rem;
+    }
+
+    .pricing-row:last-child {
+      border-bottom: none;
+    }
+
+    .price-val {
+      font-family: 'JetBrains Mono', monospace;
+      font-weight: 500;
+      color: var(--accent);
+      font-size: 1rem;
+    }
+
+    .includes-list {
+      padding: 1rem 1.5rem;
+      background: var(--accent-pale);
+      border-top: 1px solid var(--border);
+    }
+
+    .includes-list p {
+      font-size: .85rem;
+      color: var(--accent);
+      margin-bottom: 0;
+    }
+
+    .includes-list strong {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: .78rem;
+      letter-spacing: .08em;
+      text-transform: uppercase;
+    }
+
+    /* ── Image Placeholder ── */
+    .img-placeholder {
+      width: 100%;
+      background: var(--surface-alt);
+      border: 2px dashed var(--border);
+      border-radius: var(--r);
+      padding: 2.5rem 1.5rem;
+      text-align: center;
+      margin: 1.5rem 0;
+      color: var(--ink-muted);
+    }
+
+    .img-placeholder .ph-icon {
+      font-size: 2rem;
+      margin-bottom: .5rem;
+      opacity: .5;
+    }
+
+    .img-placeholder .ph-label {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: .8rem;
+      letter-spacing: .1em;
+      text-transform: uppercase;
+      color: var(--accent-lt);
+      margin-bottom: .25rem;
+    }
+
+    .img-placeholder .ph-desc {
+      font-size: .88rem;
+      color: var(--ink-muted);
+    }
+
+    /* ── Callout ── */
+    .callout {
+      background: var(--gold-pale);
+      border-left: 4px solid var(--gold);
+      border-radius: 0 var(--r) var(--r) 0;
+      padding: 1rem 1.25rem;
+      margin: 1.25rem 0;
+    }
+
+    .callout p {
+      margin-bottom: 0;
+      font-size: .93rem;
+      color: var(--ink);
+    }
+
+    /* ── Closing / Thank You ── */
+    .closing {
+      background: var(--accent);
+      color: #fff;
+      border-radius: var(--r);
+      padding: 2.5rem;
+      text-align: center;
+      margin-top: 2.5rem;
+    }
+
+    .closing h2 {
+      color: #fff;
+      font-size: 1.5rem;
+      margin-bottom: .75rem;
+    }
+
+    .closing p {
+      color: rgba(255,255,255,.85);
+      max-width: 560px;
+      margin: 0 auto 1.5rem;
+    }
+
+    .closing .credit-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: .75rem 2rem;
+      max-width: 480px;
+      margin: 1.5rem auto 0;
+      text-align: left;
+    }
+
+    .closing .credit-item {
+      border-top: 1px solid rgba(255,255,255,.25);
+      padding-top: .5rem;
+    }
+
+    .closing .credit-name {
+      font-weight: 600;
+      font-size: .95rem;
+    }
+
+    .closing .credit-role {
+      font-size: .78rem;
+      opacity: .72;
+    }
+
+    /* ── Combined experience banner ── */
+    .exp-banner {
+      background: var(--ink);
+      color: #fff;
+      border-radius: var(--r);
+      padding: 1rem 1.5rem;
+      display: flex;
+      align-items: center;
+      gap: 1.5rem;
+      margin-top: 1.5rem;
+    }
+
+    .exp-number {
+      font-family: 'Playfair Display', serif;
+      font-size: 2.8rem;
+      font-weight: 700;
+      color: var(--accent-lt);
+      white-space: nowrap;
+    }
+
+    .exp-banner p {
+      color: rgba(255,255,255,.85);
+      margin-bottom: 0;
+      font-size: .95rem;
+    }
+
+    /* ── Quick Ref Box ── */
+    .quick-ref {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--r);
+      overflow: hidden;
+      margin-top: 1.25rem;
+      box-shadow: var(--shadow);
+    }
+
+    .quick-ref-header {
+      background: var(--surface-alt);
+      border-bottom: 1px solid var(--border);
+      padding: .55rem 1.25rem;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: .72rem;
+      letter-spacing: .14em;
+      color: var(--accent);
+      text-transform: uppercase;
+    }
+
+    .quick-ref-body {
+      padding: .75rem 1.25rem;
+      display: grid;
+      grid-template-columns: auto 1fr;
+      gap: .35rem 1.5rem;
+      font-size: .88rem;
+    }
+
+    .qr-key {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: .78rem;
+      color: var(--ink-muted);
+    }
+
+    .qr-val {
+      font-weight: 600;
+      color: var(--ink);
+    }
+
+    /* ── Footnote ── */
+    .footnote {
+      text-align: center;
+      margin-top: 3rem;
+      padding-top: 1.5rem;
+      border-top: 1px solid var(--rule);
+      font-family: 'JetBrains Mono', monospace;
+      font-size: .72rem;
+      color: var(--ink-muted);
+      letter-spacing: .06em;
+    }
+
+    /* ── Responsive ── */
+    @media (max-width: 640px) {
+      .feature-row { grid-template-columns: 1fr; }
+      .closing .credit-grid { grid-template-columns: 1fr; }
+      .exp-banner { flex-direction: column; gap: .5rem; }
+      .faculty-grid, .audience-grid { grid-template-columns: 1fr; }
+    }
+
+    @media print {
+      .cover { background: #1a4a32 !important; }
+      body { font-size: 12pt; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- ═══════════════════════════════════════════════
+     COVER
+════════════════════════════════════════════════ -->
+<div class="cover">
+  <div class="page-wrap" style="margin-bottom:0; padding-bottom:0;">
+    <div class="cover-label">BMPFast Learning System · Training Module 1</div>
+    <h1>Introduction to Stormwater Management Training and Software</h1>
+    <p class="cover-sub">Meeting New Rules, Regulations, and Practice</p>
+    <div class="cover-meta">
+      <span>Issued: December 28, 2025</span>
+      <span>Platform: BMPFast</span>
+      <span>Audience: Municipal Engineers · Civil/Environmental Engineers · Regulators</span>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════════
+     MAIN CONTENT
+════════════════════════════════════════════════ -->
+<div class="page-wrap">
+
+  <!-- TABLE OF CONTENTS -->
+  <nav class="toc-strip" aria-label="Contents">
+    <h2>Contents</h2>
+    <ol>
+      <li><a href="#overview">Program Overview</a></li>
+      <li><a href="#faculty">Meet the Faculty</a></li>
+      <li><a href="#why">Why Are You Here?</a></li>
+      <li><a href="#audience">Who Is This For?</a></li>
+      <li><a href="#modules">Learning Modules Overview</a></li>
+      <li><a href="#additional-modules">Additional Modules in Development</a></li>
+      <li><a href="#platform">The BMPFast Learning System</a></li>
+      <li><a href="#registration">Registration &amp; Pricing</a></li>
+      <li><a href="#getting-started">Getting Started with the Software</a></li>
+    </ol>
+  </nav>
+
+
+  <!-- ── 1. OVERVIEW ── -->
+  <section id="overview">
+    <div class="section-header">
+      <span class="section-num">§ 01</span>
+      <div class="section-rule"></div>
+    </div>
+    <h2>Program Overview</h2>
+    <p>The BMPFast Learning System is a comprehensive professional development program for municipal stormwater managers, civil and environmental engineers, regulators, and public works decision-makers. It was built by industry leaders with over 150 years of combined experience in water quality science, BMP design and evaluation, software engineering, and regulatory compliance.</p>
+    <p>Their combined work has shaped how stormwater professionals across the United States approach permitting, treatment design, and environmental protection — and this program packages that expertise into an accessible, self-paced curriculum that integrates regulatory guidance with hands-on software training.</p>
+  </section>
+
+
+  <!-- ── 2. FACULTY ── -->
+  <section id="faculty">
+    <div class="section-header">
+      <span class="section-num">§ 02</span>
+      <div class="section-rule"></div>
+    </div>
+    <h2>Meet the Faculty</h2>
+    <p>The BMPFast Learning System was developed by a distinguished team of researchers, engineers, and software developers whose careers span decades of stormwater management innovation. Together they bring unmatched expertise in water quality science, BMP design, software engineering, and regulatory compliance.</p>
+
+    <div class="faculty-grid">
+
+      <div class="faculty-card">
+        <h3>Dr. Ron Eaglin</h3>
+        <p class="faculty-title">Professor · Daytona State College</p>
+        <p>Dr. Eaglin brings more than 40 years of software development experience spanning many diversified fields of practice. He holds degrees in Mechanical and Environmental Engineering. His specializations include stormwater management, computer applications, and cyber security — making him uniquely qualified to lead the development of modern, secure stormwater analysis tools.</p>
+        <div class="faculty-tags">
+          <span class="tag">Software Development</span>
+          <span class="tag">Stormwater Mgmt</span>
+          <span class="tag">Cyber Security</span>
+          <span class="tag">40+ yrs exp</span>
+        </div>
+      </div>
+
+      <div class="faculty-card">
+        <h3>Dr. Harvey Harper</h3>
+        <p class="faculty-title">President · Environmental Research &amp; Design (ERD)</p>
+        <p>Dr. Harper brings over 40 years of experience in stormwater management research, teaching, and design. He holds degrees in Limnology, Environmental Sciences, and Environmental Engineering. His expertise centers on water quality analysis and the evaluation of Stormwater Best Management Practices (BMPs), making him a leading authority on treatment performance assessment.</p>
+        <div class="faculty-tags">
+          <span class="tag">Water Quality Analysis</span>
+          <span class="tag">BMP Evaluation</span>
+          <span class="tag">Limnology</span>
+          <span class="tag">40+ yrs exp</span>
+        </div>
+      </div>
+
+      <div class="faculty-card">
+        <h3>Dr. Dingbao Wang</h3>
+        <p class="faculty-title">Professor of Engineering · University of Central Florida</p>
+        <p>Dr. Wang has more than 15 years of experience in teaching and research at UCF. He holds degrees in Civil Engineering and specializes in water resources system modeling and programming. His computational expertise is instrumental in building the analytical backbone of BMPFast software, ensuring that complex hydrological models are translated into practical, user-friendly tools.</p>
+        <div class="faculty-tags">
+          <span class="tag">Hydrologic Modeling</span>
+          <span class="tag">Water Resources</span>
+          <span class="tag">Programming</span>
+          <span class="tag">15+ yrs exp</span>
+        </div>
+      </div>
+
+      <div class="faculty-card">
+        <h3>Dr. Marty Wanielista</h3>
+        <p class="faculty-title">Professor Emeritus · University of Central Florida</p>
+        <p>Dr. Wanielista brings an extraordinary 55+ years of experience in stormwater management. He holds degrees in Civil Engineering, Sanitary Engineering, and Environmental Systems Engineering. He specializes in Stormwater BMPs and is the author of seven textbooks in water resource management. His body of work has been foundational in shaping stormwater management education and practice throughout the Southeast United States and beyond.</p>
+        <div class="faculty-tags">
+          <span class="tag">Stormwater BMPs</span>
+          <span class="tag">Textbook Author (×7)</span>
+          <span class="tag">Sanitary Engineering</span>
+          <span class="tag">55+ yrs exp</span>
+        </div>
+      </div>
+
+    </div>
+
+    <div class="exp-banner">
+      <div class="exp-number">150+</div>
+      <p>Combined years of expertise in stormwater science, engineering, software development, and regulatory compliance — represented by this faculty team.</p>
+    </div>
+  </section>
+
+
+  <!-- ── 3. WHY ARE YOU HERE ── -->
+  <section id="why">
+    <div class="section-header">
+      <span class="section-num">§ 03</span>
+      <div class="section-rule"></div>
+    </div>
+    <h2>Why Are You Here?</h2>
+    <p>Whether you are a seasoned stormwater professional seeking to stay current or a newer practitioner building your competency, this training program is designed to address the most pressing needs in today's regulatory environment. The BMPFast Learning System was created in direct response to evolving rules, regulations, and best practices that affect how stormwater projects are permitted, designed, and managed across Florida and beyond.</p>
+
+    <div class="obj-list">
+
+      <div class="obj-card">
+        <div class="obj-num">1</div>
+        <div class="obj-body">
+          <h3>Deepen Your Understanding</h3>
+          <p>Obtain more comprehensive understanding and training for stormwater management as it relates to water quality control. The learning modules cover fundamental principles through advanced analytical methods, ensuring that every participant gains the knowledge needed to make informed decisions in the field.</p>
+        </div>
+      </div>
+
+      <div class="obj-card">
+        <div class="obj-num">2</div>
+        <div class="obj-body">
+          <h3>Stay Current with Regulations</h3>
+          <p>Collect critical information on the new rules, regulations, and practices affecting Environmental Resource Permits (ERPs) and Basin Management Action Plans (BMAPs). Regulatory landscapes are shifting, and this program ensures you understand what those changes mean for your projects and compliance obligations.</p>
+        </div>
+      </div>
+
+      <div class="obj-card">
+        <div class="obj-num">3</div>
+        <div class="obj-body">
+          <h3>Accelerate Permitting</h3>
+          <p>Address how to obtain an ERP permit as fast as possible while ensuring full consistency with new rules, regulations, and current practice. Time-to-permit is a real cost driver for projects, and understanding the process thoroughly reduces delays and costly revisions.</p>
+        </div>
+      </div>
+
+      <div class="obj-card">
+        <div class="obj-num">4</div>
+        <div class="obj-body">
+          <h3>Master BMPFast Software</h3>
+          <p>Understand the BMPFast software platform and its capabilities for analyzing stormwater Best Management Practices. The software streamlines complex calculations and supports defensible permit applications with data-driven analysis.</p>
+        </div>
+      </div>
+
+      <div class="obj-card">
+        <div class="obj-num">5</div>
+        <div class="obj-body">
+          <h3>Earn a Professional Certificate</h3>
+          <p>Earn a certificate of competency after completing a comprehensive examination. This credential demonstrates proficiency in using stormwater BMPs for water quality control and positions you as a qualified practitioner in your field.</p>
+        </div>
+      </div>
+
+    </div>
+  </section>
+
+
+  <!-- ── 4. AUDIENCE ── -->
+  <section id="audience">
+    <div class="section-header">
+      <span class="section-num">§ 04</span>
+      <div class="section-rule"></div>
+    </div>
+    <h2>Who Is This For?</h2>
+    <p>The BMPFast Learning System is designed for a broad audience of professionals invested in stormwater management — from those just beginning to engage with water quality issues to experienced practitioners refining their skills with the latest tools and regulatory guidance. Participants typically span municipal government, consulting firms, regulatory agencies, and academic institutions and can be grouped into four key categories.</p>
+
+    <div class="audience-grid">
+
+      <div class="audience-card">
+        <h3>Building Core Competency</h3>
+        <p>Professionals with some foundational knowledge of stormwater principles who want to become fully competent in understanding water quality issues related to stormwater management. This group includes newer engineers, planners, and public works staff who need a solid grounding in BMP science and regulatory frameworks.</p>
+      </div>
+
+      <div class="audience-card">
+        <h3>Permit Applicants</h3>
+        <p>Individuals who need to complete Environmental Resource Permit (ERP), Basin Management Action Plan (BMAP), and other permit applications. These professionals benefit from understanding how the software and learning modules directly support the documentation and analysis required for successful permit submissions.</p>
+      </div>
+
+      <div class="audience-card">
+        <h3>Software Developers and Power Users</h3>
+        <p>Professionals who have written or worked with past stormwater software tools — including BMPTrains, OPSEW, SWIMM, SMADA, RETEN, LEASTS, LOADER, PAVER, and others — or software programmers who want to understand the analytical engines behind modern stormwater modeling. This group will appreciate the technical depth of the BMPFast platform.</p>
+      </div>
+
+      <div class="audience-card">
+        <h3>Regulatory and Legal Professionals</h3>
+        <p>Those who wish to obtain a more thorough understanding of stormwater laws (including foreign IP considerations), regulations such as the Applicant's Handbooks, and evolving practice standards. Staying ahead of regulatory changes is essential for compliance officers, attorneys, and agency reviewers.</p>
+      </div>
+
+    </div>
+  </section>
+
+
+  <!-- ── 5. LEARNING MODULES ── -->
+  <section id="modules">
+    <div class="section-header">
+      <span class="section-num">§ 05</span>
+      <div class="section-rule"></div>
+    </div>
+    <h2>Learning Modules Overview</h2>
+    <p>The BMPFast Learning System is organized into a comprehensive set of learning modules covering the full spectrum of stormwater management topics — from foundational principles and regulatory history to advanced BMP analysis and treatment train design. Each module is self-contained and can be viewed in any order, allowing participants to customize their learning path based on professional need and experience level.</p>
+
+    <div class="feature-row">
+      <div class="feature-card">
+        <div class="feat-icon">🕐</div>
+        <h3>Self-Paced</h3>
+        <p>View content at your own speed. Revisit modules as many times as needed for thorough comprehension.</p>
+      </div>
+      <div class="feature-card">
+        <div class="feat-icon">🔀</div>
+        <h3>Flexible Order</h3>
+        <p>Modules can be completed in any sequence. Customize your path based on current project needs.</p>
+      </div>
+      <div class="feature-card">
+        <div class="feat-icon">🔄</div>
+        <h3>Always Expanding</h3>
+        <p>New modules are added based on user interest and regulatory changes. Existing modules may be updated as practice evolves.</p>
+      </div>
+    </div>
+
+    <h3>Initial Core Curriculum — 16 Modules (2025 Launch)</h3>
+    <p>The initial set of 16 core modules forms the backbone of the training program, providing the knowledge needed to confidently navigate the ERP permitting process. Topics include:</p>
+
+    <div class="module-block">
+      <div class="module-block-header">Core Module Topics</div>
+      <ul>
+        <li>Stormwater history and permitting</li>
+        <li>New laws and regulations</li>
+        <li>Rainfall and site characteristics</li>
+        <li>Runoff generation and loading calculations</li>
+        <li>Retention analysis</li>
+        <li>Wet detention analysis</li>
+        <li>Stormwater harvesting</li>
+        <li>Competency test preparation</li>
+      </ul>
+    </div>
+
+    <div class="callout">
+      <p><strong>Frequently Asked Questions (FAQs)</strong> submitted by registered users serve as the primary guide for determining learning module titles and content. Your questions shape the curriculum.</p>
+    </div>
+  </section>
+
+
+  <!-- ── 6. ADDITIONAL MODULES ── -->
+  <section id="additional-modules">
+    <div class="section-header">
+      <span class="section-num">§ 06</span>
+      <div class="section-rule"></div>
+    </div>
+    <h2>Additional Modules in Development</h2>
+    <p>The BMPFast team is committed to continuously expanding the curriculum to address emerging topics and advanced analytical techniques. The following modules are currently being considered and developed based on practitioner demand and evolving regulatory requirements. These extend the core curriculum into specialized areas of BMP design, analysis, and system-level stormwater management.</p>
+
+    <div class="module-block">
+      <div class="module-block-header">BMP Analysis Modules</div>
+      <ul>
+        <li>Swale performance and analysis</li>
+        <li>Sorption media analysis</li>
+        <li>Rain garden design as LID/GSI BMPs</li>
+        <li>Disconnecting DCIA analysis</li>
+        <li>Permeable pavement design</li>
+        <li>Gross pollutant separators</li>
+        <li>Greenroof treatment</li>
+        <li>Alum treatment</li>
+        <li>Vegetated filter strips</li>
+        <li>User-defined BMPs for non-standard practices</li>
+      </ul>
+    </div>
+
+    <div class="module-block">
+      <div class="module-block-header">System-Level Modules</div>
+      <ul>
+        <li>Treatment train examples — series of BMPs within single catchments</li>
+        <li>Multi-catchment configurations</li>
+        <li>Comprehensive cost analysis for full-scale stormwater system design</li>
+      </ul>
+    </div>
+
+    <div class="module-block">
+      <div class="module-block-header">Advanced Science Modules</div>
+      <ul>
+        <li>Significance of concentration and TN/TP species in filtration processes</li>
+        <li>Water chemistry underpinning effective BMP selection</li>
+        <li>Performance prediction for nutrient removal</li>
+      </ul>
+    </div>
+
+    <div class="callout">
+      <p>New learning modules are constructed in direct response to the interests of registered users. Existing modules may also be modified based on regulatory actions or shifts in practice — as required by the <strong>Applicant's Handbook Volume 1</strong>. This ensures the BMPFast Learning System remains a living, evolving resource.</p>
+    </div>
+  </section>
+
+
+  <!-- ── 7. THE PLATFORM ── -->
+  <section id="platform">
+    <div class="section-header">
+      <span class="section-num">§ 07</span>
+      <div class="section-rule"></div>
+    </div>
+    <h2>The BMPFast Learning System</h2>
+    <p>BMPFast is a comprehensive professional development platform that integrates education with hands-on analytical tools. It was designed from the ground up to serve stormwater professionals who need both conceptual understanding and practical software capabilities to navigate today's complex permitting landscape. The system bridges the gap between textbook knowledge and real-world application, giving users the confidence to design, analyze, and defend their stormwater management strategies.</p>
+    <p>The acronym <strong>BMPFast</strong> stands for <em>BMPs For Assessment of Stormwater Treatment</em>.</p>
+
+    <div class="system-grid">
+
+      <div class="system-card">
+        <div class="sys-icon">📚</div>
+        <h3>Learning Modules</h3>
+        <p>A comprehensive library of educational modules covering water quality issues in stormwater management. Topics range from rainfall characteristics and runoff generation to advanced BMP analysis and treatment train design. Each module is self-paced and may be revisited as many times as needed.</p>
+      </div>
+
+      <div class="system-card">
+        <div class="sys-icon">💻</div>
+        <h3>BMPFast Software</h3>
+        <p>A powerful software package designed for the analysis of stormwater Best Management Practices used to meet state water quality standards. BMPFast enables users to model, evaluate, and optimize BMP configurations with precision and efficiency. The software supports ERP permit applications and BMAP compliance documentation.</p>
+      </div>
+
+      <div class="system-card">
+        <div class="sys-icon">🎓</div>
+        <h3>Competency Certification</h3>
+        <p>Each participant has the opportunity to earn a Certificate of Competency after completing a comprehensive examination. This certification validates proficiency in using stormwater BMPs for water quality control and demonstrates to employers, clients, and regulatory agencies that the practitioner possesses the required knowledge and skills.</p>
+      </div>
+
+    </div>
+  </section>
+
+
+  <!-- ── 8. REGISTRATION ── -->
+  <section id="registration">
+    <div class="section-header">
+      <span class="section-num">§ 08</span>
+      <div class="section-rule"></div>
+    </div>
+    <h2>Registration &amp; Pricing</h2>
+    <p>Registration for the Stormwater Learning Modules and BMPFast software provides comprehensive access to the full suite of training resources, software tools, and certification pathways. The registration is processed through Daytona State College (DSC) Continuing Education. Upon completion, you will receive your credentials and access instructions via email.</p>
+
+    <p>Registration includes the following:</p>
+    <ul style="margin: .5rem 0 1rem 1.5rem; font-size:.93rem; line-height:1.9; color:var(--ink-muted);">
+      <li>Access to all current and future learning modules for the duration of your registration period</li>
+      <li>A unique software registration code that unlocks all features of the BMPFast platform</li>
+      <li>Access to the competency certification examination — leading to the <em>"Competency Certification for Using Stormwater BMPs for Water Quality Control"</em></li>
+    </ul>
+
+    <div class="pricing-card">
+      <div class="pricing-header">
+        <h3>BMPFast Registration</h3>
+        <p>Processed through Daytona State College Continuing Education</p>
+      </div>
+      <div class="pricing-rows">
+        <div class="pricing-row">
+          <span>Initial Registration</span>
+          <span class="price-val">$500</span>
+        </div>
+        <div class="pricing-row">
+          <span>Annual Software Renewal</span>
+          <span class="price-val">$100 / yr</span>
+        </div>
+        <div class="pricing-row">
+          <span>Software Updates Included</span>
+          <span>1 year from registration</span>
+        </div>
+      </div>
+      <div class="includes-list">
+        <p><strong>Includes:</strong> All learning modules · BMPFast software registration code · Competency certification exam</p>
+      </div>
+    </div>
+
+    <div class="quick-ref">
+      <div class="quick-ref-header">Quick Reference</div>
+      <div class="quick-ref-body">
+        <span class="qr-key">Initial Registration</span> <span class="qr-val">$500</span>
+        <span class="qr-key">Annual Software Renewal</span> <span class="qr-val">$100</span>
+        <span class="qr-key">Includes</span> <span class="qr-val">All modules, software &amp; certification exam</span>
+        <span class="qr-key">BMPFast</span> <span class="qr-val">BMPs For Assessment of Stormwater Treatment</span>
+        <span class="qr-key">Registration Via</span> <span class="qr-val">Daytona State College Continuing Education</span>
+      </div>
+    </div>
+  </section>
+
+
+  <!-- ── 9. GETTING STARTED ── -->
+  <section id="getting-started">
+    <div class="section-header">
+      <span class="section-num">§ 09</span>
+      <div class="section-rule"></div>
+    </div>
+    <h2>Getting Started with the Software</h2>
+    <p>Getting started with BMPFast is a straightforward process designed to minimize setup time and maximize your learning experience. Once you have completed registration through Daytona State College Continuing Education, you will receive a registration code that unlocks the full feature set of the BMPFast platform.</p>
+
+    <!-- PLACEHOLDER: BMPFast main interface screenshot -->
+    <div class="img-placeholder">
+      <div class="ph-icon">🖥️</div>
+      <div class="ph-label">Figure — BMPFast Main Interface</div>
+      <div class="ph-desc">Screenshot showing the BMPFast dashboard upon launch. From this interface, registered users can access individual learning modules, launch BMP analysis tools, configure project parameters, and navigate to the competency certification exam.</div>
+    </div>
+
+    <p>The software interface is designed to be intuitive for engineers and stormwater professionals, with clear navigation between analysis tools, learning modules, and project workflows. The software is built with a modular architecture, so each learning module and analysis tool can be accessed independently — allowing you to focus on the specific topics most relevant to your current projects and professional development goals.</p>
+
+    <p>Most users complete the installation and initial setup process in under <strong>15 minutes</strong>. If you encounter any issues during setup, the support team is available to assist with troubleshooting and configuration questions.</p>
+  </section>
+
+
+  <!-- ── CLOSING ── -->
+  <div class="closing">
+    <h2>Thank You for Your Interest in Stormwater Management</h2>
+    <p>We sincerely appreciate your interest in the BMPFast Learning System and your commitment to advancing stormwater management practice. The challenges facing our water resources demand skilled professionals equipped with both the knowledge and the tools to protect water quality while meeting regulatory requirements efficiently. By investing in your professional development through this program, you are contributing to better environmental outcomes for communities across the state and beyond.</p>
+    <div style="font-family:'JetBrains Mono',monospace; font-size:.85rem; opacity:.8; margin-bottom:1rem;">
+      BMPFast — <em>BMPs For Assessment of Stormwater Treatment</em>
+    </div>
+    <div class="credit-grid">
+      <div class="credit-item">
+        <div class="credit-name">Dr. Marty Wanielista</div>
+        <div class="credit-role">Professor Emeritus, University of Central Florida</div>
+      </div>
+      <div class="credit-item">
+        <div class="credit-name">Dr. Harvey Harper</div>
+        <div class="credit-role">President, Environmental Research &amp; Design</div>
+      </div>
+      <div class="credit-item">
+        <div class="credit-name">Dr. Dingbao Wang</div>
+        <div class="credit-role">Professor of Engineering, University of Central Florida</div>
+      </div>
+      <div class="credit-item">
+        <div class="credit-name">Dr. Ron Eaglin</div>
+        <div class="credit-role">Professor, Daytona State College</div>
+      </div>
+    </div>
+  </div>
+
+  <p class="footnote">BMPFast Learning System · Module 1: Introduction · December 28, 2025 · Daytona State College Continuing Education</p>
+
+</div><!-- end .page-wrap -->
+</body>
+</html>
