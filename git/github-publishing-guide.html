@@ -1,0 +1,1199 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Guide to Publishing a Website on GitHub</title>
+<link href="https://fonts.googleapis.com/css2?family=Lora:ital,wght@0,400;0,600;1,400&family=DM+Sans:wght@300;400;500;600&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --navy: #0f2744;
+    --navy-mid: #1a3a5c;
+    --blue: #1e5fa8;
+    --blue-light: #d6e8f7;
+    --teal: #0e7c6b;
+    --teal-light: #d4f0ea;
+    --amber: #b86b0a;
+    --amber-light: #fef3dc;
+    --red: #9b2c2c;
+    --red-light: #fde8e8;
+    --green: #276230;
+    --green-light: #e6f4e8;
+    --gray-50: #f8f9fb;
+    --gray-100: #eef0f4;
+    --gray-200: #dde1e9;
+    --gray-400: #8d95a3;
+    --gray-600: #505a6b;
+    --gray-800: #1e2533;
+    --text: #1e2533;
+    --text-muted: #505a6b;
+    --border: #dde1e9;
+    --radius: 10px;
+    --radius-lg: 16px;
+  }
+
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: 'DM Sans', sans-serif;
+    font-size: 16px;
+    line-height: 1.75;
+    color: var(--text);
+    background: var(--gray-50);
+  }
+
+  /* ── HERO ── */
+  .hero {
+    background: linear-gradient(135deg, var(--navy) 0%, var(--navy-mid) 60%, #1d4a7a 100%);
+    color: white;
+    padding: 64px 40px 56px;
+    text-align: center;
+    position: relative;
+    overflow: hidden;
+  }
+  .hero::before {
+    content: '';
+    position: absolute;
+    top: -60px; right: -80px;
+    width: 360px; height: 360px;
+    border-radius: 50%;
+    background: rgba(255,255,255,0.04);
+  }
+  .hero::after {
+    content: '';
+    position: absolute;
+    bottom: -80px; left: -60px;
+    width: 280px; height: 280px;
+    border-radius: 50%;
+    background: rgba(255,255,255,0.03);
+  }
+  .hero-badge {
+    display: inline-block;
+    background: rgba(255,255,255,0.15);
+    border: 1px solid rgba(255,255,255,0.25);
+    border-radius: 20px;
+    padding: 4px 16px;
+    font-size: 12px;
+    font-weight: 600;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    margin-bottom: 20px;
+  }
+  .hero h1 {
+    font-family: 'Lora', serif;
+    font-size: clamp(28px, 5vw, 44px);
+    font-weight: 600;
+    line-height: 1.2;
+    margin-bottom: 16px;
+  }
+  .hero p {
+    font-size: 17px;
+    color: rgba(255,255,255,0.75);
+    max-width: 600px;
+    margin: 0 auto 28px;
+  }
+  .hero-meta {
+    display: flex;
+    justify-content: center;
+    gap: 32px;
+    flex-wrap: wrap;
+    font-size: 13px;
+    color: rgba(255,255,255,0.6);
+  }
+  .hero-meta span { display: flex; align-items: center; gap: 6px; }
+
+  /* ── LAYOUT ── */
+  .page-body {
+    max-width: 860px;
+    margin: 0 auto;
+    padding: 48px 24px 80px;
+  }
+
+  /* ── TOC ── */
+  .toc {
+    background: white;
+    border: 1px solid var(--border);
+    border-radius: var(--radius-lg);
+    padding: 28px 32px;
+    margin-bottom: 48px;
+  }
+  .toc h2 {
+    font-family: 'DM Sans', sans-serif;
+    font-size: 13px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    color: var(--text-muted);
+    margin-bottom: 16px;
+  }
+  .toc ol {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+    gap: 6px 24px;
+    padding-left: 0;
+    list-style: none;
+    counter-reset: toc;
+  }
+  .toc li {
+    counter-increment: toc;
+    display: flex;
+    align-items: flex-start;
+    gap: 8px;
+    font-size: 14px;
+  }
+  .toc li::before {
+    content: counter(toc);
+    min-width: 20px; height: 20px;
+    background: var(--blue-light);
+    color: var(--blue);
+    font-size: 11px;
+    font-weight: 600;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-top: 2px;
+    flex-shrink: 0;
+  }
+  .toc a {
+    color: var(--blue);
+    text-decoration: none;
+  }
+  .toc a:hover { text-decoration: underline; }
+
+  /* ── SECTIONS ── */
+  .section {
+    background: white;
+    border: 1px solid var(--border);
+    border-radius: var(--radius-lg);
+    padding: 36px 40px;
+    margin-bottom: 32px;
+    scroll-margin-top: 24px;
+  }
+
+  .section-header {
+    display: flex;
+    align-items: flex-start;
+    gap: 16px;
+    margin-bottom: 24px;
+    padding-bottom: 20px;
+    border-bottom: 1px solid var(--border);
+  }
+  .section-num {
+    min-width: 44px; height: 44px;
+    background: var(--navy);
+    color: white;
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 600;
+    font-size: 18px;
+    flex-shrink: 0;
+  }
+  .section-title-block h2 {
+    font-family: 'Lora', serif;
+    font-size: 22px;
+    font-weight: 600;
+    line-height: 1.3;
+    color: var(--navy);
+  }
+  .section-title-block p {
+    font-size: 14px;
+    color: var(--text-muted);
+    margin-top: 4px;
+  }
+
+  /* Headings inside sections */
+  .section h3 {
+    font-size: 16px;
+    font-weight: 600;
+    color: var(--navy);
+    margin: 28px 0 10px;
+  }
+  .section h4 {
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--text-muted);
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    margin: 22px 0 8px;
+  }
+  .section p { margin-bottom: 14px; color: var(--text); }
+  .section p:last-child { margin-bottom: 0; }
+  .section ul, .section ol {
+    padding-left: 22px;
+    margin-bottom: 14px;
+  }
+  .section li { margin-bottom: 6px; }
+
+  /* ── STEP BLOCKS ── */
+  .steps { counter-reset: step; }
+  .step {
+    display: flex;
+    gap: 16px;
+    margin-bottom: 20px;
+    counter-increment: step;
+  }
+  .step-icon {
+    min-width: 32px; height: 32px;
+    background: var(--blue);
+    color: white;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 13px;
+    font-weight: 600;
+    flex-shrink: 0;
+    margin-top: 2px;
+  }
+  .step-icon::before { content: counter(step); }
+  .step-content { flex: 1; }
+  .step-content strong { display: block; font-size: 15px; color: var(--navy); margin-bottom: 4px; }
+
+  /* ── CALLOUT BOXES ── */
+  .callout {
+    border-radius: var(--radius);
+    padding: 14px 18px;
+    margin: 18px 0;
+    display: flex;
+    gap: 12px;
+    align-items: flex-start;
+    font-size: 14px;
+    line-height: 1.6;
+  }
+  .callout-icon {
+    font-size: 18px;
+    line-height: 1;
+    margin-top: 1px;
+    flex-shrink: 0;
+  }
+  .callout-body { flex: 1; }
+  .callout-body strong { display: block; font-weight: 600; margin-bottom: 2px; }
+  .callout.tip    { background: var(--teal-light);  color: var(--teal); border-left: 3px solid var(--teal); }
+  .callout.note   { background: var(--blue-light);  color: var(--blue); border-left: 3px solid var(--blue); }
+  .callout.warn   { background: var(--amber-light); color: var(--amber); border-left: 3px solid var(--amber); }
+  .callout.good   { background: var(--green-light); color: var(--green); border-left: 3px solid var(--green); }
+
+  /* ── CODE ── */
+  pre {
+    background: #1a2232;
+    color: #c9d8ee;
+    border-radius: var(--radius);
+    padding: 16px 20px;
+    overflow-x: auto;
+    font-family: 'DM Mono', monospace;
+    font-size: 13px;
+    line-height: 1.65;
+    margin: 14px 0;
+  }
+  code {
+    font-family: 'DM Mono', monospace;
+    font-size: 13px;
+    background: var(--gray-100);
+    color: var(--navy-mid);
+    padding: 1px 6px;
+    border-radius: 4px;
+  }
+  pre code { background: none; color: inherit; padding: 0; font-size: inherit; }
+  .comment { color: #5d7a99; }
+  .cmd-label {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    background: #0f1825;
+    color: #5d7a99;
+    font-family: 'DM Mono', monospace;
+    font-size: 11px;
+    padding: 8px 20px 0;
+    border-radius: var(--radius) var(--radius) 0 0;
+    margin-top: 14px;
+    margin-bottom: 0;
+  }
+  .cmd-label + pre {
+    border-radius: 0 0 var(--radius) var(--radius);
+    margin-top: 0;
+  }
+  .cmd-label .dot {
+    width: 8px; height: 8px; border-radius: 50%;
+  }
+
+  /* ── CHOICE TABS (GUI vs CLI) ── */
+  .method-tabs {
+    border: 1px solid var(--border);
+    border-radius: var(--radius-lg);
+    overflow: hidden;
+    margin: 18px 0;
+  }
+  .tab-bar {
+    display: flex;
+    background: var(--gray-100);
+    border-bottom: 1px solid var(--border);
+  }
+  .tab-btn {
+    padding: 10px 20px;
+    font-size: 13px;
+    font-weight: 500;
+    cursor: pointer;
+    border: none;
+    background: none;
+    color: var(--text-muted);
+    border-bottom: 2px solid transparent;
+    margin-bottom: -1px;
+    font-family: 'DM Sans', sans-serif;
+    transition: color 0.15s, border-color 0.15s;
+  }
+  .tab-btn.active {
+    color: var(--blue);
+    border-bottom-color: var(--blue);
+    background: white;
+  }
+  .tab-content { display: none; padding: 20px 24px; }
+  .tab-content.active { display: block; }
+
+  /* ── CONCEPT PILL ── */
+  .concept {
+    display: inline-block;
+    background: var(--navy);
+    color: white;
+    font-size: 11px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.07em;
+    padding: 2px 9px;
+    border-radius: 20px;
+    margin-right: 6px;
+    vertical-align: middle;
+  }
+
+  /* ── GLOSSARY CARDS ── */
+  .glossary {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+    gap: 14px;
+    margin: 16px 0;
+  }
+  .gloss-card {
+    background: var(--gray-50);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 14px 16px;
+  }
+  .gloss-card .term {
+    font-weight: 600;
+    font-size: 14px;
+    color: var(--navy);
+    margin-bottom: 4px;
+  }
+  .gloss-card .def {
+    font-size: 13px;
+    color: var(--text-muted);
+    line-height: 1.5;
+  }
+
+  /* ── SCREENSHOT PLACEHOLDER ── */
+  .screenshot {
+    background: var(--gray-100);
+    border: 1px dashed var(--gray-200);
+    border-radius: var(--radius);
+    padding: 18px 20px;
+    font-size: 13px;
+    color: var(--text-muted);
+    margin: 12px 0;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+
+  /* ── TOOL COMPARISON ── */
+  .compare-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 16px;
+    margin: 16px 0;
+  }
+  @media (max-width: 600px) { .compare-grid { grid-template-columns: 1fr; } }
+  .compare-card {
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    overflow: hidden;
+  }
+  .compare-card .cc-head {
+    padding: 12px 16px;
+    font-weight: 600;
+    font-size: 14px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .compare-card.gui .cc-head  { background: var(--teal-light);  color: var(--teal); }
+  .compare-card.cli .cc-head  { background: var(--blue-light); color: var(--blue); }
+  .compare-card .cc-body {
+    padding: 14px 16px;
+    font-size: 14px;
+  }
+  .compare-card .cc-body li { margin-bottom: 5px; color: var(--text-muted); }
+
+  /* ── SUMMARY CHECKLIST ── */
+  .checklist { list-style: none; padding: 0; }
+  .checklist li {
+    display: flex;
+    align-items: flex-start;
+    gap: 10px;
+    padding: 8px 0;
+    border-bottom: 1px solid var(--border);
+    font-size: 14px;
+  }
+  .checklist li:last-child { border-bottom: none; }
+  .check-box {
+    width: 20px; height: 20px;
+    border: 2px solid var(--border);
+    border-radius: 5px;
+    flex-shrink: 0;
+    margin-top: 1px;
+  }
+
+  /* ── FOOTER ── */
+  footer {
+    text-align: center;
+    padding: 32px 24px;
+    font-size: 13px;
+    color: var(--text-muted);
+    border-top: 1px solid var(--border);
+    max-width: 860px;
+    margin: 0 auto;
+  }
+
+  @media (max-width: 640px) {
+    .section { padding: 24px 20px; }
+    .hero { padding: 40px 20px; }
+    .toc ol { grid-template-columns: 1fr; }
+  }
+</style>
+</head>
+<body>
+
+<!-- ── HERO ── -->
+<div class="hero">
+  <div class="hero-badge">Step-by-Step Guide</div>
+  <h1>Publishing a Website on GitHub</h1>
+  <p>A complete beginner's guide — from creating a folder on your computer to having a live website anyone in the world can visit.</p>
+  <div class="hero-meta">
+    <span>🕐 About 45 minutes</span>
+    <span>🎯 No prior experience needed</span>
+    <span>💻 Windows &amp; Mac</span>
+  </div>
+</div>
+
+<div class="page-body">
+
+  <!-- ── TOC ── -->
+  <div class="toc">
+    <h2>What we'll cover</h2>
+    <ol>
+      <li><a href="#concepts">Key concepts explained</a></li>
+      <li><a href="#account">Creating a GitHub account</a></li>
+      <li><a href="#tools">Choosing &amp; installing your tools</a></li>
+      <li><a href="#folder">Setting up your project folder</a></li>
+      <li><a href="#repo">Making it a Git repository</a></li>
+      <li><a href="#html">Adding your web page</a></li>
+      <li><a href="#publish">Publishing to GitHub</a></li>
+      <li><a href="#pages">Turning it into a live website</a></li>
+      <li><a href="#updates">Making updates later</a></li>
+    </ol>
+  </div>
+
+  <!-- ─────────────────────────────────── -->
+  <!-- SECTION 1 — CONCEPTS               -->
+  <!-- ─────────────────────────────────── -->
+  <div class="section" id="concepts">
+    <div class="section-header">
+      <div class="section-num">1</div>
+      <div class="section-title-block">
+        <h2>Key Concepts — What Are We Actually Doing?</h2>
+        <p>Before touching anything, let's build a mental model so nothing feels mysterious.</p>
+      </div>
+    </div>
+
+    <p>You're about to do something that professional software developers do every day. The good news is the core ideas are simple, and you only need to understand three of them.</p>
+
+    <div class="glossary">
+      <div class="gloss-card">
+        <div class="term">Git</div>
+        <div class="def">A program that tracks changes to files over time. Think of it like "Track Changes" in Word, but for any file on your computer. It keeps a full history of every version of your work.</div>
+      </div>
+      <div class="gloss-card">
+        <div class="term">GitHub</div>
+        <div class="def">A website that stores your Git-tracked files online — like a cloud backup. It also has a free feature that turns your files into a live website anyone can visit.</div>
+      </div>
+      <div class="gloss-card">
+        <div class="term">Repository (repo)</div>
+        <div class="def">A project folder that Git is keeping track of. Your folder on your computer is the "local repo." The copy on GitHub is the "remote repo."</div>
+      </div>
+      <div class="gloss-card">
+        <div class="term">Commit</div>
+        <div class="def">A saved snapshot of your files at a specific moment. Like saving a document, but permanent. You can always go back to any previous commit.</div>
+      </div>
+      <div class="gloss-card">
+        <div class="term">Push</div>
+        <div class="def">Sending your commits from your computer up to GitHub. This is how the online copy stays up to date.</div>
+      </div>
+      <div class="gloss-card">
+        <div class="term">GitHub Pages</div>
+        <div class="def">A free GitHub feature that reads the HTML files in your repo and serves them as a real website — at a public address anyone can open in a browser.</div>
+      </div>
+    </div>
+
+    <div class="callout note">
+      <div class="callout-icon">💡</div>
+      <div class="callout-body">
+        <strong>The flow in plain English</strong>
+        You create files on your computer → Git tracks them → you "commit" a snapshot → you "push" to GitHub → GitHub Pages shows them as a website.
+      </div>
+    </div>
+  </div>
+
+  <!-- ─────────────────────────────────── -->
+  <!-- SECTION 2 — ACCOUNT                -->
+  <!-- ─────────────────────────────────── -->
+  <div class="section" id="account">
+    <div class="section-header">
+      <div class="section-num">2</div>
+      <div class="section-title-block">
+        <h2>Creating a GitHub Account</h2>
+        <p>Free — no credit card required.</p>
+      </div>
+    </div>
+
+    <div class="callout good">
+      <div class="callout-icon">✅</div>
+      <div class="callout-body">If you already have a GitHub account, skip to Section 3.</div>
+    </div>
+
+    <div class="steps">
+      <div class="step">
+        <div class="step-icon"></div>
+        <div class="step-content">
+          <strong>Go to GitHub.com</strong>
+          Open your web browser and go to <code>https://github.com</code>. Click the big <strong>Sign up</strong> button.
+        </div>
+      </div>
+      <div class="step">
+        <div class="step-icon"></div>
+        <div class="step-content">
+          <strong>Enter your email and create a password</strong>
+          Use an email address you check regularly — you'll need to confirm it.
+        </div>
+      </div>
+      <div class="step">
+        <div class="step-icon"></div>
+        <div class="step-content">
+          <strong>Choose a username</strong>
+          This will be part of your website's address, so choose something you like. For example, if you choose <code>jsmith</code>, your site will be at <code>jsmith.github.io</code>.
+        </div>
+      </div>
+      <div class="step">
+        <div class="step-icon"></div>
+        <div class="step-content">
+          <strong>Verify your email</strong>
+          GitHub will send a confirmation email. Click the link in it to activate your account.
+        </div>
+      </div>
+    </div>
+
+    <div class="callout tip">
+      <div class="callout-icon">💡</div>
+      <div class="callout-body">
+        <strong>Tip on usernames</strong>
+        Keep it professional — your GitHub username is often visible to employers or collaborators. Avoid spaces (use hyphens instead) and numbers at the start.
+      </div>
+    </div>
+  </div>
+
+  <!-- ─────────────────────────────────── -->
+  <!-- SECTION 3 — TOOLS                  -->
+  <!-- ─────────────────────────────────── -->
+  <div class="section" id="tools">
+    <div class="section-header">
+      <div class="section-num">3</div>
+      <div class="section-title-block">
+        <h2>Choosing and Installing Your Tools</h2>
+        <p>You have two options — a visual point-and-click app, or typed commands. Both work great.</p>
+      </div>
+    </div>
+
+    <p>Git was invented by programmers for programmers, so it was originally used entirely by typing commands. But today there are excellent visual apps that let you do everything with mouse clicks instead. Either path gets you to the same destination.</p>
+
+    <div class="compare-grid">
+      <div class="compare-card gui">
+        <div class="cc-head">🖥️ GitHub Desktop (recommended for beginners)</div>
+        <div class="cc-body">
+          <ul>
+            <li>No typing commands</li>
+            <li>Shows you exactly what changed</li>
+            <li>Includes Git automatically</li>
+            <li>Free — made by GitHub</li>
+            <li>Windows &amp; Mac</li>
+          </ul>
+        </div>
+      </div>
+      <div class="compare-card cli">
+        <div class="cc-head">⌨️ Command Line (Git Bash / Terminal)</div>
+        <div class="cc-body">
+          <ul>
+            <li>Type commands to do everything</li>
+            <li>Works on any computer</li>
+            <li>Used by professionals worldwide</li>
+            <li>More control and flexibility</li>
+            <li>All platforms</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <p>The rest of this guide will show <strong>both methods side by side</strong> — choose the one that feels comfortable to you. You can always switch later.</p>
+
+    <h3>Installing GitHub Desktop (GUI option)</h3>
+    <div class="steps">
+      <div class="step">
+        <div class="step-icon"></div>
+        <div class="step-content">
+          <strong>Download GitHub Desktop</strong>
+          Go to <code>https://desktop.github.com</code> and click the Download button. It will detect your operating system automatically.
+        </div>
+      </div>
+      <div class="step">
+        <div class="step-icon"></div>
+        <div class="step-content">
+          <strong>Run the installer</strong>
+          On Windows, run the downloaded <code>.exe</code> file. On Mac, open the <code>.dmg</code> and drag the app to your Applications folder.
+        </div>
+      </div>
+      <div class="step">
+        <div class="step-icon"></div>
+        <div class="step-content">
+          <strong>Sign in to your GitHub account</strong>
+          When GitHub Desktop opens, click <strong>Sign in to GitHub.com</strong> and enter the credentials you just created.
+        </div>
+      </div>
+      <div class="step">
+        <div class="step-icon"></div>
+        <div class="step-content">
+          <strong>Configure your identity</strong>
+          GitHub Desktop will ask for your name and email. These are attached to your commits so you know who made each change. Use your real name.
+        </div>
+      </div>
+    </div>
+
+    <h3>Installing Git for the Command Line (CLI option)</h3>
+    <div class="steps">
+      <div class="step">
+        <div class="step-icon"></div>
+        <div class="step-content">
+          <strong>Windows: Download Git for Windows</strong>
+          Go to <code>https://git-scm.com/download/win</code>. The download will start automatically. Run the installer and accept all defaults — this gives you <strong>Git Bash</strong>, a command line app that understands Git.
+        </div>
+      </div>
+      <div class="step">
+        <div class="step-icon"></div>
+        <div class="step-content">
+          <strong>Mac: Git may already be installed</strong>
+          Open Terminal (press Cmd+Space and type "Terminal"). Type <code>git --version</code> and press Enter. If you see a version number, you're done. If not, Mac will prompt you to install it automatically.
+        </div>
+      </div>
+      <div class="step">
+        <div class="step-icon"></div>
+        <div class="step-content">
+          <strong>Tell Git who you are</strong>
+          Open Git Bash (Windows) or Terminal (Mac) and type these two commands, pressing Enter after each. Replace the quoted text with your own name and email:
+          <div class="cmd-label"><div class="dot" style="background:#fc5f57"></div><div class="dot" style="background:#fdbc2c"></div><div class="dot" style="background:#33c748"></div> Git Bash / Terminal</div>
+          <pre><code>git config --global user.name "Your Name"
+git config --global user.email "you@example.com"</code></pre>
+          You only need to do this once. Git will use this identity for all future commits.
+        </div>
+      </div>
+    </div>
+
+    <div class="callout note">
+      <div class="callout-icon">ℹ️</div>
+      <div class="callout-body">
+        <strong>What is Git Bash?</strong>
+        Git Bash is a special command-line window that understands both Git commands and standard file commands. It's what you'll open when this guide says "open a terminal."
+      </div>
+    </div>
+  </div>
+
+  <!-- ─────────────────────────────────── -->
+  <!-- SECTION 4 — FOLDER                 -->
+  <!-- ─────────────────────────────────── -->
+  <div class="section" id="folder">
+    <div class="section-header">
+      <div class="section-num">4</div>
+      <div class="section-title-block">
+        <h2>Setting Up Your Project Folder</h2>
+        <p>Creating the folder that will hold your website files.</p>
+      </div>
+    </div>
+
+    <p>Your website will live in a regular folder on your computer. The only rule is that its name should have no spaces (use hyphens instead). For this guide, we'll call the folder <code>my-website</code> and place it in Documents.</p>
+
+    <div class="method-tabs">
+      <div class="tab-bar">
+        <button class="tab-btn active" onclick="switchTab(this, 'folder-gui')">🖥️ GitHub Desktop (GUI)</button>
+        <button class="tab-btn" onclick="switchTab(this, 'folder-cli')">⌨️ Command Line</button>
+      </div>
+      <div class="tab-content active" id="folder-gui">
+        <p>In GitHub Desktop, you don't need to create the folder manually — you can do it all from within the app in Section 5. Just decide where you want it (we'll use <code>Documents</code>) and move on.</p>
+        <div class="callout tip">
+          <div class="callout-icon">💡</div>
+          <div class="callout-body">If you want to create the folder first, open File Explorer (Windows) or Finder (Mac), navigate to Documents, right-click in an empty area, and select <strong>New Folder</strong>. Name it <code>my-website</code>.</div>
+        </div>
+      </div>
+      <div class="tab-content" id="folder-cli">
+        <p>Open Git Bash (Windows) or Terminal (Mac) and type these commands:</p>
+        <div class="cmd-label"><div class="dot" style="background:#fc5f57"></div><div class="dot" style="background:#fdbc2c"></div><div class="dot" style="background:#33c748"></div> Git Bash / Terminal</div>
+        <pre><code>cd ~/Documents
+mkdir my-website
+cd my-website</code></pre>
+        <p style="margin-top:10px; font-size:14px; color:var(--text-muted);">
+          <code>cd</code> means "change directory" (navigate to a folder). <code>mkdir</code> means "make directory" (create a folder). After these commands, you are inside the new folder.
+        </p>
+      </div>
+    </div>
+  </div>
+
+  <!-- ─────────────────────────────────── -->
+  <!-- SECTION 5 — REPO                   -->
+  <!-- ─────────────────────────────────── -->
+  <div class="section" id="repo">
+    <div class="section-header">
+      <div class="section-num">5</div>
+      <div class="section-title-block">
+        <h2>Making It a Git Repository</h2>
+        <p>"Initializing" a repo means telling Git to start tracking this folder.</p>
+      </div>
+    </div>
+
+    <p>Right now, <code>my-website</code> is just a regular folder. We need to tell Git: "watch this folder." That one-time setup is called <strong>initializing a repository</strong>.</p>
+
+    <div class="method-tabs">
+      <div class="tab-bar">
+        <button class="tab-btn active" onclick="switchTab(this, 'repo-gui')">🖥️ GitHub Desktop (GUI)</button>
+        <button class="tab-btn" onclick="switchTab(this, 'repo-cli')">⌨️ Command Line</button>
+      </div>
+      <div class="tab-content active" id="repo-gui">
+        <div class="steps">
+          <div class="step">
+            <div class="step-icon"></div>
+            <div class="step-content">
+              <strong>Open GitHub Desktop and click "Create a New Repository on your hard drive"</strong>
+              You'll see this option on the welcome screen, or under <strong>File → New Repository</strong>.
+            </div>
+          </div>
+          <div class="step">
+            <div class="step-icon"></div>
+            <div class="step-content">
+              <strong>Fill in the form</strong>
+              <ul style="margin-top:6px;">
+                <li><strong>Name:</strong> <code>my-website</code></li>
+                <li><strong>Local path:</strong> Click "Choose..." and navigate to your Documents folder</li>
+                <li><strong>Initialize this repository with a README:</strong> check this box</li>
+              </ul>
+            </div>
+          </div>
+          <div class="step">
+            <div class="step-icon"></div>
+            <div class="step-content">
+              <strong>Click "Create Repository"</strong>
+              GitHub Desktop creates the folder and sets up Git inside it. You'll see the repository appear in the left panel.
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="tab-content" id="repo-cli">
+        <p>Make sure you are inside the <code>my-website</code> folder (you should be if you followed Section 4), then run:</p>
+        <div class="cmd-label"><div class="dot" style="background:#fc5f57"></div><div class="dot" style="background:#fdbc2c"></div><div class="dot" style="background:#33c748"></div> Git Bash / Terminal</div>
+        <pre><code>git init
+git branch -M main</code></pre>
+        <p style="margin-top:10px; font-size:14px; color:var(--text-muted);">
+          <code>git init</code> creates a hidden <code>.git</code> folder inside your directory. That folder is where Git stores all its history — don't touch or delete it. <code>git branch -M main</code> sets the primary branch name to "main" (the modern standard).
+        </p>
+      </div>
+    </div>
+
+    <div class="callout warn">
+      <div class="callout-icon">⚠️</div>
+      <div class="callout-body">
+        <strong>Hidden files</strong>
+        Git creates a hidden folder called <code>.git</code> inside your project. On Windows you may not see it in File Explorer by default — that's fine. Never delete it, or you'll lose Git's tracking data.
+      </div>
+    </div>
+  </div>
+
+  <!-- ─────────────────────────────────── -->
+  <!-- SECTION 6 — HTML FILE              -->
+  <!-- ─────────────────────────────────── -->
+  <div class="section" id="html">
+    <div class="section-header">
+      <div class="section-num">6</div>
+      <div class="section-title-block">
+        <h2>Adding Your Web Page</h2>
+        <p>Creating the HTML file that will become your website's home page.</p>
+      </div>
+    </div>
+
+    <p>GitHub Pages looks for a file named exactly <code>index.html</code> in your repository. That file becomes your home page. Let's create a simple one now.</p>
+
+    <div class="callout note">
+      <div class="callout-icon">ℹ️</div>
+      <div class="callout-body">
+        <strong>What text editor should I use?</strong>
+        Notepad (Windows) or TextEdit (Mac) work fine for simple HTML. For a better experience, download <strong>Visual Studio Code</strong> (free, at <code>https://code.visualstudio.com</code>) — it colors your code and helps catch mistakes. Do NOT use Word or Google Docs — they add hidden formatting that breaks HTML.
+      </div>
+    </div>
+
+    <h3>Creating index.html</h3>
+    <p>Open your text editor, create a new file, and paste the following. Then save it as <code>index.html</code> inside your <code>my-website</code> folder.</p>
+
+    <pre><code><span class="comment">&lt;!-- This is your home page --&gt;</span>
+&lt;!DOCTYPE html&gt;
+&lt;html lang="en"&gt;
+&lt;head&gt;
+  &lt;meta charset="UTF-8"&gt;
+  &lt;meta name="viewport" content="width=device-width, initial-scale=1.0"&gt;
+  &lt;title&gt;My Website&lt;/title&gt;
+&lt;/head&gt;
+&lt;body&gt;
+  &lt;h1&gt;Welcome to My Website!&lt;/h1&gt;
+  &lt;p&gt;This page is hosted on GitHub Pages.&lt;/p&gt;
+&lt;/body&gt;
+&lt;/html&gt;</code></pre>
+
+    <div class="callout tip">
+      <div class="callout-icon">💡</div>
+      <div class="callout-body">
+        <strong>Saving tip (Notepad on Windows)</strong>
+        When saving in Notepad, set <strong>Save as type</strong> to "All Files" and manually type <code>index.html</code> as the filename. If you leave it as "Text Document," Windows will save it as <code>index.html.txt</code>, which will not work as a web page.
+      </div>
+    </div>
+
+    <h3>Committing your file (saving it to Git history)</h3>
+    <p>Just saving the file on your computer isn't enough — you also need to tell Git to take a snapshot of it. This is called making a <strong>commit</strong>.</p>
+
+    <div class="method-tabs">
+      <div class="tab-bar">
+        <button class="tab-btn active" onclick="switchTab(this, 'commit-gui')">🖥️ GitHub Desktop (GUI)</button>
+        <button class="tab-btn" onclick="switchTab(this, 'commit-cli')">⌨️ Command Line</button>
+      </div>
+      <div class="tab-content active" id="commit-gui">
+        <div class="steps">
+          <div class="step">
+            <div class="step-icon"></div>
+            <div class="step-content">
+              <strong>Return to GitHub Desktop</strong>
+              You'll see your new <code>index.html</code> listed in the left panel under "Changes." A green + icon shows it's a new file.
+            </div>
+          </div>
+          <div class="step">
+            <div class="step-icon"></div>
+            <div class="step-content">
+              <strong>Write a commit message</strong>
+              At the bottom left, there's a text box that says "Summary (required)." Type a short description like: <em>Add home page</em>
+            </div>
+          </div>
+          <div class="step">
+            <div class="step-icon"></div>
+            <div class="step-content">
+              <strong>Click "Commit to main"</strong>
+              The file is now saved in Git's history. The Changes panel will empty — that means everything is committed.
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="tab-content" id="commit-cli">
+        <div class="cmd-label"><div class="dot" style="background:#fc5f57"></div><div class="dot" style="background:#fdbc2c"></div><div class="dot" style="background:#33c748"></div> Git Bash / Terminal</div>
+        <pre><code>git add index.html
+git commit -m "Add home page"</code></pre>
+        <p style="margin-top:10px; font-size:14px; color:var(--text-muted);">
+          <code>git add</code> "stages" the file — tells Git you want to include it in the next snapshot. <code>git commit -m</code> takes that snapshot with a message describing it. The message is for your own reference — write something that makes sense to you.
+        </p>
+      </div>
+    </div>
+  </div>
+
+  <!-- ─────────────────────────────────── -->
+  <!-- SECTION 7 — PUBLISH TO GITHUB      -->
+  <!-- ─────────────────────────────────── -->
+  <div class="section" id="publish">
+    <div class="section-header">
+      <div class="section-num">7</div>
+      <div class="section-title-block">
+        <h2>Publishing to GitHub</h2>
+        <p>Sending your files from your computer up to GitHub's servers.</p>
+      </div>
+    </div>
+
+    <p>Your commits are saved locally on your computer. Now we need to create a repository on GitHub.com and "push" your files up to it.</p>
+
+    <div class="method-tabs">
+      <div class="tab-bar">
+        <button class="tab-btn active" onclick="switchTab(this, 'push-gui')">🖥️ GitHub Desktop (GUI)</button>
+        <button class="tab-btn" onclick="switchTab(this, 'push-cli')">⌨️ Command Line</button>
+      </div>
+      <div class="tab-content active" id="push-gui">
+        <div class="steps">
+          <div class="step">
+            <div class="step-icon"></div>
+            <div class="step-content">
+              <strong>Click "Publish repository" in the top bar</strong>
+              GitHub Desktop shows this button when your repo hasn't been pushed to GitHub yet.
+            </div>
+          </div>
+          <div class="step">
+            <div class="step-icon"></div>
+            <div class="step-content">
+              <strong>Review the settings</strong>
+              <ul style="margin-top:6px;">
+                <li><strong>Name:</strong> Keep it as <code>my-website</code></li>
+                <li><strong>Keep this code private:</strong> Uncheck this — it must be <em>public</em> for GitHub Pages to work</li>
+              </ul>
+            </div>
+          </div>
+          <div class="step">
+            <div class="step-icon"></div>
+            <div class="step-content">
+              <strong>Click "Publish Repository"</strong>
+              GitHub Desktop creates the repo on GitHub and uploads your files. When it finishes, you can click <strong>View on GitHub</strong> to see it online.
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="tab-content" id="push-cli">
+        <p>First, go to <code>https://github.com/new</code> and create a new repository named <code>my-website</code>. Set it to <strong>Public</strong>. <em>Do not</em> check "Initialize with README." Then copy the HTTPS URL GitHub shows you.</p>
+        <p>Back in your terminal:</p>
+        <div class="cmd-label"><div class="dot" style="background:#fc5f57"></div><div class="dot" style="background:#fdbc2c"></div><div class="dot" style="background:#33c748"></div> Git Bash / Terminal</div>
+        <pre><code><span class="comment"># Replace YOUR_USERNAME with your actual GitHub username</span>
+git remote add origin https://github.com/YOUR_USERNAME/my-website.git
+git push -u origin main</code></pre>
+        <p style="margin-top:10px; font-size:14px; color:var(--text-muted);">
+          <code>remote add origin</code> tells Git where GitHub is ("origin" is the standard nickname for your GitHub remote). <code>push -u origin main</code> sends your commits up. The <code>-u</code> flag remembers the destination so future pushes only need <code>git push</code>.
+        </p>
+        <div class="callout warn" style="margin-top:14px;">
+          <div class="callout-icon">⚠️</div>
+          <div class="callout-body">
+            <strong>Authentication prompt</strong>
+            Git may open a browser window asking you to sign in to GitHub. Complete the sign-in there, and the push will continue automatically. This is a one-time setup.
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="callout good">
+      <div class="callout-icon">✅</div>
+      <div class="callout-body">
+        <strong>Verify it worked</strong>
+        Open a browser and go to <code>https://github.com/YOUR_USERNAME/my-website</code>. You should see your <code>index.html</code> file listed there. Your files are now safely backed up online!
+      </div>
+    </div>
+  </div>
+
+  <!-- ─────────────────────────────────── -->
+  <!-- SECTION 8 — GITHUB PAGES           -->
+  <!-- ─────────────────────────────────── -->
+  <div class="section" id="pages">
+    <div class="section-header">
+      <div class="section-num">8</div>
+      <div class="section-title-block">
+        <h2>Turning It Into a Live Website</h2>
+        <p>Enabling GitHub Pages — the free hosting that makes your files into a real website.</p>
+      </div>
+    </div>
+
+    <p>Right now your files are on GitHub, but they're stored as code. The final step is to flip a switch that tells GitHub to serve those files as a website.</p>
+
+    <div class="steps">
+      <div class="step">
+        <div class="step-icon"></div>
+        <div class="step-content">
+          <strong>Open your repository on GitHub.com</strong>
+          Go to <code>https://github.com/YOUR_USERNAME/my-website</code>.
+        </div>
+      </div>
+      <div class="step">
+        <div class="step-icon"></div>
+        <div class="step-content">
+          <strong>Click "Settings" (the gear icon tab near the top right)</strong>
+          This opens the settings for your repository — not your account settings.
+        </div>
+      </div>
+      <div class="step">
+        <div class="step-icon"></div>
+        <div class="step-content">
+          <strong>Scroll down the left sidebar and click "Pages"</strong>
+          This is under the "Code and automation" section.
+        </div>
+      </div>
+      <div class="step">
+        <div class="step-icon"></div>
+        <div class="step-content">
+          <strong>Under "Branch," click the dropdown that says "None" and select "main"</strong>
+          Leave the folder as <code>/ (root)</code>. Then click <strong>Save</strong>.
+        </div>
+      </div>
+      <div class="step">
+        <div class="step-icon"></div>
+        <div class="step-content">
+          <strong>Wait about 1–2 minutes, then refresh the page</strong>
+          A blue banner will appear with your site's address. It will look like:<br>
+          <code>https://YOUR_USERNAME.github.io/my-website/</code>
+        </div>
+      </div>
+      <div class="step">
+        <div class="step-icon"></div>
+        <div class="step-content">
+          <strong>Click the link and see your live website!</strong>
+          Share that address with anyone — they can open it in any browser, anywhere in the world.
+        </div>
+      </div>
+    </div>
+
+    <div class="callout tip">
+      <div class="callout-icon">💡</div>
+      <div class="callout-body">
+        <strong>Deployment takes a moment</strong>
+        After clicking Save, GitHub has to "build" your site. It usually takes 30–90 seconds. If the link shows a 404 error at first, just wait a minute and refresh.
+      </div>
+    </div>
+  </div>
+
+  <!-- ─────────────────────────────────── -->
+  <!-- SECTION 9 — UPDATES                -->
+  <!-- ─────────────────────────────────── -->
+  <div class="section" id="updates">
+    <div class="section-header">
+      <div class="section-num">9</div>
+      <div class="section-title-block">
+        <h2>Making Updates Later</h2>
+        <p>The everyday workflow once everything is set up — much simpler than the first time.</p>
+      </div>
+    </div>
+
+    <p>From now on, whenever you want to update your website, the process is: <strong>edit → commit → push</strong>. That's it. GitHub Pages will automatically update your live site within a minute or two.</p>
+
+    <div class="method-tabs">
+      <div class="tab-bar">
+        <button class="tab-btn active" onclick="switchTab(this, 'update-gui')">🖥️ GitHub Desktop (GUI)</button>
+        <button class="tab-btn" onclick="switchTab(this, 'update-cli')">⌨️ Command Line</button>
+      </div>
+      <div class="tab-content active" id="update-gui">
+        <div class="steps">
+          <div class="step">
+            <div class="step-icon"></div>
+            <div class="step-content">
+              <strong>Edit your files</strong>
+              Open and edit any file in your <code>my-website</code> folder using your text editor. Save the file normally.
+            </div>
+          </div>
+          <div class="step">
+            <div class="step-icon"></div>
+            <div class="step-content">
+              <strong>Switch to GitHub Desktop</strong>
+              It will automatically detect the changes and show them in the Changes panel.
+            </div>
+          </div>
+          <div class="step">
+            <div class="step-icon"></div>
+            <div class="step-content">
+              <strong>Write a commit message and click "Commit to main"</strong>
+              Describe what you changed, e.g., "Update home page heading"
+            </div>
+          </div>
+          <div class="step">
+            <div class="step-icon"></div>
+            <div class="step-content">
+              <strong>Click "Push origin" (top bar)</strong>
+              This sends your commit to GitHub. Your live site will update automatically in about a minute.
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="tab-content" id="update-cli">
+        <p>Navigate to your project folder and run:</p>
+        <div class="cmd-label"><div class="dot" style="background:#fc5f57"></div><div class="dot" style="background:#fdbc2c"></div><div class="dot" style="background:#33c748"></div> Git Bash / Terminal</div>
+        <pre><code>cd ~/Documents/my-website
+git add -A
+git commit -m "Describe what you changed"
+git push</code></pre>
+        <p style="margin-top:10px; font-size:14px; color:var(--text-muted);">
+          <code>git add -A</code> stages all changed and new files at once (quicker than naming them individually). After <code>git push</code>, GitHub receives your changes and Pages rebuilds the site automatically.
+        </p>
+      </div>
+    </div>
+
+    <h3>Adding more pages</h3>
+    <p>To add a second page (say, an "About" page), just create a file called <code>about.html</code> in the same folder and link to it from your <code>index.html</code> with:</p>
+    <pre><code>&lt;a href="about.html"&gt;About Me&lt;/a&gt;</code></pre>
+    <p>Then commit and push as usual. It will be live at <code>https://YOUR_USERNAME.github.io/my-website/about.html</code>.</p>
+
+    <h3>Adding images</h3>
+    <p>Copy your image file (e.g. <code>photo.jpg</code>) into your <code>my-website</code> folder. Reference it in your HTML like this:</p>
+    <pre><code>&lt;img src="photo.jpg" alt="A description of the photo"&gt;</code></pre>
+    <p>Include the image in your next commit and push, and it will appear on your live site.</p>
+  </div>
+
+  <!-- ─────────────────────────────────── -->
+  <!-- SUMMARY CHECKLIST                  -->
+  <!-- ─────────────────────────────────── -->
+  <div class="section">
+    <div class="section-header">
+      <div class="section-num" style="background: var(--teal);">✓</div>
+      <div class="section-title-block">
+        <h2>Quick-Reference Checklist</h2>
+        <p>Print or bookmark this — the whole process at a glance.</p>
+      </div>
+    </div>
+    <ul class="checklist">
+      <li><div class="check-box"></div> Created a GitHub account at github.com</li>
+      <li><div class="check-box"></div> Installed GitHub Desktop or Git for the command line</li>
+      <li><div class="check-box"></div> Created the project folder in Documents</li>
+      <li><div class="check-box"></div> Initialized a Git repository in the folder</li>
+      <li><div class="check-box"></div> Created index.html and saved it in the folder</li>
+      <li><div class="check-box"></div> Committed the file with a descriptive message</li>
+      <li><div class="check-box"></div> Created a public repository on GitHub.com</li>
+      <li><div class="check-box"></div> Pushed the local repo to GitHub</li>
+      <li><div class="check-box"></div> Enabled GitHub Pages in repository Settings → Pages</li>
+      <li><div class="check-box"></div> Visited the live site at <code>username.github.io/my-website</code></li>
+    </ul>
+
+    <div class="callout good" style="margin-top:24px;">
+      <div class="callout-icon">🎉</div>
+      <div class="callout-body">
+        <strong>You did it!</strong>
+        You now have a live website, a backed-up project, and the core skills that professional developers use every day. From here, you can add more pages, learn CSS to style your site, or explore JavaScript to add interactivity.
+      </div>
+    </div>
+  </div>
+
+</div><!-- end page-body -->
+
+<footer>
+  Guide to Publishing a Website on GitHub &nbsp;·&nbsp; Part of Ron Eaglin's Guide Collection &nbsp;·&nbsp;
+  <span id="footer-date"></span>
+</footer>
+
+<script>
+function switchTab(btn, contentId) {
+  const container = btn.closest('.method-tabs');
+  container.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+  container.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
+  btn.classList.add('active');
+  document.getElementById(contentId).classList.add('active');
+}
+
+document.getElementById('footer-date').textContent =
+  'Last updated ' + new Date().toLocaleDateString('en-US', {year:'numeric', month:'long', day:'numeric'});
+</script>
+
+</body>
+</html>
